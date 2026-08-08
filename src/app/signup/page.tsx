@@ -42,6 +42,7 @@ import {
   DASHBOARD_PATTERNS,
   KBD_HINT_STYLE,
   PRIMARY_FOCUS_RING,
+  SPACE_Y_PATTERNS,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
@@ -267,7 +268,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
 
   return (
     <div
-      className={`space-y-2 ${celebrating && !prefersReducedMotion ? 'animate-password-strong-celebration' : ''}`}
+      className={`${SPACE_Y_PATTERNS.SM} ${celebrating && !prefersReducedMotion ? 'animate-password-strong-celebration' : ''}`}
     >
       {/* Micro-UX: Granular progress bar with percentage label */}
       {/* Shows precise strength score (e.g., "75% Medium") instead of fixed widths */}
@@ -558,7 +559,9 @@ export default function SignupPage() {
   if (success) {
     return (
       <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
-        <div className={`${CONTAINER_WIDTHS.XS} w-full text-center space-y-6`}>
+        <div
+          className={`${CONTAINER_WIDTHS.XS} w-full text-center ${SPACE_Y_PATTERNS.XL}`}
+        >
           {/* Micro-UX: Staggered entrance animation for signup success creates a */}
           {/* delightful celebration moment when account creation succeeds */}
           <div
@@ -611,7 +614,9 @@ export default function SignupPage() {
         Skip to signup form
       </a>
 
-      <div className={`${CONTAINER_WIDTHS.XS} w-full space-y-8 relative`}>
+      <div
+        className={`${CONTAINER_WIDTHS.XS} w-full ${SPACE_Y_PATTERNS.XXL} relative`}
+      >
         {/* Micro-UX: Submitting overlay prevents double-clicks and provides clear visual feedback */}
         {/* Shows subtle overlay with spinner when form is being submitted */}
         {isLoading && (
@@ -643,7 +648,7 @@ export default function SignupPage() {
 
         <form
           id={AUTH_ELEMENT_IDS.SIGNUP_FORM}
-          className={`mt-8 space-y-6 animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+          className={`mt-8 ${SPACE_Y_PATTERNS.XL} animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           onSubmit={handleSubmit}
         >
           {error && (
@@ -652,7 +657,7 @@ export default function SignupPage() {
             </Alert>
           )}
 
-          <div className="space-y-4">
+          <div className={SPACE_Y_PATTERNS.LG}>
             <InputWithValidation
               ref={emailInputRef}
               id="email"
@@ -727,7 +732,7 @@ export default function SignupPage() {
             />
           </div>
 
-          <div className="space-y-2">
+          <div className={SPACE_Y_PATTERNS.SM}>
             <Button
               type="submit"
               disabled={isLoading}

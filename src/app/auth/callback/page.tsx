@@ -19,6 +19,7 @@ import {
   ICON_SIZES,
   COMPONENT_CONFIG,
   UI_CONFIG,
+  SPACE_Y_PATTERNS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -227,7 +228,7 @@ export default function AuthCallbackPage() {
       </a>
 
       <div id="auth-content" className={`${CONTAINER_WIDTHS.XS} w-full`}>
-        <div className="text-center space-y-6">
+        <div className={`text-center ${SPACE_Y_PATTERNS.XL}`}>
           {/* Micro-UX: Animated spinner with progress feedback */}
           <div className="relative inline-flex items-center justify-center">
             <div

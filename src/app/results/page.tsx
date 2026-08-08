@@ -38,6 +38,12 @@ import {
   KBD_HINT_STYLE,
   CONFETTI_DOT,
   ICON_SIZES,
+  GAP_CLASSES,
+  MT_CLASSES,
+  MB_CLASSES,
+  PY_CLASSES,
+  SPACE_Y_PATTERNS,
+  RESPONSIVE_SPACING,
 } from '@/lib/config';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
@@ -133,8 +139,10 @@ const TaskManagement = dynamic(
     ssr: false,
     loading: () => (
       <div className={CARD_PATTERNS.SKELETON}>
-        <div className={`h-6 ${GRAY_CLASSES.BG_200} rounded w-1/3 mb-4`}></div>
-        <div className="space-y-3">
+        <div
+          className={`h-6 ${GRAY_CLASSES.BG_200} rounded w-1/3 ${MB_CLASSES.XL}`}
+        ></div>
+        <div className={SPACE_Y_PATTERNS.MD}>
           <div className={`h-4 ${GRAY_CLASSES.BG_200} rounded`}></div>
           <div className={`h-4 ${GRAY_CLASSES.BG_200} rounded w-5/6`}></div>
           <div className={`h-4 ${GRAY_CLASSES.BG_200} rounded w-4/6`}></div>
@@ -457,9 +465,9 @@ function ResultsContent() {
         <div className={CARD_PATTERNS.CENTERED}>
           <LoadingSpinner
             size="md"
-            className="mb-4"
-            ariaLabel={RESULTS_PAGE_CONTENT.GENERATING}
-            label={RESULTS_PAGE_CONTENT.GENERATING}
+            className={MB_CLASSES.XL}
+            ariaLabel={RESULTS_PAGE_CONTENT.LOADING}
+            label={RESULTS_PAGE_CONTENT.LOADING}
           />
         </div>
       </div>
@@ -471,7 +479,9 @@ function ResultsContent() {
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <Alert type="error" title={RESULTS_PAGE_CONTENT.ERROR_TITLE}>
           {error}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mt-4">
+          <div
+            className={`${RESPONSIVE_SPACING.RESPONSIVE_ROW} ${MT_CLASSES.XL}`}
+          >
             <Button onClick={() => router.back()} variant="primary">
               {RESULTS_PAGE_CONTENT.BUTTONS.GO_BACK}
             </Button>
@@ -497,7 +507,9 @@ function ResultsContent() {
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <Alert type="warning" title={RESULTS_PAGE_CONTENT.WARNING_TITLE}>
           {RESULTS_PAGE_CONTENT.WARNING_MESSAGE}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mt-4">
+          <div
+            className={`${RESPONSIVE_SPACING.RESPONSIVE_ROW} ${MT_CLASSES.XL}`}
+          >
             <Button onClick={() => router.push(ROUTES.HOME)} variant="primary">
               {RESULTS_PAGE_CONTENT.BUTTONS.GO_HOME}
             </Button>
@@ -523,7 +535,7 @@ function ResultsContent() {
     <>
       <ScrollProgress />
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
-        <div className="flex justify-between items-center mb-8">
+        <div className={`flex justify-between items-center ${MB_CLASSES.XXXL}`}>
           <h1 className={`text-3xl font-bold ${GRAY_CLASSES.TEXT_900}`}>
             {RESULTS_PAGE_CONTENT.HEADING}
           </h1>
@@ -541,14 +553,14 @@ function ResultsContent() {
         </div>
 
         {/* Task Management */}
-        <div id="tasks-section" className="mt-8">
+        <div id="tasks-section" className={MT_CLASSES.XXXL}>
           <TaskManagement ideaId={idea.id} />
         </div>
 
         {/* Export Options */}
         <div id="exports-section" className={CARD_PATTERNS.WITH_MARGIN}>
           <h2
-            className={`text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} mb-6`}
+            className={`text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.XXL}`}
           >
             {RESULTS_PAGE_CONTENT.EXPORT_HEADING}
           </h2>
@@ -556,7 +568,9 @@ function ResultsContent() {
           {/* Micro-UX: Staggered entrance animation for export buttons */}
           {/* Creates a cascading fade-in effect that guides user attention to available export options */}
           {/* Respects prefers-reduced-motion for accessibility */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${GAP_CLASSES.XL}`}
+          >
             {/* Markdown Export */}
             <div
               className={`${prefersReducedMotion ? '' : 'fade-in'}`}
@@ -1008,15 +1022,15 @@ function ResultsContent() {
         {/* Micro-UX: Staggered entrance animation matches Export section for visual consistency */}
         <div className={CARD_PATTERNS.WITH_MARGIN}>
           <h2
-            className={`text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} mb-6`}
+            className={`text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.XXL}`}
           >
             {RESULTS_PAGE_CONTENT.SHARE_HEADING}
           </h2>
-          <p className={`${GRAY_CLASSES.TEXT_600} mb-6`}>
+          <p className={`${GRAY_CLASSES.TEXT_600} ${MB_CLASSES.XXL}`}>
             {RESULTS_PAGE_CONTENT.SHARE_MESSAGE}
           </p>
           <div
-            className={`flex flex-wrap gap-4 ${prefersReducedMotion ? '' : 'fade-in'}`}
+            className={`flex flex-wrap ${GAP_CLASSES.XL} ${prefersReducedMotion ? '' : 'fade-in'}`}
             style={
               !prefersReducedMotion
                 ? { animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }
@@ -1046,14 +1060,16 @@ function ResultsContent() {
           className={`${CARD_PATTERNS.WITH_MARGIN} text-center`}
           aria-labelledby="start-new-idea-cta"
         >
-          <div className="py-4">
+          <div className={PY_CLASSES.XL}>
             <h2
               id="start-new-idea-cta"
-              className={`text-xl sm:text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} mb-2`}
+              className={`text-xl sm:text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.MD}`}
             >
               {RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.TITLE}
             </h2>
-            <p className={`${GRAY_CLASSES.TEXT_600} mb-6 max-w-md mx-auto`}>
+            <p
+              className={`${GRAY_CLASSES.TEXT_600} ${MB_CLASSES.XXL} max-w-md mx-auto`}
+            >
               {RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.DESCRIPTION}
             </p>
             <Button
@@ -1061,7 +1077,7 @@ function ResultsContent() {
               size="lg"
               onClick={() => router.push(ROUTES.HOME)}
               aria-label={RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.ARIA_LABEL}
-              className={`inline-flex items-center gap-2 ${prefersReducedMotion ? '' : 'hover:-translate-y-0.5 active:translate-y-0'} transition-transform`}
+              className={`inline-flex items-center ${GAP_CLASSES.MD} ${prefersReducedMotion ? '' : 'hover:-translate-y-0.5 active:translate-y-0'} transition-transform`}
             >
               <svg
                 className={`${ICON_SIZES.MD}`}
@@ -1131,7 +1147,7 @@ export default function ResultsPage() {
           <div className={CARD_PATTERNS.CENTERED}>
             <LoadingSpinner
               size="md"
-              className="mb-4"
+              className={MB_CLASSES.XL}
               ariaLabel={RESULTS_PAGE_CONTENT.LOADING}
               label={RESULTS_PAGE_CONTENT.LOADING_SHORT}
             />

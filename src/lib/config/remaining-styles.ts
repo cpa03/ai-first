@@ -230,6 +230,8 @@ export const SPACE_Y_PATTERNS = {
   LG: 'space-y-4',
   /** space-y-6 = 24px */
   XL: 'space-y-6',
+  /** space-y-8 = 32px */
+  XXL: 'space-y-8',
 } as const;
 
 /**
