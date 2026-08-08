@@ -248,7 +248,8 @@ export const PLATFORM = {
     if (cachedIsSafari === null || cachedUserAgentStr !== ua) {
       cachedUserAgentStr = ua;
       const uaLower = ua.toLowerCase();
-      cachedIsSafari = uaLower.includes('safari') && !uaLower.includes('chrome');
+      cachedIsSafari =
+        uaLower.includes('safari') && !uaLower.includes('chrome');
     }
     return cachedIsSafari;
   },

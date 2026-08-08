@@ -23,6 +23,7 @@ import {
 } from '@/lib/config/element-ids';
 import { HOMEPAGE_SKELETON_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { HERO_ENTRANCE } from '@/lib/config';
 
 const ShareButton = dynamic(() => import('@/components/ShareButton'), {
   loading: () => <div className="h-10 w-24" />,
@@ -160,7 +161,7 @@ export default function HomePageClient() {
         <h1
           id={HOME_PAGE_ELEMENT_IDS.HERO_HEADING}
           className={`text-4xl font-bold ${GRAY_CLASSES.TEXT_900} mb-4 ${
-            prefersReducedMotion ? '' : 'animate-hero-entrance'
+            prefersReducedMotion ? '' : HERO_ENTRANCE
           }`}
           style={
             !prefersReducedMotion
@@ -172,7 +173,7 @@ export default function HomePageClient() {
         </h1>
         <p
           className={`text-xl ${GRAY_CLASSES.TEXT_700} max-w-2xl mx-auto ${
-            prefersReducedMotion ? '' : 'animate-hero-entrance'
+            prefersReducedMotion ? '' : HERO_ENTRANCE
           }`}
           style={
             !prefersReducedMotion
@@ -187,7 +188,7 @@ export default function HomePageClient() {
         </p>
         <div
           className={`mt-6 flex justify-center ${GAP_CLASSES.LG} ${
-            prefersReducedMotion ? '' : 'animate-hero-entrance'
+            prefersReducedMotion ? '' : HERO_ENTRANCE
           }`}
           style={
             !prefersReducedMotion

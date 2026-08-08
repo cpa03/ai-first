@@ -140,13 +140,19 @@ describe('Environment Validation', () => {
 
       expect(result.valid).toBe(false);
       expect(
-        result.errors.some((e) => e.includes('NEXT_PUBLIC_NOTION_CLIENT_SECRET'))
+        result.errors.some((e) =>
+          e.includes('NEXT_PUBLIC_NOTION_CLIENT_SECRET')
+        )
       ).toBe(true);
       expect(
-        result.errors.some((e) => e.includes('NEXT_PUBLIC_GITHUB_CLIENT_SECRET'))
+        result.errors.some((e) =>
+          e.includes('NEXT_PUBLIC_GITHUB_CLIENT_SECRET')
+        )
       ).toBe(true);
       expect(
-        result.errors.some((e) => e.includes('NEXT_PUBLIC_GOOGLE_REFRESH_TOKEN'))
+        result.errors.some((e) =>
+          e.includes('NEXT_PUBLIC_GOOGLE_REFRESH_TOKEN')
+        )
       ).toBe(true);
       expect(
         result.errors.some((e) => e.includes('NEXT_PUBLIC_POSTHOG_API_KEY'))

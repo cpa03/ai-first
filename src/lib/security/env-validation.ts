@@ -365,7 +365,8 @@ function checkRequiredEnvVars(): string[] {
     process.env.CF_PAGES === 'true' ||
     process.env.CF_WORKER === 'true' ||
     process.env.OPENNEXT_CLOUDFLARE === 'true'
-  ) return errors;
+  )
+    return errors;
   const required = [
     'NEXT_PUBLIC_SUPABASE_URL',
     'NEXT_PUBLIC_SUPABASE_ANON_KEY',

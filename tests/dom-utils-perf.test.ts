@@ -1,4 +1,8 @@
-import { isInputElement, PLATFORM, __resetPlatformCacheForTesting } from '@/lib/dom-utils';
+import {
+  isInputElement,
+  PLATFORM,
+  __resetPlatformCacheForTesting,
+} from '@/lib/dom-utils';
 
 describe('DOM Utilities Performance and Correctness', () => {
   let originalNavigator: typeof navigator | undefined;
@@ -50,7 +54,9 @@ describe('DOM Utilities Performance and Correctness', () => {
         }
       }
       const duration = performance.now() - start;
-      console.log(`[Benchmark] isInputElement for ${ITERATIONS * testElements.length} elements: ${duration.toFixed(2)}ms`);
+      console.log(
+        `[Benchmark] isInputElement for ${ITERATIONS * testElements.length} elements: ${duration.toFixed(2)}ms`
+      );
       expect(duration).toBeLessThan(100); // Should run extremely fast
     });
   });
@@ -63,7 +69,8 @@ describe('DOM Utilities Performance and Correctness', () => {
       Object.defineProperty(global, 'navigator', {
         value: {
           platform: 'MacIntel',
-          userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          userAgent:
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         },
         writable: true,
         configurable: true,
@@ -85,7 +92,8 @@ describe('DOM Utilities Performance and Correctness', () => {
       Object.defineProperty(global, 'navigator', {
         value: {
           platform: 'MacIntel',
-          userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15',
+          userAgent:
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15',
         },
         writable: true,
         configurable: true,
@@ -106,7 +114,9 @@ describe('DOM Utilities Performance and Correctness', () => {
         PLATFORM.isSafari();
       }
       const duration = performance.now() - start;
-      console.log(`[Benchmark] PLATFORM property evaluations (${ITERATIONS * 7} checks): ${duration.toFixed(2)}ms`);
+      console.log(
+        `[Benchmark] PLATFORM property evaluations (${ITERATIONS * 7} checks): ${duration.toFixed(2)}ms`
+      );
       expect(duration).toBeLessThan(150); // Should be almost instant due to caching
     });
   });

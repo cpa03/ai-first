@@ -20,6 +20,7 @@ import {
   COMPONENT_CONFIG,
   UI_CONFIG,
   SPACE_Y_PATTERNS,
+  FADE_IN,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -271,7 +272,7 @@ export default function AuthCallbackPage() {
           {/* Micro-UX: Timeout warning with retry option */}
           {hasTimedOut && (
             <div
-              className={`${BG_COLORS.WARNING_LIGHT} border ${BORDER_COLORS.WARNING} rounded-lg p-4 animate-fade-in`}
+              className={`${BG_COLORS.WARNING_LIGHT} border ${BORDER_COLORS.WARNING} rounded-lg p-4 ${FADE_IN}`}
               role="alert"
               aria-live="assertive"
             >
