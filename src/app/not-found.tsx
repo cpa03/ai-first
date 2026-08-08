@@ -20,7 +20,6 @@ import {
   NOT_FOUND_LABELS,
   BREATHE,
   HERO_ENTRANCE,
-  ANIMATION_CONFIG,
   GRAY_CLASSES,
   ICON_SIZES,
   COMPONENT_CONFIG,
@@ -29,6 +28,7 @@ import {
   BG_COLORS,
   BORDER_COLORS,
 } from '@/lib/config';
+import { ANIMATION_PATTERNS } from '@/lib/config/remaining-styles';
 import type { ComponentConfig } from '@/lib/config/components';
 import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
@@ -261,13 +261,12 @@ export default function NotFound() {
           </div>
 
           {/* Micro-UX: Keyboard shortcut hints for discoverability */}
+          {/* Uses discover-pulse animation to draw attention to available shortcuts */}
           <div
-            className={`mt-6 flex items-center justify-center gap-4 text-xs ${GRAY_CLASSES.TEXT_500} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
+            className={`mt-6 flex items-center justify-center gap-4 text-xs ${GRAY_CLASSES.TEXT_500} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5} ${ANIMATION_PATTERNS.DISCOVER_PULSE} rounded-lg px-4 py-2`}
             aria-hidden="true"
           >
-            <span
-              className={`hidden sm:inline-flex items-center gap-1.5 ${BREATHE}`}
-            >
+            <span className="hidden sm:inline-flex items-center gap-1.5">
               <kbd
                 className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
               >
@@ -280,12 +279,7 @@ export default function NotFound() {
               </kbd>
               <span>go back</span>
             </span>
-            <span
-              className={`hidden sm:inline-flex items-center gap-1.5 ${BREATHE}`}
-              style={{
-                animationDelay: `${ANIMATION_CONFIG.NOT_FOUND_PAGE.FIRST_HINT_DELAY}ms`,
-              }}
-            >
+            <span className="hidden sm:inline-flex items-center gap-1.5">
               <kbd
                 className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
               >
@@ -293,12 +287,7 @@ export default function NotFound() {
               </kbd>
               <span>go home</span>
             </span>
-            <span
-              className={`hidden sm:inline-flex items-center gap-1.5`}
-              style={{
-                animationDelay: `${ANIMATION_CONFIG.NOT_FOUND_PAGE.SECOND_HINT_DELAY}ms`,
-              }}
-            >
+            <span className="hidden sm:inline-flex items-center gap-1.5">
               {hasCopied ? (
                 <span
                   className={`${TEXT_COLORS.SUCCESS_MEDIUM_DARK} font-medium animate-fade-in`}
@@ -308,18 +297,20 @@ export default function NotFound() {
               ) : (
                 <>
                   <kbd
-                    className={`${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT} ${BREATHE}`}
+                    className={
+                      UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT
+                    }
                   >
                     {isMac ? '⌘' : 'Ctrl'}
                   </kbd>
                   <kbd
-                    className={`${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT} ${BREATHE}`}
+                    className={
+                      UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT
+                    }
                   >
                     C
                   </kbd>
-                  <span className={BREATHE}>
-                    {NOT_FOUND_LABELS.COPY_URL_HINT}
-                  </span>
+                  <span>{NOT_FOUND_LABELS.COPY_URL_HINT}</span>
                 </>
               )}
             </span>
