@@ -968,3 +968,21 @@ export {
   type DotShape,
   type DotColor,
 } from './dot-indicators';
+
+// Scroll Shadow Configuration
+// Centralizes hardcoded shadow and transition values used in ScrollShadow component
+export {
+  SCROLL_SHADOW_BOX_SHADOWS,
+  SCROLL_SHADOW_TRANSITIONS,
+  SCROLL_SHADOW_THRESHOLD,
+  SCROLL_SHADOW_CONFIG,
+  type ScrollShadowConfig,
+} from './scroll-shadow';
+
+// Body Overflow Configuration
+// Centralizes hardcoded body overflow values used in MobileNav and KeyboardShortcutsHelp
+export {
+  BODY_OVERFLOW_VALUES,
+  BODY_OVERFLOW_CONFIG,
+  type BodyOverflowConfig,
+} from './body-overflow';

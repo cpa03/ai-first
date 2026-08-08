@@ -2,6 +2,7 @@
 
 import { memo, useState, useEffect, useCallback, useRef } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { SCROLL_SHADOW_CONFIG } from '@/lib/config';
 
 /**
  * ScrollShadow - Adds a subtle shadow to the header when scrolling down
@@ -25,8 +26,7 @@ function ScrollShadowComponent() {
     if (rafRef.current !== null) return;
 
     rafRef.current = requestAnimationFrame(() => {
-      // Show shadow when scrolled more than 10px from top
-      setHasScrolled(window.scrollY > 10);
+      setHasScrolled(window.scrollY > SCROLL_SHADOW_CONFIG.THRESHOLD);
       rafRef.current = null;
     });
   }, []);
@@ -50,16 +50,16 @@ function ScrollShadowComponent() {
 
     if (hasScrolled) {
       header.style.boxShadow = prefersReducedMotion
-        ? '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)'
-        : '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)';
+        ? SCROLL_SHADOW_CONFIG.SHADOWS.REDUCED_MOTION
+        : SCROLL_SHADOW_CONFIG.SHADOWS.DEFAULT;
       header.style.transition = prefersReducedMotion
-        ? 'none'
-        : 'box-shadow 200ms ease-out';
+        ? SCROLL_SHADOW_CONFIG.TRANSITIONS.NONE
+        : SCROLL_SHADOW_CONFIG.TRANSITIONS.SHADOW;
     } else {
       header.style.boxShadow = '';
       header.style.transition = prefersReducedMotion
-        ? 'none'
-        : 'box-shadow 200ms ease-out';
+        ? SCROLL_SHADOW_CONFIG.TRANSITIONS.NONE
+        : SCROLL_SHADOW_CONFIG.TRANSITIONS.SHADOW;
     }
   }, [hasScrolled, prefersReducedMotion]);
 
