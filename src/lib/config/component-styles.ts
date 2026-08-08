@@ -476,6 +476,93 @@ export const LOADING_PAGE_STYLES = {
 } as const;
 
 /**
+ * Progress Stepper styles
+ * Used in: ProgressStepper
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const PROGRESS_STEPPER_STYLES = {
+  /** Main nav container margin */
+  NAV_CONTAINER: 'mb-6 sm:mb-8',
+  /** Mobile step list container */
+  MOBILE_STEP_LIST: 'flex items-center space-x-2',
+  /** Mobile step label */
+  MOBILE_STEP_LABEL: 'px-2 mt-1.5 text-xs font-medium',
+  /** Mobile progress bar container */
+  MOBILE_PROGRESS_CONTAINER: 'mt-2 mx-2',
+  /** Mobile step count */
+  MOBILE_STEP_COUNT: 'text-xs font-medium tabular-nums',
+  /** Desktop step label container */
+  DESKTOP_STEP_LABEL: 'flex flex-col ml-3 text-left',
+  /** Desktop step label text */
+  DESKTOP_STEP_LABEL_TEXT: 'text-sm font-medium',
+  /** Desktop step count */
+  DESKTOP_STEP_COUNT: 'text-xs font-medium tabular-nums',
+  /** Keyboard navigation hint */
+  KEYBOARD_HINT:
+    'hidden sm:flex items-center justify-center gap-2 mt-2 text-xs',
+} as const;
+
+/**
+ * Footer Navigation styles
+ * Used in: FooterNav
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const FOOTER_NAV_STYLES = {
+  /** Column title */
+  COLUMN_TITLE: 'text-sm font-semibold uppercase tracking-wider',
+  /** Column items list */
+  COLUMN_ITEMS: 'mt-4',
+  /** Link text */
+  LINK_TEXT: 'text-sm transition-all ease-out',
+  /** Link container */
+  LINK_CONTAINER: 'inline-flex items-center gap-1.5',
+} as const;
+
+/**
+ * Blueprint Display styles
+ * Used in: BlueprintDisplay
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const BLUEPRINT_DISPLAY_STYLES = {
+  /** Loading state center container */
+  LOADING_CENTER: 'text-center mb-8',
+  /** Loading spinner margin */
+  LOADING_SPINNER: 'mb-4',
+  /** Loading title */
+  LOADING_TITLE: 'text-xl sm:text-2xl font-semibold mb-2',
+  /** Loading description */
+  LOADING_DESCRIPTION: 'text-sm sm:text-base',
+  /** Print title */
+  PRINT_TITLE: 'text-2xl font-bold mb-4',
+  /** Print idea text */
+  PRINT_IDEA: 'text-sm mb-2',
+  /** Print divider */
+  PRINT_DIVIDER: 'my-4',
+} as const;
+
+/**
+ * Referral Link styles
+ * Used in: ReferralLink
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const REFERRAL_LINK_STYLES = {
+  /** Title text */
+  TITLE: 'text-sm font-semibold mb-1',
+  /** Description text */
+  DESCRIPTION: 'text-xs mb-2',
+} as const;
+
+/**
+ * Task Management styles
+ * Used in: TaskManagement
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const TASK_MANAGEMENT_EMPTY_STYLES = {
+  /** Empty state container */
+  CONTAINER: 'text-center py-8 animate-fade-in',
+} as const;
+
+/**
  * All component styles grouped by component
  */
 export const COMPONENT_STYLES = {
@@ -584,6 +671,21 @@ export const COMPONENT_STYLES = {
     MENU_INDICATOR_CONTAINER: MOBILE_NAV_MENU_INDICATOR_CONTAINER,
     MENU_KEYBOARD_HINT: MOBILE_NAV_MENU_KEYBOARD_HINT,
   },
+
+  // Progress Stepper styles
+  PROGRESS_STEPPER: PROGRESS_STEPPER_STYLES,
+
+  // Footer Navigation styles
+  FOOTER_NAV: FOOTER_NAV_STYLES,
+
+  // Blueprint Display styles
+  BLUEPRINT_DISPLAY: BLUEPRINT_DISPLAY_STYLES,
+
+  // Referral Link styles
+  REFERRAL_LINK: REFERRAL_LINK_STYLES,
+
+  // Task Management empty state styles
+  TASK_MANAGEMENT_EMPTY: TASK_MANAGEMENT_EMPTY_STYLES,
 } as const;
 
 export type ComponentStyles = typeof COMPONENT_STYLES;

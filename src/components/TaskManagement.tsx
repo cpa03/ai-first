@@ -28,6 +28,7 @@ import {
   ICON_SIZES,
   SPACE_Y_PATTERNS,
   FLEX_PATTERNS,
+  TASK_MANAGEMENT_EMPTY_STYLES,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import type { Task } from '@/lib/db';
@@ -331,7 +332,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
           />
         ))}
         {filteredDeliverables.length === 0 && statusFilter !== 'all' && (
-          <div className="text-center py-8 animate-fade-in">
+          <div className={TASK_MANAGEMENT_EMPTY_STYLES.CONTAINER}>
             {/* Micro-UX: Enhanced filtered empty state with animated icon */}
             {/* Matches the visual pattern of other empty states in the app */}
             <div

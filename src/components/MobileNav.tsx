@@ -24,6 +24,8 @@ import {
   PRIMARY_ACTIVE_LINK,
   SPACE_Y_PATTERNS,
   BODY_OVERFLOW_CONFIG,
+  MT_CLASSES,
+  GAP_CLASSES,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
@@ -250,10 +252,10 @@ function MobileNavComponent() {
             className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${isOpen ? 'rotate-45 translate-y-1' : ''}`}
           />
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none mt-1.5 ${isOpen ? 'opacity-0 scale-0' : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${MT_CLASSES.MD_SM} ${isOpen ? 'opacity-0 scale-0' : ''}`}
           />
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none mt-1.5 ${isOpen ? '-rotate-45 -translate-y-1' : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${MT_CLASSES.MD_SM} ${isOpen ? '-rotate-45 -translate-y-1' : ''}`}
           />
         </div>
       </button>
@@ -339,7 +341,7 @@ function MobileNavComponent() {
                       aria-label={link.ariaLabel}
                       aria-current={active ? 'page' : undefined}
                     >
-                      <span className="flex items-center gap-3">
+                      <span className={`flex items-center ${GAP_CLASSES.LG}`}>
                         {active && (
                           <span
                             className={MOBILE_NAV_ACTIVE_INDICATOR}

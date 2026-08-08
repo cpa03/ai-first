@@ -17,6 +17,7 @@ import {
   PROGRESS_BAR_TRACK,
   ICON_SIZES,
   HEIGHT_ONLY,
+  PROGRESS_STEPPER_STYLES,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -169,13 +170,13 @@ const ProgressStepperComponent = function ProgressStepper({
 
   return (
     <nav
-      className="mb-6 sm:mb-8"
+      className={PROGRESS_STEPPER_STYLES.NAV_CONTAINER}
       aria-label={PROGRESS_STEPPER_LABELS.NAV_ARIA_LABEL}
       role="navigation"
     >
       <div className="sm:hidden">
         <div className="flex items-center justify-between px-2">
-          <ol className="flex items-center space-x-2">
+          <ol className={PROGRESS_STEPPER_STYLES.MOBILE_STEP_LIST}>
             {steps.map((step, index) => {
               const isClickable = onStepClick && index !== currentStep;
               return (
@@ -204,7 +205,7 @@ const ProgressStepperComponent = function ProgressStepper({
             })}
           </ol>
           <span
-            className={`text-xs ${TEXT_COLOR_CLASSES.BODY} font-medium tabular-nums`}
+            className={`${PROGRESS_STEPPER_STYLES.MOBILE_STEP_COUNT} ${TEXT_COLOR_CLASSES.BODY}`}
             aria-hidden="true"
           >
             {currentStep + 1} / {steps.length}
@@ -214,14 +215,14 @@ const ProgressStepperComponent = function ProgressStepper({
         {/* Helps users understand where they are in the flow without relying on memory */}
         {steps[currentStep] && (
           <div
-            className={`px-2 mt-1.5 text-xs font-medium ${TEXT_COLOR_CLASSES.BRAND} truncate`}
+            className={`${PROGRESS_STEPPER_STYLES.MOBILE_STEP_LABEL} ${TEXT_COLOR_CLASSES.BRAND} truncate`}
             aria-hidden="true"
           >
             {steps[currentStep].label}
           </div>
         )}
         <div
-          className={`mt-2 ${PROGRESS_BAR_TRACK} mx-2`}
+          className={`${PROGRESS_STEPPER_STYLES.MOBILE_PROGRESS_CONTAINER} ${PROGRESS_BAR_TRACK}`}
           role="progressbar"
           aria-valuenow={animatedProgress}
           aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
@@ -297,10 +298,10 @@ const ProgressStepperComponent = function ProgressStepper({
                       index + 1
                     )}
                   </div>
-                  <div className="flex flex-col ml-3 text-left">
+                  <div className={PROGRESS_STEPPER_STYLES.DESKTOP_STEP_LABEL}>
                     <span
                       className={`
-                        text-sm font-medium
+                        ${PROGRESS_STEPPER_STYLES.DESKTOP_STEP_LABEL_TEXT}
                         ${isClickable ? `group-hover:${TEXT_COLORS.BRAND} transition-colors` : ''}
                         ${
                           step.current
@@ -315,7 +316,7 @@ const ProgressStepperComponent = function ProgressStepper({
                     </span>
                     {step.current && (
                       <span
-                        className={`text-xs ${TEXT_COLORS.BRAND_LIGHT} font-medium`}
+                        className={`${PROGRESS_STEPPER_STYLES.DESKTOP_STEP_COUNT} ${TEXT_COLORS.BRAND_LIGHT}`}
                       >
                         Step {currentStep + 1} of {steps.length}
                       </span>
@@ -353,7 +354,7 @@ const ProgressStepperComponent = function ProgressStepper({
       {/* Micro-UX: Keyboard navigation hints for step navigation */}
       {onStepClick && steps.length > 1 && (
         <div
-          className={`hidden sm:flex items-center justify-center gap-2 mt-2 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
+          className={`${PROGRESS_STEPPER_STYLES.KEYBOARD_HINT} ${TEXT_COLOR_CLASSES.MUTED}`}
           aria-label={PROGRESS_STEPPER_LABELS.KEYBOARD_NAV_ARIA_LABEL}
         >
           <span className="flex items-center gap-1.5">
