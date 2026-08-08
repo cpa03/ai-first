@@ -33,6 +33,7 @@ import {
   FLEX_PATTERNS,
   SPACE_Y_PATTERNS,
   PRIMARY_LINK,
+  BODY_OVERFLOW_CONFIG,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -522,12 +523,12 @@ function KeyboardShortcutsHelpComponent({
     if (isOpen) {
       storeFocus();
       requestAnimationFrame(() => searchInputRef.current?.focus());
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = BODY_OVERFLOW_CONFIG.VALUES.HIDDEN;
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = BODY_OVERFLOW_CONFIG.VALUES.UNSET;
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = BODY_OVERFLOW_CONFIG.VALUES.UNSET;
     };
   }, [isOpen, storeFocus]);
 

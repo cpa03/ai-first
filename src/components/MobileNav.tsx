@@ -23,6 +23,7 @@ import {
   ANIMATION_CONFIG,
   PRIMARY_ACTIVE_LINK,
   SPACE_Y_PATTERNS,
+  BODY_OVERFLOW_CONFIG,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
@@ -112,7 +113,7 @@ function MobileNavComponent() {
 
   useEffect(() => {
     if (isOpen && isMobile) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = BODY_OVERFLOW_CONFIG.VALUES.HIDDEN;
       firstMenuItemRef.current?.focus();
 
       if (!prefersReducedMotion) {
@@ -123,7 +124,7 @@ function MobileNavComponent() {
         }, MOBILE_NAV_CONFIG.KEYBOARD_HINTS_VISIBLE_DURATION_MS);
       }
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = BODY_OVERFLOW_CONFIG.VALUES.UNSET;
       setHintsVisible(false);
       if (hintsTimeoutRef.current) {
         clearTimeout(hintsTimeoutRef.current);
@@ -131,7 +132,7 @@ function MobileNavComponent() {
       }
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = BODY_OVERFLOW_CONFIG.VALUES.UNSET;
     };
   }, [isOpen, isMobile, prefersReducedMotion]);
 
