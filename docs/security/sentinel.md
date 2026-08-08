@@ -53,3 +53,9 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** SSRF blocklist patterns in `src/lib/config/security-patterns.ts` did not detect advanced/alternate IPv6 loopback (e.g., `[0:0:0:0:0:0:0:1]`, `[0::1]`) and unspecified (e.g., `[0:0:0:0:0:0:0:0]`, `[0::0]`, `[0::]`) representations. Attackers can leverage these representations to bypass naive SSRF filters since web clients still resolve them to local targets.
 **Learning:** Regex-based SSRF mitigations often overlook the rich variety of formats supported by IPv6 (e.g., full-length, double-colon compressed, optional trailing colons, and varying zero-padding).
 **Prevention:** Always design IPv6 loopback patterns defensively with robust patterns that match brackets containing any valid IPv6 loopback and unspecified variants (both compressed and full-length, ending in 0 or 1).
+
+## 2026-08-08 - Loose Integration Secrets Validation Gaps
+
+**Vulnerability:** High-risk third-party client secrets (`GITHUB_CLIENT_SECRET`, `NOTION_CLIENT_SECRET`), OAuth refresh tokens (`GOOGLE_REFRESH_TOKEN`), and private analytics keys (`POSTHOG_API_KEY`) were not covered by strict server startup validation. This could lead to accidental frontend exposure through `NEXT_PUBLIC_` prefixes, use of default/example values, or weak/short keys in production.
+**Learning:** When adding standard environment variable keys or examples to configuration, developers often neglect registering them in strict runtime security validators. This results in inconsistent protection where some integrations are hardened while others remain vulnerable to leakage or weak configurations.
+**Prevention:** Centralize all sensitive integration credentials in type-safe environment key accessors and map them directly into a strict validation whitelist. Ensure any private OAuth or client secret is explicitly protected against frontend bundling and validated for high-entropy strength in production.
