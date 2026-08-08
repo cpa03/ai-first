@@ -121,6 +121,37 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
     [focusedTaskIndex, allTasks]
   );
 
+  const hasNextIncomplete = useMemo(
+    () => allTasks.some((t) => t.status !== 'completed'),
+    [allTasks]
+  );
+
+  const scrollToNextIncomplete = useCallback(() => {
+    const nextIncomplete = allTasks.find((t) => t.status !== 'completed');
+    if (!nextIncomplete) {
+      setExpandAnnouncement(
+        TASK_MANAGEMENT_LABELS.NEXT_INCOMPLETE_ALL_DONE_ANNOUNCEMENT
+      );
+      setExpandTriggered(true);
+      return;
+    }
+
+    const deliverable = data?.deliverables.find((d) =>
+      d.tasks.some((t) => t.id === nextIncomplete.id)
+    );
+    if (deliverable && !expandedDeliverables.has(deliverable.id)) {
+      toggleDeliverable(deliverable.id);
+    }
+
+    setExpandAnnouncement(
+      TASK_MANAGEMENT_LABELS.NEXT_INCOMPLETE_ANNOUNCEMENT(nextIncomplete.title)
+    );
+    setExpandTriggered(true);
+
+    const taskIndex = allTasks.findIndex((t) => t.id === nextIncomplete.id);
+    setFocusedTaskIndex(taskIndex);
+  }, [allTasks, data, expandedDeliverables, toggleDeliverable]);
+
   useEffect(() => {
     if (focusedTaskIndex >= 0 && focusedTaskIndex < allTasks.length) {
       const taskId = allTasks[focusedTaskIndex].id;
@@ -193,6 +224,10 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
         e.preventDefault();
         triggerHapticFeedback();
         handleFilterChange('completed');
+      } else if (e.key === 'n') {
+        e.preventDefault();
+        triggerHapticFeedback();
+        scrollToNextIncomplete();
       }
     };
 
@@ -206,6 +241,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
     focusedTaskIndex,
     handleToggleTaskStatus,
     handleFilterChange,
+    scrollToNextIncomplete,
   ]);
 
   // PERFORMANCE: Memoize reload handler to prevent function recreation on each render
@@ -314,6 +350,8 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
         overallProgress={summary.overallProgress}
         onExpandAll={expandAll}
         onCollapseAll={collapseAll}
+        onScrollToNextIncomplete={scrollToNextIncomplete}
+        hasNextIncomplete={hasNextIncomplete}
         statusFilter={statusFilter}
         onFilterChange={handleFilterChange}
         filterCounts={filterCounts}
@@ -426,6 +464,12 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
             1-3
           </kbd>
           filter
+        </span>
+        <span className="hidden sm:inline-flex items-center gap-1.5">
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+            n
+          </kbd>
+          next task
         </span>
         <span className="hidden sm:inline-flex items-center gap-1.5">
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>

@@ -34,6 +34,8 @@ interface TaskManagementHeaderProps {
   overallProgress: number;
   onExpandAll: () => void;
   onCollapseAll: () => void;
+  onScrollToNextIncomplete: () => void;
+  hasNextIncomplete: boolean;
   statusFilter: 'all' | 'in_progress' | 'completed';
   onFilterChange: (filter: 'all' | 'in_progress' | 'completed') => void;
   filterCounts: { all: number; in_progress: number; completed: number };
@@ -48,6 +50,8 @@ function TaskManagementHeaderComponent({
   overallProgress,
   onExpandAll,
   onCollapseAll,
+  onScrollToNextIncomplete,
+  hasNextIncomplete,
   statusFilter,
   onFilterChange,
   filterCounts,
@@ -302,6 +306,32 @@ function TaskManagementHeaderComponent({
             variant="subtle"
             showToast={true}
           />
+          <Tooltip
+            content={
+              hasNextIncomplete
+                ? TASK_MANAGEMENT_LABELS.NEXT_INCOMPLETE_BUTTON
+                : TASK_MANAGEMENT_LABELS.NEXT_INCOMPLETE_ALL_DONE
+            }
+            shortcut={['n']}
+            position="bottom"
+          >
+            <Button
+              onClick={() => {
+                triggerHapticFeedback();
+                onScrollToNextIncomplete();
+              }}
+              variant={hasNextIncomplete ? 'primary' : 'outline'}
+              size="sm"
+              disabled={!hasNextIncomplete}
+              aria-label={
+                hasNextIncomplete
+                  ? TASK_MANAGEMENT_LABELS.NEXT_INCOMPLETE_BUTTON
+                  : TASK_MANAGEMENT_LABELS.NEXT_INCOMPLETE_ALL_DONE
+              }
+            >
+              {TASK_MANAGEMENT_LABELS.NEXT_INCOMPLETE_BUTTON}
+            </Button>
+          </Tooltip>
         </div>
         {/* Micro-UX: Keyboard shortcut hints for discoverability */}
         {/* Makes [ ] and 1-3 shortcuts visible without requiring hover, following the ProgressStepper pattern */}
@@ -343,6 +373,20 @@ function TaskManagementHeaderComponent({
             </kbd>
             <span className={TRANSITION_CLASSES.COLOR}>
               {TASK_MANAGEMENT_LABELS.FILTER_HINT}
+            </span>
+          </span>
+          <span
+            className={`${TEXT_COLORS.MUTED_LIGHT} opacity-50`}
+            aria-hidden="true"
+          >
+            ·
+          </span>
+          <span className={FLEX_PATTERNS.GAP_SM}>
+            <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+              n
+            </kbd>
+            <span className={TRANSITION_CLASSES.COLOR}>
+              {TASK_MANAGEMENT_LABELS.NEXT_INCOMPLETE_HINT}
             </span>
           </span>
         </div>

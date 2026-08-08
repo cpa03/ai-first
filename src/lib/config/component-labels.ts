@@ -424,7 +424,7 @@ export const TASK_MANAGEMENT_LABELS = {
   SKELETON_ARIA_LABEL: 'Loading task management data',
   SKELETON_SR_TEXT: 'Loading task management data...',
   KEYBOARD_SHORTCUTS_ARIA_LABEL:
-    'Keyboard shortcuts: [ to expand all, ] to collapse all, 1-3 to filter',
+    'Keyboard shortcuts: [ to expand all, ] to collapse all, 1-3 to filter, n for next incomplete task',
   COPY_SUMMARY_BUTTON: 'Copy Summary',
   COPY_SUMMARY_SUCCESS: 'Copied!',
   // Task status filter labels
@@ -440,6 +440,12 @@ export const TASK_MANAGEMENT_LABELS = {
   PROGRESS_SUMMARY_TITLE: '📊 Task Progress Summary',
   SHOW_ALL_TASKS: 'Show all tasks',
   SHOW_ALL_TASKS_ARIA: 'Clear filter and show all tasks',
+  // Next incomplete task navigation
+  NEXT_INCOMPLETE_BUTTON: 'Next Task',
+  NEXT_INCOMPLETE_ALL_DONE: 'All done!',
+  NEXT_INCOMPLETE_HINT: 'next task',
+  NEXT_INCOMPLETE_ANNOUNCEMENT: (title: string) => `Scrolled to task: ${title}`,
+  NEXT_INCOMPLETE_ALL_DONE_ANNOUNCEMENT: 'All tasks are complete!',
 } as const;
 
 /**
