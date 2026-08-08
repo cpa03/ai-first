@@ -7,6 +7,7 @@ import MobileNav from '@/components/MobileNav';
 import ToastContainer from '@/components/ToastContainer';
 import ScrollToTop from '@/components/ScrollToTop';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
+import ScrollShadow from '@/components/ScrollShadow';
 import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SEO_CONFIG } from '@/lib/config/seo';
@@ -23,6 +24,7 @@ import {
   LAYOUT_CLASSES,
   PRIMARY_FOCUS_RING,
 } from '@/lib/config/theme';
+import { GAP_CLASSES, MT_CLASSES } from '@/lib/config/spacing';
 import { ICON_SIZES } from '@/lib/config/icon-sizes';
 import { GRAY_CLASSES, ELEMENT_PATTERNS } from '@/lib/config/remaining-styles';
 import { FOOTER_NAV_CONFIG } from '@/lib/config/navigation';
@@ -156,6 +158,13 @@ export default async function RootLayout({
         {PRECONNECT_URLS.map((url) => (
           <link key={url} rel="preconnect" href={url} />
         ))}
+        {/* Preconnect to Google Fonts for faster font loading */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         {/* JSON-LD structured data for SEO - sanitized via safeJsonLd() to prevent XSS */}
         <script
           type="application/ld+json"
@@ -167,9 +176,10 @@ export default async function RootLayout({
       >
         <ErrorBoundary>
           <GlobalErrorHandler />
+          <ScrollShadow />
           <KeyboardShortcutsProvider>
             <a href="#main-content" className="skip-link">
-              <span className="flex items-center gap-2">
+              <span className={`flex items-center ${GAP_CLASSES.MD}`}>
                 <svg
                   className={ICON_SIZES.MD}
                   fill="none"
@@ -207,7 +217,7 @@ export default async function RootLayout({
                         IdeaFlow
                       </Link>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className={`flex items-center ${GAP_CLASSES.MD}`}>
                       <KeyboardShortcutsButton />
                       <MobileNav />
                     </div>
@@ -228,7 +238,9 @@ export default async function RootLayout({
                 aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.SITE_FOOTER}
               >
                 <div className={PAGE_LAYOUT_CLASSES.CONTAINER_XL}>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                  <div
+                    className={`grid grid-cols-2 md:grid-cols-4 ${GAP_CLASSES.XXXL}`}
+                  >
                     {/* Brand column */}
                     <div className="col-span-2 md:col-span-1">
                       <Link
@@ -241,7 +253,9 @@ export default async function RootLayout({
                         {APP_CONFIG.TAGLINE}
                       </p>
                       {/* Social links */}
-                      <div className="mt-4 flex items-center gap-3">
+                      <div
+                        className={`${MT_CLASSES.XL} flex items-center ${GAP_CLASSES.LG}`}
+                      >
                         {FOOTER_NAV_CONFIG.SOCIAL_LINKS.map((link) => (
                           <Tooltip
                             key={link.href}
@@ -290,7 +304,9 @@ export default async function RootLayout({
 
                   {/* Bottom bar */}
                   <div className={FOOTER_PATTERNS.BOTTOM_BORDER}>
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+                    <div
+                      className={`flex flex-col sm:flex-row items-center justify-between ${GAP_CLASSES.MD}`}
+                    >
                       <p className={FOOTER_PATTERNS.BOTTOM_TEXT}>
                         {APP_CONFIG.BRANDING.COPYRIGHT}
                       </p>

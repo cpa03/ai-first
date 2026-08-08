@@ -128,6 +128,37 @@ describe('Environment Validation', () => {
       ).toBe(true);
     });
 
+    it('should detect NEXT_PUBLIC_ prefix on the newly added sensitive integration keys', () => {
+      process.env.NEXT_PUBLIC_NOTION_CLIENT_SECRET = 'notion-exposed-secret';
+      process.env.NEXT_PUBLIC_GITHUB_CLIENT_SECRET = 'github-exposed-secret';
+      process.env.NEXT_PUBLIC_GOOGLE_REFRESH_TOKEN = 'google-exposed-token';
+      process.env.NEXT_PUBLIC_POSTHOG_API_KEY = 'posthog-exposed-key';
+      process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
+
+      const result = validateEnvironment();
+
+      expect(result.valid).toBe(false);
+      expect(
+        result.errors.some((e) =>
+          e.includes('NEXT_PUBLIC_NOTION_CLIENT_SECRET')
+        )
+      ).toBe(true);
+      expect(
+        result.errors.some((e) =>
+          e.includes('NEXT_PUBLIC_GITHUB_CLIENT_SECRET')
+        )
+      ).toBe(true);
+      expect(
+        result.errors.some((e) =>
+          e.includes('NEXT_PUBLIC_GOOGLE_REFRESH_TOKEN')
+        )
+      ).toBe(true);
+      expect(
+        result.errors.some((e) => e.includes('NEXT_PUBLIC_POSTHOG_API_KEY'))
+      ).toBe(true);
+    });
+
     it('should warn about placeholders and weak strength on integration keys outside development', () => {
       // Set to production to enable strength/complexity checks
       Object.defineProperty(process.env, 'NODE_ENV', {
@@ -159,6 +190,63 @@ describe('Environment Validation', () => {
       expect(
         result.warnings.some(
           (w) => w.includes('TRELLO_API_KEY') && w.includes('too short')
+        )
+      ).toBe(true);
+    });
+
+    it('should warn about placeholders and weak strength on the newly added sensitive integration keys outside development', () => {
+      // Set to production to enable strength/complexity checks
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: 'production',
+        writable: true,
+      });
+      process.env.NOTION_CLIENT_SECRET = 'your_notion_secret_here'; // placeholder
+      process.env.GITHUB_CLIENT_SECRET = 'your_github_secret_here'; // placeholder
+      process.env.GOOGLE_REFRESH_TOKEN = 'your_google_token_here'; // placeholder
+      process.env.POSTHOG_API_KEY = 'your_posthog_key_here'; // placeholder
+      process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
+
+      const result = validateEnvironment();
+
+      expect(
+        result.warnings.some(
+          (w) => w.includes('NOTION_CLIENT_SECRET') && w.includes('placeholder')
+        )
+      ).toBe(true);
+      expect(
+        result.warnings.some(
+          (w) => w.includes('NOTION_CLIENT_SECRET') && w.includes('too short')
+        )
+      ).toBe(true);
+      expect(
+        result.warnings.some(
+          (w) => w.includes('GITHUB_CLIENT_SECRET') && w.includes('placeholder')
+        )
+      ).toBe(true);
+      expect(
+        result.warnings.some(
+          (w) => w.includes('GITHUB_CLIENT_SECRET') && w.includes('too short')
+        )
+      ).toBe(true);
+      expect(
+        result.warnings.some(
+          (w) => w.includes('GOOGLE_REFRESH_TOKEN') && w.includes('placeholder')
+        )
+      ).toBe(true);
+      expect(
+        result.warnings.some(
+          (w) => w.includes('GOOGLE_REFRESH_TOKEN') && w.includes('too short')
+        )
+      ).toBe(true);
+      expect(
+        result.warnings.some(
+          (w) => w.includes('POSTHOG_API_KEY') && w.includes('placeholder')
+        )
+      ).toBe(true);
+      expect(
+        result.warnings.some(
+          (w) => w.includes('POSTHOG_API_KEY') && w.includes('too short')
         )
       ).toBe(true);
     });

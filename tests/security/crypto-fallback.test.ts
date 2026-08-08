@@ -73,6 +73,74 @@ describe('timingSafeEqualStrings', () => {
   });
 });
 
+describe('timingSafeEqual Performance Benchmarks', () => {
+  it('benchmarks timingSafeEqualStrings with matched vs mismatched lengths', () => {
+    const stringA = 'a'.repeat(10000);
+    const stringB = 'a'.repeat(10000);
+    const stringC = 'a'.repeat(500); // significantly different length
+    const iterations = 5000;
+
+    // Matching lengths benchmark
+    const startMatch = performance.now();
+    for (let i = 0; i < iterations; i++) {
+      timingSafeEqualStrings(stringA, stringB);
+    }
+    const endMatch = performance.now();
+    const durationMatch = endMatch - startMatch;
+
+    // Mismatched lengths benchmark (optimized path)
+    const startMismatch = performance.now();
+    for (let i = 0; i < iterations; i++) {
+      timingSafeEqualStrings(stringA, stringC);
+    }
+    const endMismatch = performance.now();
+    const durationMismatch = endMismatch - startMismatch;
+
+    console.log(
+      `[Benchmark] timingSafeEqualStrings matching lengths (10k chars, ${iterations} runs): ${durationMatch.toFixed(2)}ms`
+    );
+    console.log(
+      `[Benchmark] timingSafeEqualStrings mismatched lengths (10k vs 500, ${iterations} runs): ${durationMismatch.toFixed(2)}ms`
+    );
+
+    // Expect the mismatched path to be significantly faster (under normal circumstances at least 3x faster)
+    expect(durationMismatch).toBeLessThan(durationMatch);
+  });
+
+  it('benchmarks timingSafeEqualArrays with matched vs mismatched lengths', () => {
+    const arrayA = new Uint8Array(10000);
+    const arrayB = new Uint8Array(10000);
+    const arrayC = new Uint8Array(500);
+    const iterations = 5000;
+
+    // Matching lengths benchmark
+    const startMatch = performance.now();
+    for (let i = 0; i < iterations; i++) {
+      timingSafeEqualArrays(arrayA, arrayB);
+    }
+    const endMatch = performance.now();
+    const durationMatch = endMatch - startMatch;
+
+    // Mismatched lengths benchmark (optimized path)
+    const startMismatch = performance.now();
+    for (let i = 0; i < iterations; i++) {
+      timingSafeEqualArrays(arrayA, arrayC);
+    }
+    const endMismatch = performance.now();
+    const durationMismatch = endMismatch - startMismatch;
+
+    console.log(
+      `[Benchmark] timingSafeEqualArrays matching lengths (10k bytes, ${iterations} runs): ${durationMatch.toFixed(2)}ms`
+    );
+    console.log(
+      `[Benchmark] timingSafeEqualArrays mismatched lengths (10k vs 500, ${iterations} runs): ${durationMismatch.toFixed(2)}ms`
+    );
+
+    // Expect the mismatched path to be significantly faster
+    expect(durationMismatch).toBeLessThan(durationMatch);
+  });
+});
+
 describe('timingSafeEqualArrays', () => {
   it('should return true for identical Uint8Arrays', () => {
     expect(

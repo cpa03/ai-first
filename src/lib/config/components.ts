@@ -68,6 +68,37 @@ export const COMPONENT_CONFIG = {
       100,
       2000
     ),
+    /** Text strings for auth callback page */
+    TEXT: {
+      SKIP_LINK: 'Skip to authentication content',
+      TIMEOUT_TITLE: 'Authentication is taking longer than expected',
+      TIMEOUT_DESCRIPTION:
+        'This might be due to a slow network connection or server issue.',
+      RETRY_TOOLTIP: 'Retry authentication',
+      CANCEL_TOOLTIP: 'Cancel and go back to login',
+      RETRY_BUTTON: 'Retry',
+      CANCEL_BUTTON: 'Cancel',
+      ELAPSED_PREFIX: 'Elapsed:',
+      KEYBOARD_HINT_CANCEL: 'cancel',
+      KEYBOARD_HINT_RETRY: 'retry',
+      ANNOUNCE_TIMEOUT:
+        'Authentication is taking longer than expected. You can cancel and try again.',
+      ANNOUNCE_CANCEL: 'Authentication cancelled. Redirecting to login...',
+      ANNOUNCE_RETRY: 'Retrying authentication...',
+      ANNOUNCE_SUCCESS:
+        'Authentication successful. Redirecting to dashboard...',
+      ANNOUNCE_FAILURE: 'Authentication failed. Redirecting to login...',
+    },
+    /** CSS classes for auth callback page */
+    STYLES: {
+      TIMEOUT_WARNING_CONTAINER: 'flex items-start gap-3',
+      TIMEOUT_WARNING_ICON: 'flex-shrink-0 mt-0.5',
+      TIMEOUT_WARNING_TITLE: 'text-sm font-medium',
+      TIMEOUT_WARNING_DESCRIPTION: 'text-xs mt-1',
+      BUTTONS_CONTAINER: 'flex flex-col sm:flex-row gap-3 justify-center',
+      KEYBOARD_HINTS: 'flex items-center justify-center gap-4 text-xs',
+      KEYBOARD_HINT_ITEM: 'hidden sm:inline-flex items-center gap-1.5',
+    },
   } as const,
 
   INPUT: {

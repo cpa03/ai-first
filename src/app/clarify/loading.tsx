@@ -4,6 +4,7 @@ import {
   PAGE_LAYOUT_CLASSES,
   COMPONENT_CONFIG,
   COMPONENT_STYLES,
+  SPACE_Y_PATTERNS,
 } from '@/lib/config';
 import { COMPONENT_DEFAULTS } from '@/lib/config/ui';
 
@@ -33,7 +34,7 @@ export default function ClarifyLoading() {
       <div
         className={`${PAGE_LAYOUT_CLASSES.CONTAINER_SM} ${PAGE_STYLES.MX_AUTO_PX4}`}
       >
-        <div className={`${CARD_PATTERNS.ANIMATED} space-y-6`}>
+        <div className={`${CARD_PATTERNS.ANIMATED} ${SPACE_Y_PATTERNS.XL}`}>
           <div className={PAGE_STYLES.QUESTION_CONTAINER}>
             <Skeleton
               className={SKELETON_SIZES.TEXT_H5_W34}

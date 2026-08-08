@@ -170,7 +170,11 @@ const nextConfig = {
       '@notionhq/client',
       'clsx',
       'tailwind-merge',
+      'react',
+      'react-dom',
+      'next',
     ],
+    optimizeCss: true,
   },
   compiler: {
     removeConsole:

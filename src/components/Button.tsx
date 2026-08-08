@@ -96,9 +96,9 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
     }, []);
 
     useEffect(() => {
-      const timeouts = timeoutRefs.current;
       return () => {
-        timeouts.forEach((timeoutId) => clearTimeout(timeoutId));
+        timeoutRefs.current.forEach((timeoutId) => clearTimeout(timeoutId));
+        timeoutRefs.current = [];
       };
     }, []);
 
@@ -182,6 +182,9 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
 
         const timeoutId = setTimeout(() => {
           setRipples((prev) => prev.filter((r) => r.id !== rippleId));
+          timeoutRefs.current = timeoutRefs.current.filter(
+            (id) => id !== timeoutId
+          );
         }, RIPPLE_CONFIG.DURATION_MS);
         timeoutRefs.current.push(timeoutId);
       },

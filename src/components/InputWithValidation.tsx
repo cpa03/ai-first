@@ -39,6 +39,10 @@ import {
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { COMPONENT_CONFIG } from '@/lib/config';
+import {
+  INPUT_BUTTON_SIZES,
+  PROGRESS_BAR_SIZES,
+} from '@/lib/config/icon-sizes';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { PLATFORM } from '@/lib/dom-utils';
 import Tooltip from './Tooltip';
@@ -501,7 +505,7 @@ const InputWithValidationComponent = forwardRef<
                 <button
                   type="button"
                   onClick={handleClear}
-                  className={`w-11 h-11 flex items-center justify-center ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} rounded-full ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
+                  className={`${INPUT_BUTTON_SIZES.CLEAR_BUTTON} flex items-center justify-center ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} rounded-full ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
                   aria-label={`Clear ${label}`}
                 >
                   <svg
@@ -638,7 +642,7 @@ const InputWithValidationComponent = forwardRef<
             <div className={FLEX_PATTERNS.GAP_MD}>
               {maxLength && (
                 <div
-                  className={`w-16 h-1.5 ${BG_COLORS.PROGRESS_NEUTRAL} rounded-full overflow-hidden relative`}
+                  className={`${PROGRESS_BAR_SIZES.INPUT_VALIDATION} ${BG_COLORS.PROGRESS_NEUTRAL} rounded-full overflow-hidden relative`}
                   role="progressbar"
                   aria-valuenow={charCount}
                   aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}

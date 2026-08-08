@@ -16,6 +16,7 @@ import {
   PROGRESS_BAR_A11Y,
   PROGRESS_BAR_TRACK,
   ICON_SIZES,
+  HEIGHT_ONLY,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -325,7 +326,7 @@ const ProgressStepperComponent = function ProgressStepper({
               {!isLast && (
                 <div
                   className={`
-                    flex-1 h-0.5 mx-4
+                    flex-1 ${HEIGHT_ONLY.XXS} mx-4
                     ${step.completed ? BG_COLORS.BRAND : BG_COLORS.PROGRESS_NEUTRAL}
                     ${TRANSITION_CLASSES.COLOR_SLOW}
                   `}

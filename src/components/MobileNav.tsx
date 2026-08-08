@@ -22,10 +22,13 @@ import {
   Z_INDEX_LAYERS,
   ANIMATION_CONFIG,
   PRIMARY_ACTIVE_LINK,
+  SPACE_Y_PATTERNS,
+  BODY_OVERFLOW_CONFIG,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
+import { HAMBURGER_SIZES } from '@/lib/config/icon-sizes';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -110,7 +113,7 @@ function MobileNavComponent() {
 
   useEffect(() => {
     if (isOpen && isMobile) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = BODY_OVERFLOW_CONFIG.VALUES.HIDDEN;
       firstMenuItemRef.current?.focus();
 
       if (!prefersReducedMotion) {
@@ -121,7 +124,7 @@ function MobileNavComponent() {
         }, MOBILE_NAV_CONFIG.KEYBOARD_HINTS_VISIBLE_DURATION_MS);
       }
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = BODY_OVERFLOW_CONFIG.VALUES.UNSET;
       setHintsVisible(false);
       if (hintsTimeoutRef.current) {
         clearTimeout(hintsTimeoutRef.current);
@@ -129,7 +132,7 @@ function MobileNavComponent() {
       }
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = BODY_OVERFLOW_CONFIG.VALUES.UNSET;
     };
   }, [isOpen, isMobile, prefersReducedMotion]);
 
@@ -273,12 +276,14 @@ function MobileNavComponent() {
               aria-label={`${MOBILE_NAV_CONFIG.CLOSE_ARIA_LABEL} (Escape)`}
               title="Press Escape to close"
             >
-              <div className="w-5 h-5 flex flex-col justify-center items-center">
+              <div
+                className={`${HAMBURGER_SIZES.CONTAINER} flex flex-col justify-center items-center`}
+              >
                 <span
-                  className={`block w-5 h-0.5 bg-current rounded-full rotate-45 translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
+                  className={`block ${HAMBURGER_SIZES.LINE} bg-current rounded-full rotate-45 translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
                 />
                 <span
-                  className={`block w-5 h-0.5 bg-current rounded-full -rotate-45 -translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
+                  className={`block ${HAMBURGER_SIZES.LINE} bg-current rounded-full -rotate-45 -translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
                 />
               </div>
             </button>
@@ -302,7 +307,7 @@ function MobileNavComponent() {
             className={`fixed top-16 left-0 right-0 ${BG_COLORS.DEFAULT} border-b ${BORDER_COLORS.LIGHT} shadow-2xl z-[${Z_INDEX_LAYERS.MOBILE_MENU}] animate-slide-down`}
           >
             <ul
-              className={`${CONTAINER_WIDTHS.XL} mx-auto ${RESPONSIVE_PADDING.CLASS} py-8 space-y-2 ${BG_COLORS.DEFAULT}`}
+              className={`${CONTAINER_WIDTHS.XL} mx-auto ${RESPONSIVE_PADDING.CLASS} py-8 ${SPACE_Y_PATTERNS.SM} ${BG_COLORS.DEFAULT}`}
             >
               {navLinks.map((link, index) => {
                 const active = isActive(link.href);

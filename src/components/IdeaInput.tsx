@@ -31,6 +31,7 @@ import {
   ICON_SIZES,
   SPACE_Y_PATTERNS,
   CONFETTI_DOT,
+  HEIGHT_ONLY,
 } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
@@ -376,7 +377,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
               aria-live="polite"
             >
               <span
-                className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${BG_COLORS.SUCCESS_LIGHT} animate-success-pop`}
+                className={`inline-flex items-center justify-center ${ICON_SIZES.LG} rounded-full ${BG_COLORS.SUCCESS_LIGHT} animate-success-pop`}
               >
                 <svg
                   className={ICON_SIZES.SM}
@@ -428,7 +429,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
             aria-live="polite"
           >
             <span
-              className={`inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary-100 text-primary-700 text-xs ${TYPOGRAPHY_CLASSES.BOLD}`}
+              className={`inline-flex items-center justify-center ${ICON_SIZES.LG} rounded-full bg-primary-100 text-primary-700 text-xs ${TYPOGRAPHY_CLASSES.BOLD}`}
             >
               {charactersNeededData.charsNeeded}
             </span>
@@ -462,7 +463,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         {writingProgress > 5 && (
           <div className={SPACE_Y_PATTERNS.SM}>
             <div
-              className={`relative h-1.5 ${GRAY_CLASSES.BG_200} rounded-full overflow-hidden`}
+              className={`relative ${HEIGHT_ONLY.SM_XS} ${GRAY_CLASSES.BG_200} rounded-full overflow-hidden`}
             >
               <div
                 className={`absolute left-0 top-0 h-full ${TRANSITION_CLASSES.SLOW_EASE_OUT} rounded-full ${

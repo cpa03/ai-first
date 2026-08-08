@@ -44,6 +44,8 @@ export const ICON_SIZES = {
 export const WIDTH_ONLY = {
   /** w-3 = 12px */
   SM: 'w-3',
+  /** w-3.5 = 14px */
+  SM_MD: 'w-3.5',
   /** w-4 = 16px */
   MD: 'w-4',
   /** w-5 = 20px */
@@ -67,8 +69,16 @@ export const WIDTH_ONLY = {
  * Replaces hardcoded h-* classes throughout components
  */
 export const HEIGHT_ONLY = {
+  /** h-0.5 = 2px */
+  XXS: 'h-0.5',
+  /** h-1 = 4px */
+  XS: 'h-1',
+  /** h-1.5 = 6px */
+  SM_XS: 'h-1.5',
   /** h-3 = 12px */
   SM: 'h-3',
+  /** h-3.5 = 14px */
+  SM_MD: 'h-3.5',
   /** h-4 = 16px */
   MD: 'h-4',
   /** h-5 = 20px */
@@ -168,5 +178,77 @@ export const MINI_BUTTON_SIZES = {
   DOT_MD: 'w-3.5 h-3.5 rounded-full',
 } as const;
 
+/**
+ * Input button sizes for form controls (clear button, password toggle, etc.)
+ * Replaces hardcoded w-N h-N classes in InputWithValidation.tsx
+ */
+export const INPUT_BUTTON_SIZES = {
+  /** w-11 h-11 = 44px - clear button and password toggle */
+  CLEAR_BUTTON: 'w-11 h-11',
+  /** w-10 h-10 = 40px - compact input buttons */
+  COMPACT: 'w-10 h-10',
+  /** w-9 h-9 = 36px - small input buttons */
+  SMALL: 'w-9 h-9',
+} as const;
+
+/**
+ * Progress bar sizes for input validation and loading indicators
+ * Replaces hardcoded w-N h-N classes for progress bars
+ */
+export const PROGRESS_BAR_SIZES = {
+  /** w-16 h-1.5 = 64px wide, 6px tall - input validation progress */
+  INPUT_VALIDATION: 'w-16 h-1.5',
+  /** w-full h-1.5 = full width, 6px tall - standard progress bar */
+  STANDARD: 'w-full h-1.5',
+  /** w-full h-2 = full width, 8px tall - large progress bar */
+  LARGE: 'w-full h-2',
+  /** w-full h-3 = full width, 12px tall - extra large progress bar */
+  EXTRA_LARGE: 'w-full h-3',
+} as const;
+
+/**
+ * Connector line sizes for decorative elements
+ * Replaces hardcoded w-N h-N classes for decorative lines
+ */
+export const CONNECTOR_SIZES = {
+  /** w-8 h-0.5 = 32px wide, 2px tall - horizontal connector */
+  HORIZONTAL: 'w-8 h-0.5',
+  /** w-0.5 h-8 = 2px wide, 32px tall - vertical connector */
+  VERTICAL: 'w-0.5 h-8',
+  /** w-12 h-0.5 = 48px wide, 2px tall - wide connector */
+  HORIZONTAL_WIDE: 'w-12 h-0.5',
+} as const;
+
+/**
+ * Indicator sizes for status indicators and badges
+ * Replaces hardcoded w-N h-N classes for indicators
+ */
+export const INDICATOR_SIZES = {
+  /** w-6 h-2 = 24px wide, 8px tall - pill indicator */
+  PILL: 'w-6 h-2',
+  /** w-5 h-2 = 20px wide, 8px tall - small pill indicator */
+  PILL_SM: 'w-5 h-2',
+  /** w-8 h-2 = 32px wide, 8px tall - large pill indicator */
+  PILL_LG: 'w-8 h-2',
+} as const;
+
+/**
+ * Hamburger menu sizes for mobile navigation
+ * Replaces hardcoded w-N h-N classes in MobileNav.tsx
+ */
+export const HAMBURGER_SIZES = {
+  /** w-5 h-5 = 20px - hamburger icon container */
+  CONTAINER: 'w-5 h-5',
+  /** w-5 h-0.5 = 20px wide, 2px tall - hamburger line */
+  LINE: 'w-5 h-0.5',
+  /** w-4 h-0.5 = 16px wide, 2px tall - close icon line */
+  LINE_CLOSE: 'w-4 h-0.5',
+} as const;
+
 export type IconSizes = typeof ICON_SIZES;
 export type IconPatterns = typeof ICON_PATTERNS;
+export type InputButtonSizes = typeof INPUT_BUTTON_SIZES;
+export type ProgressBarSizes = typeof PROGRESS_BAR_SIZES;
+export type ConnectorSizes = typeof CONNECTOR_SIZES;
+export type IndicatorSizes = typeof INDICATOR_SIZES;
+export type HamburgerSizes = typeof HAMBURGER_SIZES;

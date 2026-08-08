@@ -18,7 +18,7 @@ import {
   TYPOGRAPHY_CLASSES,
   PROGRESS_BAR_A11Y,
 } from '@/lib/config/theme';
-import { ICON_SIZES } from '@/lib/config/icon-sizes';
+import { ICON_SIZES, INDICATOR_SIZES } from '@/lib/config/icon-sizes';
 import {
   USER_ONBOARDING_LABELS,
   USER_ONBOARDING_COMPLETION_LABELS,
@@ -499,9 +499,9 @@ export default function UserOnboarding() {
                       setCurrentStepIndex(index);
                     }
                   }}
-                  className={`rounded-full transition-all ${DURATION_TAILWIND[200]} ease-out ${
+                  className={`rounded-full transition-all ${DURATION_TAILWIND[200]} ease-out ${FOCUS_RING_PATTERNS.DEFAULT} ${
                     index === currentStepIndex
-                      ? `w-6 h-2 ${BG_COLORS.BRAND}`
+                      ? `${INDICATOR_SIZES.PILL} ${BG_COLORS.BRAND}`
                       : index < currentStepIndex
                         ? `${ICON_SIZES.XS} ${BG_COLORS.BRAND} opacity-60 hover:opacity-80 cursor-pointer`
                         : `${ICON_SIZES.XS} ${BG_COLORS.LIGHTER} ${TEXT_COLORS.MUTED}`

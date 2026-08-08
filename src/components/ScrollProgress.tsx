@@ -14,6 +14,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   PROGRESS_BAR_A11Y,
+  HEIGHT_ONLY,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
@@ -152,7 +153,9 @@ function ScrollProgressComponent() {
     <div
       ref={barRef}
       className={`${SCROLL_PROGRESS_BAR} ${
-        isHovered || isDragging ? 'h-1.5 cursor-pointer' : 'cursor-pointer'
+        isHovered || isDragging
+          ? `${HEIGHT_ONLY.SM_XS} cursor-pointer`
+          : 'cursor-pointer'
       } focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white/60 ${TRANSITION_CLASSES.DEFAULT}`}
       style={{ zIndex: Z_INDEX_LAYERS.STICKY }}
       role="slider"

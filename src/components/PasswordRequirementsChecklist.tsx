@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useEffect, useState, memo } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useConfetti } from '@/hooks/useConfetti';
 import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
@@ -14,6 +15,9 @@ import {
   DURATION_TAILWIND,
   COMPONENT_STATE_COLORS,
   ICON_SIZES,
+  HEIGHT_ONLY,
+  SPACE_Y_PATTERNS,
+  CONFETTI_DOT,
 } from '@/lib/config';
 import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
 
@@ -66,6 +70,7 @@ function PasswordRequirementsChecklistComponent({
   className = '',
 }: PasswordRequirementsChecklistProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const { fire: fireConfetti, particles: confettiParticles } = useConfetti();
   const [showCompleteCelebration, setShowCompleteCelebration] = useState(false);
   const [hasAppeared, setHasAppeared] = useState(false);
   const [newlyMetIds, setNewlyMetIds] = useState<Set<string>>(new Set());
@@ -113,6 +118,7 @@ function PasswordRequirementsChecklistComponent({
   useEffect(() => {
     if (allMet && !prevAllMetRef.current) {
       setShowCompleteCelebration(true);
+      fireConfetti();
       celebrationTimeoutRef.current = setTimeout(() => {
         setShowCompleteCelebration(false);
       }, COMPONENT_CONFIG.PASSWORD_REQUIREMENTS.CELEBRATION_DURATION_MS);
@@ -124,7 +130,7 @@ function PasswordRequirementsChecklistComponent({
         clearTimeout(celebrationTimeoutRef.current);
       }
     };
-  }, [allMet]);
+  }, [allMet, fireConfetti]);
 
   // Micro-UX: Track individual requirement transitions and trigger animation
   // Provides delightful positive feedback when each individual requirement is satisfied
@@ -228,7 +234,7 @@ function PasswordRequirementsChecklistComponent({
       >
         {announcement}
       </div>
-      <div className="space-y-1.5">
+      <div className={SPACE_Y_PATTERNS.SM_MD}>
         <div className="flex items-center justify-between">
           <p className={`text-xs font-medium ${TEXT_COLORS.MUTED_DARK}`}>
             {PASSWORD_REQUIREMENTS_LABELS.HEADER_TEXT}
@@ -240,7 +246,7 @@ function PasswordRequirementsChecklistComponent({
           </span>
         </div>
         <div
-          className={`h-1.5 ${progressBgColor} rounded-full overflow-hidden ${TRANSITION_CLASSES.COLOR_SLOW}`}
+          className={`${HEIGHT_ONLY.SM_XS} ${progressBgColor} rounded-full overflow-hidden ${TRANSITION_CLASSES.COLOR_SLOW}`}
           role="progressbar"
           aria-valuenow={metCount}
           aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
@@ -256,7 +262,7 @@ function PasswordRequirementsChecklistComponent({
           />
         </div>
       </div>
-      <ul className="space-y-1.5">
+      <ul className={SPACE_Y_PATTERNS.SM_MD}>
         {requirements.map((req, index) => (
           <li
             key={req.id}
@@ -316,7 +322,7 @@ function PasswordRequirementsChecklistComponent({
       </ul>
       {allMet && (
         <p
-          className={`text-xs ${TEXT_COLORS.SUCCESS_DARK} font-medium flex items-center gap-1.5 mt-2 ${showCompleteCelebration && !prefersReducedMotion ? 'animate-fade-in' : ''}`}
+          className={`relative text-xs ${TEXT_COLORS.SUCCESS_DARK} font-medium flex items-center gap-1.5 mt-2 ${showCompleteCelebration && !prefersReducedMotion ? 'animate-fade-in' : ''}`}
           role="status"
           aria-live="polite"
         >
@@ -339,6 +345,25 @@ function PasswordRequirementsChecklistComponent({
             </svg>
           </span>
           {PASSWORD_VALIDATION_CONFIG.REQUIREMENTS_LABELS.ALL_MET}
+          {confettiParticles.map((particle) => (
+            <span
+              key={particle.id}
+              className={CONFETTI_DOT}
+              style={
+                {
+                  left: '50%',
+                  top: '50%',
+                  width: `${particle.size}px`,
+                  height: `${particle.size}px`,
+                  backgroundColor: particle.color,
+                  '--confetti-x': `${particle.x}px`,
+                  '--confetti-y': `${particle.y}px`,
+                  animationDelay: `${particle.delay}ms`,
+                } as React.CSSProperties
+              }
+              aria-hidden="true"
+            />
+          ))}
         </p>
       )}
     </div>

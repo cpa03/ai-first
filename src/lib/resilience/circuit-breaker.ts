@@ -12,13 +12,19 @@ type CircuitBreakerInternalState = {
 
 const logger = createLogger('CircuitBreaker');
 
+/**
+ * Lock mechanism for circuit breaker half-open state.
+ * Prevents race conditions in concurrent request environments.
+ * Uses promise chaining to ensure only one request can execute in half-open state.
+ */
+const halfOpenLocks = new Map<string, Promise<void>>();
+
 export class CircuitBreaker {
   private circuitState: CircuitBreakerInternalState = {
     state: 'closed',
     failures: 0,
   };
   private recentFailures: number[] = [];
-  private halfOpenLock = false;
 
   constructor(
     private readonly name: string,
@@ -26,8 +32,10 @@ export class CircuitBreaker {
   ) {}
 
   async execute<T>(operation: () => Promise<T>): Promise<T> {
+    const now = Date.now();
+
     if (this.circuitState.state === 'open') {
-      if (Date.now() >= (this.circuitState.nextAttemptTime || 0)) {
+      if (now >= (this.circuitState.nextAttemptTime || 0)) {
         this.circuitState.state = 'half-open';
         logger.info(
           `Circuit breaker HALF-OPEN transition for "${this.name}" - starting recovery probe`
@@ -41,16 +49,44 @@ export class CircuitBreaker {
     }
 
     if (this.circuitState.state === 'half-open') {
-      if (this.halfOpenLock) {
-        throw new CircuitBreakerError(
-          this.name,
-          new Date(this.circuitState.nextAttemptTime || 0)
-        );
-      }
-      this.halfOpenLock = true;
+      return this.withHalfOpenLock(() => this.executeOperation(operation, now));
     }
 
-    const now = Date.now();
+    return this.executeOperation(operation, now);
+  }
+
+  /**
+   * Acquires a lock for half-open state and executes the callback atomically.
+   * Uses promise chaining to ensure only one request can execute at a time.
+   */
+  private async withHalfOpenLock<T>(callback: () => Promise<T>): Promise<T> {
+    const previousLock = halfOpenLocks.get(this.name);
+
+    const currentLock = (previousLock || Promise.resolve()).then(() => {
+      return callback();
+    });
+
+    halfOpenLocks.set(
+      this.name,
+      currentLock.then(
+        () => {},
+        () => {}
+      )
+    );
+
+    try {
+      return await currentLock;
+    } finally {
+      if (halfOpenLocks.get(this.name) === currentLock) {
+        halfOpenLocks.delete(this.name);
+      }
+    }
+  }
+
+  private async executeOperation<T>(
+    operation: () => Promise<T>,
+    now: number
+  ): Promise<T> {
     this.cleanupOldFailures(now);
 
     try {
@@ -66,10 +102,6 @@ export class CircuitBreaker {
         (errorMessage?.includes('stopped due to circuit breaker') ? 0 : 1);
       this.onError(normalizedError, now, attemptCount);
       throw normalizedError;
-    } finally {
-      if (this.circuitState.state === 'half-open') {
-        this.halfOpenLock = false;
-      }
     }
   }
 

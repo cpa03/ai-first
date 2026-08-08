@@ -2,6 +2,15 @@
   "name": "ai-first",
   "version": "0.1.1",
   "private": true,
+  "sideEffects": [
+    "*.css",
+    "*.scss",
+    "*.less",
+    "*.styl",
+    "*.stylus",
+    "*.pcss",
+    "*.sss"
+  ],
   "scripts": {
     "dev": "next dev",
     "dev:check": "npm run env:check && npm run dev",

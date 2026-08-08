@@ -233,6 +233,11 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
     DELETE_SELECTED_IDEA: 'Delete currently selected idea',
     TOGGLE_PASSWORD_VISIBILITY: 'Toggle password visibility',
     DOWNLOAD_MARKDOWN: 'Download blueprint as Markdown',
+    SHARE_IDEA: 'Share idea via Web Share API or clipboard',
+    EMAIL_BLUEPRINT: 'Email blueprint to yourself',
+    PASTE_FROM_CLIPBOARD: 'Paste from clipboard into empty input',
+    SNOOZE_ALERT: 'Snooze auto-dismissing alert',
+    DISMISS_ALERT: 'Dismiss alert',
   } as const,
 } as const;
 
