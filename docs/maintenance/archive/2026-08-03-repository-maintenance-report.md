@@ -40,35 +40,35 @@ The `.gitignore` is comprehensive and well-maintained (161 lines). It covers:
 
 These branches are already merged into `main`:
 
-| Branch                                                  | Last Commit | Status |
-| ------------------------------------------------------- | ----------- | ------ |
+| Branch                                                     | Last Commit | Status |
+| ---------------------------------------------------------- | ----------- | ------ |
 | `origin/flexy/modularize-hardcoded-values-20260802-204647` | 2026-08-02  | MERGED |
-| `origin/palette/go-back-button-tooltip`                 | 2026-08-02  | MERGED |
-| `origin/palette/micro-ux-auth-callback-improvement`     | 2026-08-01  | MERGED |
-| `origin/refactor/flexy-modularize-hardcoded-icon-sizes` | 2026-08-01  | MERGED |
-| `origin/repokeeper/maintenance-cleanup-20260802`        | 2026-08-02  | MERGED |
+| `origin/palette/go-back-button-tooltip`                    | 2026-08-02  | MERGED |
+| `origin/palette/micro-ux-auth-callback-improvement`        | 2026-08-01  | MERGED |
+| `origin/refactor/flexy-modularize-hardcoded-icon-sizes`    | 2026-08-01  | MERGED |
+| `origin/repokeeper/maintenance-cleanup-20260802`           | 2026-08-02  | MERGED |
 
 ### Stale Branches (Not Updated in 7+ Days)
 
 These branches have not been updated since before 2026-07-27:
 
-| Branch                                                   | Last Commit | Age     | Notes                             |
-| -------------------------------------------------------- | ----------- | ------- | --------------------------------- |
-| `origin/bugfix/fix-accessibility-patterns`               | 2026-07-21  | 12 days | Superseded by later a11y fixes    |
-| `origin/bugfix/loop-check-20260725-204030`               | 2026-07-25  | 8 days  | One-time check report             |
-| `origin/docs/document-db-service-status-1709`            | 2026-07-22  | 11 days | Documentation only                |
-| `origin/fix/blueprint-display-template-literal`          | 2026-07-20  | 13 days | Old bugfix                        |
-| `origin/fix/env-validation-ts-error`                     | 2026-07-27  | 6 days  | Near-stale                        |
-| `origin/fix/ts-node-env-readonly-assignment`             | 2026-07-27  | 6 days  | Near-stale                        |
-| `origin/flexy/eliminate-hardcoded-timeout-referral-link` | 2026-07-25  | 8 days  | Superseded                        |
-| `origin/flexy/eliminate-remaining-hardcoded-durations`   | 2026-07-24  | 9 days  | Superseded                        |
-| `origin/flexy/modularization-audit-report-20260724`      | 2026-07-24  | 9 days  | Audit report only                 |
-| `origin/palette/clickable-table-rows`                    | 2026-07-24  | 9 days  | Feature branch                    |
-| `origin/palette/layout-error-keyboard-hints`             | 2026-07-22  | 11 days | Feature branch                    |
-| `origin/palette/mobile-step-label-main`                  | 2026-07-25  | 8 days  | Feature branch                    |
-| `origin/palette/submit-button-enable-transition`         | 2026-07-26  | 7 days  | Feature branch                    |
-| `origin/palette/submit-button-validity-pulse`            | 2026-07-22  | 11 days | Feature branch                    |
-| `origin/security/update-dependencies-1739`               | 2026-07-22  | 11 days | Security docs only                |
+| Branch                                                   | Last Commit | Age     | Notes                          |
+| -------------------------------------------------------- | ----------- | ------- | ------------------------------ |
+| `origin/bugfix/fix-accessibility-patterns`               | 2026-07-21  | 12 days | Superseded by later a11y fixes |
+| `origin/bugfix/loop-check-20260725-204030`               | 2026-07-25  | 8 days  | One-time check report          |
+| `origin/docs/document-db-service-status-1709`            | 2026-07-22  | 11 days | Documentation only             |
+| `origin/fix/blueprint-display-template-literal`          | 2026-07-20  | 13 days | Old bugfix                     |
+| `origin/fix/env-validation-ts-error`                     | 2026-07-27  | 6 days  | Near-stale                     |
+| `origin/fix/ts-node-env-readonly-assignment`             | 2026-07-27  | 6 days  | Near-stale                     |
+| `origin/flexy/eliminate-hardcoded-timeout-referral-link` | 2026-07-25  | 8 days  | Superseded                     |
+| `origin/flexy/eliminate-remaining-hardcoded-durations`   | 2026-07-24  | 9 days  | Superseded                     |
+| `origin/flexy/modularization-audit-report-20260724`      | 2026-07-24  | 9 days  | Audit report only              |
+| `origin/palette/clickable-table-rows`                    | 2026-07-24  | 9 days  | Feature branch                 |
+| `origin/palette/layout-error-keyboard-hints`             | 2026-07-22  | 11 days | Feature branch                 |
+| `origin/palette/mobile-step-label-main`                  | 2026-07-25  | 8 days  | Feature branch                 |
+| `origin/palette/submit-button-enable-transition`         | 2026-07-26  | 7 days  | Feature branch                 |
+| `origin/palette/submit-button-validity-pulse`            | 2026-07-22  | 11 days | Feature branch                 |
+| `origin/security/update-dependencies-1739`               | 2026-07-22  | 11 days | Security docs only             |
 
 ### Active Branches (Recently Updated)
 
