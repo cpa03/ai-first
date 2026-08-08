@@ -18,17 +18,10 @@ interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   ariaLabel?: string;
-  /** Delay animation start by N ms for staggered multi-spinner effects */
   animationDelay?: number;
-  /** Optional visible text label to display next to the spinner (e.g., "Loading dashboard...") */
   label?: string;
-  /**
-   * Micro-UX: Delay before showing the spinner (in ms).
-   * Prevents visual flickering for fast-loading operations (< 300ms).
-   * If the operation completes before this delay, no spinner is shown at all.
-   * @default 0
-   */
   showDelay?: number;
+  showElapsedTime?: boolean;
 }
 
 function LoadingSpinnerComponent({
@@ -38,13 +31,14 @@ function LoadingSpinnerComponent({
   animationDelay = 0,
   label,
   showDelay = 0,
+  showElapsedTime = false,
 }: LoadingSpinnerProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const [hasAppeared, setHasAppeared] = useState(false);
   const [shouldShow, setShouldShow] = useState(showDelay === 0);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   // Micro-UX: Track when spinner first becomes visible for entrance animation
-  // Creates a subtle fade-in + scale effect that makes the loading state feel more polished
   useEffect(() => {
     if (!prefersReducedMotion) {
       requestAnimationFrame(() => {
@@ -54,7 +48,6 @@ function LoadingSpinnerComponent({
   }, [prefersReducedMotion]);
 
   // Micro-UX: Delay showing spinner to prevent visual flickering for fast operations
-  // If showDelay is 0, spinner shows immediately (backwards compatible)
   useEffect(() => {
     if (showDelay <= 0) return;
 
@@ -64,6 +57,24 @@ function LoadingSpinnerComponent({
 
     return () => clearTimeout(timer);
   }, [showDelay]);
+
+  // Micro-UX: Elapsed time counter — appears after threshold, updates every second
+  // Reduces user anxiety during long operations by showing "Still loading (Xs)"
+  useEffect(() => {
+    if (!showElapsedTime || !shouldShow) return;
+
+    const thresholdId = setTimeout(() => {
+      setElapsedSeconds(1);
+
+      const intervalId = setInterval(() => {
+        setElapsedSeconds((prev) => prev + 1);
+      }, COMPONENT_CONFIG.SPINNER.ELAPSED_TIME_INTERVAL_MS);
+
+      return () => clearInterval(intervalId);
+    }, COMPONENT_CONFIG.SPINNER.ELAPSED_TIME_THRESHOLD_MS);
+
+    return () => clearTimeout(thresholdId);
+  }, [showElapsedTime, shouldShow]);
 
   // PERFORMANCE: Memoize spinner dimensions to prevent recalculation on every render
   // These values only change when the size prop changes
@@ -190,6 +201,14 @@ function LoadingSpinnerComponent({
           className={`text-sm ${TEXT_COLOR_CLASSES.BODY} font-medium ${FADE_IN}`}
         >
           {label}
+        </span>
+      )}
+      {showElapsedTime && elapsedSeconds > 0 && (
+        <span
+          className={`text-xs text-gray-400 font-mono ${FADE_IN}`}
+          aria-live="polite"
+        >
+          {COMPONENT_CONFIG.SPINNER.ELAPSED_TIME_LABEL} ({elapsedSeconds}s)
         </span>
       )}
     </div>

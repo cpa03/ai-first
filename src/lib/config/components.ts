@@ -273,6 +273,17 @@ export const COMPONENT_CONFIG = {
       100,
       3000
     ),
+    /** Micro-UX: Threshold (ms) before showing elapsed time counter (default: 3000) */
+    ELAPSED_TIME_THRESHOLD_MS: EnvLoader.number(
+      'COMPONENT_SPINNER_ELAPSED_TIME_THRESHOLD_MS',
+      3000,
+      1000,
+      10000
+    ),
+    /** Micro-UX: Update interval for elapsed time counter (ms) */
+    ELAPSED_TIME_INTERVAL_MS: 1000,
+    /** Micro-UX: Label prefix for elapsed time display */
+    ELAPSED_TIME_LABEL: 'Still loading',
   } as const,
 
   SKELETON: {
