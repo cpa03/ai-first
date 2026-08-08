@@ -24,6 +24,8 @@ import {
   GRADIENT_CONFIG,
   ICON_SIZES,
   FLEX_PATTERNS,
+  REFERRAL_LINK_STYLES,
+  TEXT_COLORS,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -151,10 +153,12 @@ function ReferralLinkComponent({
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-semibold text-primary-900 mb-1">
+          <h3 className={`${REFERRAL_LINK_STYLES.TITLE} text-primary-900`}>
             {REFERRAL_LINK_LABELS.TITLE}
           </h3>
-          <p className="text-xs text-primary-700 mb-2">
+          <p
+            className={`${REFERRAL_LINK_STYLES.DESCRIPTION} ${TEXT_COLORS.BRAND}`}
+          >
             {REFERRAL_LINK_LABELS.DESCRIPTION}
           </p>
           <div className="flex items-center gap-2">

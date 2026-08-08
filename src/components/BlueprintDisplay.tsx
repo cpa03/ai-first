@@ -39,6 +39,7 @@ import {
   SKELETON_SIZE_PATTERNS,
   SPACE_Y_PATTERNS,
   SPACE_X_PATTERNS,
+  BLUEPRINT_DISPLAY_STYLES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -140,18 +141,20 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     return (
       <div className={UI_CONFIG.LAYOUT.CONTAINER}>
         <LoadingAnnouncer message={MESSAGES.LOADING.BLUEPRINT} />
-        <div className="text-center mb-8">
+        <div className={BLUEPRINT_DISPLAY_STYLES.LOADING_CENTER}>
           <LoadingSpinner
             size="lg"
-            className="mb-4"
+            className={BLUEPRINT_DISPLAY_STYLES.LOADING_SPINNER}
             ariaLabel={MESSAGES.BLUEPRINT.ARIA_LABEL_GENERATING}
           />
           <h2
-            className={`text-xl sm:text-2xl font-semibold ${TEXT_COLOR_CLASSES.HEADING} mb-2`}
+            className={`${BLUEPRINT_DISPLAY_STYLES.LOADING_TITLE} ${TEXT_COLOR_CLASSES.HEADING}`}
           >
             {MESSAGES.BLUEPRINT.GENERATING_TITLE}
           </h2>
-          <p className={`text-sm sm:text-base ${TEXT_COLOR_CLASSES.BODY}`}>
+          <p
+            className={`${BLUEPRINT_DISPLAY_STYLES.LOADING_DESCRIPTION} ${TEXT_COLOR_CLASSES.BODY}`}
+          >
             {MESSAGES.BLUEPRINT.GENERATING_DESCRIPTION}
           </p>
         </div>
@@ -251,11 +254,15 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   return (
     <div className={UI_CONFIG.LAYOUT.CONTAINER}>
       <div className="print-only hidden">
-        <h1 className="text-2xl font-bold mb-4">
+        <h1 className={BLUEPRINT_DISPLAY_STYLES.PRINT_TITLE}>
           {MESSAGES.BLUEPRINT.PAGE_TITLE}
         </h1>
-        <p className={`text-sm ${TEXT_COLOR_CLASSES.BODY} mb-2`}>{idea}</p>
-        <hr className="my-4" />
+        <p
+          className={`${BLUEPRINT_DISPLAY_STYLES.PRINT_IDEA} ${TEXT_COLOR_CLASSES.BODY}`}
+        >
+          {idea}
+        </p>
+        <hr className={BLUEPRINT_DISPLAY_STYLES.PRINT_DIVIDER} />
       </div>
       <section
         aria-labelledby={ARIA_HEADING_IDS.BLUEPRINT}

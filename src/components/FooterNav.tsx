@@ -9,6 +9,7 @@ import {
   PRIMARY_FOCUS_RING,
   ACTIVE_DOT,
   SPACE_Y_PATTERNS,
+  FOOTER_NAV_STYLES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -114,11 +115,13 @@ function FooterNavComponent({ columns }: FooterNavProps) {
         return (
           <div key={column.title}>
             <p
-              className={`text-sm font-semibold ${GRAY_CLASSES.TEXT_900} uppercase tracking-wider`}
+              className={`${FOOTER_NAV_STYLES.COLUMN_TITLE} ${GRAY_CLASSES.TEXT_900}`}
             >
               {column.title}
             </p>
-            <ul className={`mt-4 ${SPACE_Y_PATTERNS.MD}`}>
+            <ul
+              className={`${FOOTER_NAV_STYLES.COLUMN_ITEMS} ${SPACE_Y_PATTERNS.MD}`}
+            >
               {column.items.map((item, itemIndex) => {
                 const active = isActive(item.href);
                 const globalIndex = globalOffset + itemIndex;
@@ -134,9 +137,9 @@ function FooterNavComponent({ columns }: FooterNavProps) {
                       onFocus={() => handleFocus(globalIndex)}
                       onBlur={handleBlur}
                       className={`
-                        text-sm transition-all ${DURATION_TAILWIND[200]} ease-out
+                        ${FOOTER_NAV_STYLES.LINK_TEXT} ${DURATION_TAILWIND[200]}
                         ${PRIMARY_FOCUS_RING} rounded-md
-                        inline-flex items-center gap-1.5
+                        ${FOOTER_NAV_STYLES.LINK_CONTAINER}
                         ${active ? 'text-primary-600 font-semibold' : `${GRAY_CLASSES.TEXT_600} hover:text-primary-600 hover:translate-x-1 motion-reduce:hover:transform-none`}
                         ${focusedIndex === globalIndex ? 'ring-2 ring-primary-500 ring-offset-2' : ''}
                       `}
