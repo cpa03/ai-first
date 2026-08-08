@@ -73,11 +73,38 @@ export const CF_LIMITS = {
 } as const;
 
 /**
+ * Cloudflare Bot Detection Configuration
+ * Thresholds for identifying bot and threat scores from Cloudflare headers
+ * @see https://developers.cloudflare.com/bots/
+ */
+export const CF_BOT_DETECTION = {
+  /**
+   * Bot score threshold below which requests are considered likely bots
+   * Cloudflare bot scores range from 1-99 (lower = more likely bot)
+   * Env: CF_BOT_SCORE_THRESHOLD (default: 30)
+   */
+  BOT_SCORE_THRESHOLD: EnvLoader.number('CF_BOT_SCORE_THRESHOLD', 30, 1, 99),
+
+  /**
+   * Threat score threshold above which requests are considered threatening
+   * Cloudflare threat scores range from 0-100 (higher = more threatening)
+   * Env: CF_THREAT_SCORE_THRESHOLD (default: 50)
+   */
+  THREAT_SCORE_THRESHOLD: EnvLoader.number(
+    'CF_THREAT_SCORE_THRESHOLD',
+    50,
+    0,
+    100
+  ),
+} as const;
+
+/**
  * Combined Cloudflare configuration for easy importing
  */
 export const CLOUDFLARE_CONFIG = {
   CACHE_TTL: CF_CACHE_TTL,
   LIMITS: CF_LIMITS,
+  BOT_DETECTION: CF_BOT_DETECTION,
 } as const;
 
 export type CfCacheStatusType =

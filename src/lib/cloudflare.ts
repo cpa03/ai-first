@@ -10,7 +10,11 @@
  */
 
 import { PLATFORM_ENV_VARS } from './config/constants';
-import { CF_CACHE_TTL, CF_LIMITS } from './config/cloudflare-config';
+import {
+  CF_CACHE_TTL,
+  CF_LIMITS,
+  CF_BOT_DETECTION,
+} from './config/cloudflare-config';
 import { generateId } from '@/lib/security/crypto';
 import { PLATFORM_ENV_KEYS } from './config/env-keys';
 
@@ -856,11 +860,13 @@ export function detectBot(request: Request): BotDetectionResult {
   const botScore = botScoreStr ? parseInt(botScoreStr, 10) : null;
   const threatScore = threatScoreStr ? parseInt(threatScoreStr, 10) : null;
 
-  // Bot score < 30 is highly likely a bot, 30-50 is uncertain, > 50 is likely human
+  // Bot score < threshold is highly likely a bot; threat score > threshold is likely threatening
+  // Thresholds are configurable via environment variables
   const isLikelyBot =
     botScore !== null
-      ? botScore < 30
-      : threatScore !== null && threatScore > 50;
+      ? botScore < CF_BOT_DETECTION.BOT_SCORE_THRESHOLD
+      : threatScore !== null &&
+        threatScore > CF_BOT_DETECTION.THREAT_SCORE_THRESHOLD;
 
   return {
     isBot: isLikelyBot,

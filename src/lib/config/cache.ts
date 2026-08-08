@@ -330,6 +330,29 @@ export const CACHE_CONFIG = {
   } as const,
 
   /**
+   * Precision rounding for cache statistics
+   * Controls decimal precision for utilization and hit rate calculations
+   */
+  PRECISION: {
+    /**
+     * Decimal places for utilization percentage
+     * Env: CACHE_PRECISION_UTILIZATION (default: 2)
+     */
+    UTILIZATION_DECIMALS: EnvLoader.number(
+      'CACHE_PRECISION_UTILIZATION',
+      2,
+      0,
+      4
+    ),
+
+    /**
+     * Decimal places for hit rate (0-1 scale)
+     * Env: CACHE_PRECISION_HIT_RATE (default: 4)
+     */
+    HIT_RATE_DECIMALS: EnvLoader.number('CACHE_PRECISION_HIT_RATE', 4, 0, 6),
+  } as const,
+
+  /**
    * Cache health monitoring thresholds
    * Controls when cache health status changes
    */
