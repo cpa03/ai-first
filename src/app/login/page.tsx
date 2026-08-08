@@ -35,6 +35,8 @@ import {
   ICON_SIZES,
   DASHBOARD_PATTERNS,
   KBD_HINT_STYLE,
+  SPACE_Y_PATTERNS,
+  GAP_CLASSES,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -271,7 +273,9 @@ export default function LoginPage() {
         Skip to login form
       </a>
 
-      <div className={`${CONTAINER_WIDTHS.XS} w-full space-y-8 relative`}>
+      <div
+        className={`${CONTAINER_WIDTHS.XS} w-full ${SPACE_Y_PATTERNS.XXL} relative`}
+      >
         {/* Micro-UX: Submitting overlay prevents double-clicks and provides clear visual feedback */}
         {/* Shows subtle overlay with spinner when form is being submitted */}
         {isLoading && (
@@ -303,7 +307,7 @@ export default function LoginPage() {
 
         <form
           id={AUTH_ELEMENT_IDS.LOGIN_FORM}
-          className={`mt-8 space-y-6 animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+          className={`mt-8 ${SPACE_Y_PATTERNS.XL} animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           onSubmit={handleSubmit}
         >
           {error && (
@@ -312,7 +316,7 @@ export default function LoginPage() {
             </Alert>
           )}
 
-          <div className="space-y-4">
+          <div className={SPACE_Y_PATTERNS.LG}>
             <InputWithValidation
               ref={emailInputRef}
               id="email"
@@ -329,7 +333,7 @@ export default function LoginPage() {
               autoFocus
             />
 
-            <div className="space-y-1.5">
+            <div className={SPACE_Y_PATTERNS.SM_MD}>
               <InputWithValidation
                 ref={passwordInputRef}
                 id="password"
@@ -357,7 +361,7 @@ export default function LoginPage() {
             <div className="flex items-center">
               <label
                 htmlFor={AUTH_ELEMENT_IDS.REMEMBER_ME}
-                className="flex items-center gap-2.5 cursor-pointer group"
+                className={`flex items-center ${GAP_CLASSES.MD_LG} cursor-pointer group`}
               >
                 <span className="relative">
                   <input
@@ -418,7 +422,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className={SPACE_Y_PATTERNS.SM}>
             <Button
               type="submit"
               disabled={isLoading}

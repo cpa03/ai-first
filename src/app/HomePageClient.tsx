@@ -11,6 +11,11 @@ import {
   TEXT_COLORS,
   BORDER_COLORS,
 } from '@/lib/config/theme';
+import {
+  SPACE_Y_PATTERNS,
+  SPACE_X_PATTERNS,
+} from '@/lib/config/remaining-styles';
+import { GAP_CLASSES, MT_CLASSES } from '@/lib/config/spacing';
 import { GRAY_CLASSES } from '@/lib/config/remaining-styles';
 import {
   HOME_PAGE_ELEMENT_IDS,
@@ -32,7 +37,7 @@ const Skeleton = dynamic(() => import('@/components/Skeleton'), {
 const IdeaInput = dynamic(() => import('@/components/IdeaInput'), {
   loading: () => (
     <div
-      className="space-y-4"
+      className={`${SPACE_Y_PATTERNS.LG}`}
       style={{ minHeight: HOMEPAGE_SKELETON_TAILWIND.IDEA_INPUT_MIN_H }}
     >
       <Skeleton variant="text" className="h-32 w-full" />
@@ -51,7 +56,7 @@ const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
   loading: () => (
     <section
       aria-hidden="true"
-      className="mt-16 grid md:grid-cols-3 gap-8"
+      className={`${MT_CLASSES.XXXXL} grid md:grid-cols-3 ${GAP_CLASSES.XXXL}`}
       style={{ minHeight: HOMEPAGE_SKELETON_TAILWIND.FEATURE_GRID_MIN_H }}
     >
       {[1, 2, 3].map((i) => (
@@ -74,7 +79,7 @@ const WhyChooseSection = dynamic(
     loading: () => (
       <section
         aria-hidden="true"
-        className={`mt-16 ${GRAY_CLASSES.BG_50} rounded-lg p-8`}
+        className={`${MT_CLASSES.XXXXL} ${GRAY_CLASSES.BG_50} rounded-lg p-8`}
         style={{ minHeight: HOMEPAGE_SKELETON_TAILWIND.WHY_CHOOSE_MIN_H }}
       >
         <Skeleton variant="text" className="h-10 mx-auto mb-6 w-3/4" />
@@ -82,7 +87,7 @@ const WhyChooseSection = dynamic(
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className={`flex items-start space-x-3 p-4 rounded-lg bg-white border ${GRAY_CLASSES.BORDER_200}`}
+              className={`flex items-start ${SPACE_X_PATTERNS.MD} p-4 rounded-lg bg-white border ${GRAY_CLASSES.BORDER_200}`}
             >
               <Skeleton
                 variant="circle"
@@ -181,7 +186,7 @@ export default function HomePageClient() {
           {HOME_PAGE_CONFIG.HERO.DESCRIPTION}
         </p>
         <div
-          className={`mt-6 flex justify-center gap-3 ${
+          className={`mt-6 flex justify-center ${GAP_CLASSES.LG} ${
             prefersReducedMotion ? '' : 'animate-hero-entrance'
           }`}
           style={
@@ -231,7 +236,9 @@ export default function HomePageClient() {
             {HOME_PAGE_CONFIG.CONFIRMATION.LABEL}
           </h3>
           <p className={TEXT_COLORS.INFO_DARK}>{idea}</p>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4">
+          <div
+            className={`flex flex-col sm:flex-row sm:items-center sm:justify-between ${GAP_CLASSES.LG} ${MT_CLASSES.XL}`}
+          >
             <p className={`text-sm ${TEXT_COLORS.INFO}`}>
               {HOME_PAGE_CONFIG.CONFIRMATION.SAVED_WITH_ID}
               {` `}
