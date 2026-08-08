@@ -48,12 +48,16 @@ export const EXPORT_ENV_KEYS = {
   GITHUB_TOKEN: 'GITHUB_TOKEN',
   /** GitHub OAuth client ID */
   GITHUB_CLIENT_ID: 'GITHUB_CLIENT_ID',
+  /** GitHub OAuth client secret */
+  GITHUB_CLIENT_SECRET: 'GITHUB_CLIENT_SECRET',
   /** GitHub OAuth redirect URI */
   GITHUB_REDIRECT_URI: 'GITHUB_REDIRECT_URI',
   /** Notion API key */
   NOTION_API_KEY: 'NOTION_API_KEY',
   /** Notion OAuth client ID */
   NOTION_CLIENT_ID: 'NOTION_CLIENT_ID',
+  /** Notion OAuth client secret */
+  NOTION_CLIENT_SECRET: 'NOTION_CLIENT_SECRET',
   /** Notion OAuth redirect URI */
   NOTION_REDIRECT_URI: 'NOTION_REDIRECT_URI',
   /** Notion parent page ID for creating pages */
@@ -70,6 +74,8 @@ export const EXPORT_ENV_KEYS = {
   GOOGLE_CLIENT_SECRET: 'GOOGLE_CLIENT_SECRET',
   /** Google OAuth redirect URI */
   GOOGLE_REDIRECT_URI: 'GOOGLE_REDIRECT_URI',
+  /** Google OAuth refresh token */
+  GOOGLE_REFRESH_TOKEN: 'GOOGLE_REFRESH_TOKEN',
 } as const;
 
 /**
@@ -185,11 +191,15 @@ export const ENV_ACCESSORS = {
     GITHUB_TOKEN: () => EnvLoader.string(EXPORT_ENV_KEYS.GITHUB_TOKEN, ''),
     GITHUB_CLIENT_ID: () =>
       EnvLoader.string(EXPORT_ENV_KEYS.GITHUB_CLIENT_ID, ''),
+    GITHUB_CLIENT_SECRET: () =>
+      EnvLoader.string(EXPORT_ENV_KEYS.GITHUB_CLIENT_SECRET, ''),
     GITHUB_REDIRECT_URI: () =>
       EnvLoader.string(EXPORT_ENV_KEYS.GITHUB_REDIRECT_URI, ''),
     NOTION_API_KEY: () => EnvLoader.string(EXPORT_ENV_KEYS.NOTION_API_KEY, ''),
     NOTION_CLIENT_ID: () =>
       EnvLoader.string(EXPORT_ENV_KEYS.NOTION_CLIENT_ID, ''),
+    NOTION_CLIENT_SECRET: () =>
+      EnvLoader.string(EXPORT_ENV_KEYS.NOTION_CLIENT_SECRET, ''),
     NOTION_REDIRECT_URI: () =>
       EnvLoader.string(EXPORT_ENV_KEYS.NOTION_REDIRECT_URI, ''),
     NOTION_PARENT_PAGE_ID: () =>
@@ -204,6 +214,8 @@ export const ENV_ACCESSORS = {
       EnvLoader.string(EXPORT_ENV_KEYS.GOOGLE_CLIENT_SECRET, ''),
     GOOGLE_REDIRECT_URI: () =>
       EnvLoader.string(EXPORT_ENV_KEYS.GOOGLE_REDIRECT_URI, ''),
+    GOOGLE_REFRESH_TOKEN: () =>
+      EnvLoader.string(EXPORT_ENV_KEYS.GOOGLE_REFRESH_TOKEN, ''),
   },
 
   /** Platform detection keys */

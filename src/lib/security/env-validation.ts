@@ -25,10 +25,14 @@ const SENSITIVE_KEYS = [
   'ANTHROPIC_API_KEY',
   'INTERNAL_API_SECRET',
   'NOTION_API_KEY',
+  'NOTION_CLIENT_SECRET',
   'TRELLO_API_KEY',
   'TRELLO_TOKEN',
   'GITHUB_TOKEN',
+  'GITHUB_CLIENT_SECRET',
   'GOOGLE_CLIENT_SECRET',
+  'GOOGLE_REFRESH_TOKEN',
+  'POSTHOG_API_KEY',
 ] as const;
 
 /**
@@ -130,10 +134,14 @@ const MUST_BE_PRIVATE = [
   'ANTHROPIC_API_KEY',
   'INTERNAL_API_SECRET',
   'NOTION_API_KEY',
+  'NOTION_CLIENT_SECRET',
   'TRELLO_API_KEY',
   'TRELLO_TOKEN',
   'GITHUB_TOKEN',
+  'GITHUB_CLIENT_SECRET',
   'GOOGLE_CLIENT_SECRET',
+  'GOOGLE_REFRESH_TOKEN',
+  'POSTHOG_API_KEY',
 ] as const;
 
 /**
@@ -457,6 +465,32 @@ export function validateEnvironment(): ValidationResult {
     warnings.push(
       ...checkSecretStrength('GOOGLE_CLIENT_SECRET', googleClientSecret)
     );
+  }
+
+  const notionClientSecret = ENV_ACCESSORS.EXPORT.NOTION_CLIENT_SECRET();
+  if (notionClientSecret) {
+    warnings.push(
+      ...checkSecretStrength('NOTION_CLIENT_SECRET', notionClientSecret)
+    );
+  }
+
+  const githubClientSecret = ENV_ACCESSORS.EXPORT.GITHUB_CLIENT_SECRET();
+  if (githubClientSecret) {
+    warnings.push(
+      ...checkSecretStrength('GITHUB_CLIENT_SECRET', githubClientSecret)
+    );
+  }
+
+  const googleRefreshToken = ENV_ACCESSORS.EXPORT.GOOGLE_REFRESH_TOKEN();
+  if (googleRefreshToken) {
+    warnings.push(
+      ...checkSecretStrength('GOOGLE_REFRESH_TOKEN', googleRefreshToken)
+    );
+  }
+
+  const posthogApiKey = process.env.POSTHOG_API_KEY;
+  if (posthogApiKey) {
+    warnings.push(...checkSecretStrength('POSTHOG_API_KEY', posthogApiKey));
   }
 
   // AI key format validation
