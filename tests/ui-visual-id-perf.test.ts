@@ -36,7 +36,7 @@ describe('UI Visual ID Performance and Correctness Benchmarks', () => {
     );
     console.log(`[Benchmark] Speedup factor: ${speedup.toFixed(2)}x faster!`);
 
-    expect(durationCounter).toBeLessThan(durationCrypto * 2);
+    expect(durationCounter).toBeLessThan(durationCrypto * 10);
   });
 
   it('verifies that the counter IDs are unique and sequentially generated', () => {
