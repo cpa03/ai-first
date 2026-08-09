@@ -499,6 +499,22 @@ export const PRECISION_CONFIG = {
     10,
     EnvLoader.number('PRECISION_CONFIDENCE_DECIMALS', 2, 0, 10)
   ),
+
+  /**
+   * Default decimal places for hours rounding
+   * Env: PRECISION_HOURS_DECIMALS (default: 1)
+   */
+  HOURS_DECIMALS: EnvLoader.number('PRECISION_HOURS_DECIMALS', 1, 0, 4),
+
+  /**
+   * Multiplier for hours rounding (10^HOURS_DECIMALS)
+   * Computed from HOURS_DECIMALS
+   * Used for rounding hours to 1 decimal place (e.g., 1.23 -> 1.2)
+   */
+  HOURS_MULTIPLIER: Math.pow(
+    10,
+    EnvLoader.number('PRECISION_HOURS_DECIMALS', 1, 0, 4)
+  ),
 } as const;
 
 /**

@@ -12,6 +12,7 @@ import {
   API_ERROR_MESSAGES,
   TASK_CONFIG,
   PROGRESS_PERCENTAGE,
+  PRECISION_CONFIG,
   MESSAGES,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -204,7 +205,10 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
 
       const newCompletedCount = deliverable.completedCount + deltaTasks;
       const newCompletedHours =
-        Math.round((deliverable.completedHours + deltaHours) * 10) / 10;
+        Math.round(
+          (deliverable.completedHours + deltaHours) *
+            PRECISION_CONFIG.HOURS_MULTIPLIER
+        ) / PRECISION_CONFIG.HOURS_MULTIPLIER;
 
       const updatedDeliverable = {
         ...deliverable,
@@ -225,7 +229,10 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
       const { summary } = prevData;
       const newOverallCompletedTasks = summary.completedTasks + deltaTasks;
       const newOverallCompletedHours =
-        Math.round((summary.completedHours + deltaHours) * 10) / 10;
+        Math.round(
+          (summary.completedHours + deltaHours) *
+            PRECISION_CONFIG.HOURS_MULTIPLIER
+        ) / PRECISION_CONFIG.HOURS_MULTIPLIER;
 
       return {
         ...prevData,
