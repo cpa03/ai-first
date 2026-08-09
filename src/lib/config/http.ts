@@ -1,13 +1,28 @@
 /**
  * HTTP Constants Module
  *
- * Centralized HTTP-related constants including status codes, headers, and auth config.
+ * Centralized HTTP-related constants including status codes, headers, methods, and auth config.
  * Extracted from constants.ts to improve modularity (addresses Issue #443).
  *
  * @module lib/config/http
  */
 
 import { EnvLoader } from './environment';
+
+/**
+ * HTTP Methods
+ * Centralized HTTP method constants for API requests
+ * Eliminates hardcoded 'POST', 'GET', 'PUT', 'DELETE', 'PATCH' strings
+ */
+export const HTTP_METHODS = {
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  DELETE: 'DELETE',
+  PATCH: 'PATCH',
+  OPTIONS: 'OPTIONS',
+  HEAD: 'HEAD',
+} as const;
 
 /**
  * HTTP Status Codes

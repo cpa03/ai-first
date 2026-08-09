@@ -1,6 +1,11 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { Task } from '../db/service';
-import { TRELLO_CONFIG, TASK_CONFIG, API_ERROR_MESSAGES } from '../config';
+import {
+  TRELLO_CONFIG,
+  TASK_CONFIG,
+  HTTP_METHODS,
+  API_ERROR_MESSAGES,
+} from '../config';
 import { ENV_ACCESSORS } from '../config/env-keys';
 
 import { createLogger } from '../logger';
@@ -215,7 +220,7 @@ export class TrelloExporter extends ExportConnector {
         fetch(
           `${this.API_BASE}/boards/?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
           {
-            method: 'POST',
+            method: HTTP_METHODS.POST,
           }
         ),
       'create-board'
@@ -239,7 +244,7 @@ export class TrelloExporter extends ExportConnector {
         fetch(
           `${this.API_BASE}/boards/${boardId}/lists?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
           {
-            method: 'POST',
+            method: HTTP_METHODS.POST,
           }
         ),
       'create-list'
@@ -273,7 +278,7 @@ export class TrelloExporter extends ExportConnector {
     const response = await this.executeWithResilience(
       () =>
         fetch(`${this.API_BASE}/cards?${params.toString()}`, {
-          method: 'POST',
+          method: HTTP_METHODS.POST,
         }),
       'create-card'
     );
@@ -325,7 +330,7 @@ export class TrelloExporter extends ExportConnector {
         fetch(
           `${this.API_BASE}/cards/${cardId}/labels?color=${label}&key=${apiKey}&token=${token}`,
           {
-            method: 'POST',
+            method: HTTP_METHODS.POST,
           }
         ),
       'add-card-label'
@@ -347,7 +352,7 @@ export class TrelloExporter extends ExportConnector {
         fetch(
           `${this.API_BASE}/cards/${cardId}/actions/comments?text=${encodeURIComponent(comment)}&key=${apiKey}&token=${token}`,
           {
-            method: 'POST',
+            method: HTTP_METHODS.POST,
           }
         ),
       'add-card-comment'

@@ -4,6 +4,7 @@ import {
   GITHUB_CONFIG,
   TASK_CONFIG,
   HTTP_HEADERS,
+  HTTP_METHODS,
   API_ERROR_MESSAGES,
   IDEA_STATUS_CONFIG,
 } from '@/lib/config';
@@ -282,7 +283,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     const createResponse = await this.executeWithResilience(
       () =>
         fetch(`${this.API_BASE}/user/repos`, {
-          method: 'POST',
+          method: HTTP_METHODS.POST,
           headers: {
             Authorization: `token ${token}`,
             Accept: 'application/vnd.github.v3+json',
@@ -331,7 +332,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     const response = await this.executeWithResilience(
       () =>
         fetch(`${this.API_BASE}/repos/${owner}/${repo}/projects`, {
-          method: 'POST',
+          method: HTTP_METHODS.POST,
           headers: {
             Authorization: `token ${token}`,
             Accept: 'application/vnd.github.inertia-preview+json',
@@ -362,7 +363,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     const response = await this.executeWithResilience(
       () =>
         fetch(`${this.API_BASE}/projects/${projectId}/columns`, {
-          method: 'POST',
+          method: HTTP_METHODS.POST,
           headers: {
             Authorization: `token ${token}`,
             Accept: 'application/vnd.github.inertia-preview+json',
@@ -417,7 +418,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     const response = await this.executeWithResilience(
       () =>
         fetch(`${this.API_BASE}/repos/${owner}/${repo}/issues`, {
-          method: 'POST',
+          method: HTTP_METHODS.POST,
           headers: {
             Authorization: `token ${token}`,
             Accept: 'application/vnd.github.v3+json',
@@ -443,7 +444,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     const response = await this.executeWithResilience(
       () =>
         fetch(`${this.API_BASE}/projects/columns/${String(columnId)}/cards`, {
-          method: 'POST',
+          method: HTTP_METHODS.POST,
           headers: {
             Authorization: `token ${token}`,
             Accept: 'application/vnd.github.inertia-preview+json',
@@ -498,7 +499,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     const response = await this.executeWithResilience(
       () =>
         fetch(`${this.API_BASE}/repos/${owner}/${repo}/contents/README.md`, {
-          method: 'PUT',
+          method: HTTP_METHODS.PUT,
           headers: {
             Authorization: `token ${token}`,
             Accept: 'application/vnd.github.v3+json',
