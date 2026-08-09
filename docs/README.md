@@ -230,28 +230,17 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
-- [Browser Console Audit - 2026-08-06](./audit/browser-console-audit-20260806.md) - Browser console & Lighthouse audit (latest)
-- [BroCula Browser Audit - 2026-08-06](./audit/BROCULA-20260806.md) - BroCula browser audit (latest)
-- [Browser Console Audit - 2026-08-05](./audit/browser-console-audit-20260805.md) - Browser console & Lighthouse audit
-- [BroCula Browser Audit - 2026-08-05](./audit/BROCULA-20260805.md) - BroCula browser audit
-- [BroCula Browser Audit - 2026-08-04](./audit/BROCULA-AUDIT-20260804.md) - Browser console & Lighthouse audit
-- [Browser Audit - 2026-08-01](./audit/browser-audit-2026-08-01.md) - Browser console & Lighthouse audit
-- [Browser Console Audit - 2026-07-31](./audit/browser-audit-20260731.md) - Browser console & Lighthouse audit
-- [Flexy Modularization Audit - 2026-07-24](./audit/flexy-modularization-audit-20260724.md) - Code modularization assessment (authoritative)
-- [Flexy Modularization Audit (legacy)](./audit/flexy-modularization-audit.md) - Earlier modularization assessment
-- [Skipped Tests Investigation](./audit/skipped-tests-investigation.md) - Investigation of skipped tests with documented reasons
+- [BroCula Browser Audit - 2026-08-08](./audit/BROCULA-AUDIT-20260808.md) - BroCula browser audit (latest)
+- [BroCula Browser Console Lighthouse - 2026-08-08](./audit/2026-08-08-brocula-browser-console-lighthouse.md) - Browser console & Lighthouse audit (latest)
 - [Issue: Large Files](./audit/ISSUE-01-large-files.md) - Files exceeding 250 LOC maintainability threshold
 - [Issue: API Test Coverage](./audit/ISSUE-02-api-test-coverage.md) - API route test coverage gaps
 - [Issue: CSRF Protection](./audit/ISSUE-03-csrf-protection.md) - CSRF protection audit
 - [Issue: Structured Logging](./audit/ISSUE-04-structured-logging.md) - Structured logging implementation
 - [Issue: Cloudflare Deployment](./audit/ISSUE-05-cloudflare-deployment.md) - Cloudflare deployment configuration
-- [Phase 1 Diagnostic Report - 2026-08-04](./audit/phase1-diagnostic-2026-08-04.md) - Phase 1 system diagnostic
-- [Phase 1 Diagnostic Report](./audit/phase1-diagnostic-report.md) - Phase 1 system diagnostic
-- [Phase 2 Hardening Report](./audit/phase2-hardening-report.md) - Phase 2 security hardening
 
 ### Archived Reports
 
-Older audit reports (2026-07-08 through 2026-07-29) are archived in [audit/archive/](./audit/archive/).
+Older audit reports (2026-07-08 through 2026-08-07) are archived in [audit/archive/](./audit/archive/).
 
 ## Database Reports
 
