@@ -59,7 +59,8 @@
     "backup:verify": "bash scripts/backup-verify.sh",
     "backup:monitor": "bash scripts/backup-monitor.sh",
     "backup:report": "bash scripts/backup-monitor.sh --report",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "node scripts/fix-opennext-css.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
