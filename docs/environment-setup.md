@@ -73,9 +73,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 ```
 
-### AI Provider Configuration (at least one required)
+### AI Provider Configuration (at least one REQUIRED)
 
-Set **at least one** of the following API keys. You can configure both for fallback support.
+The application requires at least one AI provider to function. Set **at least one** of the following API keys. You can configure both for fallback support.
 
 ```bash
 # Option 1: OpenAI (recommended)
@@ -84,6 +84,8 @@ OPENAI_API_KEY=your_openai_api_key
 # Option 2: Anthropic (alternative)
 ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
+
+**Note**: If neither key is set, the application will fail to start with an error message indicating that at least one AI provider is required.
 
 ### Cost Guardrails
 

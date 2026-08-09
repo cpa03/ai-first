@@ -225,11 +225,37 @@ validate_service_role_key_security() {
         return 1
     fi
 
+    # Whitelist of NEXT_PUBLIC_ variables that are safe to expose to client
+    # These are explicitly designed for client-side use
+    local allowed_public_vars=(
+        "NEXT_PUBLIC_SUPABASE_URL"
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+        "NEXT_PUBLIC_APP_URL"
+        "NEXT_PUBLIC_SITE_URL"
+        "NEXT_PUBLIC_VERCEL_URL"
+        "NEXT_PUBLIC_POSTHOG_KEY"
+        "NEXT_PUBLIC_GA_ID"
+        "NEXT_PUBLIC_ANALYTICS_ID"
+        "NEXT_PUBLIC_AB_TEST_ENABLED"
+        "NEXT_PUBLIC_ANALYTICS_ENABLED"
+        "NEXT_PUBLIC_ANALYTICS_POSTHOG_ENABLED"
+    )
+
     # Also check for any other potential NEXT_PUBLIC_ leakage patterns
     local all_vars=$(env | grep '^NEXT_PUBLIC_')
     while IFS= read -r var; do
-        if [[ "$var" =~ SERVICE|ROLE|ADMIN|SECRET|PRIVATE|KEY ]]; then
-            local var_name=$(echo "$var" | cut -d= -f1)
+        local var_name=$(echo "$var" | cut -d= -f1)
+        
+        # Skip if this variable is in the allowed whitelist
+        local is_allowed=false
+        for allowed in "${allowed_public_vars[@]}"; do
+            if [ "$var_name" = "$allowed" ]; then
+                is_allowed=true
+                break
+            fi
+        done
+        
+        if [ "$is_allowed" = false ] && [[ "$var_name" =~ SERVICE|ROLE|ADMIN|SECRET|PRIVATE|KEY ]]; then
             print_status "SECURITY" "POTENTIAL LEAK: $var_name contains sensitive keyword"
             print_status "WARN" "NEXT_PUBLIC_ variables are exposed to client browser bundle"
             ((security_warnings++)) || true
