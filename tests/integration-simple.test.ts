@@ -16,37 +16,65 @@ const mockFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
 global.fetch = mockFetch;
 
 // Mock database service
+const mockDbService = {
+  createIdea: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
+  getIdea: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
+  updateIdea: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
+  createClarificationSession:
+    jest.fn<(...args: unknown[]) => Promise<unknown>>(),
+  saveAnswers: jest.fn<(...args: unknown[]) => Promise<unknown>>(),
+};
+
 jest.mock('@/lib/db', () => ({
-  dbService: {
-    createIdea: jest.fn().mockResolvedValue({
-      id: 'test-idea-123',
-      content: 'Test idea content',
-      status: 'created',
-      created_at: new Date().toISOString(),
-    }),
-    getIdea: jest.fn().mockResolvedValue({
-      id: 'test-idea-123',
-      content: 'Test idea content',
-      status: 'clarifying',
-    }),
-    updateIdea: jest.fn().mockResolvedValue({
-      id: 'test-idea-123',
-      content: 'Updated idea',
-      status: 'completed',
-    }),
-    createClarificationSession: jest.fn().mockResolvedValue({
-      id: 'session-123',
-      idea_id: 'test-idea-123',
-    }),
-    saveAnswers: jest.fn().mockResolvedValue([
-      {
-        session_id: 'session-123',
-        question_id: '1',
-        answer: 'Test answer',
-      },
-    ]),
-  },
+  dbService: mockDbService,
 }));
+
+beforeEach(() => {
+  mockDbService.createIdea.mockResolvedValue({
+    id: 'test-idea-123',
+    user_id: 'user-123',
+    title: 'Test Idea',
+    raw_text: 'Test idea content',
+    status: 'created',
+    deleted_at: null,
+    created_at: new Date().toISOString(),
+  });
+  mockDbService.getIdea.mockResolvedValue({
+    id: 'test-idea-123',
+    user_id: 'user-123',
+    title: 'Test Idea',
+    raw_text: 'Test idea content',
+    status: 'clarifying',
+    deleted_at: null,
+    created_at: new Date().toISOString(),
+  });
+  mockDbService.updateIdea.mockResolvedValue({
+    id: 'test-idea-123',
+    user_id: 'user-123',
+    title: 'Test Idea',
+    raw_text: 'Updated idea',
+    status: 'completed',
+    deleted_at: null,
+    created_at: new Date().toISOString(),
+  });
+  mockDbService.createClarificationSession.mockResolvedValue({
+    id: 'session-123',
+    idea_id: 'test-idea-123',
+    status: 'active',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  });
+  mockDbService.saveAnswers.mockResolvedValue([
+    {
+      id: 'answer-1',
+      session_id: 'session-123',
+      question_id: '1',
+      answer: 'Test answer',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+  ]);
+});
 
 describe('API Integration Tests', () => {
   beforeEach(() => {
@@ -303,7 +331,7 @@ describe('API Integration Tests', () => {
         json: async () => {
           throw new Error('Invalid JSON');
         },
-      } as Response);
+      } as unknown as Response);
 
       await expect(
         fetch('/api/ideas').then((res) => res.json())
