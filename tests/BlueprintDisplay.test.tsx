@@ -1,6 +1,7 @@
 import { render, screen, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import BlueprintDisplay from '@/components/BlueprintDisplay';
+import { TEST_CONFIG } from './config/test-config';
 
 describe('BlueprintDisplay', () => {
   beforeEach(() => {
@@ -46,7 +47,7 @@ describe('BlueprintDisplay', () => {
           screen.getAllByText(/your project blueprint/i).length
         ).toBeGreaterThan(0);
       },
-      { timeout: 3000 }
+      { timeout: TEST_CONFIG.SHORT_TIMEOUT }
     );
 
     expect(screen.getAllByText(/test idea/i).length).toBeGreaterThan(0);
@@ -69,7 +70,7 @@ describe('BlueprintDisplay', () => {
           screen.getAllByText(/your project blueprint/i).length
         ).toBeGreaterThan(0);
       },
-      { timeout: 3000 }
+      { timeout: TEST_CONFIG.SHORT_TIMEOUT }
     );
 
     expect(screen.getByText(/not specified/i)).toBeInTheDocument();
@@ -85,7 +86,7 @@ describe('BlueprintDisplay', () => {
       () => {
         expect(screen.getByText(/download markdown/i)).toBeInTheDocument();
       },
-      { timeout: 3000 }
+      { timeout: TEST_CONFIG.SHORT_TIMEOUT }
     );
 
     const downloadButton = screen.getByText(/download markdown/i);
@@ -116,7 +117,7 @@ describe('BlueprintDisplay', () => {
       () => {
         expect(screen.getByText(/copy to clipboard/i)).toBeInTheDocument();
       },
-      { timeout: 3000 }
+      { timeout: TEST_CONFIG.SHORT_TIMEOUT }
     );
 
     const copyButton = screen.getByText(/copy to clipboard/i);

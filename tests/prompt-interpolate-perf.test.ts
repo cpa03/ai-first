@@ -3,6 +3,7 @@ import {
   parseTemplate,
   clearTemplateChunksCache,
 } from '@/lib/prompt-service';
+import { TEST_CONFIG } from './config/test-config';
 
 // Previous regex-based implementation to verify correctness and compare performance
 function previousInterpolate(
@@ -66,7 +67,11 @@ describe('PromptService Interpolation Performance and Correctness', () => {
         agent: 'ClarifierAgent-Ultimate-Superpowers',
         taskId: 'task_9876543210_abc',
         resourceId: 'res_edge_worker_cloudflare',
-        config: { retries: 5, timeout: 5000, enabled: true },
+        config: {
+          retries: 5,
+          timeout: TEST_CONFIG.DEFAULT_TIMEOUT,
+          enabled: true,
+        },
         status: 'completed',
       };
 
