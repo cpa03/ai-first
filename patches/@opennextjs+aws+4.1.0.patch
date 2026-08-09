@@ -1,0 +1,13 @@
+diff --git a/node_modules/@opennextjs/aws/dist/build/copyTracedFiles.js b/node_modules/@opennextjs/aws/dist/build/copyTracedFiles.js
+index 9701b04..8113849 100644
+--- a/node_modules/@opennextjs/aws/dist/build/copyTracedFiles.js
++++ b/node_modules/@opennextjs/aws/dist/build/copyTracedFiles.js
+@@ -311,7 +311,7 @@ File ${serverPath} does not exist
+     // Copy .next/static/css from standalone to output dir
+     // needed for optimizeCss feature to work
+     if (config.experimental.optimizeCss) {
+-        cpSync(path.join(standaloneNextDir, "static", "css"), path.join(outputNextDir, "static", "css"), { recursive: true });
++        if (existsSync(path.join(standaloneNextDir, "static", "css"))) { cpSync(path.join(standaloneNextDir, "static", "css"), path.join(outputNextDir, "static", "css"), { recursive: true }); }
+     }
+     logger.debug("copyTracedFiles:", Date.now() - tsStart, "ms");
+     return {
