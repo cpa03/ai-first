@@ -1096,6 +1096,35 @@ button[aria-disabled='true'].btn-glow-hover {
   }
 }
 
+/* Caps Lock Warning Pulse - Micro-UX delight for password field feedback */
+/* Creates a subtle scale + opacity pulse when caps lock warning first appears */
+/* Draws attention to the warning icon without being distracting */
+@keyframes pulseOnce {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-once {
+  animation: pulseOnce 0.6s var(--ease-smooth) forwards;
+}
+
+/* Reduced motion support for pulse-once */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-once {
+    animation: none;
+  }
+}
+
 @keyframes strikethrough {
   0% {
     width: 0;
