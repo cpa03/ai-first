@@ -1,33 +1,88 @@
 /**
  * Integration Tests - Complete User Workflows
- * SKIPPED - Needs rework due to complex mocking issues
  *
- * REASON FOR SKIPPING:
- * - Complex mocking issues with React components and external services
- * - Timing problems with async operations and state updates
- * - Individual component tests pass, indicating core functionality works
- * - The mocking approach needs to be reworked to properly test integration workflows
- *
- * REWORK PLAN:
- * 1. Set up MSW (Mock Service Worker) for API mocking
- *    - See: https://mswjs.io/docs/getting-started/intro
- * 2. Use React Testing Library's recommended patterns
- *    - See: https://testing-library.com/docs/guiding-principles
- * 3. Focus on testing user workflows rather than implementation details
- * 4. Remove complex mock setup and use MSW handlers instead
+ * REWORK STATUS:
+ * - Original complex integration tests were skipped due to mocking issues
+ * - See integration-simple.test.ts for working API integration tests
+ * - This file now contains simplified component integration tests
  *
  * RELATED ISSUES:
  * - Issue #1903: Investigate and Enable Skipped Tests
- *
- * TODO: Rework this test suite with proper mocking strategy
- * - Consider using MSW (Mock Service Worker) for API mocking
- * - Use React Testing Library's recommended patterns
- * - Focus on testing user workflows rather than implementation details
  */
 
-describe.skip('Integration Comprehensive Tests - SKIPPED', () => {
-  it('placeholder - suite needs rework', () => {
-    expect(true).toBe(true);
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
+
+jest.mock('@/lib/db', () => ({
+  dbService: {
+    createIdea: jest.fn().mockResolvedValue({ id: 'test-idea-123' }),
+    getIdea: jest
+      .fn()
+      .mockResolvedValue({ id: 'test-idea-123', content: 'Test idea' }),
+    updateIdea: jest.fn(),
+  },
+}));
+
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    back: jest.fn(),
+  }),
+}));
+
+describe('Integration Tests - Component Integration', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('Component Rendering Integration', () => {
+    it('should render IdeaInput component without errors', async () => {
+      const { default: IdeaInput } = await import('@/components/IdeaInput');
+      const mockOnSubmit = jest.fn();
+
+      render(<IdeaInput onSubmit={mockOnSubmit} />);
+
+      expect(screen.getByLabelText(/what's your idea/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/be as specific or as general/i)
+      ).toBeInTheDocument();
+    });
+
+    it('should render BlueprintDisplay component without errors', async () => {
+      const { default: BlueprintDisplay } =
+        await import('@/components/BlueprintDisplay');
+
+      const { container } = render(
+        <BlueprintDisplay
+          idea="Test idea for blueprint"
+          answers={{ main_goal: 'Test goal' }}
+        />
+      );
+
+      expect(container.firstChild).toBeTruthy();
+    });
+  });
+
+  describe('Error Boundary Integration', () => {
+    it('should catch and display errors gracefully', async () => {
+      const { default: ErrorBoundary } =
+        await import('@/components/ErrorBoundary');
+
+      const ThrowError = () => {
+        throw new Error('Test error');
+      };
+
+      render(
+        <ErrorBoundary>
+          <ThrowError />
+        </ErrorBoundary>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
+      });
+    });
   });
 });
 
