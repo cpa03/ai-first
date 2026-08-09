@@ -314,6 +314,9 @@ export type {
 } from './time';
 
 export type { StatusCodes, HttpHeaders, AuthConfig } from './http';
+
+// HTTP Methods - centralizes hardcoded 'POST', 'GET', 'PUT', 'DELETE', 'PATCH' strings
+export { HTTP_METHODS } from './http';
 export type { HealthConfig, MemoryConfig } from './health';
 
 export { type ErrorConfig } from './error-config';
