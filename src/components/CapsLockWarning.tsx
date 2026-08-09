@@ -9,6 +9,7 @@ import {
   TEXT_COLORS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
+import { ANIMATION_DELAYS } from '@/lib/config/theme';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface CapsLockWarningProps {
@@ -47,7 +48,10 @@ function CapsLockWarningComponent({
       // Micro-UX: Pulse icon once when warning first appears for visual attention
       if (!prefersReducedMotion) {
         setPulseOnce(true);
-        const timer = setTimeout(() => setPulseOnce(false), 600);
+        const timer = setTimeout(
+          () => setPulseOnce(false),
+          ANIMATION_DELAYS.RIPPLE
+        );
         return () => clearTimeout(timer);
       }
     }
@@ -61,7 +65,7 @@ function CapsLockWarningComponent({
       const timer = setTimeout(() => {
         setShouldRender(false);
         setIsExiting(false);
-      }, 200);
+      }, ANIMATION_DELAYS.LONG);
       return () => clearTimeout(timer);
     }
   }, [isOn]);
