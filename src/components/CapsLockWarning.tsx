@@ -37,15 +37,22 @@ function CapsLockWarningComponent({
   const prefersReducedMotion = usePrefersReducedMotion();
   const [shouldRender, setShouldRender] = useState(isOn);
   const [isExiting, setIsExiting] = useState(false);
+  const [pulseOnce, setPulseOnce] = useState(false);
   const prevIsOnRef = useRef(isOn);
 
   useEffect(() => {
     if (isOn && !prevIsOnRef.current) {
       setShouldRender(true);
       setIsExiting(false);
+      // Micro-UX: Pulse icon once when warning first appears for visual attention
+      if (!prefersReducedMotion) {
+        setPulseOnce(true);
+        const timer = setTimeout(() => setPulseOnce(false), 600);
+        return () => clearTimeout(timer);
+      }
     }
     prevIsOnRef.current = isOn;
-  }, [isOn]);
+  }, [isOn, prefersReducedMotion]);
 
   useEffect(() => {
     if (!isOn && prevIsOnRef.current) {
@@ -70,7 +77,7 @@ function CapsLockWarningComponent({
       aria-live="polite"
     >
       <svg
-        className={`${SVG_SIZES.SMD} flex-shrink-0`}
+        className={`${SVG_SIZES.SMD} flex-shrink-0 ${pulseOnce ? 'animate-pulse-once' : ''}`}
         fill="none"
         viewBox={SVG_VIEWBOX.STANDARD}
         stroke="currentColor"
