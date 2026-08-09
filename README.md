@@ -121,10 +121,12 @@
     /EmailButton.tsx         ← Email send-to-self button
     /ErrorBoundary.tsx      ← Error boundary component
     /FeatureGrid.tsx        ← Feature showcase grid
+    /FooterNav.tsx          ← Footer navigation component
     /GlobalErrorHandler.tsx  ← Global error handling
     /IdeaInput.tsx          ← Idea input component
     /IdeaReadyIndicator.tsx ← Idea ready status indicator
     /InputWithValidation.tsx ← Form input with validation
+    /KeyboardShortcutHint.tsx ← Keyboard shortcut tooltip hint
     /KeyboardShortcutsHelp.tsx ← Keyboard shortcuts help
     /KeyboardShortcutsProvider.tsx ← Keyboard shortcuts context
     /LayoutErrorFallback.tsx ← Layout error fallback UI
@@ -134,7 +136,10 @@
     /PasswordRequirementsChecklist.tsx ← Password requirements display
     /ProgressStepper.tsx    ← Progress indicator
     /ReferralLink.tsx       ← Referral link component
+    /ScrollProgress.tsx     ← Scroll progress indicator
+    /ScrollShadow.tsx       ← Header scroll shadow effect
     /ScrollToTop.tsx        ← Scroll to top button
+    /ScrollToTopButton.tsx  ← Scroll to top button with animation
     /SessionTracker.tsx     ← Session tracking component
     /ShareButton.tsx        ← Share functionality
     /Skeleton.tsx           ← Skeleton loading component
