@@ -20,6 +20,7 @@ import {
 } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import IdeaInput from '@/components/IdeaInput';
+import { TEST_CONFIG } from './config/test-config';
 
 // Simple fetch mock
 const mockFetch = jest.fn();
@@ -74,7 +75,7 @@ describe('E2E Tests - Simplified', () => {
           expect(mockOnSubmit).toHaveBeenCalledTimes(1);
           expect(mockOnSubmit).toHaveBeenCalledWith(idea, 'test-idea-123');
         },
-        { timeout: 3000 }
+        { timeout: TEST_CONFIG.SHORT_TIMEOUT }
       );
     });
 
@@ -114,7 +115,7 @@ describe('E2E Tests - Simplified', () => {
             screen.getByText(/failed to save your idea/i)
           ).toBeInTheDocument();
         },
-        { timeout: 3000 }
+        { timeout: TEST_CONFIG.SHORT_TIMEOUT }
       );
 
       // Should not call onSubmit

@@ -15,6 +15,7 @@ import { AIService, AIModelConfig } from '@/lib/ai';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import { MOCK_SECRETS } from './utils/test-secrets';
+import { RETRY_CONFIG } from '@/lib/config/retry-config';
 
 jest.mock('openai', () => {
   return jest.fn();
@@ -30,12 +31,20 @@ jest.mock('@/lib/resilience', () => ({
   },
   defaultResilienceConfigs: {
     openai: {
-      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 10000 },
+      retry: {
+        maxRetries: RETRY_CONFIG.DEFAULT_MAX_RETRIES,
+        baseDelayMs: RETRY_CONFIG.INITIAL_DELAY,
+        maxDelayMs: RETRY_CONFIG.MAX_DELAY,
+      },
       timeout: { timeoutMs: 60000 },
       circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 60000 },
     },
     default: {
-      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 10000 },
+      retry: {
+        maxRetries: RETRY_CONFIG.DEFAULT_MAX_RETRIES,
+        baseDelayMs: RETRY_CONFIG.INITIAL_DELAY,
+        maxDelayMs: RETRY_CONFIG.MAX_DELAY,
+      },
       timeout: { timeoutMs: 30000 },
       circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 60000 },
     },

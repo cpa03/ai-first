@@ -7,6 +7,7 @@ import {
 } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ClarificationFlow from '@/components/ClarificationFlow';
+import { TEST_CONFIG } from './config/test-config';
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -269,7 +270,7 @@ describe('ClarificationFlow', () => {
           })
         ).toBeInTheDocument();
       },
-      { timeout: 3000 }
+      { timeout: TEST_CONFIG.SHORT_TIMEOUT }
     );
 
     const secondTextarea = screen.getByPlaceholderText(
@@ -288,7 +289,7 @@ describe('ClarificationFlow', () => {
           })
         ).toBeInTheDocument();
       },
-      { timeout: 3000 }
+      { timeout: TEST_CONFIG.SHORT_TIMEOUT }
     );
 
     const select = screen.getByDisplayValue(/select an option/i);
@@ -343,7 +344,7 @@ describe('ClarificationFlow', () => {
           screen.getByRole('heading', { name: mockQuestions[1].question })
         ).toBeInTheDocument();
       },
-      { timeout: 3000 }
+      { timeout: TEST_CONFIG.SHORT_TIMEOUT }
     );
 
     expect(

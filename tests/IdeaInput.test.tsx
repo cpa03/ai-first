@@ -7,6 +7,7 @@ import {
 } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import IdeaInput from '@/components/IdeaInput';
+import { TEST_CONFIG } from './config/test-config';
 
 global.fetch = jest.fn();
 
@@ -62,7 +63,7 @@ describe('IdeaInput', () => {
           'test-idea-123'
         );
       },
-      { timeout: 3000 }
+      { timeout: TEST_CONFIG.SHORT_TIMEOUT }
     );
   });
 

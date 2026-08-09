@@ -7,6 +7,7 @@ import {
 import { resilienceManager } from '@/lib/resilience';
 import { ExportData } from '@/lib/export-connectors/base';
 import { TEST_NOTION_API_KEY, MOCK_SECRETS } from './utils/test-secrets';
+import { RETRY_CONFIG } from '@/lib/config/retry-config';
 
 jest.mock('@/lib/resilience');
 jest.mock('@notionhq/client');
@@ -61,7 +62,7 @@ describe('Export Connector Resilience Integration', () => {
           expect.any(Function),
           expect.objectContaining({
             timeoutMs: expect.any(Number),
-            maxRetries: 3,
+            maxRetries: RETRY_CONFIG.DEFAULT_MAX_RETRIES,
           }),
           'notion-create-page'
         );
@@ -79,7 +80,7 @@ describe('Export Connector Resilience Integration', () => {
           expect.any(Function),
           expect.objectContaining({
             timeoutMs: 30000,
-            maxRetries: 3,
+            maxRetries: RETRY_CONFIG.DEFAULT_MAX_RETRIES,
           }),
           'notion-validate-config'
         );
@@ -300,7 +301,7 @@ describe('Export Connector Resilience Integration', () => {
           expect.any(Function),
           expect.objectContaining({
             timeoutMs: 15000,
-            maxRetries: 3,
+            maxRetries: RETRY_CONFIG.DEFAULT_MAX_RETRIES,
           }),
           'trello-validate-config'
         );
@@ -514,7 +515,7 @@ describe('Export Connector Resilience Integration', () => {
           expect.any(Function),
           expect.objectContaining({
             timeoutMs: 30000,
-            maxRetries: 3,
+            maxRetries: RETRY_CONFIG.DEFAULT_MAX_RETRIES,
           }),
           'github-projects-validate-config'
         );
