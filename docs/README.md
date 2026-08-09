@@ -266,24 +266,13 @@ Older audit reports (2026-07-08 through 2026-07-29) are archived in [audit/archi
 
 ### Active Reports
 
-- [Repository Maintenance Report - 2026-08-06](./maintenance/2026-08-06-repository-maintenance-report.md) - Comprehensive health check: lint/type-check, stale branch cleanup, documentation sync (latest)
-- [Repository Maintenance Report - 2026-08-05](./maintenance/2026-08-05-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, empty directory cleanup
-- [Repository Health Check - 2026-08-05](./maintenance/2026-08-05-health-check.md) - Repository health check with branch analysis
-- [Repository Maintenance Report - 2026-08-04](./maintenance/2026-08-04-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, documentation, repository structure
-- [Repository Maintenance Report - 2026-08-03](./maintenance/2026-08-03-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, documentation, repository structure
-- [BugFixer Audit - 2026-08-03](./maintenance/2026-08-03-bugfixer-audit.md) - BugFixer comprehensive audit
-- [CMZ Execution Log - 2026-08-02](./maintenance/2026-08-02-execution-log.md) - CMZ autonomous agent execution log
-- [CMZ Execution Summary - 2026-08-02](./maintenance/2026-08-02-execution-summary.md) - CMZ autonomous agent execution summary
-- [Phase 2 Hardening Report - 2026-08-02](./maintenance/2026-08-02-phase2-hardening-report.md) - Phase 2 feature hardening and integration
-- [Phase 3 Strategic Expansion - 2026-08-02](./maintenance/2026-08-02-phase3-strategic-expansion.md) - Phase 3 strategic expansion report
-- [RepoKeeper Audit - 2026-08-02](./maintenance/2026-08-02-repokeeper-audit.md) - RepoKeeper maintenance audit
-- [Repository Audit - 2026-08-01](./maintenance/2026-08-01-repository-audit.md) - Repository audit with branch analysis
-- [BugFixer Audit - 2026-08-01](./maintenance/2026-08-01-bugfixer-audit.md) - BugFixer comprehensive audit
-- [Repository Maintenance Loop - 2026-08-01](./maintenance/2026-08-01-repository-maintenance-loop.md) - Maintenance loop report
+- [Repository Maintenance Report - 2026-08-08](./maintenance/2026-08-08-repository-maintenance-report.md) - Repository maintenance report (latest)
+- [Repository Maintenance Report - 2026-08-07](./maintenance/2026-08-07-repository-maintenance-report.md) - Repository maintenance report
+- [Repository Maintenance Report - 2026-08-06](./maintenance/2026-08-06-repository-maintenance-report.md) - Comprehensive health check: lint/type-check, stale branch cleanup, documentation sync
 
 ### Archived Reports
 
-Older maintenance reports (2026-07-07 through 2026-07-31) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/).
+Older maintenance reports (2026-07-07 through 2026-08-05) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/).
 
 ---
 
