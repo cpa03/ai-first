@@ -11,42 +11,78 @@
 
 import { jest } from '@jest/globals';
 
+// Helper to create a mock Response that satisfies the type system
+function createMockResponse(data: unknown, ok = true, status = 200): Response {
+  return {
+    ok,
+    status,
+    statusText: ok ? 'OK' : 'Error',
+    headers: new Headers({ 'content-type': 'application/json' }),
+    redirected: false,
+    type: 'basic' as ResponseType,
+    url: '',
+    clone: jest.fn(),
+    body: null,
+    bodyUsed: false,
+    arrayBuffer: jest.fn(),
+    blob: jest.fn(),
+    bytes: jest.fn(),
+    formData: jest.fn(),
+    text: jest.fn(),
+    json: async () => data,
+  } as unknown as Response;
+}
+
 // Mock fetch for API calls
 const mockFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
 global.fetch = mockFetch;
 
 // Mock database service
-jest.mock('@/lib/db', () => ({
-  dbService: {
-    createIdea: jest.fn().mockResolvedValue({
-      id: 'test-idea-123',
-      content: 'Test idea content',
-      status: 'created',
-      created_at: new Date().toISOString(),
-    }),
-    getIdea: jest.fn().mockResolvedValue({
-      id: 'test-idea-123',
-      content: 'Test idea content',
-      status: 'clarifying',
-    }),
-    updateIdea: jest.fn().mockResolvedValue({
-      id: 'test-idea-123',
-      content: 'Updated idea',
-      status: 'completed',
-    }),
-    createClarificationSession: jest.fn().mockResolvedValue({
-      id: 'session-123',
-      idea_id: 'test-idea-123',
-    }),
-    saveAnswers: jest.fn().mockResolvedValue([
-      {
-        session_id: 'session-123',
-        question_id: '1',
-        answer: 'Test answer',
-      },
-    ]),
-  },
-}));
+// Jest mock factory loses type context, so we use mockImplementation for proper typing
+jest.mock('@/lib/db', () => {
+  const mockIdea = {
+    id: 'test-idea-123',
+    user_id: 'user-123',
+    title: 'Test idea',
+    raw_text: 'Test idea content',
+    status: 'draft',
+    deleted_at: null,
+    created_at: new Date().toISOString(),
+  };
+
+  return {
+    dbService: {
+      createIdea: jest.fn().mockImplementation(async () => mockIdea),
+      getIdea: jest.fn().mockImplementation(async () => ({
+        ...mockIdea,
+        status: 'clarified',
+      })),
+      updateIdea: jest.fn().mockImplementation(async () => ({
+        ...mockIdea,
+        title: 'Updated idea',
+        raw_text: 'Updated idea',
+        status: 'completed',
+      })),
+      createClarificationSession: jest.fn().mockImplementation(async () => ({
+        id: 'session-123',
+        idea_id: 'test-idea-123',
+        status: 'active',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })),
+      saveAnswers: jest.fn().mockImplementation(async () => [
+        {
+          id: 'answer-1',
+          session_id: 'session-123',
+          question_id: '1',
+          answer: 'Test answer',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      ]),
+    },
+  };
+});
 
 describe('API Integration Tests', () => {
   beforeEach(() => {
@@ -67,10 +103,7 @@ describe('API Integration Tests', () => {
         timestamp: new Date().toISOString(),
       };
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      } as Response);
+      mockFetch.mockResolvedValueOnce(createMockResponse(mockResponse));
 
       const response = await fetch('/api/ideas', {
         method: 'POST',
@@ -98,10 +131,7 @@ describe('API Integration Tests', () => {
         timestamp: new Date().toISOString(),
       };
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      } as Response);
+      mockFetch.mockResolvedValueOnce(createMockResponse(mockResponse));
 
       const response = await fetch('/api/ideas/test-idea-123');
       const data = await response.json();
@@ -112,15 +142,17 @@ describe('API Integration Tests', () => {
     });
 
     it('should handle idea creation errors', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 400,
-        json: async () => ({
-          success: false,
-          error: 'Content is required',
-          code: 'VALIDATION_ERROR',
-        }),
-      } as Response);
+      mockFetch.mockResolvedValueOnce(
+        createMockResponse(
+          {
+            success: false,
+            error: 'Content is required',
+            code: 'VALIDATION_ERROR',
+          },
+          false,
+          400
+        )
+      );
 
       const response = await fetch('/api/ideas', {
         method: 'POST',
@@ -155,10 +187,7 @@ describe('API Integration Tests', () => {
         timestamp: new Date().toISOString(),
       };
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      } as Response);
+      mockFetch.mockResolvedValueOnce(createMockResponse(mockResponse));
 
       const response = await fetch('/api/clarify/start', {
         method: 'POST',
@@ -186,10 +215,7 @@ describe('API Integration Tests', () => {
         timestamp: new Date().toISOString(),
       };
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      } as Response);
+      mockFetch.mockResolvedValueOnce(createMockResponse(mockResponse));
 
       const response = await fetch('/api/clarify/answer', {
         method: 'POST',
@@ -233,10 +259,7 @@ describe('API Integration Tests', () => {
         timestamp: new Date().toISOString(),
       };
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      } as Response);
+      mockFetch.mockResolvedValueOnce(createMockResponse(mockResponse));
 
       const response = await fetch('/api/breakdown', {
         method: 'POST',
@@ -265,10 +288,7 @@ describe('API Integration Tests', () => {
         },
       };
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      } as Response);
+      mockFetch.mockResolvedValueOnce(createMockResponse(mockResponse));
 
       const response = await fetch('/api/health');
       const data = await response.json();
@@ -303,7 +323,7 @@ describe('API Integration Tests', () => {
         json: async () => {
           throw new Error('Invalid JSON');
         },
-      } as Response);
+      } as unknown as Response);
 
       await expect(
         fetch('/api/ideas').then((res) => res.json())
@@ -320,18 +340,9 @@ describe('API Integration Tests', () => {
       ];
 
       mockFetch
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => mockResponses[0],
-        } as Response)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => mockResponses[1],
-        } as Response)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => mockResponses[2],
-        } as Response);
+        .mockResolvedValueOnce(createMockResponse(mockResponses[0]))
+        .mockResolvedValueOnce(createMockResponse(mockResponses[1]))
+        .mockResolvedValueOnce(createMockResponse(mockResponses[2]));
 
       const promises = [
         fetch('/api/ideas/1'),
