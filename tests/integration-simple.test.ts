@@ -15,37 +15,16 @@ import { jest } from '@jest/globals';
 const mockFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
 global.fetch = mockFetch;
 
-// Mock database service
+// Mock database service - minimal mock since tests don't use dbService methods directly
 jest.mock('@/lib/db', () => ({
   dbService: {
-    createIdea: jest.fn().mockResolvedValue({
-      id: 'test-idea-123',
-      content: 'Test idea content',
-      status: 'created',
-      created_at: new Date().toISOString(),
-    }),
-    getIdea: jest.fn().mockResolvedValue({
-      id: 'test-idea-123',
-      content: 'Test idea content',
-      status: 'clarifying',
-    }),
-    updateIdea: jest.fn().mockResolvedValue({
-      id: 'test-idea-123',
-      content: 'Updated idea',
-      status: 'completed',
-    }),
-    createClarificationSession: jest.fn().mockResolvedValue({
-      id: 'session-123',
-      idea_id: 'test-idea-123',
-    }),
-    saveAnswers: jest.fn().mockResolvedValue([
-      {
-        session_id: 'session-123',
-        question_id: '1',
-        answer: 'Test answer',
-      },
-    ]),
+    createIdea: jest.fn(),
+    getIdea: jest.fn(),
+    updateIdea: jest.fn(),
+    createClarificationSession: jest.fn(),
+    saveAnswers: jest.fn(),
   },
+  supabaseClient: null,
 }));
 
 describe('API Integration Tests', () => {
@@ -303,7 +282,7 @@ describe('API Integration Tests', () => {
         json: async () => {
           throw new Error('Invalid JSON');
         },
-      } as Response);
+      } as unknown as Response);
 
       await expect(
         fetch('/api/ideas').then((res) => res.json())
