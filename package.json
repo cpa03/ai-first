@@ -47,7 +47,7 @@
     "audit:browser": "node scripts/brocula-audit.js",
     "build:verify": "npm run build && npm run scan:console && npm run audit:lighthouse",
     "analyze": "ANALYZE=true npm run build -- --webpack",
-    "build:cloudflare": "opennextjs-cloudflare build",
+    "build:cloudflare": "bash scripts/build-cloudflare.sh",
     "preview:cloudflare": "opennextjs-cloudflare preview",
     "deploy:cloudflare": "opennextjs-cloudflare deploy",
     "deploy:cloudflare:staging": "opennextjs-cloudflare deploy --env staging",
@@ -59,7 +59,8 @@
     "backup:verify": "bash scripts/backup-verify.sh",
     "backup:monitor": "bash scripts/backup-monitor.sh",
     "backup:report": "bash scripts/backup-monitor.sh --report",
-    "prepare": "husky"
+    "prepare": "husky",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
@@ -110,6 +111,7 @@
     "lint-staged": "^16.2.7",
     "madge": "^8.0.0",
     "oh-my-opencode": "^3.8.0",
+    "patch-package": "^8.0.1",
     "playwright": "^1.58.2",
     "prettier": "^3.8.1",
     "tailwindcss": "^3.4.1",

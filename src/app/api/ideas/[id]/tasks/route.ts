@@ -8,7 +8,7 @@ import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { STATUS_CODES } from '@/lib/config/constants';
-import { IDEA_STATUS_CONFIG } from '@/lib/config';
+import { IDEA_STATUS_CONFIG, PRECISION_CONFIG } from '@/lib/config';
 
 async function handleGet(context: ApiContext) {
   const { request, params } = context;
@@ -79,9 +79,14 @@ async function handleGet(context: ApiContext) {
       totalHours += deliverableTotalHours;
       completedHours += deliverableCompletedHours;
 
-      // Round deliverable hours to 1 decimal place for the response
-      const dTotalHours = Math.round(deliverableTotalHours * 10) / 10;
-      const dCompletedHours = Math.round(deliverableCompletedHours * 10) / 10;
+      // Round deliverable hours for the response
+      const dTotalHours =
+        Math.round(deliverableTotalHours * PRECISION_CONFIG.HOURS_MULTIPLIER) /
+        PRECISION_CONFIG.HOURS_MULTIPLIER;
+      const dCompletedHours =
+        Math.round(
+          deliverableCompletedHours * PRECISION_CONFIG.HOURS_MULTIPLIER
+        ) / PRECISION_CONFIG.HOURS_MULTIPLIER;
 
       const deliverableProgress =
         tasks.length > 0 ? (deliverableCompleted / tasks.length) * 100 : 0;
@@ -107,8 +112,12 @@ async function handleGet(context: ApiContext) {
           totalDeliverables: deliverables.length,
           totalTasks,
           completedTasks,
-          totalHours: Math.round(totalHours * 10) / 10,
-          completedHours: Math.round(completedHours * 10) / 10,
+          totalHours:
+            Math.round(totalHours * PRECISION_CONFIG.HOURS_MULTIPLIER) /
+            PRECISION_CONFIG.HOURS_MULTIPLIER,
+          completedHours:
+            Math.round(completedHours * PRECISION_CONFIG.HOURS_MULTIPLIER) /
+            PRECISION_CONFIG.HOURS_MULTIPLIER,
           overallProgress: Math.round(overallProgress),
         },
       },
