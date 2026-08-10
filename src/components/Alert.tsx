@@ -93,6 +93,10 @@ const AlertComponent = function Alert({
   );
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [currentDelay, setCurrentDelay] = useState<number | null>(null);
+  // Micro-UX: Briefly show keyboard shortcut hints when alert appears
+  // Helps users discover shortcuts (d=dismiss, s=snooze) without cluttering UI
+  const [showShortcutHint, setShowShortcutHint] = useState(false);
+  const shortcutHintTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const styles = ALERT_STYLES[type];
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<NodeJS.Timeout | null>(null);
@@ -102,6 +106,24 @@ const AlertComponent = function Alert({
 
   const shouldAutoDismiss =
     autoDismiss && (type === 'success' || type === 'info') && onClose;
+
+  useEffect(() => {
+    if (!onClose || prefersReducedMotion) return;
+
+    const showTimer = setTimeout(() => {
+      setShowShortcutHint(true);
+      shortcutHintTimeoutRef.current = setTimeout(() => {
+        setShowShortcutHint(false);
+      }, 3000);
+    }, 500);
+
+    return () => {
+      clearTimeout(showTimer);
+      if (shortcutHintTimeoutRef.current) {
+        clearTimeout(shortcutHintTimeoutRef.current);
+      }
+    };
+  }, [onClose, prefersReducedMotion]);
 
   const effectiveDelay =
     currentDelay ??
@@ -117,6 +139,10 @@ const AlertComponent = function Alert({
     if (progressRef.current) {
       clearInterval(progressRef.current);
       progressRef.current = null;
+    }
+    if (shortcutHintTimeoutRef.current) {
+      clearTimeout(shortcutHintTimeoutRef.current);
+      shortcutHintTimeoutRef.current = null;
     }
   }, []);
 
@@ -341,7 +367,7 @@ const AlertComponent = function Alert({
       )}
       {onClose && (
         <div
-          className={`${COORDINATE_POSITION_PATTERNS.BOTTOM_LEFT_SM} flex items-center gap-2 text-xs opacity-0 focus-within:opacity-60 hover:opacity-60 transition-opacity`}
+          className={`${COORDINATE_POSITION_PATTERNS.BOTTOM_LEFT_SM} flex items-center gap-2 text-xs ${showShortcutHint ? 'opacity-60' : 'opacity-0'} focus-within:opacity-60 hover:opacity-60 transition-opacity`}
           aria-hidden="true"
         >
           {shouldAutoDismiss && (
