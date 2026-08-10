@@ -352,7 +352,7 @@ const InputWithValidationComponent = forwardRef<
       passwordVisible &&
         showPasswordToggle &&
         inputType === 'password' &&
-        'bg-amber-50/50 border-amber-300/60 transition-colors duration-300',
+        `bg-amber-50/50 border-amber-300/60 transition-colors ${DURATION_TAILWIND[300]}`,
       className
     );
 
