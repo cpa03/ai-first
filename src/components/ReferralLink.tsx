@@ -177,6 +177,7 @@ function ReferralLinkComponent({
                 onKeyDown={handleCodeKeyDown}
                 onBlur={handleBlur}
                 tabIndex={0}
+                role="button"
                 aria-label={`${referralUrl}. Press Space or Enter to select the link.`}
                 className={`w-full min-w-0 px-3 py-2 ${WHITE_BG_PATTERNS.DEFAULT} border border-primary-200 rounded-md text-sm text-primary-800 truncate font-mono cursor-pointer ${GRAY_CLASSES.HOVER_BG_50} transition-all ${DURATION_TAILWIND[200]} outline-none ${FOCUS_RING_PATTERNS.DEFAULT}`}
               >

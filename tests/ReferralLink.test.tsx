@@ -37,6 +37,7 @@ describe('ReferralLink', () => {
       'aria-label',
       'http://localhost/signup?ref=testcode123. Press Space or Enter to select the link.'
     );
+    expect(codeElement).toHaveAttribute('role', 'button');
     expect(codeElement.className).toContain('focus-visible:ring-2');
     expect(codeElement.className).toContain('focus-visible:ring-primary-500');
   });
