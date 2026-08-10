@@ -230,8 +230,12 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
-- [BroCula Browser Audit - 2026-08-08](./audit/BROCULA-AUDIT-20260808.md) - BroCula browser audit (latest)
-- [BroCula Browser Console Lighthouse - 2026-08-08](./audit/2026-08-08-brocula-browser-console-lighthouse.md) - Browser console & Lighthouse audit (latest)
+- [BroCula Browser Audit Report - 2026-08-10](./audit/BROCULA-AUDIT-REPORT.md) - BroCula browser audit (latest)
+- [BroCula Browser Audit - 2026-08-10](./audit/BROCULA-AUDIT-20260810.md) - BroCula browser audit (latest)
+- [BroCula Browser Audit - 2026-08-09](./audit/BROCULA-AUDIT-2026-08-09.md) - BroCula browser audit
+- [BroCula Browser Audit - 2026-08-08](./audit/BROCULA-AUDIT-20260808.md) - BroCula browser audit
+- [BroCula Browser Console Lighthouse - 2026-08-08](./audit/2026-08-08-brocula-browser-console-lighthouse.md) - Browser console & Lighthouse audit
+- [BroCula Audit Summary](./audit/BROCULA-AUDIT-SUMMARY.md) - BroCula audit summary
 - [Issue: Large Files](./audit/ISSUE-01-large-files.md) - Files exceeding 250 LOC maintainability threshold
 - [Issue: API Test Coverage](./audit/ISSUE-02-api-test-coverage.md) - API route test coverage gaps
 - [Issue: CSRF Protection](./audit/ISSUE-03-csrf-protection.md) - CSRF protection audit
@@ -258,13 +262,10 @@ Older audit reports (2026-07-08 through 2026-08-07) are archived in [audit/archi
 - [Repository Maintenance Report - 2026-08-10 (0045)](./maintenance/2026-08-10-repository-maintenance-report-0045.md) - Repository maintenance report (latest)
 - [Repository Maintenance Report - 2026-08-10](./maintenance/2026-08-10-repository-maintenance-report.md) - Repository maintenance report
 - [Repository Maintenance Report - 2026-08-09](./maintenance/2026-08-09-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-08](./maintenance/2026-08-08-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-07](./maintenance/2026-08-07-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-06](./maintenance/2026-08-06-repository-maintenance-report.md) - Comprehensive health check: lint/type-check, stale branch cleanup, documentation sync
 
 ### Archived Reports
 
-Older maintenance reports (2026-07-07 through 2026-08-05) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/).
+Older maintenance reports (2026-07-07 through 2026-08-08) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/).
 
 ---
 
