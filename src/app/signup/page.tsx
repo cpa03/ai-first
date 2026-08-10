@@ -47,6 +47,7 @@ import {
   FADE_IN,
   SUCCESS_POP,
   CHECKLIST_ANIMATIONS,
+  COMMON_SPACING_PATTERNS,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
@@ -277,7 +278,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
       {/* Micro-UX: Granular progress bar with percentage label */}
       {/* Shows precise strength score (e.g., "75% Medium") instead of fixed widths */}
       {/* Matches the PasswordRequirementsChecklist pattern of showing "3 of 5" */}
-      <div className="flex items-center gap-2">
+      <div className={COMMON_SPACING_PATTERNS.FLEX_CENTER_SM}>
         <div className={FORM_PATTERNS.STRENGTH_BAR_TRACK}>
           <div
             className={`h-full ${config.color} transition-all ${DURATION_TAILWIND[300]} ease-out rounded-full`}

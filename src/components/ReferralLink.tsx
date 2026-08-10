@@ -26,6 +26,7 @@ import {
   FLEX_PATTERNS,
   REFERRAL_LINK_STYLES,
   TEXT_COLORS,
+  COMMON_SPACING_PATTERNS,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -161,7 +162,7 @@ function ReferralLinkComponent({
           >
             {REFERRAL_LINK_LABELS.DESCRIPTION}
           </p>
-          <div className="flex items-center gap-2">
+          <div className={COMMON_SPACING_PATTERNS.FLEX_CENTER_SM}>
             <Tooltip
               content={
                 isSelected

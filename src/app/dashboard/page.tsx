@@ -47,6 +47,7 @@ import {
   createRouteWithParams,
   FADE_IN,
   FOCUS_RING,
+  COMMON_SPACING_PATTERNS,
 } from '@/lib/config';
 import type { ComponentConfig } from '@/lib/config/components';
 import {
@@ -688,7 +689,7 @@ export default function DashboardPage() {
             {DASHBOARD_PAGE_CONTENT.IDEA_COUNT.TOTAL}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className={COMMON_SPACING_PATTERNS.FLEX_CENTER_SM}>
           <Tooltip
             content={DASHBOARD_LABELS.NEW_IDEA_TOOLTIP}
             shortcut={DASHBOARD_LABELS.NEW_IDEA_SHORTCUT}
