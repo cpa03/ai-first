@@ -347,6 +347,12 @@ const InputWithValidationComponent = forwardRef<
         `${COMPONENT_STATE_COLORS.INPUT_SUCCESS.FLASH} ${STATE_SHADOWS.SUCCESS}`,
       showValidCelebration && 'animate-input-valid-celebration',
       isFocused && !currentValue.trim() && 'animate-placeholder-breathe',
+      // Micro-UX: Subtle amber background tint when password is visible
+      // Provides clear visual feedback that password text is exposed
+      passwordVisible &&
+        showPasswordToggle &&
+        inputType === 'password' &&
+        'bg-amber-50/50 border-amber-300/60 transition-colors duration-300',
       className
     );
 
