@@ -24,6 +24,7 @@
     "check:parallel": "bash scripts/parallel-check.sh",
     "check:parallel:shard": "bash scripts/parallel-check.sh --shard",
     "test": "jest",
+    "test:api": "jest --config jest.config.api.js",
     "test:watch": "jest --watch",
     "test:changed": "jest --onlyChanged",
     "test:coverage": "jest --coverage --coverageReporters=text-lcov",
