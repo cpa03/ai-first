@@ -276,7 +276,9 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
       description: 'Non-standard IP encoding SSRF (hex, decimal, or octal)',
     },
     {
-      pattern: /\[?::ffff:(?:127\.0\.0\.1|169\.254\.\d+\.\d+)\]?/i,
+      // SECURITY: Enhanced to detect the entire loopback subnet block (127.0.0.0/8) and shorthands
+      // in IPv6-mapped IPv4 formats (e.g., ::ffff:127.0.0.2, ::ffff:127.1), as well as cloud link-local.
+      pattern: /\[?::ffff:(?:127\.(?:[0-9]{1,3}\.){1,3}[0-9]{1,3}|127\.1|169\.254\.\d+\.\d+)\]?/i,
       severity: 3,
       description: 'IPv6-mapped IPv4 SSRF',
     },

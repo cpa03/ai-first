@@ -106,4 +106,19 @@ describe('Suspicious Pattern Detection Bypasses', () => {
       expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
     }
   });
+
+  it('should detect SSRF with other IPv6-mapped loopback subnets and shorthands (enhanced security checks)', () => {
+    const cases = [
+      'https://example.com/api/test?url=http://[::ffff:127.0.0.2]',
+      'https://example.com/api/test?url=http://[::ffff:127.12.34.56]',
+      'https://example.com/api/test?url=http://[::ffff:127.0.1]',
+      'https://example.com/api/test?url=http://[::ffff:127.1]',
+    ];
+    for (const url of cases) {
+      const request = createMockRequest(url);
+      const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+      expect(result.detected).toBe(true);
+      expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
+    }
+  });
 });
