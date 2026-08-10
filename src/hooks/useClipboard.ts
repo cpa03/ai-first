@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { triggerHapticFeedback } from '@/lib/utils';
-import { UI_CONFIG } from '@/lib/config/constants';
+import { UI_TIMING_CONFIG } from '@/lib/config';
+import { UI_CONFIG } from '@/lib/config/ui-config';
 import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('useClipboard');
@@ -96,7 +97,7 @@ export function useClipboard(
         errorTimeoutRef.current = setTimeout(() => {
           setHasError(false);
           setErrorMessage(null);
-        }, 5000);
+        }, UI_TIMING_CONFIG.CLIPBOARD_ERROR_HIDE_DURATION);
 
         return false;
       }
@@ -140,7 +141,7 @@ export function useClipboard(
       errorTimeoutRef.current = setTimeout(() => {
         setHasError(false);
         setErrorMessage(null);
-      }, 5000);
+      }, UI_TIMING_CONFIG.CLIPBOARD_ERROR_HIDE_DURATION);
 
       return null;
     }

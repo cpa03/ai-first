@@ -23,6 +23,7 @@ import {
   COORDINATE_POSITION_PATTERNS,
   COMMON_SPACING_PATTERNS,
   HEIGHT_ONLY,
+  UI_TIMING_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -114,8 +115,8 @@ const AlertComponent = function Alert({
       setShowShortcutHint(true);
       shortcutHintTimeoutRef.current = setTimeout(() => {
         setShowShortcutHint(false);
-      }, 3000);
-    }, 500);
+      }, UI_TIMING_CONFIG.SHORTCUT_HINT_HIDE_DURATION);
+    }, UI_TIMING_CONFIG.TOAST_SHORTCUT_HINT_DELAY);
 
     return () => {
       clearTimeout(showTimer);

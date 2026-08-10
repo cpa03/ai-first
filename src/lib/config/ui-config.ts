@@ -146,6 +146,30 @@ export const UI_CONFIG = {
   ),
 
   /**
+   * Keyboard shortcut hint hide duration (in milliseconds)
+   * How long the keyboard shortcut hint stays visible before hiding
+   * Env: UI_SHORTCUT_HINT_HIDE_DURATION (default: 3000)
+   */
+  SHORTCUT_HINT_HIDE_DURATION: EnvLoader.number(
+    'UI_SHORTCUT_HINT_HIDE_DURATION',
+    3000,
+    1000,
+    10000
+  ),
+
+  /**
+   * Clipboard error message hide duration (in milliseconds)
+   * How long to show error messages from clipboard operations
+   * Env: UI_CLIPBOARD_ERROR_HIDE_DURATION (default: 5000)
+   */
+  CLIPBOARD_ERROR_HIDE_DURATION: EnvLoader.number(
+    'UI_CLIPBOARD_ERROR_HIDE_DURATION',
+    5000,
+    2000,
+    15000
+  ),
+
+  /**
    * Scroll percentage threshold for showing percentage text in ScrollToTop button
    * Env: UI_SCROLL_PERCENTAGE_THRESHOLD (default: 10)
    */
