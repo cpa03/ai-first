@@ -581,6 +581,19 @@ export const SCROLL_DEPTH_THRESHOLDS = {
 } as const;
 
 /**
+ * Scroll Step Configuration
+ * Centralizes scroll step values used in ScrollProgress component
+ * Replaces hardcoded 20 and 5 values for keyboard scroll navigation
+ */
+export const SCROLL_STEP_CONFIG = {
+  /** Large scroll step when Shift is held (pixels) */
+  LARGE: EnvLoader.number('SCROLL_STEP_LARGE', 20, 5, 100),
+
+  /** Small scroll step for normal keyboard scroll (pixels) */
+  SMALL: EnvLoader.number('SCROLL_STEP_SMALL', 5, 1, 50),
+} as const;
+
+/**
  * Time Conversion Configuration
  * Centralizes time unit conversion constants
  * Replaces hardcoded "1000" for ms-to-seconds conversions, etc.
@@ -645,6 +658,7 @@ export const MODULAR_CONSTANTS = {
   ERROR_CONTEXT: ERROR_CONTEXT_CONFIG,
   PRECISION: PRECISION_CONFIG,
   SCROLL_DEPTH_THRESHOLDS,
+  SCROLL_STEP: SCROLL_STEP_CONFIG,
 } as const;
 
 export type ModularConstants = typeof MODULAR_CONSTANTS;

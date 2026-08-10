@@ -426,7 +426,7 @@ function ClarificationFlow({
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className={`${ICON_SIZES.XS} rounded-full bg-primary-200 animate-pulse`}
+                className={`${ICON_SIZES.XS} rounded-full ${BG_COLORS.BRAND_200} animate-pulse`}
                 style={{
                   animationDelay: `${i * ANIMATION_DELAYS.LONG}ms`,
                   animationDuration: `${ANIMATION_CONFIG.SLOW}ms`,

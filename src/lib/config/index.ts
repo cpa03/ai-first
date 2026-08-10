@@ -154,6 +154,7 @@ export {
   PRIMARY_LINK_FOCUS,
   PRIMARY_ACTIVE_LINK,
   PRIMARY_INACTIVE_LINK,
+  TOOLTIP_CONFIG,
 } from './theme';
 
 // Page Configuration
@@ -360,6 +361,7 @@ export {
   ID_PREFIX_CONFIG,
   ERROR_CONTEXT_CONFIG,
   PRECISION_CONFIG,
+  SCROLL_STEP_CONFIG,
   type ModularConstants,
 } from './modular-constants';
 

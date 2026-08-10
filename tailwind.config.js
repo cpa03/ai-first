@@ -40,6 +40,11 @@ module.exports = {
     'focus-visible:ring-gray-400',
     'focus-visible:ring-blue-500',
     'focus-visible:ring-green-500',
+    // Tooltip arrow border colors (dynamic from TOOLTIP_CONFIG)
+    'border-t-gray-800',
+    'border-b-gray-800',
+    'border-l-gray-800',
+    'border-r-gray-800',
   ],
   theme: {
     extend: {

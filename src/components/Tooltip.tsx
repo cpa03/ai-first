@@ -22,6 +22,7 @@ import {
   BG_COLORS,
   BORDER_COLOR_CLASSES,
   DURATION_TAILWIND,
+  TOOLTIP_CONFIG,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { PLATFORM } from '@/lib/dom-utils';
@@ -152,19 +153,17 @@ function TooltipComponent({
   };
 
   const arrowClasses = {
-    top: 'top-full left-1/2 -translate-x-1/2 -mt-1 border-t-gray-800',
-    bottom: 'bottom-full left-1/2 -translate-x-1/2 -mb-1 border-b-gray-800',
-    left: 'left-full top-1/2 -translate-y-1/2 -ml-1 border-l-gray-800',
-    right: 'right-full top-1/2 -translate-y-1/2 -mr-1 border-r-gray-800',
+    top: `top-full left-1/2 -translate-x-1/2 -mt-1 border-t-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
+    bottom: `bottom-full left-1/2 -translate-x-1/2 -mb-1 border-b-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
+    left: `left-full top-1/2 -translate-y-1/2 -ml-1 border-l-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
+    right: `right-full top-1/2 -translate-y-1/2 -mr-1 border-r-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
   };
 
   const arrowBorderClasses = {
-    top: 'border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent',
-    bottom:
-      'border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent',
-    left: 'border-t-4 border-b-4 border-l-4 border-t-transparent border-b-transparent',
-    right:
-      'border-t-4 border-b-4 border-r-4 border-t-transparent border-b-transparent',
+    top: `${TOOLTIP_CONFIG.ARROW.BORDER_SIZE} border-t-4 ${TOOLTIP_CONFIG.ARROW.TRANSPARENT.TOP_BOTTOM}`,
+    bottom: `${TOOLTIP_CONFIG.ARROW.BORDER_SIZE} border-b-4 ${TOOLTIP_CONFIG.ARROW.TRANSPARENT.TOP_BOTTOM}`,
+    left: `border-t-4 border-b-4 border-l-4 ${TOOLTIP_CONFIG.ARROW.TRANSPARENT.LEFT_RIGHT}`,
+    right: `border-t-4 border-b-4 border-r-4 ${TOOLTIP_CONFIG.ARROW.TRANSPARENT.LEFT_RIGHT}`,
   };
 
   return (
@@ -197,16 +196,16 @@ function TooltipComponent({
           <div className="relative">
             <div
               className={`
-                px-2.5 py-1.5 ${BG_COLORS.DARKER} text-white text-xs font-medium rounded-md
+                ${TOOLTIP_CONFIG.CONTENT_PADDING} ${BG_COLORS.DARKER} text-white text-xs font-medium rounded-md
                 shadow-lg border ${BORDER_COLOR_CLASSES.MUTED_DARK}/50 whitespace-normal
                 w-max ${CONTAINER_WIDTH_CLASSES.TOOLTIP} break-words
-                flex items-center gap-2.5
+                flex items-center ${TOOLTIP_CONFIG.CONTENT_GAP}
               `}
             >
               {content && <span>{content}</span>}
               {shortcut && shortcut.length > 0 && (
                 <div
-                  className={`flex items-center gap-1 pl-2 ml-auto ${
+                  className={`flex items-center ${TOOLTIP_CONFIG.SHORTCUT_GAP} ${TOOLTIP_CONFIG.SHORTCUT_SECTION} ${
                     content ? `border-l ${BORDER_COLOR_CLASSES.MUTED_DARK}` : ''
                   }`}
                 >

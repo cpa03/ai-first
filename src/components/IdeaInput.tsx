@@ -429,7 +429,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
             aria-live="polite"
           >
             <span
-              className={`inline-flex items-center justify-center ${ICON_SIZES.LG} rounded-full bg-primary-100 text-primary-700 text-xs ${TYPOGRAPHY_CLASSES.BOLD}`}
+              className={`inline-flex items-center justify-center ${ICON_SIZES.LG} rounded-full ${BG_COLORS.BRAND_100} ${TEXT_COLORS.BRAND} text-xs ${TYPOGRAPHY_CLASSES.BOLD}`}
             >
               {charactersNeededData.charsNeeded}
             </span>
