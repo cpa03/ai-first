@@ -13,7 +13,22 @@ export interface UseClipboardOptions {
   onPaste?: (text: string) => void;
 }
 
-export function useClipboard(options: UseClipboardOptions = {}) {
+export interface UseClipboardResult {
+  copy: (text: string) => Promise<boolean>;
+  paste: () => Promise<string | null>;
+  hasCopied: boolean;
+  hasPasted: boolean;
+  /** Indicates the most recent clipboard operation failed */
+  hasError: boolean;
+  /** Human-readable error message for the most recent failure */
+  errorMessage: string | null;
+  /** Clears the error state */
+  clearError: () => void;
+}
+
+export function useClipboard(
+  options: UseClipboardOptions = {}
+): UseClipboardResult {
   const {
     duration = UI_CONFIG.COPY_FEEDBACK_DURATION,
     onCopy,
@@ -22,18 +37,35 @@ export function useClipboard(options: UseClipboardOptions = {}) {
 
   const [hasCopied, setHasCopied] = useState(false);
   const [hasPasted, setHasPasted] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const errorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
     };
+  }, []);
+
+  const clearError = useCallback(() => {
+    setHasError(false);
+    setErrorMessage(null);
+    if (errorTimeoutRef.current) {
+      clearTimeout(errorTimeoutRef.current);
+      errorTimeoutRef.current = null;
+    }
   }, []);
 
   const copy = useCallback(
     async (text: string) => {
+      clearError();
+
       try {
         await navigator.clipboard.writeText(text);
         triggerHapticFeedback();
@@ -53,14 +85,28 @@ export function useClipboard(options: UseClipboardOptions = {}) {
 
         return true;
       } catch (err) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : 'Failed to copy to clipboard. Please try again.';
         logger.error('Failed to copy text to clipboard', err);
+        setHasError(true);
+        setErrorMessage(message);
+
+        errorTimeoutRef.current = setTimeout(() => {
+          setHasError(false);
+          setErrorMessage(null);
+        }, 5000);
+
         return false;
       }
     },
-    [duration, onCopy]
+    [duration, onCopy, clearError]
   );
 
   const paste = useCallback(async () => {
+    clearError();
+
     try {
       const text = await navigator.clipboard.readText();
       if (text) {
@@ -83,15 +129,30 @@ export function useClipboard(options: UseClipboardOptions = {}) {
       }
       return null;
     } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Failed to read from clipboard. Please check permissions.';
       logger.error('Failed to read from clipboard', err);
+      setHasError(true);
+      setErrorMessage(message);
+
+      errorTimeoutRef.current = setTimeout(() => {
+        setHasError(false);
+        setErrorMessage(null);
+      }, 5000);
+
       return null;
     }
-  }, [duration, onPaste]);
+  }, [duration, onPaste, clearError]);
 
   return {
     copy,
     paste,
     hasCopied,
     hasPasted,
+    hasError,
+    errorMessage,
+    clearError,
   };
 }
