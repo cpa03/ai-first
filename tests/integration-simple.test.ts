@@ -9,8 +9,6 @@
  * - Issue #1903: Investigate and Enable Skipped Tests
  */
 
-import { jest } from '@jest/globals';
-
 // Helper to create a mock Response that satisfies the type system
 function createMockResponse(data: unknown, ok = true, status = 200): Response {
   return {
