@@ -15,6 +15,7 @@ import {
   SVG_VIEWBOX,
   PROGRESS_BAR_A11Y,
   HEIGHT_ONLY,
+  SCROLL_STEP_CONFIG,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
@@ -187,7 +188,9 @@ function ScrollProgressComponent() {
           case 'ArrowRight':
           case 'ArrowUp': {
             e.preventDefault();
-            const step = e.shiftKey ? 20 : 5;
+            const step = e.shiftKey
+              ? SCROLL_STEP_CONFIG.LARGE
+              : SCROLL_STEP_CONFIG.SMALL;
             const nextPercent = Math.min(scrollPercent + step, 100);
             window.scrollTo({
               top: (nextPercent / 100) * docHeight,
@@ -198,7 +201,9 @@ function ScrollProgressComponent() {
           case 'ArrowLeft':
           case 'ArrowDown': {
             e.preventDefault();
-            const step = e.shiftKey ? 20 : 5;
+            const step = e.shiftKey
+              ? SCROLL_STEP_CONFIG.LARGE
+              : SCROLL_STEP_CONFIG.SMALL;
             const prevPercent = Math.max(scrollPercent - step, 0);
             window.scrollTo({
               top: (prevPercent / 100) * docHeight,

@@ -84,4 +84,5 @@ export {
   PROGRESS_PERCENTAGE,
   TIME_CONVERSIONS,
   SCROLL_DEPTH_THRESHOLDS,
+  SCROLL_STEP_CONFIG,
 } from './modular-constants';

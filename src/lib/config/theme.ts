@@ -2242,6 +2242,27 @@ export const PRIMARY_INACTIVE_LINK =
   'border-transparent text-gray-800 hover:text-primary-600 hover:bg-gray-50';
 
 /**
+ * Tooltip Component Configuration
+ * Centralizes hardcoded values in Tooltip component
+ * Eliminates arrow border sizes, padding, and gap values in Tooltip.tsx
+ */
+export const TOOLTIP_CONFIG = {
+  ARROW: {
+    BORDER_SIZE: 'border-l-4 border-r-4',
+    BORDER_COLOR_NAME: 'gray-800',
+    TRANSPARENT: {
+      TOP_BOTTOM: 'border-l-transparent border-r-transparent',
+      LEFT_RIGHT: 'border-t-transparent border-b-transparent',
+    },
+  } as const,
+
+  CONTENT_PADDING: 'px-2.5 py-1.5',
+  CONTENT_GAP: 'gap-2.5',
+  SHORTCUT_GAP: 'gap-1',
+  SHORTCUT_SECTION: 'pl-2 ml-auto',
+} as const;
+
+/**
  * Combined Tailwind Utility Classes
  * Provides all utility classes in a single object for convenience
  *
