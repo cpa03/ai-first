@@ -429,7 +429,7 @@ interface LoadingAnnouncerProps {
 
 ### LoadingOverlay
 
-**File:** `src/components/LoadingOverlay.tsx`
+**File:** `src/components/LoadingOverlay.tsx` (planned - not yet implemented)
 
 Purpose: Full-screen or inline loading overlay with spinner and message.
 
@@ -1301,7 +1301,7 @@ npm test -- --testNamePattern="loading"
 
 4. **NotificationPreferences Button Hardcoded Styles (PENDING)**
    - Browser notification enable/disable buttons use hardcoded Tailwind classes
-   - **File:** `src/components/NotificationPreferences.tsx` (lines 166, 175, 189)
+   - **File:** `src/components/NotificationPreferences.tsx` (planned - not yet implemented)
    - **Issue:** Uses `text-red-600`, `text-primary-600` instead of Button component variants
    - **Recommendation:** Refactor to use Button component with appropriate variants
    - **Status:** Pending - requires JSX refactoring

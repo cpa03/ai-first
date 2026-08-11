@@ -61,7 +61,7 @@ A comprehensive frontend code audit was performed on the IdeaFlow application. T
 - `src/components/IdeaInput.tsx` - Idea input form with validation
 - `src/components/InputWithValidation.tsx` - Validated input component
 - `src/components/LoadingAnnouncer.tsx` - Screen reader announcements
-- `src/components/LoadingOverlay.tsx` - Loading overlay component
+- ~~`src/components/LoadingOverlay.tsx`~~ - Planned (not yet implemented)
 - `src/components/LoadingSpinner.tsx` - Loading spinner
 - `src/components/MobileNav.tsx` - Responsive navigation
 - `src/components/ProgressStepper.tsx` - Progress indicator

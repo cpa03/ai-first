@@ -64,7 +64,7 @@
 - Ensures cache consistency with database
 - Proper invalidation strategy for context window management
 
-### 4. Client-Side Caching Hook (`src/lib/use-cache.ts`)
+### 4. Client-Side Caching Hook (`src/lib/use-cache.ts`) (planned - not yet implemented)
 
 **Changes**:
 

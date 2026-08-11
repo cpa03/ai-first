@@ -6,7 +6,8 @@ This directory contains security audits, code quality reports, and compliance in
 
 | Report                                                                                                 | Date       | Description                               |
 | ------------------------------------------------------------------------------------------------------ | ---------- | ----------------------------------------- |
-| [BROCULA-AUDIT-REPORT.md](./BROCULA-AUDIT-REPORT.md)                                                   | 2026-08-10 | BroCula browser audit (latest)            |
+| [BROCULA-AUDIT-20260811.md](./BROCULA-AUDIT-20260811.md)                                               | 2026-08-11 | BroCula browser audit (latest)            |
+| [BROCULA-AUDIT-REPORT.md](./BROCULA-AUDIT-REPORT.md)                                                   | 2026-08-10 | BroCula browser audit                     |
 | [BROCULA-AUDIT-20260810.md](./BROCULA-AUDIT-20260810.md)                                               | 2026-08-10 | BroCula browser audit (latest)            |
 | [BROCULA-AUDIT-2026-08-09.md](./BROCULA-AUDIT-2026-08-09.md)                                           | 2026-08-09 | BroCula browser audit                     |
 | [2026-08-08-brocula-browser-console-lighthouse.md](./2026-08-08-brocula-browser-console-lighthouse.md) | 2026-08-08 | Browser console & Lighthouse audit        |
