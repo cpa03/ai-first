@@ -55,6 +55,16 @@ export const INPUT_VALIDATION_LABELS = {
   SHOW_PASSWORD_ARIA: 'Show password',
   /** ARIA label to hide password */
   HIDE_PASSWORD_ARIA: 'Hide password',
+  /** Copy password label when password is visible */
+  COPY_PASSWORD: 'Copy',
+  /** Copy password success label */
+  COPY_PASSWORD_SUCCESS: 'Copied!',
+  /** ARIA label for copy password button */
+  COPY_PASSWORD_ARIA: 'Copy password to clipboard',
+  /** Tooltip for copy password button */
+  COPY_PASSWORD_TOOLTIP: 'Copy password',
+  /** Toast message on successful password copy */
+  COPY_PASSWORD_TOAST: 'Password copied to clipboard!',
   /** Tooltip for invalid input error icon */
   FIX_ERROR_TOOLTIP: 'Please fix this error',
   /** Character limit progress aria-label */
