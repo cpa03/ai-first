@@ -6,12 +6,10 @@ This directory contains security audits, code quality reports, and compliance in
 
 | Report                                                                                                 | Date       | Description                               |
 | ------------------------------------------------------------------------------------------------------ | ---------- | ----------------------------------------- |
+| [BROCULA-AUDIT-REPORT-20260811.md](./BROCULA-AUDIT-REPORT-20260811.md)                                 | 2026-08-11 | BroCula browser audit report (latest)     |
 | [BROCULA-AUDIT-20260811.md](./BROCULA-AUDIT-20260811.md)                                               | 2026-08-11 | BroCula browser audit (latest)            |
-| [BROCULA-AUDIT-REPORT.md](./BROCULA-AUDIT-REPORT.md)                                                   | 2026-08-10 | BroCula browser audit                     |
-| [BROCULA-AUDIT-20260810.md](./BROCULA-AUDIT-20260810.md)                                               | 2026-08-10 | BroCula browser audit (latest)            |
-| [BROCULA-AUDIT-2026-08-09.md](./BROCULA-AUDIT-2026-08-09.md)                                           | 2026-08-09 | BroCula browser audit                     |
+| [BROCULA-AUDIT-20260810.md](./BROCULA-AUDIT-20260810.md)                                               | 2026-08-10 | BroCula browser audit                     |
 | [2026-08-08-brocula-browser-console-lighthouse.md](./2026-08-08-brocula-browser-console-lighthouse.md) | 2026-08-08 | Browser console & Lighthouse audit        |
-| [BROCULA-AUDIT-20260808.md](./BROCULA-AUDIT-20260808.md)                                               | 2026-08-08 | BroCula browser audit                     |
 | [BROCULA-AUDIT-SUMMARY.md](./BROCULA-AUDIT-SUMMARY.md)                                                 | 2026-08    | BroCula audit summary                     |
 | [SECURITY-AUDIT-1739.md](./SECURITY-AUDIT-1739.md)                                                     | 2026-08    | Security audit for issue #1739            |
 | [ISSUE-01-large-files.md](./ISSUE-01-large-files.md)                                                   | 2026-07    | Large file detection and refactoring plan |

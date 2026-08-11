@@ -231,10 +231,9 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
-- [BroCula Browser Audit Report - 2026-08-10](./audit/BROCULA-AUDIT-REPORT.md) - BroCula browser audit (latest)
-- [BroCula Browser Audit - 2026-08-10](./audit/BROCULA-AUDIT-20260810.md) - BroCula browser audit (latest)
-- [BroCula Browser Audit - 2026-08-09](./audit/BROCULA-AUDIT-2026-08-09.md) - BroCula browser audit
-- [BroCula Browser Audit - 2026-08-08](./audit/BROCULA-AUDIT-20260808.md) - BroCula browser audit
+- [BroCula Browser Audit Report - 2026-08-11](./audit/BROCULA-AUDIT-REPORT-20260811.md) - BroCula browser audit (latest)
+- [BroCula Browser Audit - 2026-08-11](./audit/BROCULA-AUDIT-20260811.md) - BroCula browser audit
+- [BroCula Browser Audit - 2026-08-10](./audit/BROCULA-AUDIT-20260810.md) - BroCula browser audit
 - [BroCula Browser Console Lighthouse - 2026-08-08](./audit/2026-08-08-brocula-browser-console-lighthouse.md) - Browser console & Lighthouse audit
 - [BroCula Audit Summary](./audit/BROCULA-AUDIT-SUMMARY.md) - BroCula audit summary
 - [Issue: Large Files](./audit/ISSUE-01-large-files.md) - Files exceeding 250 LOC maintainability threshold
