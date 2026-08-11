@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 /**
  * Custom hook to detect Caps Lock state on keyboard events.
@@ -25,15 +25,6 @@ import { useState, useCallback, useRef, useEffect } from 'react';
  */
 export function useCapsLock() {
   const [isCapsLockOn, setIsCapsLockOn] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     // Check the CapsLock state from the keyboard event
@@ -56,23 +47,19 @@ export function useCapsLock() {
     setIsCapsLockOn(false);
   }, []);
 
-  // Also handle global CapsLock changes (e.g., user toggles CapsLock while not focused on input)
+  // Also handle global CapsLock changes and keep in sync on any interaction
   useEffect(() => {
-    const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'CapsLock') {
-        // Use a small delay to let the browser update the modifier state
-        timeoutRef.current = setTimeout(() => {
-          setIsCapsLockOn(e.getModifierState('CapsLock'));
-        }, 0);
+    const handleGlobalEvent = (e: KeyboardEvent | MouseEvent) => {
+      if (typeof e.getModifierState === 'function') {
+        setIsCapsLockOn(e.getModifierState('CapsLock'));
       }
     };
 
-    window.addEventListener('keydown', handleGlobalKeyDown);
+    window.addEventListener('keydown', handleGlobalEvent);
+    window.addEventListener('mousedown', handleGlobalEvent);
     return () => {
-      window.removeEventListener('keydown', handleGlobalKeyDown);
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      window.removeEventListener('keydown', handleGlobalEvent);
+      window.removeEventListener('mousedown', handleGlobalEvent);
     };
   }, []);
 
