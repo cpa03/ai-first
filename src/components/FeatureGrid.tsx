@@ -26,6 +26,7 @@ function FeatureGridComponent() {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const [announcement, setAnnouncement] = useState<string>('');
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -95,6 +96,10 @@ function FeatureGridComponent() {
         if (nextCard) {
           nextCard.focus();
           setFocusedIndex(nextIndex);
+          const nextFeature = FEATURE_CONFIG.FEATURES[nextIndex];
+          setAnnouncement(
+            `Step ${nextFeature.step} of ${FEATURE_CONFIG.FEATURES.length}: ${nextFeature.title}`
+          );
         }
       }
     };
@@ -259,6 +264,14 @@ function FeatureGridComponent() {
           </kbd>
           <span>jump to first/last</span>
         </span>
+      </div>
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {announcement}
       </div>
     </section>
   );
