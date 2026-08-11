@@ -48,6 +48,7 @@ import {
   SUCCESS_POP,
   CHECKLIST_ANIMATIONS,
   COMMON_SPACING_PATTERNS,
+  REMAINING_PATTERNS,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
@@ -101,7 +102,9 @@ function PasswordMatchIndicator({
             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
-        <span className="text-xs font-medium">
+        <span
+          className={`${REMAINING_PATTERNS.FORM_TEXT_SIZES.XS} font-medium`}
+        >
           {SIGNUP_PAGE_CONTENT.PASSWORD_MATCH.HINT}
         </span>
       </div>
@@ -149,7 +152,7 @@ function PasswordMatchIndicator({
           />
         </svg>
       )}
-      <span className="text-xs font-medium">
+      <span className={`${REMAINING_PATTERNS.FORM_TEXT_SIZES.XS} font-medium`}>
         {matchStatus === 'match'
           ? SIGNUP_PAGE_CONTENT.PASSWORD_MATCH.MATCH
           : SIGNUP_PAGE_CONTENT.PASSWORD_MATCH.MISMATCH}
@@ -741,7 +744,7 @@ export default function SignupPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full"
+              className={REMAINING_PATTERNS.FORM_WIDTH.FULL}
               size="lg"
               enableTransition
               attention={isFormValid && !isLoading}

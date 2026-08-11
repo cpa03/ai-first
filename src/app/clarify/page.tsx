@@ -26,6 +26,7 @@ import {
   UI_CONFIG,
   GRAY_CLASSES,
   BREATHE,
+  REMAINING_PATTERNS,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
@@ -123,7 +124,7 @@ function ClarifySuccessState({
           <p className="mb-4">{CLARIFY_PAGE_CONTENT.SUCCESS_MESSAGE}</p>
           <div className={CARD_PATTERNS.CONTENT}>
             {Object.entries(answers).map(([key, value]) => (
-              <div key={key} className="text-sm">
+              <div key={key} className={REMAINING_PATTERNS.FORM_TEXT_SIZES.SM}>
                 <span className={`${GRAY_CLASSES.TEXT_700} font-medium`}>
                   {key.replace(/_/g, ' ')}:
                 </span>{' '}
@@ -131,7 +132,7 @@ function ClarifySuccessState({
               </div>
             ))}
           </div>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mt-4">
+          <div className={REMAINING_PATTERNS.CLARIFY_LAYOUT.RESPONSIVE_FLEX}>
             <Button onClick={handleGenerateBlueprint} variant="primary">
               {CLARIFY_PAGE_CONTENT.BUTTONS.GENERATE_BLUEPRINT}
             </Button>
@@ -265,7 +266,7 @@ function ClarifyPageContent() {
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <Alert type="warning" title={CLARIFY_PAGE_CONTENT.AUTH_REQUIRED_TITLE}>
           <p>{CLARIFY_PAGE_CONTENT.AUTH_REQUIRED_MESSAGE}</p>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mt-4">
+          <div className={REMAINING_PATTERNS.CLARIFY_LAYOUT.RESPONSIVE_FLEX}>
             <Button onClick={() => router.push(ROUTES.HOME)} variant="primary">
               {CLARIFY_PAGE_CONTENT.BUTTONS.GO_HOME}
             </Button>
@@ -294,7 +295,11 @@ function ClarifyPageContent() {
         <div className="slide-up">
           <Alert type="error" title={CLARIFY_PAGE_CONTENT.ERROR_TITLE}>
             <p className="mb-4">{error}</p>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div
+              className={
+                REMAINING_PATTERNS.CLARIFY_LAYOUT.RESPONSIVE_FLEX_NO_MT
+              }
+            >
               <Button onClick={() => router.back()} variant="primary">
                 {CLARIFY_PAGE_CONTENT.BUTTONS.GO_BACK}
               </Button>
@@ -342,7 +347,7 @@ function ClarifyPageContent() {
       <div
         className={`${CONTAINER_WIDTHS.SM} mx-auto ${RESPONSIVE_PADDING.CLASS} mb-8`}
       >
-        <div className="text-center">
+        <div className={REMAINING_PATTERNS.CLARIFY_LAYOUT.TEXT_CENTER}>
           <h1 className={`text-3xl font-bold ${GRAY_CLASSES.TEXT_900} mb-4`}>
             {CLARIFY_PAGE_CONTENT.HEADING}
           </h1>

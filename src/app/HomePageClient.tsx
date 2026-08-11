@@ -24,9 +24,12 @@ import {
 import { HOMEPAGE_SKELETON_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { HERO_ENTRANCE } from '@/lib/config';
+import { REMAINING_PATTERNS } from '@/lib/config/remaining-hardcoded-patterns';
 
 const ShareButton = dynamic(() => import('@/components/ShareButton'), {
-  loading: () => <div className="h-10 w-24" />,
+  loading: () => (
+    <div className={REMAINING_PATTERNS.SKELETON_SIZES.SHARE_BUTTON} />
+  ),
   ssr: false,
 });
 
@@ -41,15 +44,23 @@ const IdeaInput = dynamic(() => import('@/components/IdeaInput'), {
       className={`${SPACE_Y_PATTERNS.LG}`}
       style={{ minHeight: HOMEPAGE_SKELETON_TAILWIND.IDEA_INPUT_MIN_H }}
     >
-      <Skeleton variant="text" className="h-32 w-full" />
-      <Skeleton variant="rect" className="h-10 w-32" />
+      <Skeleton
+        variant="text"
+        className={REMAINING_PATTERNS.SKELETON_SIZES.IDEA_INPUT_TEXT}
+      />
+      <Skeleton
+        variant="rect"
+        className={REMAINING_PATTERNS.SKELETON_SIZES.IDEA_INPUT_BUTTON}
+      />
     </div>
   ),
   ssr: false,
 });
 
 const CopyButton = dynamic(() => import('@/components/CopyButton'), {
-  loading: () => <div className="h-8 w-20" />,
+  loading: () => (
+    <div className={REMAINING_PATTERNS.SKELETON_SIZES.COPY_BUTTON} />
+  ),
   ssr: false,
 });
 
@@ -65,9 +76,18 @@ const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
           key={i}
           className={`text-center p-6 rounded-xl bg-white border ${GRAY_CLASSES.BORDER_200} flex flex-col items-center justify-center`}
         >
-          <Skeleton variant="circle" className="w-16 h-16 mx-auto mb-4" />
-          <Skeleton variant="text" className="h-6 mx-auto mb-2 w-3/4" />
-          <Skeleton variant="text" className="h-4 mx-auto w-full" />
+          <Skeleton
+            variant="circle"
+            className={`${REMAINING_PATTERNS.SKELETON_SIZES.FEATURE_CIRCLE} mx-auto mb-4`}
+          />
+          <Skeleton
+            variant="text"
+            className={`${REMAINING_PATTERNS.SKELETON_SIZES.FEATURE_TITLE} mx-auto mb-2 w-3/4`}
+          />
+          <Skeleton
+            variant="text"
+            className={`${REMAINING_PATTERNS.SKELETON_SIZES.FEATURE_DESC} mx-auto w-full`}
+          />
         </div>
       ))}
     </section>
@@ -83,7 +103,10 @@ const WhyChooseSection = dynamic(
         className={`${MT_CLASSES.XXXXL} ${GRAY_CLASSES.BG_50} rounded-lg p-8`}
         style={{ minHeight: HOMEPAGE_SKELETON_TAILWIND.WHY_CHOOSE_MIN_H }}
       >
-        <Skeleton variant="text" className="h-10 mx-auto mb-6 w-3/4" />
+        <Skeleton
+          variant="text"
+          className={`${REMAINING_PATTERNS.SKELETON_SIZES.WHY_CHOOSE_TITLE} mx-auto mb-6 w-3/4`}
+        />
         <div className="grid md:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map((i) => (
             <div
@@ -92,11 +115,17 @@ const WhyChooseSection = dynamic(
             >
               <Skeleton
                 variant="circle"
-                className="w-6 h-6 flex-shrink-0 mt-1"
+                className={`${REMAINING_PATTERNS.SKELETON_SIZES.WHY_CHOOSE_ICON} flex-shrink-0 mt-1`}
               />
-              <div className="flex-1">
-                <Skeleton variant="text" className="h-5 mb-2 w-1/2" />
-                <Skeleton variant="text" className="h-4 w-3/4" />
+              <div className={REMAINING_PATTERNS.SKELETON_LAYOUT.FLEX_GROW}>
+                <Skeleton
+                  variant="text"
+                  className={`${REMAINING_PATTERNS.SKELETON_SIZES.WHY_CHOOSE_ITEM_TITLE} mb-2 w-1/2`}
+                />
+                <Skeleton
+                  variant="text"
+                  className={`${REMAINING_PATTERNS.SKELETON_SIZES.FEATURE_DESC} w-3/4`}
+                />
               </div>
             </div>
           ))}

@@ -40,6 +40,7 @@ import {
 import Tooltip from '@/components/Tooltip';
 import FooterNav from '@/components/FooterNav';
 import { FOOTER_PATTERNS } from '@/lib/config/remaining-styles';
+import { REMAINING_PATTERNS } from '@/lib/config/remaining-hardcoded-patterns';
 
 // JSON-LD Structured Data for SEO - Growth: Better search visibility
 const jsonLd = {
@@ -202,13 +203,13 @@ export default async function RootLayout({
                 </kbd>
               </span>
             </a>
-            <div className="min-h-screen flex flex-col">
+            <div className={REMAINING_PATTERNS.MAIN_CONTENT}>
               <ToastContainer />
               <header
                 className={`${BG_COLOR_CLASSES.CARD} ${SHADOW_CLASSES.SMALL} ${BORDER_COLOR_CLASSES.TOP} sticky top-0 z-[${Z_INDEX_LAYERS.OVERLAY}]`}
               >
                 <div className={PAGE_LAYOUT_CLASSES.CONTAINER_XL}>
-                  <div className="flex justify-between items-center h-16">
+                  <div className={REMAINING_PATTERNS.HEADER}>
                     <div className="flex items-center">
                       <Link
                         href={ROUTES.HOME}
@@ -226,7 +227,7 @@ export default async function RootLayout({
               </header>
               <main
                 id={PAGE_ELEMENT_IDS.MAIN_CONTENT}
-                className="flex-1 focus:outline-none"
+                className={REMAINING_PATTERNS.SKIP_LINK_TARGET}
                 role="main"
                 tabIndex={-1}
               >

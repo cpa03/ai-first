@@ -38,6 +38,7 @@ import {
   SPACE_Y_PATTERNS,
   GAP_CLASSES,
   HERO_ENTRANCE,
+  REMAINING_PATTERNS,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -413,7 +414,7 @@ export default function LoginPage() {
                 </span>
               </label>
             </div>
-            <div className="text-sm">
+            <div className={REMAINING_PATTERNS.FORM_TEXT_SIZES.SM}>
               <Link
                 href={ROUTES.FORGOT_PASSWORD}
                 className={FORM_PATTERNS.AUTH_LINK}
@@ -427,7 +428,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full"
+              className={REMAINING_PATTERNS.FORM_WIDTH.FULL}
               size="lg"
               enableTransition
               attention={isFormValid && !isLoading}
