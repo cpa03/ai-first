@@ -45,7 +45,9 @@ import {
 } from '@/lib/config/icon-sizes';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { PLATFORM } from '@/lib/dom-utils';
+import { useClipboard } from '@/hooks/useClipboard';
 import Tooltip from './Tooltip';
+import StatusAnnouncer from './StatusAnnouncer';
 
 export interface InputWithValidationProps extends React.InputHTMLAttributes<
   HTMLInputElement | HTMLTextAreaElement
@@ -147,6 +149,7 @@ const InputWithValidationComponent = forwardRef<
     const [shouldShake, setShouldShake] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
+    const [passwordCopied, setPasswordCopied] = useState(false);
     const [showSuccessFlash, setShowSuccessFlash] = useState(false);
     const [showValidCelebration, setShowValidCelebration] = useState(false);
     const [isMac, setIsMac] = useState(false);
@@ -165,6 +168,16 @@ const InputWithValidationComponent = forwardRef<
       isValid && charCount > 0,
       { useMicrotask: true }
     );
+
+    const handlePasswordCopied = useCallback(() => {
+      setPasswordCopied(true);
+      setTimeout(() => setPasswordCopied(false), 2000);
+    }, []);
+
+    const { copy: copyPassword } = useClipboard({
+      onCopy: handlePasswordCopied,
+      duration: 2000,
+    });
 
     // Micro-UX: Detect platform for keyboard shortcut display
     useEffect(() => {
@@ -534,84 +547,149 @@ const InputWithValidationComponent = forwardRef<
           )}
 
           {showPasswordToggle && !multiline && (
-            <div
-              className={`absolute ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} ${hasIcon || showClearButton ? 'right-20' : 'right-14'}`}
-            >
-              <Tooltip
-                content={
-                  passwordVisible
-                    ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA
-                    : INPUT_VALIDATION_LABELS.SHOW_PASSWORD_ARIA
-                }
-                shortcut={isMac ? ['⌘', 'Shift', 'P'] : ['Ctrl', 'Shift', 'P']}
-                position="top"
+            <>
+              <StatusAnnouncer
+                message={INPUT_VALIDATION_LABELS.COPY_PASSWORD_TOAST}
+                triggered={passwordCopied}
+              />
+              {passwordVisible && currentValue && (
+                <div
+                  className={`absolute ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} ${hasIcon || showClearButton ? 'right-36' : 'right-28'}`}
+                >
+                  <Tooltip
+                    content={INPUT_VALIDATION_LABELS.COPY_PASSWORD_TOOLTIP}
+                    shortcut={isMac ? ['⌘', 'C'] : ['Ctrl', 'C']}
+                    position="top"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        triggerHapticFeedback();
+                        copyPassword(currentValue);
+                      }}
+                      className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
+                      aria-label={INPUT_VALIDATION_LABELS.COPY_PASSWORD_ARIA}
+                    >
+                      <span className="text-xs font-medium tabular-nums">
+                        {passwordCopied
+                          ? INPUT_VALIDATION_LABELS.COPY_PASSWORD_SUCCESS
+                          : INPUT_VALIDATION_LABELS.COPY_PASSWORD}
+                      </span>
+                      <span className={`relative inline-flex ${SVG_SIZES.SMD}`}>
+                        <svg
+                          className={`${SVG_SIZES.SMD} ${TRANSITION_CLASSES.DEFAULT} ${passwordCopied ? TEXT_COLORS.SUCCESS_DARK : ''}`}
+                          fill="none"
+                          viewBox={SVG_VIEWBOX.STANDARD}
+                          stroke="currentColor"
+                          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                          aria-hidden="true"
+                        >
+                          {passwordCopied ? (
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M5 13l4 4L19 7"
+                            />
+                          ) : (
+                            <>
+                              <rect
+                                x="9"
+                                y="9"
+                                width="13"
+                                height="13"
+                                rx="2"
+                                ry="2"
+                              />
+                              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                            </>
+                          )}
+                        </svg>
+                      </span>
+                    </button>
+                  </Tooltip>
+                </div>
+              )}
+              <div
+                className={`absolute ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} ${hasIcon || showClearButton ? 'right-20' : 'right-14'}`}
               >
-                <button
-                  type="button"
-                  onClick={() => {
-                    triggerHapticFeedback();
-                    setPasswordVisible(!passwordVisible);
-                  }}
-                  className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
-                  aria-label={
+                <Tooltip
+                  content={
                     passwordVisible
                       ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA
                       : INPUT_VALIDATION_LABELS.SHOW_PASSWORD_ARIA
                   }
+                  shortcut={
+                    isMac ? ['⌘', 'Shift', 'P'] : ['Ctrl', 'Shift', 'P']
+                  }
+                  position="top"
                 >
-                  <span className="text-xs font-medium tabular-nums">
-                    {passwordVisible
-                      ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD
-                      : INPUT_VALIDATION_LABELS.SHOW_PASSWORD}
-                  </span>
-                  <span className={`relative inline-flex ${SVG_SIZES.SMD}`}>
-                    {/* Eye icon (show state) - fades/slides out when toggling to hidden */}
-                    <svg
-                      className={`absolute inset-0 ${SVG_SIZES.SMD} ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
-                        passwordVisible
-                          ? 'opacity-100 scale-100 rotate-0'
-                          : 'opacity-0 scale-75 -rotate-45'
-                      }`}
-                      fill="none"
-                      viewBox={SVG_VIEWBOX.STANDARD}
-                      stroke="currentColor"
-                      strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                      />
-                    </svg>
-                    {/* Eye-slash icon (hide state) - fades/slides in when toggling to visible */}
-                    <svg
-                      className={`absolute inset-0 ${SVG_SIZES.SMD} ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
-                        passwordVisible
-                          ? 'opacity-0 scale-75 rotate-45'
-                          : 'opacity-100 scale-100 rotate-0'
-                      }`}
-                      fill="none"
-                      viewBox={SVG_VIEWBOX.STANDARD}
-                      stroke="currentColor"
-                      strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                      />
-                    </svg>
-                  </span>
-                </button>
-              </Tooltip>
-            </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      triggerHapticFeedback();
+                      setPasswordVisible(!passwordVisible);
+                    }}
+                    className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
+                    aria-label={
+                      passwordVisible
+                        ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA
+                        : INPUT_VALIDATION_LABELS.SHOW_PASSWORD_ARIA
+                    }
+                  >
+                    <span className="text-xs font-medium tabular-nums">
+                      {passwordVisible
+                        ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD
+                        : INPUT_VALIDATION_LABELS.SHOW_PASSWORD}
+                    </span>
+                    <span className={`relative inline-flex ${SVG_SIZES.SMD}`}>
+                      {/* Eye icon (show state) - fades/slides out when toggling to hidden */}
+                      <svg
+                        className={`absolute inset-0 ${SVG_SIZES.SMD} ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
+                          passwordVisible
+                            ? 'opacity-100 scale-100 rotate-0'
+                            : 'opacity-0 scale-75 -rotate-45'
+                        }`}
+                        fill="none"
+                        viewBox={SVG_VIEWBOX.STANDARD}
+                        stroke="currentColor"
+                        strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
+                      </svg>
+                      {/* Eye-slash icon (hide state) - fades/slides in when toggling to visible */}
+                      <svg
+                        className={`absolute inset-0 ${SVG_SIZES.SMD} ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
+                          passwordVisible
+                            ? 'opacity-0 scale-75 rotate-45'
+                            : 'opacity-100 scale-100 rotate-0'
+                        }`}
+                        fill="none"
+                        viewBox={SVG_VIEWBOX.STANDARD}
+                        stroke="currentColor"
+                        strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                        />
+                      </svg>
+                    </span>
+                  </button>
+                </Tooltip>
+              </div>
+            </>
           )}
         </div>
 
