@@ -190,7 +190,7 @@ npm install eslint-plugin-react-hooks@latest --save-dev
    - Collision-resistant SHA-256 hashing
    - Proper cache invalidation
 
-2. **Client-Side Caching** (`src/lib/use-cache.ts`)
+2. **Client-Side Caching** (`src/lib/use-cache.ts`) (planned - not yet implemented)
    - Stale-while-revalidate pattern
    - localStorage-based caching
    - TTL-based expiration
