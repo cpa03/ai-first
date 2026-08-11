@@ -25,6 +25,7 @@ import {
   GAP_CLASSES,
   GRAY_CLASSES,
   TEXT_SIZE_CLASSES,
+  FLEX_GROW_PATTERNS,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -287,7 +288,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       >
         {toastIcons[toast.type]}
       </svg>
-      <div className="flex-1 min-w-0">
+      <div className={FLEX_GROW_PATTERNS.GROW}>
         <p className={`text-sm font-medium ${styles.titleColor}`}>
           {toast.message}
         </p>

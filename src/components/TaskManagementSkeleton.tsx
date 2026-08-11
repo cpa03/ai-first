@@ -16,6 +16,7 @@ import {
   SPACE_Y_PATTERNS,
   SPACING_PATTERNS,
   SKELETON_SIZE_PATTERNS,
+  TEXT_ALIGNMENT,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 
@@ -121,7 +122,7 @@ function TaskManagementSkeletonComponent() {
                   />
                 </div>
                 <div className={FLEX_PATTERNS.GAP_XL}>
-                  <div className="text-right">
+                  <div className={TEXT_ALIGNMENT.RIGHT}>
                     <Skeleton
                       className={`${SKELETON_SIZE_PATTERNS.BADGE_SM} mb-1 ml-auto`}
                       variant="text"

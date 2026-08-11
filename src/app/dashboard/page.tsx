@@ -49,6 +49,8 @@ import {
   FOCUS_RING,
   COMMON_SPACING_PATTERNS,
   REMAINING_PATTERNS,
+  OVERFLOW_PATTERNS,
+  INLINE_FLEX_PATTERNS,
 } from '@/lib/config';
 import type { ComponentConfig } from '@/lib/config/components';
 import {
@@ -910,14 +912,14 @@ export default function DashboardPage() {
                 {/* Provides discoverability for quick actions: Enter to clear filter, n to create new idea */}
                 {/* Matches the keyboard hints pattern used elsewhere in the dashboard */}
                 <span
-                  className={`hidden sm:inline-flex items-center gap-4 text-xs ${GRAY_CLASSES.TEXT_500}`}
+                  className={`${INLINE_FLEX_PATTERNS.RESPONSIVE_GAP_MD_SM} text-xs ${GRAY_CLASSES.TEXT_500}`}
                   aria-hidden="true"
                 >
-                  <span className="inline-flex items-center gap-1.5">
+                  <span className={INLINE_FLEX_PATTERNS.GAP_MD_SM}>
                     <kbd className={KBD_HINT_STYLE}>Enter</kbd>
                     <span>clear filter</span>
                   </span>
-                  <span className="inline-flex items-center gap-1.5">
+                  <span className={INLINE_FLEX_PATTERNS.GAP_MD_SM}>
                     <kbd className={KBD_HINT_STYLE}>n</kbd>
                     <span>new idea</span>
                   </span>
@@ -1086,7 +1088,7 @@ export default function DashboardPage() {
         </div>
       ) : (
         <div className={CARD_PATTERNS.OVERFLOW_HIDDEN}>
-          <div className="overflow-x-auto">
+          <div className={OVERFLOW_PATTERNS.X_AUTO}>
             <table
               className={`${TABLE_PATTERNS.container} divide-y divide-gray-200`}
               role="table"

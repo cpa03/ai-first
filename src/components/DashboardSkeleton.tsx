@@ -16,6 +16,7 @@ import {
   MB_CLASSES,
   MT_CLASSES,
   COMMON_SPACING_PATTERNS,
+  OVERFLOW_PATTERNS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 
@@ -54,7 +55,7 @@ function DashboardSkeletonComponent() {
       </div>
 
       <div className={CARD_PATTERNS.OVERFLOW_HIDDEN}>
-        <div className="overflow-x-auto">
+        <div className={OVERFLOW_PATTERNS.X_AUTO}>
           <table
             className={`${TABLE_PATTERNS.container} divide-y divide-gray-200`}
             aria-hidden="true"

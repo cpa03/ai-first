@@ -510,3 +510,15 @@ export const REMAINING_STYLES = {
   FOOTER_PATTERNS,
   FORM_PATTERNS,
 } as const;
+
+export const TEXT_ALIGNMENT = {
+  RIGHT: 'text-right',
+  LEFT: 'text-left',
+  CENTER: 'text-center',
+} as const;
+
+export const OVERFLOW_PATTERNS = {
+  X_AUTO: 'overflow-x-auto',
+  Y_AUTO: 'overflow-y-auto',
+  HIDDEN: 'overflow-hidden',
+} as const;

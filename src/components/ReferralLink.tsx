@@ -27,6 +27,7 @@ import {
   REFERRAL_LINK_STYLES,
   TEXT_COLORS,
   COMMON_SPACING_PATTERNS,
+  FLEX_GROW_PATTERNS,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -153,7 +154,7 @@ function ReferralLinkComponent({
       aria-label={REFERRAL_LINK_LABELS.REGION_ARIA_LABEL}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex-1 min-w-0">
+        <div className={FLEX_GROW_PATTERNS.GROW}>
           <h3 className={`${REFERRAL_LINK_STYLES.TITLE} text-primary-900`}>
             {REFERRAL_LINK_LABELS.TITLE}
           </h3>
@@ -170,7 +171,7 @@ function ReferralLinkComponent({
                   : REFERRAL_LINK_LABELS.CODE_TITLE
               }
               position="top"
-              className="flex-1 min-w-0"
+              className={FLEX_GROW_PATTERNS.GROW}
             >
               <code
                 onClick={handleCodeClick}
