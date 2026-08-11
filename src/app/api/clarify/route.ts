@@ -1,6 +1,6 @@
 import { clarifierAgent } from '@/lib/agents/clarifier';
 import { validateIdea, validateIdeaId } from '@/lib/validation';
-import { ValidationError } from '@/lib/errors';
+import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
 import {
   withApiHandler,
   standardSuccessResponse,
@@ -35,9 +35,14 @@ async function handlePost(context: ApiContext) {
 
     // Verify idea exists and user owns it
     const ideaRecord = await dbService.getIdea(finalIdeaId);
-    if (ideaRecord) {
-      verifyResourceOwnership(user.id, ideaRecord.user_id, 'idea');
+    if (!ideaRecord) {
+      throw new AppError(
+        'Idea not found',
+        ErrorCode.NOT_FOUND,
+        STATUS_CODES.NOT_FOUND
+      );
     }
+    verifyResourceOwnership(user.id, ideaRecord.user_id, 'idea');
   } else {
     // Still require authentication even for new ideas
     await requireAuth(request);
