@@ -6,6 +6,7 @@ import {
   ANIMATION_CONFIG,
   TRANSITION_CLASSES,
   TYPING_INDICATOR_DOT_PATTERN,
+  INLINE_FLEX_PATTERNS,
 } from '@/lib/config';
 
 interface TypingIndicatorProps {
@@ -83,12 +84,12 @@ function TypingIndicatorComponent({
 
   return (
     <div
-      className={`inline-flex items-center gap-1 ${className}`}
+      className={`${INLINE_FLEX_PATTERNS.GAP_SM} ${className}`}
       role="status"
       aria-live="polite"
     >
       {/* Animated dots - hidden from screen readers */}
-      <span className="inline-flex items-center gap-1" aria-hidden="true">
+      <span className={INLINE_FLEX_PATTERNS.GAP_SM} aria-hidden="true">
         {[0, 1, 2].map((index) => (
           <span
             key={index}

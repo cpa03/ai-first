@@ -258,6 +258,30 @@ export const RESPONSIVE_SPACING = {
   RESPONSIVE_GAP: 'flex items-center gap-2 sm:gap-4',
 } as const;
 
+/**
+ * Inline flex patterns for inline elements with gaps
+ * Replaces hardcoded inline-flex items-center gap-* classes
+ */
+export const INLINE_FLEX_PATTERNS = {
+  /** inline-flex items-center gap-1 */
+  GAP_SM: 'inline-flex items-center gap-1',
+  /** inline-flex items-center gap-1.5 */
+  GAP_MD_SM: 'inline-flex items-center gap-1.5',
+  /** inline-flex items-center gap-2 */
+  GAP_MD: 'inline-flex items-center gap-2',
+  /** hidden sm:inline-flex items-center gap-1.5 */
+  RESPONSIVE_GAP_MD_SM: 'hidden sm:inline-flex items-center gap-1.5',
+} as const;
+
+/**
+ * Flex grow patterns for flexible width containers
+ * Replaces hardcoded flex-1 min-w-0 classes
+ */
+export const FLEX_GROW_PATTERNS = {
+  /** flex-1 min-w-0 - allows element to grow while preventing overflow */
+  GROW: 'flex-1 min-w-0',
+} as const;
+
 export type GapClasses = typeof GAP_CLASSES;
 export type MtClasses = typeof MT_CLASSES;
 export type MbClasses = typeof MB_CLASSES;

@@ -24,6 +24,7 @@ import {
   COMMON_SPACING_PATTERNS,
   HEIGHT_ONLY,
   UI_TIMING_CONFIG,
+  FLEX_GROW_PATTERNS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -277,7 +278,7 @@ const AlertComponent = function Alert({
       >
         {ALERT_ICONS[type]}
       </svg>
-      <div className="flex-1 min-w-0">
+      <div className={FLEX_GROW_PATTERNS.GROW}>
         {title && (
           <h3
             className={`text-lg font-semibold ${styles.titleColor} ${MB_CLASSES.MD}`}

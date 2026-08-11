@@ -723,6 +723,8 @@ export {
   FOOTER_PATTERNS,
   FORM_PATTERNS,
   REMAINING_STYLES,
+  TEXT_ALIGNMENT,
+  OVERFLOW_PATTERNS,
 } from './remaining-styles';
 
 // Component-Specific Tailwind Class Configuration
@@ -898,6 +900,8 @@ export {
   PL_CLASSES,
   COMMON_SPACING_PATTERNS,
   RESPONSIVE_SPACING,
+  INLINE_FLEX_PATTERNS,
+  FLEX_GROW_PATTERNS,
 } from './spacing';
 
 // Centralizes all hardcoded icon size values (w-N h-N patterns)

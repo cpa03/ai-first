@@ -20,6 +20,7 @@ import {
   SPACE_Y_PATTERNS,
   PROGRESS_PERCENTAGE,
   CONFETTI_DOT,
+  TEXT_ALIGNMENT,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -198,7 +199,7 @@ function DeliverableCardComponent({
           )}
         </div>
         <div className={FLEX_PATTERNS.GAP_XL}>
-          <div className="text-right">
+          <div className={TEXT_ALIGNMENT.RIGHT}>
             <div
               className={`${DELIVERABLE_CARD_STYLES.HEADER.PROGRESS.VALUE} ${isCompleted ? TEXT_COLORS.SUCCESS_DARK : ''}`}
             >

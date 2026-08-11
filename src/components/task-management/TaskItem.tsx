@@ -22,6 +22,7 @@ import {
   SPACING_PATTERNS,
   CONFETTI_DOT,
   REMAINING_PATTERNS,
+  FLEX_GROW_PATTERNS,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -223,7 +224,7 @@ function TaskItemComponent({
             )}
           </div>
 
-          <div className="flex-1 min-w-0">
+          <div className={FLEX_GROW_PATTERNS.GROW}>
             <div
               className={`${FLEX_PATTERNS.BETWEEN_START} ${SPACING_PATTERNS.GAP2}`}
             >

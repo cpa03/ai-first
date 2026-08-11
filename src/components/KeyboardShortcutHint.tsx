@@ -18,6 +18,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   COMMON_SPACING_PATTERNS,
+  FLEX_GROW_PATTERNS,
 } from '@/lib/config';
 
 interface KeyboardShortcutHintProps {
@@ -133,7 +134,7 @@ function KeyboardShortcutHintComponent({
               />
             </svg>
           </div>
-          <div className="flex-1 min-w-0">
+          <div className={FLEX_GROW_PATTERNS.GROW}>
             <p className={`text-sm font-semibold ${TEXT_COLORS.PRIMARY}`}>
               Keyboard shortcuts available
             </p>

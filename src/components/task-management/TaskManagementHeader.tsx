@@ -18,6 +18,7 @@ import {
   FLEX_PATTERNS,
   PROGRESS_PERCENTAGE,
   CONFETTI_DOT,
+  TEXT_ALIGNMENT,
 } from '@/lib/config';
 import { DASHBOARD_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -179,7 +180,7 @@ function TaskManagementHeaderComponent({
             {MESSAGES.TASK_MANAGEMENT.HEADER_SUBTITLE(totalDeliverables)}
           </p>
         </div>
-        <div className="text-right">
+        <div className={TEXT_ALIGNMENT.RIGHT}>
           <div className={TASK_HEADER_STYLES.STATS.VALUE}>
             {animatedProgress}%
           </div>
