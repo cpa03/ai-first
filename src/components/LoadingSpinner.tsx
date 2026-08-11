@@ -10,6 +10,7 @@ import {
   LOADING_SPINNER_RIPPLE,
   COMPONENT_MAGIC_NUMBERS,
   BORDER_COLORS,
+  REMAINING_PATTERNS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -166,7 +167,7 @@ function LoadingSpinnerComponent({
 
       {!prefersReducedMotion && (
         <div
-          className="absolute rounded-full border border-primary-200/60"
+          className={REMAINING_PATTERNS.SPINNER_BORDER_RING}
           style={borderRingStyle}
           aria-hidden="true"
         />
@@ -174,7 +175,7 @@ function LoadingSpinnerComponent({
 
       <svg
         className={`
-          relative z-10 rounded-full
+          ${REMAINING_PATTERNS.SPINNER_SVG_CONTAINER}
           ${prefersReducedMotion ? `border-2 ${BORDER_COLORS.DEFAULT}` : `animate-spin border-2 ${BORDER_COLORS.LIGHT} border-t-primary-600`}
         `}
         style={svgStyle}
@@ -183,7 +184,7 @@ function LoadingSpinnerComponent({
         aria-hidden="true"
       >
         <circle
-          className="opacity-30"
+          className={REMAINING_PATTERNS.SPINNER_CIRCLE_OPACITY}
           cx={COMPONENT_CONFIG.SPINNER.VIEWBOX_SIZE / 2}
           cy={COMPONENT_CONFIG.SPINNER.VIEWBOX_SIZE / 2}
           r={COMPONENT_CONFIG.SPINNER.VIEWBOX_SIZE / 2 - 2}
@@ -191,7 +192,11 @@ function LoadingSpinnerComponent({
           strokeWidth={COMPONENT_CONFIG.SPINNER.STROKE_WIDTH}
         />
         <path
-          className={prefersReducedMotion ? 'opacity-100' : 'opacity-75'}
+          className={
+            prefersReducedMotion
+              ? REMAINING_PATTERNS.SPINNER_PATH_REDUCED_MOTION
+              : REMAINING_PATTERNS.SPINNER_PATH_NORMAL_MOTION
+          }
           fill="currentColor"
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         />

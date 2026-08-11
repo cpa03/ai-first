@@ -48,6 +48,7 @@ import {
   FADE_IN,
   FOCUS_RING,
   COMMON_SPACING_PATTERNS,
+  REMAINING_PATTERNS,
 } from '@/lib/config';
 import type { ComponentConfig } from '@/lib/config/components';
 import {
@@ -1115,7 +1116,7 @@ export default function DashboardPage() {
               </thead>
               <tbody
                 ref={tableBodyRef}
-                className="bg-white divide-y divide-gray-200"
+                className={REMAINING_PATTERNS.TABLE_BODY}
               >
                 {ideas.map((idea, index) => (
                   <tr
@@ -1130,7 +1131,7 @@ export default function DashboardPage() {
                         : `animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)}`
                     } ${
                       selectedRowIndex === index
-                        ? `${DASHBOARD_PATTERNS.SELECT_OPTION_ACTIVE} ring-2 ring-primary-400 ring-inset`
+                        ? `${DASHBOARD_PATTERNS.SELECT_OPTION_ACTIVE} ${REMAINING_PATTERNS.TABLE_ROW_SELECTED_RING}`
                         : ''
                     }`}
                   >
@@ -1146,7 +1147,9 @@ export default function DashboardPage() {
                         <CopyButton
                           textToCopy={idea.title}
                           variant="icon-only"
-                          className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus:opacity-100 transition-opacity"
+                          className={
+                            REMAINING_PATTERNS.COPY_BUTTON_HOVER_OPACITY
+                          }
                           showToast={false}
                         />
                       </div>
@@ -1194,14 +1197,16 @@ export default function DashboardPage() {
                         >
                           {deletingId === idea.id && (
                             <svg
-                              className="animate-spin h-3 w-3"
+                              className={REMAINING_PATTERNS.SPINNER_SMALL}
                               xmlns={SVG_NAMESPACE.SVG}
                               fill="none"
                               viewBox={SVG_VIEWBOX.STANDARD}
                               aria-hidden="true"
                             >
                               <circle
-                                className="opacity-25"
+                                className={
+                                  REMAINING_PATTERNS.DISABLED_OPACITY.LIGHT
+                                }
                                 cx="12"
                                 cy="12"
                                 r="10"
@@ -1209,7 +1214,9 @@ export default function DashboardPage() {
                                 strokeWidth={SVG_STROKE_WIDTHS.SPINNER}
                               />
                               <path
-                                className="opacity-75"
+                                className={
+                                  REMAINING_PATTERNS.DISABLED_OPACITY.MEDIUM
+                                }
                                 fill="currentColor"
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                               />

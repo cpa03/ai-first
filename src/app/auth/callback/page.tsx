@@ -21,6 +21,7 @@ import {
   UI_CONFIG,
   SPACE_Y_PATTERNS,
   FADE_IN,
+  REMAINING_PATTERNS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -237,7 +238,7 @@ export default function AuthCallbackPage() {
             />
             {/* Micro-UX: Subtle pulse ring around spinner for visual feedback */}
             {!prefersReducedMotion && (
-              <div className="absolute inset-0 rounded-full border-2 border-primary-200 animate-ping opacity-20" />
+              <div className={REMAINING_PATTERNS.AUTH_CALLBACK_ANIMATION} />
             )}
           </div>
 
@@ -249,7 +250,10 @@ export default function AuthCallbackPage() {
               aria-atomic="true"
             >
               {COMPONENT_DEFAULTS.LOADING_TEXT.AUTH_CALLBACK_TITLE}
-              <span className="inline-block w-8 text-left" aria-hidden="true">
+              <span
+                className={REMAINING_PATTERNS.AUTH_CALLBACK_WIDTH}
+                aria-hidden="true"
+              >
                 {getProgressDots()}
               </span>
             </h1>

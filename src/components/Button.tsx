@@ -18,6 +18,7 @@ import {
   COMPONENT_CONFIG,
   BUTTON_RIPPLE,
   SVG_CIRCLE,
+  REMAINING_PATTERNS,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { PLATFORM } from '@/lib/dom-utils';
@@ -235,7 +236,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
             aria-hidden="true"
           >
             <circle
-              className="opacity-25"
+              className={REMAINING_PATTERNS.DISABLED_OPACITY.LIGHT}
               cx={SVG_CIRCLE.CX_24}
               cy={SVG_CIRCLE.CY_24}
               r={SVG_CIRCLE.R_10}
@@ -243,7 +244,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
               strokeWidth={SVG_STROKE_WIDTHS.SPINNER}
             ></circle>
             <path
-              className="opacity-75"
+              className={REMAINING_PATTERNS.DISABLED_OPACITY.MEDIUM}
               fill="currentColor"
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
