@@ -259,6 +259,18 @@ function detectPlatform(): 'vercel' | 'cloudflare' | 'unknown' {
  * @see getClientIdentifier for the recommended identification strategy
  */
 function generateRequestFingerprint(request: Request): string {
+  // SECURITY: Log fingerprint usage in production for abuse detection
+  if (
+    typeof process !== 'undefined' &&
+    ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'production'
+  ) {
+    console.warn(
+      `[RateLimit] SECURITY: Using client-controlled fingerprint fallback. ` +
+        `This is vulnerable to header spoofing. Ensure platform headers are set. ` +
+        `URL: ${request.url}`
+    );
+  }
+
   const userAgent = request.headers.get('user-agent') || '';
   const acceptLang = request.headers.get('accept-language') || '';
   const acceptEncoding = request.headers.get('accept-encoding') || '';
@@ -273,7 +285,11 @@ function generateRequestFingerprint(request: Request): string {
   }
 
   const serverSecret = ENV_ACCESSORS.SECURITY.INTERNAL_API_SECRET() || '';
-  const combined = `${urlPath}:${userAgent}:${acceptLang}:${acceptEncoding}:${serverSecret}`;
+
+  // SECURITY: Include timestamp component to make fingerprints time-bound
+  // This limits the window for header rotation attacks
+  const timeBucket = Math.floor(Date.now() / (60 * 60 * 1000)); // 1-hour buckets
+  const combined = `${urlPath}:${userAgent}:${acceptLang}:${acceptEncoding}:${serverSecret}:${timeBucket}`;
 
   return `fp:${simpleHash(combined)}`;
 }
@@ -346,9 +362,30 @@ export function getClientIdentifier(request: Request): string {
     return `proxy:${proxyIp}`;
   }
 
+  // SECURITY: Check for additional IP headers used by various providers
+  // These are less common but still more reliable than fingerprinting
+  const additionalIpHeaders = [
+    'x-client-ip',
+    'x-cluster-client-ip',
+    'x-forwarded',
+    'forwarded-for',
+    'forwarded',
+  ];
+
+  for (const header of additionalIpHeaders) {
+    const ip = request.headers.get(header);
+    if (ip) {
+      // Extract first IP if comma-separated
+      const firstIp = ip.split(',')[0].trim();
+      if (firstIp) {
+        return `header:${firstIp}`;
+      }
+    }
+  }
+
   // Fallback: Use request fingerprinting
-  // ⚠️ WARNING: This uses client-controlled headers and should be a last resort
-  // Consider logging a warning in production if this path is frequently hit
+  // SECURITY: This uses client-controlled headers and is vulnerable to spoofing
+  // Only used when no IP-based identification is available
   return generateRequestFingerprint(request);
 }
 
