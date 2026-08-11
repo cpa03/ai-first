@@ -69,6 +69,7 @@ import CopyButton from '@/components/CopyButton';
 import StepCelebration from '@/components/StepCelebration';
 import Skeleton from '@/components/Skeleton';
 import Tooltip from '@/components/Tooltip';
+import TypingIndicator from '@/components/TypingIndicator';
 import { CapsLockWarning } from '@/components/CapsLockWarning';
 import { useCapsLock } from '@/hooks/useCapsLock';
 import { useClarificationSession } from '@/hooks/useClarificationSession';
@@ -138,12 +139,17 @@ function ClarificationFlow({
   const prevStepRef = useRef(currentStep);
   const [pasteSuccess, setPasteSuccess] = useState(false);
   const pasteSuccessTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Micro-UX: Clean up paste success timeout on unmount
   useEffect(() => {
     return () => {
       if (pasteSuccessTimeoutRef.current) {
         clearTimeout(pasteSuccessTimeoutRef.current);
+      }
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
       }
     };
   }, []);
@@ -162,6 +168,16 @@ function ClarificationFlow({
       });
     }
   }, [currentStep, prefersReducedMotion]);
+
+  // Micro-UX: Reset typing indicator when step changes
+  // Prevents stale typing state from carrying over between questions
+  useEffect(() => {
+    setIsTyping(false);
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+  }, [currentStep]);
 
   // Micro-UX: Track navigation direction for directional slide animation
   // Gives users visual context about whether they're moving forward or backward
@@ -293,12 +309,27 @@ function ClarificationFlow({
     }
   }, [currentQuestion, setCurrentAnswer, textareaRef, textInputRef]);
 
+  const handleInputType = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setCurrentAnswer(e.target.value);
+      setIsTyping(true);
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      typingTimeoutRef.current = setTimeout(() => {
+        setIsTyping(false);
+      }, ANIMATION_CONFIG.TYPING_INDICATOR.STATE_DURATION);
+    },
+    [setCurrentAnswer]
+  );
+
   // Micro-UX: Clear answer handler - matches IdeaInput pattern for consistency
   // Allows users to quickly reset their answer with clear button or Escape key
   const handleClear = useCallback(() => {
     if (currentAnswer.trim()) {
       triggerHapticFeedback();
       setCurrentAnswer('');
+      setIsTyping(false);
       const ref =
         currentQuestion?.type === 'textarea' ? textareaRef : textInputRef;
       ref?.current?.focus();
@@ -734,7 +765,7 @@ function ClarificationFlow({
                   name="answer"
                   label={currentQuestion.question}
                   value={currentAnswer}
-                  onChange={(e) => setCurrentAnswer(e.target.value)}
+                  onChange={handleInputType}
                   onKeyDown={(e) => {
                     capsLockKeyDown(e);
                     handleKeyDown(e);
@@ -762,7 +793,7 @@ function ClarificationFlow({
                   id={CLARIFICATION_ELEMENT_IDS.ANSWER_TEXT}
                   label={currentQuestion.question}
                   value={currentAnswer}
-                  onChange={(e) => setCurrentAnswer(e.target.value)}
+                  onChange={handleInputType}
                   onKeyDown={(e) => {
                     capsLockKeyDown(e);
                     handleKeyDown(e);
@@ -877,6 +908,15 @@ function ClarificationFlow({
                       {CLARIFICATION_FLOW_LABELS.CLEAR_BUTTON}
                     </Button>
                   </Tooltip>
+                </div>
+              )}
+
+            {(currentQuestion.type === 'textarea' ||
+              currentQuestion.type === 'text') &&
+              !showCelebration &&
+              !isSubmitting && (
+                <div className="ml-2">
+                  <TypingIndicator isTyping={isTyping} />
                 </div>
               )}
 
