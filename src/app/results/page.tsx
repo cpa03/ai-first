@@ -411,6 +411,25 @@ function ResultsContent() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [idea, loading, openHelp]);
 
+  // Micro-UX: 'n' key navigates to home page for new idea
+  // Matches the dashboard's 'n' shortcut for consistency across the app
+  // Helps users quickly loop back to create new ideas after reviewing results
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isFocusedOnInput(e.target)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      if (e.key === 'n' && idea && !loading) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        router.push(ROUTES.HOME);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [idea, loading, router]);
+
   // Micro-UX: Section jump shortcuts for quick navigation on long results pages
   // b = Blueprint, t = Tasks, e = Exports
   // Matches the j/k navigation pattern from dashboard for consistency
@@ -941,7 +960,13 @@ function ResultsContent() {
                 </span>
               </span>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-                <kbd className={ELEMENT_PATTERNS.KBD}>?</kbd>
+                <kbd className={KBD_HINT_STYLE}>n</kbd>
+                <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                  new idea
+                </span>
+              </span>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+                <kbd className={KBD_HINT_STYLE}>?</kbd>
                 <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                   all shortcuts
                 </span>
@@ -1116,6 +1141,12 @@ function ResultsContent() {
               <kbd className={KBD_HINT_STYLE}>e</kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 Exports
+              </span>
+            </span>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+              <kbd className={KBD_HINT_STYLE}>n</kbd>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                New Idea
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
