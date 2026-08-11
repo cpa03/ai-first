@@ -390,7 +390,8 @@ export async function verifyInternalRequest(
   try {
     // Check if request has text method (full Fetch API Request)
     if (typeof request.text === 'function') {
-      body = await request.text();
+      // SECURITY & ARCHITECTURE: Clone the request to avoid premature stream consumption
+      body = await request.clone().text();
     } else if (request.body) {
       // Fallback: try to get body from request.body (for different environments)
       body = typeof request.body === 'string' ? request.body : '';
