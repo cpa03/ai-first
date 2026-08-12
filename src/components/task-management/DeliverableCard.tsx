@@ -149,6 +149,14 @@ function DeliverableCardComponent({
     [isExpanded]
   );
 
+  const inlineProgressFillClasses = useMemo(() => {
+    if (deliverable.progress === 100) return 'bg-green-500';
+    if (deliverable.progress >= 75) return 'bg-blue-500';
+    if (deliverable.progress >= 50) return 'bg-blue-400';
+    if (deliverable.progress > 0) return 'bg-blue-300';
+    return 'bg-gray-300';
+  }, [deliverable.progress]);
+
   const isCompleted = deliverable.progress === PROGRESS_PERCENTAGE.COMPLETE;
 
   return (
@@ -196,6 +204,21 @@ function DeliverableCardComponent({
             <p className={DELIVERABLE_CARD_STYLES.HEADER.DESCRIPTION}>
               {deliverable.description}
             </p>
+          )}
+          {!isExpanded && deliverable.totalCount > 0 && (
+            <div
+              className={DELIVERABLE_CARD_STYLES.HEADER.INLINE_PROGRESS.TRACK}
+              role="progressbar"
+              aria-valuenow={deliverable.progress}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`${deliverable.title} progress: ${deliverable.progress}%`}
+            >
+              <div
+                className={`${DELIVERABLE_CARD_STYLES.HEADER.INLINE_PROGRESS.FILL} ${inlineProgressFillClasses}`}
+                style={{ width: `${deliverable.progress}%` }}
+              />
+            </div>
           )}
         </div>
         <div className={FLEX_PATTERNS.GAP_XL}>
