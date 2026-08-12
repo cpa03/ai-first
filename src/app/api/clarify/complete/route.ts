@@ -8,6 +8,7 @@ import {
 } from '@/lib/api-handler';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { dbService } from '@/lib/db';
+import { STATUS_CODES } from '@/lib/config/constants';
 
 async function handlePost(context: ApiContext) {
   const { request, rateLimit: _rateLimit } = context;

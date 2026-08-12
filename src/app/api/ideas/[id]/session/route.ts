@@ -7,6 +7,7 @@ import { ValidationError, NotFoundError } from '@/lib/errors';
 import { validateIdeaId } from '@/lib/validation';
 import { dbService } from '@/lib/db';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
+import { STATUS_CODES } from '@/lib/config/constants';
 
 async function handleGet(context: ApiContext) {
   const { request, params } = context;
