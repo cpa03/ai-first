@@ -11,6 +11,14 @@ interface UseCountUpOptions {
   decimals?: number;
 }
 
+/**
+ * Animates a number smoothly from its previous value to the target value.
+ *
+ * PERFORMANCE OPTIMIZATION (⚡ Bolt):
+ * - Skips scheduling requestAnimationFrame loops if target is already equal to the current display value,
+ *   completely avoiding redundant timer registrations and render cycles.
+ * - Handles prefers-reduced-motion immediately to avoid any transition overhead for users with sensitivities.
+ */
 export function useCountUp({
   target,
   duration = COMPONENT_CONFIG.COUNT_UP.DEFAULT_DURATION_MS,
@@ -28,6 +36,11 @@ export function useCountUp({
     if (prefersReducedMotion) {
       setDisplayValue(target);
       displayValueRef.current = target;
+      return;
+    }
+
+    // Skip animation if target value is already reached, preventing redundant RAF loop scheduling
+    if (target === displayValueRef.current) {
       return;
     }
 
