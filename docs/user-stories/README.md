@@ -8,10 +8,10 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 
 | Metric               | Count |
 | -------------------- | ----- |
-| **Total Stories**    | 9     |
+| **Total Stories**    | 10    |
 | **P0 (Must Have)**   | 5     |
 | **P1 (Should Have)** | 2     |
-| **P2 (Could Have)**  | 2     |
+| **P2 (Could Have)**  | 3     |
 | **P3 (Won't Have)**  | 0     |
 
 ### Story Points Summary
@@ -20,8 +20,8 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 | ----------------- | ------------ | ---------------------------------------------------------------------------------------- |
 | **MVP (P0)**      | 23           | US-AUTH-001 (3), US-AUTH-002 (2), US-IDEA-001 (5), US-IDEA-002 (5), US-BREAKDOWN-001 (8) |
 | **Post-MVP (P1)** | 5            | US-AUTH-003 (2), US-EXPORT-001 (3)                                                       |
-| **Growth (P2)**   | 5            | US-GROWTH-001 (2), US-GROWTH-002 (3)                                                     |
-| **Total**         | **33**       | All stories                                                                              |
+| **Growth (P2)**   | 18           | US-GROWTH-001 (2), US-GROWTH-002 (3), US-ANA-001 (13)                                    |
+| **Total**         | **46**       | All stories                                                                              |
 
 ### Estimated Effort (Based on Story Points)
 
@@ -33,7 +33,7 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 
 **MVP Estimated Effort**: ~4-5 development days (based on 23 story points)
 **Total Estimated Effort**: ~5-6 development days (based on 28 story points)
-**Total with Growth**: ~6-7 development days (based on 33 story points)
+**Total with Growth**: ~8-9 development days (based on 46 story points)
 
 ### Status Overview
 
@@ -72,14 +72,15 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 
 ### Priority Distribution by Feature
 
-| Feature Area    | P0    | P1    | P2    | P3    | Total |
-| --------------- | ----- | ----- | ----- | ----- | ----- |
-| Authentication  | 2     | 1     | 0     | 0     | 3     |
-| Idea Management | 2     | 0     | 0     | 0     | 2     |
-| Breakdown       | 1     | 0     | 0     | 0     | 1     |
-| Export          | 0     | 1     | 0     | 0     | 1     |
-| Growth          | 0     | 0     | 2     | 0     | 2     |
-| **Total**       | **5** | **2** | **2** | **0** | **9** |
+| Feature Area    | P0    | P1    | P2    | P3    | Total  |
+| --------------- | ----- | ----- | ----- | ----- | ------ |
+| Authentication  | 2     | 1     | 0     | 0     | 3      |
+| Idea Management | 2     | 0     | 0     | 0     | 2      |
+| Breakdown       | 1     | 0     | 0     | 0     | 1      |
+| Export          | 0     | 1     | 0     | 0     | 1      |
+| Growth          | 0     | 0     | 2     | 0     | 2      |
+| Analytics       | 0     | 0     | 1     | 0     | 1      |
+| **Total**       | **5** | **2** | **3** | **0** | **10** |
 
 ---
 
@@ -100,9 +101,11 @@ user-stories/
 │   └── us-breakdown-001-engine.md # Automatic idea breakdown into tasks
 ├── export/                      # Export & integration feature stories
 │   └── us-export-001-markdown.md # Export plan to Markdown format
-└── growth/                      # Growth & viral loops feature stories
-    ├── us-growth-001-share.md   # Share results page
-    └── us-growth-002-referral.md # Referral link for viral growth
+├── growth/                      # Growth & viral loops feature stories
+│   ├── us-growth-001-share.md   # Share results page
+│   └── us-growth-002-referral.md # Referral link for viral growth
+└── analytics/                   # Analytics & insights feature stories
+    └── us-analytics-001-dashboard.md # Analytics dashboard for data-driven decisions
 ```
 
 ## User Story Index
@@ -150,6 +153,14 @@ user-stories/
 | [US-GROWTH-002](./growth/us-growth-002-referral.md) | Referral Link for Viral | P2       | Ready  | Startup Founder |
 
 **Related Issues**: #1870, #1883
+
+### Analytics & Insights
+
+| Story ID                                                | Title               | Priority | Status   | Persona         |
+| ------------------------------------------------------- | ------------------- | -------- | -------- | --------------- |
+| [US-ANA-001](./analytics/us-analytics-001-dashboard.md) | Analytics Dashboard | P2       | Proposed | Project Manager |
+
+**Related Issues**: New feature (Phase 3)
 
 ## How to Use This Directory
 
