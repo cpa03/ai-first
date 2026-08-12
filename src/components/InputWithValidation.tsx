@@ -171,12 +171,10 @@ const InputWithValidationComponent = forwardRef<
 
     const handlePasswordCopied = useCallback(() => {
       setPasswordCopied(true);
-      setTimeout(() => setPasswordCopied(false), 2000);
     }, []);
 
     const { copy: copyPassword } = useClipboard({
       onCopy: handlePasswordCopied,
-      duration: 2000,
     });
 
     // Micro-UX: Detect platform for keyboard shortcut display
