@@ -161,6 +161,11 @@ export const DELIVERABLE_CARD_STYLES = {
       VALUE: 'text-lg font-semibold text-gray-900',
       LABEL: 'text-xs text-gray-600',
     },
+    /** Micro-UX: Inline progress bar in collapsed header for at-a-glance progress visibility */
+    INLINE_PROGRESS: {
+      TRACK: 'w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mt-2',
+      FILL: 'h-full rounded-full transition-all duration-500 ease-out',
+    },
     ICON: (isExpanded: boolean) =>
       `w-5 h-5 text-gray-500 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`,
   },
