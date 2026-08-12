@@ -5,7 +5,12 @@ import {
 } from '@/lib/api-handler';
 import { dbService, Task } from '@/lib/db';
 import { sanitizeHtml, sanitizeObject } from '@/lib/validation';
-import { AppError, ErrorCode, ValidationError } from '@/lib/errors';
+import {
+  AppError,
+  ErrorCode,
+  ValidationError,
+  NotFoundError,
+} from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { TASK_CONFIG } from '@/lib/config';
@@ -111,11 +116,7 @@ async function handlePut(context: ApiContext) {
     const taskWithOwnership = await dbService.getTaskWithOwnership(taskId);
 
     if (!taskWithOwnership) {
-      throw new AppError(
-        API_ERROR_MESSAGES.NOT_FOUND.TASK,
-        ErrorCode.NOT_FOUND,
-        STATUS_CODES.NOT_FOUND
-      );
+      throw new NotFoundError('Task', taskId);
     }
 
     // Verify ownership
@@ -215,11 +216,7 @@ async function handleDelete(context: ApiContext) {
     const taskWithOwnership = await dbService.getTaskWithOwnership(taskId);
 
     if (!taskWithOwnership) {
-      throw new AppError(
-        API_ERROR_MESSAGES.NOT_FOUND.TASK,
-        ErrorCode.NOT_FOUND,
-        STATUS_CODES.NOT_FOUND
-      );
+      throw new NotFoundError('Task', taskId);
     }
 
     // Verify ownership
@@ -274,11 +271,7 @@ async function handleGet(context: ApiContext) {
     const taskWithOwnership = await dbService.getTaskWithOwnership(taskId);
 
     if (!taskWithOwnership) {
-      throw new AppError(
-        API_ERROR_MESSAGES.NOT_FOUND.TASK,
-        ErrorCode.NOT_FOUND,
-        STATUS_CODES.NOT_FOUND
-      );
+      throw new NotFoundError('Task', taskId);
     }
 
     // Verify ownership

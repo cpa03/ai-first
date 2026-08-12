@@ -1,6 +1,6 @@
 import { clarifierAgent } from '@/lib/agents/clarifier';
 import { validateIdea, validateIdeaId } from '@/lib/validation';
-import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
+import { ValidationError, NotFoundError } from '@/lib/errors';
 import {
   withApiHandler,
   standardSuccessResponse,
@@ -36,11 +36,7 @@ async function handlePost(context: ApiContext) {
     // Verify idea exists and user owns it
     const ideaRecord = await dbService.getIdea(finalIdeaId);
     if (!ideaRecord) {
-      throw new AppError(
-        'Idea not found',
-        ErrorCode.NOT_FOUND,
-        STATUS_CODES.NOT_FOUND
-      );
+      throw new NotFoundError('Idea', finalIdeaId);
     }
     verifyResourceOwnership(user.id, ideaRecord.user_id, 'idea');
   } else {

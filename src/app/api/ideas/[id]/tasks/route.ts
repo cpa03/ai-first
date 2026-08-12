@@ -4,7 +4,12 @@ import {
   ApiContext,
 } from '@/lib/api-handler';
 import { dbService } from '@/lib/db';
-import { AppError, ErrorCode } from '@/lib/errors';
+import {
+  AppError,
+  ErrorCode,
+  ValidationError,
+  NotFoundError,
+} from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { STATUS_CODES } from '@/lib/config/constants';
@@ -18,11 +23,12 @@ async function handleGet(context: ApiContext) {
   const ideaId = params.id;
 
   if (!ideaId) {
-    throw new AppError(
-      API_ERROR_MESSAGES.VALIDATION.IDEA_ID_REQUIRED,
-      ErrorCode.VALIDATION_ERROR,
-      STATUS_CODES.BAD_REQUEST
-    );
+    throw new ValidationError([
+      {
+        field: 'ideaId',
+        message: API_ERROR_MESSAGES.VALIDATION.IDEA_ID_REQUIRED,
+      },
+    ]);
   }
 
   try {
@@ -32,11 +38,7 @@ async function handleGet(context: ApiContext) {
     // Verify idea exists and user owns it
     const idea = await dbService.getIdea(ideaId);
     if (!idea) {
-      throw new AppError(
-        API_ERROR_MESSAGES.NOT_FOUND.IDEA,
-        ErrorCode.NOT_FOUND,
-        STATUS_CODES.NOT_FOUND
-      );
+      throw new NotFoundError('Idea', ideaId);
     }
 
     verifyResourceOwnership(user.id, idea.user_id, 'idea');
@@ -45,11 +47,7 @@ async function handleGet(context: ApiContext) {
       await dbService.getIdeaDeliverablesWithTasks(ideaId);
 
     if (!deliverablesWithTasks || deliverablesWithTasks.length === 0) {
-      throw new AppError(
-        API_ERROR_MESSAGES.DELIVERABLE.NO_DELIVERABLES_FOUND,
-        ErrorCode.NOT_FOUND,
-        STATUS_CODES.NOT_FOUND
-      );
+      throw new NotFoundError('Deliverables', ideaId);
     }
 
     // PERFORMANCE: Use a single pass over deliverables and tasks to calculate all stats

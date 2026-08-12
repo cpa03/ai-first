@@ -295,3 +295,134 @@ export class RetryExhaustedError extends AppError {
   service: string;
   attempts: number;
 }
+
+/**
+ * NotFoundError - Thrown when a requested resource does not exist.
+ *
+ * Use for: missing records, expired sessions, invalid IDs.
+ * Status: 404
+ * Retryable: No
+ */
+export class NotFoundError extends AppError {
+  constructor(resource: string, identifier?: string, requestId?: string) {
+    const message = identifier
+      ? `${resource} not found: ${identifier}`
+      : `${resource} not found`;
+    const details: ErrorDetail[] | undefined = identifier
+      ? [
+          {
+            field: 'id',
+            message: `${resource} with id '${identifier}' does not exist`,
+          },
+        ]
+      : undefined;
+    const suggestions = [
+      `Verify the ${resource.toLowerCase()} ID is correct`,
+      'Check if the resource has been deleted',
+      'Ensure you are using the correct endpoint',
+    ];
+    super(
+      message,
+      ErrorCode.NOT_FOUND,
+      STATUS_CODES.NOT_FOUND,
+      details,
+      false,
+      suggestions,
+      requestId
+    );
+    this.name = 'NotFoundError';
+    this.resource = resource;
+  }
+
+  resource: string;
+}
+
+/**
+ * AuthenticationError - Thrown when user is not authenticated.
+ *
+ * Use for: missing/invalid/expired tokens, unauthenticated access.
+ * Status: 401
+ * Retryable: No
+ */
+export class AuthenticationError extends AppError {
+  constructor(message: string = 'Authentication required', requestId?: string) {
+    const suggestions = [
+      'Provide a valid authorization token in the Authorization header',
+      'Check that your token has not expired',
+      'Verify you have valid API credentials',
+    ];
+    super(
+      message,
+      ErrorCode.AUTHENTICATION_ERROR,
+      STATUS_CODES.UNAUTHORIZED,
+      undefined,
+      false,
+      suggestions,
+      requestId
+    );
+    this.name = 'AuthenticationError';
+  }
+}
+
+/**
+ * AuthorizationError - Thrown when user lacks permission.
+ *
+ * Use for: insufficient permissions, ownership violations, role-based access.
+ * Status: 403
+ * Retryable: No
+ */
+export class AuthorizationError extends AppError {
+  constructor(
+    message: string = 'Insufficient permissions',
+    details?: ErrorDetail[],
+    requestId?: string
+  ) {
+    const suggestions = [
+      'Verify you have the appropriate role or permissions',
+      'Contact the resource owner for access',
+      'Check that you are accessing your own data',
+    ];
+    super(
+      message,
+      ErrorCode.AUTHORIZATION_ERROR,
+      STATUS_CODES.FORBIDDEN,
+      details,
+      false,
+      suggestions,
+      requestId
+    );
+    this.name = 'AuthorizationError';
+  }
+}
+
+/**
+ * ConflictError - Thrown when operation conflicts with current state.
+ *
+ * Use for: duplicate resources, concurrent modification, state conflicts.
+ * Status: 409
+ * Retryable: Sometimes (depends on conflict type)
+ */
+export class ConflictError extends AppError {
+  constructor(
+    message: string,
+    details?: ErrorDetail[],
+    retryable: boolean = false,
+    requestId?: string
+  ) {
+    const suggestions = [
+      'Check if a resource with this identifier already exists',
+      'Resolve any concurrent modification conflicts',
+      'Retry the operation with updated data',
+    ];
+    super(
+      message,
+      ErrorCode.CONFLICT,
+      STATUS_CODES.CONFLICT,
+      details,
+      retryable,
+      suggestions,
+      requestId
+    );
+    this.name = 'ConflictError';
+  }
+}

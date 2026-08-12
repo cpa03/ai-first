@@ -5,7 +5,7 @@ import {
   validateUserResponses,
   sanitizeHtml,
 } from '@/lib/validation';
-import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
+import { ValidationError, NotFoundError } from '@/lib/errors';
 import {
   withApiHandler,
   standardSuccessResponse,
@@ -41,11 +41,7 @@ async function handlePost(context: ApiContext) {
   // Verify idea exists and user owns it
   const idea = await dbService.getIdea(ideaId.trim());
   if (!idea) {
-    throw new AppError(
-      API_ERROR_MESSAGES.NOT_FOUND.IDEA,
-      ErrorCode.NOT_FOUND,
-      STATUS_CODES.NOT_FOUND
-    );
+    throw new NotFoundError('Idea', ideaId);
   }
 
   verifyResourceOwnership(user.id, idea.user_id, 'idea');
@@ -109,11 +105,7 @@ async function handleGet(context: ApiContext) {
   // Verify idea exists and user owns it
   const idea = await dbService.getIdea(ideaId.trim());
   if (!idea) {
-    throw new AppError(
-      API_ERROR_MESSAGES.NOT_FOUND.IDEA,
-      ErrorCode.NOT_FOUND,
-      STATUS_CODES.NOT_FOUND
-    );
+    throw new NotFoundError('Idea', ideaId);
   }
 
   verifyResourceOwnership(user.id, idea.user_id, 'idea');
@@ -121,11 +113,7 @@ async function handleGet(context: ApiContext) {
   const session = await breakdownEngine.getBreakdownSession(ideaId.trim());
 
   if (!session) {
-    throw new AppError(
-      API_ERROR_MESSAGES.NOT_FOUND.SESSION,
-      ErrorCode.NOT_FOUND,
-      STATUS_CODES.NOT_FOUND
-    );
+    throw new NotFoundError('Breakdown session', ideaId);
   }
 
   return standardSuccessResponse(

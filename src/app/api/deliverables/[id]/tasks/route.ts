@@ -5,7 +5,12 @@ import {
 } from '@/lib/api-handler';
 import { dbService } from '@/lib/db';
 import { sanitizeHtml } from '@/lib/validation';
-import { AppError, ErrorCode, ValidationError } from '@/lib/errors';
+import {
+  AppError,
+  ErrorCode,
+  ValidationError,
+  NotFoundError,
+} from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { TASK_VALIDATION, STATUS_CODES } from '@/lib/config/constants';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
@@ -121,11 +126,7 @@ async function handlePost(context: ApiContext) {
       await dbService.getDeliverableWithIdea(deliverableId);
 
     if (!deliverableWithIdea) {
-      throw new AppError(
-        API_ERROR_MESSAGES.NOT_FOUND.DELIVERABLE,
-        ErrorCode.NOT_FOUND,
-        STATUS_CODES.NOT_FOUND
-      );
+      throw new NotFoundError('Deliverable', deliverableId);
     }
 
     // Verify ownership

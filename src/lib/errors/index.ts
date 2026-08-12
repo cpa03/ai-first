@@ -36,6 +36,10 @@ export {
   TimeoutError,
   CircuitBreakerError,
   RetryExhaustedError,
+  NotFoundError,
+  AuthenticationError,
+  AuthorizationError,
+  ConflictError,
   type ErrorDetail,
   type ErrorResponse,
 } from './classes';

@@ -4,7 +4,12 @@ import {
   ApiContext,
 } from '@/lib/api-handler';
 import { dbService } from '@/lib/db';
-import { AppError, ErrorCode, ValidationError } from '@/lib/errors';
+import {
+  AppError,
+  ErrorCode,
+  ValidationError,
+  NotFoundError,
+} from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { TASK_CONFIG } from '@/lib/config';
 import { STATUS_CODES } from '@/lib/config/constants';
@@ -77,11 +82,7 @@ async function handlePatch(context: ApiContext) {
     const taskWithOwnership = await dbService.getTaskWithOwnership(taskId);
 
     if (!taskWithOwnership) {
-      throw new AppError(
-        API_ERROR_MESSAGES.NOT_FOUND.TASK,
-        ErrorCode.NOT_FOUND,
-        STATUS_CODES.NOT_FOUND
-      );
+      throw new NotFoundError('Task', taskId);
     }
 
     // Verify ownership

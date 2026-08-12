@@ -3,7 +3,7 @@ import {
   ApiContext,
   standardSuccessResponse,
 } from '@/lib/api-handler';
-import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
+import { ValidationError, NotFoundError } from '@/lib/errors';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { validateIdeaId, sanitizeHtml } from '@/lib/validation';
 import { dbService, Idea } from '@/lib/db';
@@ -35,11 +35,7 @@ async function handleGet(context: ApiContext) {
   const idea = await dbService.getIdea(ideaId!);
 
   if (!idea) {
-    throw new AppError(
-      API_ERROR_MESSAGES.NOT_FOUND.IDEA,
-      ErrorCode.NOT_FOUND,
-      STATUS_CODES.NOT_FOUND
-    );
+    throw new NotFoundError('Idea', ideaId);
   }
 
   // Verify ownership
@@ -86,11 +82,7 @@ async function handlePut(context: ApiContext) {
 
   const existingIdea = await dbService.getIdea(ideaId!);
   if (!existingIdea) {
-    throw new AppError(
-      API_ERROR_MESSAGES.NOT_FOUND.IDEA,
-      ErrorCode.NOT_FOUND,
-      STATUS_CODES.NOT_FOUND
-    );
+    throw new NotFoundError('Idea', ideaId);
   }
 
   // Verify ownership
@@ -152,11 +144,7 @@ async function handleDelete(context: ApiContext) {
 
   const existingIdea = await dbService.getIdea(ideaId!);
   if (!existingIdea) {
-    throw new AppError(
-      API_ERROR_MESSAGES.NOT_FOUND.IDEA,
-      ErrorCode.NOT_FOUND,
-      STATUS_CODES.NOT_FOUND
-    );
+    throw new NotFoundError('Idea', ideaId);
   }
 
   // Verify ownership
