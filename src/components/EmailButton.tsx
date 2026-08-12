@@ -158,6 +158,7 @@ const EmailButtonComponent = function EmailButton({
             loading={state === 'loading'}
             onClick={handleEmailClick}
             aria-label={ariaLabel}
+            aria-keyshortcuts="Control+Shift+E, Meta+Shift+E"
             className={`
               hover:-translate-y-0.5 active:translate-y-0
               transition-all ${TRANSITION_CLASSES.DEFAULT} ease-out transform

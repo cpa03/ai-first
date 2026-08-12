@@ -235,6 +235,7 @@ const ShareButtonComponent = function ShareButton({
             onClick={handleShare}
             className={`${baseClasses} ${variantClasses[variant]} ${glowClass} ${className}`}
             aria-label={ariaLabel}
+            aria-keyshortcuts="Control+Shift+S, Meta+Shift+S"
             type="button"
           >
             <span
