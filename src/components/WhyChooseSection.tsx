@@ -5,6 +5,7 @@ import { WHY_CHOOSE_CONFIG, FEATURE_CONFIG } from '@/lib/config/landing-page';
 import { UI_STRINGS, UI_CONFIG } from '@/lib/config/ui';
 import { SVG_VIEWBOX, TEXT_COLOR_CLASSES } from '@/lib/config/theme';
 import { WHY_CHOOSE_SECTION_LABELS } from '@/lib/config/component-labels';
+import { CSS_CONTAINMENT } from '@/lib/config';
 import {
   HOME_PAGE_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -120,7 +121,7 @@ function WhyChooseSectionComponent() {
       ref={sectionRef}
       className={SECTION_STYLES.CONTAINER}
       aria-labelledby={ARIA_HEADING_IDS.WHY_CHOOSE}
-      style={{ contain: 'layout' }}
+      style={CSS_CONTAINMENT.LAYOUT}
     >
       <div
         role="status"

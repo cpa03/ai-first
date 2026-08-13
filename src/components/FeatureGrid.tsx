@@ -9,6 +9,7 @@ import {
   GRADIENT_CONFIG,
   BG_COLORS,
 } from '@/lib/config/theme';
+import { CSS_CONTAINMENT } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { MT_CLASSES, GAP_CLASSES } from '@/lib/config/spacing';
 import { ICON_SIZES, CONNECTOR_SIZES } from '@/lib/config/icon-sizes';
@@ -123,7 +124,7 @@ function FeatureGridComponent() {
       ref={sectionRef}
       aria-labelledby={ARIA_HEADING_IDS.HOW_IT_WORKS}
       className={MT_CLASSES.XXXXL}
-      style={{ contain: 'layout' }}
+      style={CSS_CONTAINMENT.LAYOUT}
     >
       <h2 id={HOME_PAGE_ELEMENT_IDS.HOW_IT_WORKS_HEADING} className="sr-only">
         How It Works

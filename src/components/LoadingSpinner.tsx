@@ -11,6 +11,7 @@ import {
   COMPONENT_MAGIC_NUMBERS,
   BORDER_COLORS,
   REMAINING_PATTERNS,
+  CSS_POSITIONING,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -105,8 +106,7 @@ function LoadingSpinnerComponent({
       width: `${pulseRingSize}px`,
       height: `${pulseRingSize}px`,
       top: `-${pulseRingOffset}px`,
-      left: '50%',
-      transform: 'translateX(-50%)',
+      ...CSS_POSITIONING.CENTER_HORIZONTAL,
       animationDelay: animationDelay > 0 ? `${animationDelay}ms` : undefined,
     }),
     [pulseRingSize, pulseRingOffset, animationDelay]
@@ -117,8 +117,7 @@ function LoadingSpinnerComponent({
       width: `${spinnerDimension + COMPONENT_MAGIC_NUMBERS.SPINNER.PADDING}px`,
       height: `${spinnerDimension + COMPONENT_MAGIC_NUMBERS.SPINNER.PADDING}px`,
       top: SPINNER_TAILWIND.BORDER_RING_OFFSET,
-      left: '50%',
-      transform: 'translateX(-50%)',
+      ...CSS_POSITIONING.CENTER_HORIZONTAL,
       animation: `pulse ${COMPONENT_CONFIG.SPINNER.ANIMATION_MS}ms ${UI_CONFIG.ANIMATION.EASING.SPINNER} infinite`,
       animationDelay: animationDelay > 0 ? `${animationDelay}ms` : undefined,
     }),
