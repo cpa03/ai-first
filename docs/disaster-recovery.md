@@ -202,12 +202,14 @@ The restoration test validates:
    # List available backups
    ls -la backups/ideaflow_backup_*.tar.gz
 
-   # Restore specific tables
-   # Extract backup
-   tar -xzf backups/ideaflow_backup_YYYYMMDD_HHMMSS.tar.gz -C /tmp/restore
+   # Use the automated restore script
+   ./scripts/backup-restore.sh --backup backups/ideaflow_backup_YYYYMMDD_HHMMSS.tar.gz
 
-   # Use Supabase dashboard to import data
-   # Or use Supabase CLI for restoration
+   # Or restore specific tables
+   ./scripts/backup-restore.sh --backup backups/ideaflow_backup_YYYYMMDD_HHMMSS.tar.gz --tables ideas,tasks
+
+   # Dry run first to see what would be restored
+   ./scripts/backup-restore.sh --backup backups/ideaflow_backup_YYYYMMDD_HHMMSS.tar.gz --dry-run
    ```
 
 3. **Verify restoration**
@@ -387,6 +389,7 @@ backups/
 | Backup Type    | Frequency       | Retention | Storage          |
 | -------------- | --------------- | --------- | ---------------- |
 | Automated      | Daily 02:00 UTC | 30 days   | GitHub Artifacts |
+| Cross-Region   | Daily 03:00 UTC | 90 days   | AWS S3 / GCS     |
 | Manual         | As needed       | 90 days   | Local + External |
 | Pre-deployment | Before deploys  | 7 days    | Local            |
 
