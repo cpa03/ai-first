@@ -1030,3 +1030,23 @@ export {
   DASHBOARD_SPECIFIC,
   REMAINING_PATTERNS,
 } from './remaining-hardcoded-patterns';
+
+// CSS Containment Configuration
+// Centralizes all CSS containment values used throughout the application
+export {
+  CSS_CONTAINMENT,
+  CSS_CONTAINMENT_CLASSES,
+  getContainmentStyle,
+  type CSSContainment,
+  type CSSContainmentValue,
+} from './css-containment';
+
+// CSS Positioning Configuration
+// Centralizes all CSS positioning values used throughout the application
+export {
+  CSS_POSITIONING,
+  CSS_POSITIONING_CLASSES,
+  getPositioningStyle,
+  type CSSPositioning,
+  type CSSPositioningValue,
+} from './css-positioning';

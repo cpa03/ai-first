@@ -23,7 +23,7 @@ import {
 } from '@/lib/config/element-ids';
 import { HOMEPAGE_SKELETON_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { HERO_ENTRANCE } from '@/lib/config';
+import { HERO_ENTRANCE, CSS_CONTAINMENT } from '@/lib/config';
 import { REMAINING_PATTERNS } from '@/lib/config/remaining-hardcoded-patterns';
 
 const ShareButton = dynamic(() => import('@/components/ShareButton'), {
@@ -245,7 +245,7 @@ export default function HomePageClient() {
       <section
         aria-labelledby={ARIA_HEADING_IDS.IDEA_INPUT}
         className={CARD_PATTERNS.BASE}
-        style={{ contain: 'layout' }}
+        style={CSS_CONTAINMENT.LAYOUT}
       >
         <h2 id={HOME_PAGE_ELEMENT_IDS.IDEA_INPUT_HEADING} className="sr-only">
           Enter Your Idea
