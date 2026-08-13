@@ -98,7 +98,25 @@ Backups older than `BACKUP_RETENTION_DAYS` (default: 30 days) are automatically 
 
 ## Restoration
 
-### Database Restoration
+### Automated Restoration
+
+Use the restoration script for easy backup restoration:
+
+```bash
+# Restore all tables from backup
+./scripts/backup-restore.sh --backup ./backups/ideaflow_backup_YYYYMMDD_HHMMSS.tar.gz
+
+# Restore specific tables
+./scripts/backup-restore.sh --backup ./backups/ideaflow_backup_YYYYMMDD_HHMMSS.tar.gz --tables ideas,tasks
+
+# Dry run (see what would be restored)
+./scripts/backup-restore.sh --backup ./backups/ideaflow_backup_YYYYMMDD_HHMMSS.tar.gz --dry-run
+
+# Restore to specific directory
+./scripts/backup-restore.sh --backup ./backups/ideaflow_backup_YYYYMMDD_HHMMSS.tar.gz --target-dir /tmp/restore
+```
+
+### Manual Database Restoration
 
 ```bash
 # Decompress backup
@@ -149,6 +167,57 @@ Check backup sizes:
 ls -lh /tmp/backups/ai-first_*
 ```
 
+## Cross-Region Backup Replication
+
+For disaster recovery, backups can be replicated to external storage:
+
+### AWS S3 Replication
+
+```bash
+# Install AWS CLI
+pip install awscli
+
+# Configure AWS credentials
+aws configure
+
+# Upload backup to S3
+aws s3 cp ./backups/ideaflow_backup_YYYYMMDD_HHMMSS.tar.gz s3://your-backup-bucket/backups/
+
+# Enable versioning for backup retention
+aws s3api put-bucket-versioning --bucket your-backup-bucket --versioning-configuration Status=Enabled
+```
+
+### Google Cloud Storage Replication
+
+```bash
+# Install gsutil
+pip install gsutil
+
+# Copy backup to GCS
+gsutil cp ./backups/ideaflow_backup_YYYYMMDD_HHMMSS.tar.gz gs://your-backup-bucket/backups/
+```
+
+### Automated Cross-Region Replication
+
+Add to your GitHub Actions workflow:
+
+```yaml
+- name: Replicate to external storage
+  if: success()
+  env:
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  run: |
+    # Find latest backup
+    LATEST_BACKUP=$(ls -t ./backups/ideaflow_backup_*.tar.gz | head -1)
+    
+    if [[ -n "$LATEST_BACKUP" ]]; then
+      # Upload to S3
+      aws s3 cp "$LATEST_BACKUP" s3://your-backup-bucket/backups/
+      echo "Backup replicated to S3: $LATEST_BACKUP"
+    fi
+```
+
 ## Best Practices
 
 1. **Regular Verification** - Run `backup-verify.sh` after each backup
@@ -156,6 +225,8 @@ ls -lh /tmp/backups/ai-first_*
 3. **Monitor Disk Space** - Ensure sufficient storage for backups
 4. **Secure Backups** - Protect backup files with appropriate permissions
 5. **Document Changes** - Update this document when procedures change
+6. **Cross-Region Replication** - Replicate backups to external storage for disaster recovery
+7. **Encryption** - Encrypt backups at rest and in transit
 
 ## Troubleshooting
 

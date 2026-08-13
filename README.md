@@ -285,6 +285,8 @@
   /bug-scan.sh             ← Bug scanning script
   /backup.sh               ← Backup script
   /backup-verify.sh        ← Backup verification script
+  /backup-restore.sh       ← Backup restoration script
+  /backup-monitor.sh       ← Backup monitoring script
   /security/               ← Security scripts directory
 /tests/                     ← Test files
   /api/                    ← API tests
