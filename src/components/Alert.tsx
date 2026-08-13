@@ -23,7 +23,6 @@ import {
   COORDINATE_POSITION_PATTERNS,
   COMMON_SPACING_PATTERNS,
   HEIGHT_ONLY,
-  UI_TIMING_CONFIG,
   FLEX_GROW_PATTERNS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -108,24 +107,6 @@ const AlertComponent = function Alert({
 
   const shouldAutoDismiss =
     autoDismiss && (type === 'success' || type === 'info') && onClose;
-
-  useEffect(() => {
-    if (!onClose || prefersReducedMotion) return;
-
-    const showTimer = setTimeout(() => {
-      setShowShortcutHint(true);
-      shortcutHintTimeoutRef.current = setTimeout(() => {
-        setShowShortcutHint(false);
-      }, UI_TIMING_CONFIG.SHORTCUT_HINT_HIDE_DURATION);
-    }, UI_TIMING_CONFIG.TOAST_SHORTCUT_HINT_DELAY);
-
-    return () => {
-      clearTimeout(showTimer);
-      if (shortcutHintTimeoutRef.current) {
-        clearTimeout(shortcutHintTimeoutRef.current);
-      }
-    };
-  }, [onClose, prefersReducedMotion]);
 
   const effectiveDelay =
     currentDelay ??
@@ -243,11 +224,41 @@ const AlertComponent = function Alert({
     if (shouldAutoDismiss) {
       setIsPaused(true);
     }
+    // Micro-UX: Show keyboard shortcut hints when alert is hovered
+    // Helps users discover shortcuts without cluttering the UI permanently
+    if (onClose && !prefersReducedMotion) {
+      setShowShortcutHint(true);
+    }
   };
 
   const handleMouseLeave = () => {
     if (shouldAutoDismiss) {
       setIsPaused(false);
+    }
+    // Micro-UX: Hide keyboard shortcut hints when mouse leaves
+    if (onClose) {
+      setShowShortcutHint(false);
+    }
+  };
+
+  const handleFocus = () => {
+    if (shouldAutoDismiss) {
+      setIsPaused(true);
+    }
+    // Micro-UX: Show keyboard shortcut hints when alert is focused
+    // Critical for keyboard-only users to discover shortcuts (d=dismiss, s=snooze)
+    if (onClose && !prefersReducedMotion) {
+      setShowShortcutHint(true);
+    }
+  };
+
+  const handleBlur = () => {
+    if (shouldAutoDismiss) {
+      setIsPaused(false);
+    }
+    // Micro-UX: Hide keyboard shortcut hints when focus leaves
+    if (onClose) {
+      setShowShortcutHint(false);
     }
   };
 
@@ -266,8 +277,8 @@ const AlertComponent = function Alert({
       `}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onFocus={handleMouseEnter}
-      onBlur={handleMouseLeave}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
       onKeyDown={handleKeyDown}
     >
       <svg
