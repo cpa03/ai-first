@@ -5,6 +5,7 @@ import React, {
   useRef,
   useEffect,
   useCallback,
+  useLayoutEffect,
   useId,
   memo,
 } from 'react';
@@ -40,13 +41,54 @@ interface TooltipProps {
   className?: string;
 }
 
+/**
+ * Micro-UX: Viewport boundary detection for smart tooltip positioning
+ * Prevents tooltips from being clipped at viewport edges by automatically
+ * flipping to the opposite position when space is insufficient.
+ */
+const VIEWPORT_PADDING = 8; // px from viewport edge
+
+function getOppositePosition(pos: TooltipPosition): TooltipPosition {
+  const opposites: Record<TooltipPosition, TooltipPosition> = {
+    top: 'bottom',
+    bottom: 'top',
+    left: 'right',
+    right: 'left',
+  };
+  return opposites[pos];
+}
+
+function hasEnoughSpace(
+  triggerRect: DOMRect,
+  position: TooltipPosition,
+  tooltipWidth: number,
+  tooltipHeight: number
+): boolean {
+  const { top, bottom, left, right } = triggerRect;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+
+  switch (position) {
+    case 'top':
+      return top - tooltipHeight - 8 >= VIEWPORT_PADDING;
+    case 'bottom':
+      return bottom + tooltipHeight + 8 <= viewportHeight - VIEWPORT_PADDING;
+    case 'left':
+      return left - tooltipWidth - 8 >= VIEWPORT_PADDING;
+    case 'right':
+      return right + tooltipWidth + 8 <= viewportWidth - VIEWPORT_PADDING;
+    default:
+      return true;
+  }
+}
+
 // PERFORMANCE: Memoize Tooltip to prevent re-renders when parent components update
 // Tooltip is a wrapper component that may be nested inside frequently updating parents
 function TooltipComponent({
   children,
   content,
   shortcut,
-  position = 'top',
+  position: requestedPosition = 'top',
   delay = UI_CONFIG_CONSTANTS.TOOLTIP_DELAY,
   disabled = false,
   className = '',
@@ -55,6 +97,9 @@ function TooltipComponent({
   const [isVisible, setIsVisible] = useState(false);
   const [isMac, setIsMac] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [computedPosition, setComputedPosition] =
+    useState<TooltipPosition>(requestedPosition);
+  const [horizontalOffset, setHorizontalOffset] = useState(0);
   const triggerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const showTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -63,6 +108,59 @@ function TooltipComponent({
   const touchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const prefersReducedMotion = usePrefersReducedMotion();
+
+  useLayoutEffect(() => {
+    if (!isMounted || !triggerRef.current || !tooltipRef.current) return;
+
+    const triggerRect = triggerRef.current.getBoundingClientRect();
+    const tooltipEl = tooltipRef.current;
+    const tooltipRect = tooltipEl.getBoundingClientRect();
+
+    let bestPosition = requestedPosition;
+
+    if (
+      !hasEnoughSpace(
+        triggerRect,
+        requestedPosition,
+        tooltipRect.width,
+        tooltipRect.height
+      )
+    ) {
+      const opposite = getOppositePosition(requestedPosition);
+      if (
+        hasEnoughSpace(
+          triggerRect,
+          opposite,
+          tooltipRect.width,
+          tooltipRect.height
+        )
+      ) {
+        bestPosition = opposite;
+      }
+    }
+
+    setComputedPosition(bestPosition);
+
+    if (bestPosition === 'top' || bestPosition === 'bottom') {
+      const triggerCenter = triggerRect.left + triggerRect.width / 2;
+      const tooltipHalfWidth = tooltipRect.width / 2;
+      const viewportWidth = window.innerWidth;
+
+      let offset = 0;
+      if (triggerCenter - tooltipHalfWidth < VIEWPORT_PADDING) {
+        offset = -(triggerCenter - tooltipHalfWidth - VIEWPORT_PADDING);
+      } else if (
+        triggerCenter + tooltipHalfWidth >
+        viewportWidth - VIEWPORT_PADDING
+      ) {
+        offset =
+          viewportWidth - VIEWPORT_PADDING - (triggerCenter + tooltipHalfWidth);
+      }
+      setHorizontalOffset(offset);
+    } else {
+      setHorizontalOffset(0);
+    }
+  }, [isMounted, requestedPosition]);
 
   const showTooltip = useCallback(() => {
     if (disabled) return;
@@ -166,6 +264,13 @@ function TooltipComponent({
     right: `border-t-4 border-b-4 border-r-4 ${TOOLTIP_CONFIG.ARROW.TRANSPARENT.LEFT_RIGHT}`,
   };
 
+  const tooltipStyle: React.CSSProperties = {
+    zIndex: Z_INDEX_LAYERS.TOAST,
+    ...(horizontalOffset !== 0
+      ? { transform: `translateX(calc(-50% + ${horizontalOffset}px))` }
+      : {}),
+  };
+
   return (
     <div
       ref={triggerRef}
@@ -187,11 +292,11 @@ function TooltipComponent({
           role="tooltip"
           className={`
             absolute pointer-events-none
-            ${positionClasses[position]}
+            ${positionClasses[computedPosition]}
             ${prefersReducedMotion ? '' : `transition-all ${DURATION_TAILWIND[200]} ease-out`}
             ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
           `}
-          style={{ zIndex: Z_INDEX_LAYERS.TOAST }}
+          style={tooltipStyle}
         >
           <div className="relative">
             <div
@@ -231,8 +336,8 @@ function TooltipComponent({
             <div
               className={`
                 absolute w-0 h-0
-                ${arrowClasses[position]}
-                ${arrowBorderClasses[position]}
+                ${arrowClasses[computedPosition]}
+                ${arrowBorderClasses[computedPosition]}
               `}
               aria-hidden="true"
             />
