@@ -71,3 +71,9 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** Request signature verification in `src/lib/security/request-signer.ts` consumed the request body stream directly using `request.text()`. In modern Edge and Serverless runtimes, this prematurely locks and exhausts the readable stream, causing subsequent route handlers to fail with `TypeError: body stream already read` errors or prevent validation of requests with payloads.
 **Learning:** Web APIs enforce a single-consumption rule on request/response body streams. Middleware and interceptors that perform validation checks (such as HMAC signature verification) must not mutate or exhaust the request stream before it reaches the main handlers.
 **Prevention:** Always clone the Request object (`request.clone().text()`) when performing out-of-band body inspection, signature verification, or logging, ensuring downstream route handlers can safely consume the request body.
+
+## 2026-08-13 - AI Model Parameter Validation Length Limits
+
+**Vulnerability:** The AI model configuration validation in `src/lib/validation.ts` (`validateModelName`) lacked a maximum length check on user-supplied model name strings. This exposed the application to potential Denial of Service (DoS) and memory/CPU resource exhaustion attacks through excessively long model names causing expensive regex execution and string manipulation overhead on the server-side.
+**Learning:** Standard security validation schemes often focus on pattern matches (like allowed prefixes or character sets) but fail to enforce basic length boundaries. This can be exploited to cause denial of service via catastrophic regex backtracking or high allocation overhead.
+**Prevention:** Always enforce strict length limits on any parameter input fields (such as a maximum of 100 characters for AI model names) before matching against complex regexes or processing them in down-stream integrations.

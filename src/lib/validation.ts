@@ -672,6 +672,15 @@ export function validateModelName(model: unknown): ValidationResult {
     return { valid: false, errors };
   }
 
+  // SECURITY: Enforce a strict 100-character maximum length limit
+  // to prevent potential Denial of Service (DoS) and resource exhaustion attacks
+  if (trimmed.length > 100) {
+    errors.push({
+      field: 'model',
+      message: VALIDATION_ERROR_MESSAGES.AI_MODEL.MODEL.TOO_LONG(100),
+    });
+  }
+
   if (!VALIDATION.MODEL_NAME_PATTERN.test(trimmed)) {
     errors.push({
       field: 'model',
