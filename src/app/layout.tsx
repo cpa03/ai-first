@@ -9,7 +9,7 @@ import ScrollToTop from '@/components/ScrollToTop';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
 import ScrollShadow from '@/components/ScrollShadow';
 import Link from 'next/link';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { SEO_CONFIG } from '@/lib/config/seo';
 import { APP_CONFIG } from '@/lib/config/app';
 import { PRECONNECT_URLS } from '@/lib/config/external-api-domains';
@@ -75,13 +75,6 @@ const inter = Inter({
   variable: '--font-inter',
   display: 'swap',
   weight: ['400', '500', '600', '700'],
-});
-
-const jetBrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-  weight: ['400', '500', '600'],
 });
 
 export const metadata: Metadata = {
@@ -151,7 +144,7 @@ export default async function RootLayout({
       lang="en"
       nonce={nonce}
       suppressHydrationWarning
-      className={`${inter.variable} ${jetBrainsMono.variable}`}
+      className={`${inter.variable}`}
       data-scroll-behavior="smooth"
     >
       <head>
