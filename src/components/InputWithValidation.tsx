@@ -45,6 +45,10 @@ import {
 } from '@/lib/config/icon-sizes';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { PLATFORM } from '@/lib/dom-utils';
+import {
+  PASSWORD_VISIBLE_TINT,
+  VALID_CHECKMARK_COLOR,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { useClipboard } from '@/hooks/useClipboard';
 import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -363,7 +367,7 @@ const InputWithValidationComponent = forwardRef<
       passwordVisible &&
         showPasswordToggle &&
         inputType === 'password' &&
-        `bg-amber-50/50 border-amber-300/60 transition-colors ${DURATION_TAILWIND[300]}`,
+        `${PASSWORD_VISIBLE_TINT} transition-colors ${DURATION_TAILWIND[300]}`,
       className
     );
 
@@ -459,7 +463,7 @@ const InputWithValidationComponent = forwardRef<
               >
                 <div className="pointer-events-none">
                   <svg
-                    className={`${ICON_SIZES.LG} text-green-800 animate-in fade-in ${TRANSITION_CLASSES.DEFAULT} ${DRAW_CHECK}`}
+                    className={`${ICON_SIZES.LG} ${VALID_CHECKMARK_COLOR} animate-in fade-in ${TRANSITION_CLASSES.DEFAULT} ${DRAW_CHECK}`}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
