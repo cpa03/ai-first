@@ -570,6 +570,7 @@ export const NOT_FOUND_LABELS = {
   COPY_URL_ARIA_LABEL: 'Copy broken page URL to clipboard for reporting',
   COPY_URL_HINT: 'copy URL',
   GO_BACK_TOOLTIP: 'Navigate to previous page',
+  GO_HOME_TOOLTIP: 'Return to the home page',
 } as const;
 
 export const PAGE_CONFIG = {
