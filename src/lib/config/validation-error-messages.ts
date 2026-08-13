@@ -48,6 +48,8 @@ export const VALIDATION_ERROR_MESSAGES = {
     MODEL: {
       REQUIRED: 'model is required and must be a string',
       EMPTY: 'model cannot be empty',
+      TOO_LONG: (maxLength: number) =>
+        `model must not exceed ${maxLength} characters`,
       INVALID_CHARS:
         'model must contain only alphanumeric characters, dashes, and dots',
       INVALID_PREFIX: (prefixes: string[]) =>
