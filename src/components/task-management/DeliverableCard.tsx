@@ -22,6 +22,7 @@ import {
   CONFETTI_DOT,
   TEXT_ALIGNMENT,
 } from '@/lib/config';
+import { TASK_CARD_VERTICAL_MARGIN } from '@/lib/config/remaining-hardcoded-patterns';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
@@ -260,7 +261,7 @@ function DeliverableCardComponent({
           id={`deliverable-tasks-${deliverable.id}`}
           className={`${DELIVERABLE_CARD_STYLES.CONTENT.CONTAINER} ${prefersReducedMotion ? '' : 'animate-expand-content'}`}
         >
-          <div className="mt-4 mb-4">
+          <div className={TASK_CARD_VERTICAL_MARGIN}>
             <div
               className={DELIVERABLE_CARD_STYLES.CONTENT.PROGRESS_BAR.CONTAINER}
             >

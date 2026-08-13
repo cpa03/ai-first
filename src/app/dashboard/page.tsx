@@ -52,6 +52,11 @@ import {
   OVERFLOW_PATTERNS,
   INLINE_FLEX_PATTERNS,
 } from '@/lib/config';
+import {
+  DASHBOARD_FILTER_BAR,
+  DASHBOARD_EMPTY_STATE_CTA,
+  DASHBOARD_EMPTY_STATE_CTA_ROW,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import type { ComponentConfig } from '@/lib/config/components';
 import {
   DASHBOARD_ELEMENT_IDS,
@@ -712,7 +717,7 @@ export default function DashboardPage() {
         </div>
       )}
       {/* Filter */}
-      <div className="mb-6 flex flex-wrap items-center gap-4">
+      <div className={DASHBOARD_FILTER_BAR}>
         <label htmlFor="status-filter" className="sr-only">
           {DASHBOARD_PAGE_CONTENT.FILTER.LABEL}
         </label>
@@ -897,8 +902,8 @@ export default function DashboardPage() {
                     : filter
                 )}
               </p>
-              <div className="flex flex-col items-center gap-3">
-                <div className="flex justify-center gap-3">
+              <div className={DASHBOARD_EMPTY_STATE_CTA}>
+                <div className={DASHBOARD_EMPTY_STATE_CTA_ROW}>
                   <Button variant="outline" onClick={() => setFilter('all')}>
                     {DASHBOARD_PAGE_CONTENT.CLEAR_FILTER}
                   </Button>

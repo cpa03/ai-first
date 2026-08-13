@@ -50,6 +50,7 @@ import {
   COMMON_SPACING_PATTERNS,
   REMAINING_PATTERNS,
 } from '@/lib/config';
+import { SIGNUP_TIP_ITEM } from '@/lib/config/remaining-hardcoded-patterns';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
 import { useScrollToError } from '@/hooks/useScrollToError';
@@ -322,7 +323,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
       {feedback.length > 0 && strength !== 'strong' && (
         <ul className={FORM_PATTERNS.TIP_LIST} aria-live="polite">
           {feedback.slice(0, 2).map((tip, idx) => (
-            <li key={idx} className="flex items-center gap-1">
+            <li key={idx} className={SIGNUP_TIP_ITEM}>
               <span className={FORM_PATTERNS.TIP_BULLET}>
                 {USER_ONBOARDING_LABELS.BULLET}
               </span>

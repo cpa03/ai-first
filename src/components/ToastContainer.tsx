@@ -28,6 +28,7 @@ import {
   FLEX_GROW_PATTERNS,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
+import { SWIPE_PROGRESS_BAR } from '@/lib/config/remaining-hardcoded-patterns';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 
@@ -357,7 +358,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       {isSwiping &&
         swipeOffset > UI_CONSTANTS.TOAST_SWIPE_PROGRESS_THRESHOLD && (
           <div
-            className="absolute left-0 top-0 bottom-0 w-1 bg-current opacity-50 rounded-l-lg"
+            className={SWIPE_PROGRESS_BAR}
             style={{
               opacity:
                 Math.min(

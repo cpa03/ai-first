@@ -53,6 +53,7 @@ import {
   SPACING_PATTERNS,
   SKELETON_SIZE_PATTERNS,
 } from '@/lib/config';
+import { SELECT_ICON_POSITION } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   CLARIFICATION_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -968,7 +969,7 @@ function ClarificationFlow({
                       </option>
                     ))}
                   </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <div className={SELECT_ICON_POSITION}>
                     <svg
                       className={`${ICON_SIZES.LG} ${TEXT_COLOR_CLASSES.MUTED} ${TRANSITION_CLASSES.TRANSFORM}`}
                       fill="none"

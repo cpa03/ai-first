@@ -79,6 +79,8 @@ export const MB_CLASSES = {
   XXL: 'mb-6',
   /** mb-8 = 32px */
   XXXL: 'mb-8',
+  /** mb-12 = 48px */
+  XXXXL: 'mb-12',
 } as const;
 
 /**
@@ -221,7 +223,7 @@ export const PL_CLASSES = {
  * Combined spacing patterns for common use cases
  */
 export const COMMON_SPACING_PATTERNS = {
-  /** flex items-center gap-2 */
+  FLEX_CENTER_XS: 'flex items-center gap-1',
   FLEX_CENTER_SM: 'flex items-center gap-2',
   /** flex items-center gap-3 */
   FLEX_CENTER_MD: 'flex items-center gap-3',

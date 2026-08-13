@@ -393,7 +393,7 @@ const AlertComponent = function Alert({
               <span>snooze</span>
             </span>
           )}
-          <span className="flex items-center gap-1">
+          <span className={COMMON_SPACING_PATTERNS.FLEX_CENTER_XS}>
             <kbd
               className={`px-1 py-0.5 ${GRAY_CLASSES.BG_200_50} rounded ${TEXT_SIZE_CLASSES.XS} font-mono`}
             >
