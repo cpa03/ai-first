@@ -159,13 +159,6 @@ export default async function RootLayout({
         {PRECONNECT_URLS.map((url) => (
           <link key={url} rel="preconnect" href={url} />
         ))}
-        {/* Preconnect to Google Fonts for faster font loading */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
         {/* JSON-LD structured data for SEO - sanitized via safeJsonLd() to prevent XSS */}
         <script
           type="application/ld+json"

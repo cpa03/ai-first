@@ -142,12 +142,35 @@ export const EXTERNAL_API_DOMAINS = {
       'https://app.asana.com'
     ),
   },
+
+  /**
+   * Google Fonts domains
+   * Used for font loading optimization
+   */
+  GOOGLE_FONTS: {
+    /** Google Fonts API domain - Env: GOOGLE_FONTS_API_DOMAIN (default: 'fonts.googleapis.com') */
+    API_DOMAIN: EnvLoader.string(
+      'GOOGLE_FONTS_API_DOMAIN',
+      'fonts.googleapis.com'
+    ),
+    /** Google Fonts static domain - Env: GOOGLE_FONTS_STATIC_DOMAIN (default: 'fonts.gstatic.com') */
+    STATIC_DOMAIN: EnvLoader.string(
+      'GOOGLE_FONTS_STATIC_DOMAIN',
+      'fonts.gstatic.com'
+    ),
+    /** Full API URL for preconnect - Env: GOOGLE_FONTS_API_URL (default: 'https://fonts.googleapis.com') */
+    API_URL: EnvLoader.string(
+      'GOOGLE_FONTS_API_URL',
+      'https://fonts.googleapis.com'
+    ),
+    /** Full static URL for preconnect - Env: GOOGLE_FONTS_STATIC_URL (default: 'https://fonts.gstatic.com') */
+    STATIC_URL: EnvLoader.string(
+      'GOOGLE_FONTS_STATIC_URL',
+      'https://fonts.gstatic.com'
+    ),
+  },
 } as const;
 
-/**
- * Preconnect URLs for all external APIs
- * Used in HTML head for performance optimization
- */
 export const PRECONNECT_URLS = [
   EXTERNAL_API_DOMAINS.SUPABASE.PRECONNECT_URL,
   EXTERNAL_API_DOMAINS.OPENAI.PRECONNECT_URL,
@@ -155,6 +178,8 @@ export const PRECONNECT_URLS = [
   EXTERNAL_API_DOMAINS.NOTION.PRECONNECT_URL,
   EXTERNAL_API_DOMAINS.TRELLO.PRECONNECT_URL,
   EXTERNAL_API_DOMAINS.GITHUB.PRECONNECT_URL,
+  EXTERNAL_API_DOMAINS.GOOGLE_FONTS.API_URL,
+  EXTERNAL_API_DOMAINS.GOOGLE_FONTS.STATIC_URL,
 ] as const;
 
 /**
