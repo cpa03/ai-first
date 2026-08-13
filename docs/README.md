@@ -233,10 +233,7 @@ Complete index of all IdeaFlow documentation.
 
 - [Phase 1 Audit Report - 2026-08-12](./audit/PHASE1-AUDIT-20260812.md) - Comprehensive quality assessment (latest)
 - [BroCula Browser Audit Report - 2026-08-11](./audit/BROCULA-AUDIT-REPORT-20260811.md) - BroCula browser audit
-- [BroCula Browser Audit - 2026-08-11](./audit/BROCULA-AUDIT-20260811.md) - BroCula browser audit
-- [BroCula Browser Audit - 2026-08-10](./audit/BROCULA-AUDIT-20260810.md) - BroCula browser audit
 - [BroCula Browser Console Lighthouse - 2026-08-08](./audit/2026-08-08-brocula-browser-console-lighthouse.md) - Browser console & Lighthouse audit
-- [BroCula Audit Summary](./audit/BROCULA-AUDIT-SUMMARY.md) - BroCula audit summary
 - [Issue: Large Files](./audit/ISSUE-01-large-files.md) - Files exceeding 250 LOC maintainability threshold
 - [Issue: API Test Coverage](./audit/ISSUE-02-api-test-coverage.md) - API route test coverage gaps
 - [Issue: CSRF Protection](./audit/ISSUE-03-csrf-protection.md) - CSRF protection audit
@@ -245,7 +242,7 @@ Complete index of all IdeaFlow documentation.
 
 ### Archived Reports
 
-Older audit reports (2026-07-08 through 2026-08-07) are archived in [audit/archive/](./audit/archive/).
+Older audit reports (2026-07-08 through 2026-08-11) are archived in [audit/archive/](./audit/archive/).
 
 ## Database Reports
 
