@@ -50,6 +50,14 @@ const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
   ssr: false,
 });
 
+// Micro-UX: Lazy load SectionIndicator for section navigation
+const SectionIndicator = dynamic(
+  () => import('@/components/SectionIndicator'),
+  {
+    ssr: false,
+  }
+);
+
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
@@ -550,9 +558,16 @@ function ResultsContent() {
   }
 
   // Use the BlueprintDisplay component with real data
+  const sections = [
+    { id: 'blueprint-section', label: 'Blueprint', shortcut: 'b' },
+    { id: 'tasks-section', label: 'Tasks', shortcut: 't' },
+    { id: 'exports-section', label: 'Exports', shortcut: 'e' },
+  ];
+
   return (
     <>
       <ScrollProgress />
+      <SectionIndicator sections={sections} />
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <div className={`flex justify-between items-center ${MB_CLASSES.XXXL}`}>
           <h1 className={`text-3xl font-bold ${GRAY_CLASSES.TEXT_900}`}>
