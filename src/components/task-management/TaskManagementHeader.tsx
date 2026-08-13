@@ -20,6 +20,7 @@ import {
   CONFETTI_DOT,
   TEXT_ALIGNMENT,
 } from '@/lib/config';
+import { TASK_ACTION_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
 import { DASHBOARD_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
@@ -267,7 +268,7 @@ function TaskManagementHeaderComponent({
             );
           })}
         </div>
-        <div className="flex gap-2">
+        <div className={TASK_ACTION_GROUP}>
           <Tooltip
             content={MESSAGES.TASK_MANAGEMENT.EXPAND_ALL}
             shortcut={['[']}

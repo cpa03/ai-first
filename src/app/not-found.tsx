@@ -29,6 +29,19 @@ import {
   BORDER_COLORS,
 } from '@/lib/config';
 import { ANIMATION_PATTERNS } from '@/lib/config/remaining-styles';
+import {
+  NOT_FOUND_404_CONTAINER,
+  NOT_FOUND_BUTTON_INLINE,
+  NOT_FOUND_BUTTON_INLINE_FULL,
+  NOT_FOUND_SHORTCUTS_SECTION,
+  KEYBOARD_HINT_INLINE,
+  POPULAR_PAGES_SECTION,
+  POPULAR_PAGES_GRID,
+  POPULAR_PAGES_ITEM,
+  POPULAR_PAGES_ICON,
+  COPY_URL_HINT,
+  NOT_FOUND_COPY_SECTION,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import type { ComponentConfig } from '@/lib/config/components';
 import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
@@ -121,7 +134,7 @@ export default function NotFound() {
           id={ERROR_ELEMENT_IDS.ERROR_CONTENT}
           className={`${CARD_PATTERNS.CENTERED_LARGE} ${HERO_ENTRANCE}`}
         >
-          <div className="relative mb-6">
+          <div className={NOT_FOUND_404_CONTAINER}>
             <div
               className={`inline-flex items-center justify-center w-24 h-24 rounded-full ${GRAY_CLASSES.BG_100}`}
             >
@@ -159,7 +172,7 @@ export default function NotFound() {
               <Button
                 variant="primary"
                 onClick={handleGoBack}
-                className="inline-flex items-center justify-center gap-2"
+                className={NOT_FOUND_BUTTON_INLINE}
               >
                 <svg
                   className={ICON_SIZES.MD}
@@ -182,7 +195,7 @@ export default function NotFound() {
             <Link href={ROUTES.HOME}>
               <Button
                 variant="secondary"
-                className="inline-flex items-center justify-center gap-2 w-full"
+                className={NOT_FOUND_BUTTON_INLINE_FULL}
               >
                 <svg
                   className={ICON_SIZES.MD}
@@ -205,7 +218,7 @@ export default function NotFound() {
             <Link href={ROUTES.DASHBOARD}>
               <Button
                 variant="outline"
-                className="inline-flex items-center justify-center gap-2 w-full"
+                className={NOT_FOUND_BUTTON_INLINE_FULL}
               >
                 <svg
                   className={ICON_SIZES.MD}
@@ -227,7 +240,7 @@ export default function NotFound() {
           </div>
 
           <div
-            className={`mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
+            className={`${NOT_FOUND_COPY_SECTION} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
           >
             <CopyButton
               textToCopy={
@@ -243,9 +256,7 @@ export default function NotFound() {
               shortcut={[isMac ? '⌘' : 'Ctrl', 'C']}
               position="top"
             >
-              <span
-                className={`text-xs ${GRAY_CLASSES.TEXT_500} hidden sm:inline-flex items-center gap-1.5`}
-              >
+              <span className={`${COPY_URL_HINT}`}>
                 <kbd
                   className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
                 >
@@ -263,10 +274,10 @@ export default function NotFound() {
           {/* Micro-UX: Keyboard shortcut hints for discoverability */}
           {/* Uses discover-pulse animation to draw attention to available shortcuts */}
           <div
-            className={`mt-6 flex items-center justify-center gap-4 text-xs ${GRAY_CLASSES.TEXT_500} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5} ${ANIMATION_PATTERNS.DISCOVER_PULSE} rounded-lg px-4 py-2`}
+            className={`${NOT_FOUND_SHORTCUTS_SECTION} ${GRAY_CLASSES.TEXT_500} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5} ${ANIMATION_PATTERNS.DISCOVER_PULSE} rounded-lg px-4 py-2`}
             aria-hidden="true"
           >
-            <span className="hidden sm:inline-flex items-center gap-1.5">
+            <span className={KEYBOARD_HINT_INLINE}>
               <kbd
                 className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
               >
@@ -279,7 +290,7 @@ export default function NotFound() {
               </kbd>
               <span>go back</span>
             </span>
-            <span className="hidden sm:inline-flex items-center gap-1.5">
+            <span className={KEYBOARD_HINT_INLINE}>
               <kbd
                 className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
               >
@@ -287,7 +298,7 @@ export default function NotFound() {
               </kbd>
               <span>go home</span>
             </span>
-            <span className="hidden sm:inline-flex items-center gap-1.5">
+            <span className={KEYBOARD_HINT_INLINE}>
               {hasCopied ? (
                 <span
                   className={`${TEXT_COLORS.SUCCESS_MEDIUM_DARK} font-medium animate-fade-in`}
@@ -319,7 +330,7 @@ export default function NotFound() {
           {/* Micro-UX: Popular pages suggestions to help users find what they're looking for */}
           {/* Provides quick access to common destinations, reducing frustration from 404 errors */}
           <div
-            className={`mt-8 pt-6 border-t ${BORDER_COLORS.LIGHT} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_6}`}
+            className={`${POPULAR_PAGES_SECTION} ${BORDER_COLORS.LIGHT} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_6}`}
           >
             <h2
               id="popular-pages-heading"
@@ -328,7 +339,7 @@ export default function NotFound() {
               Popular pages
             </h2>
             <nav aria-labelledby="popular-pages-heading">
-              <ul className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <ul className={POPULAR_PAGES_GRID}>
                 {[
                   {
                     href: ROUTES.HOME,
@@ -370,10 +381,10 @@ export default function NotFound() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className={`group flex items-center gap-3 p-3 rounded-lg border ${BORDER_COLORS.LIGHT} ${BG_COLORS.DEFAULT} hover:${BORDER_COLORS.PRIMARY_LIGHT} hover:${BG_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2`}
+                      className={`${POPULAR_PAGES_ITEM} ${BORDER_COLORS.LIGHT} ${BG_COLORS.DEFAULT} hover:${BORDER_COLORS.PRIMARY_LIGHT} hover:${BG_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2`}
                     >
                       <span
-                        className={`flex-shrink-0 w-10 h-10 rounded-full ${BG_COLORS.LIGHT} group-hover:${BG_COLORS.BRAND_LIGHT} flex items-center justify-center ${TRANSITION_CLASSES.DEFAULT}`}
+                        className={`${POPULAR_PAGES_ICON} ${BG_COLORS.LIGHT} group-hover:${BG_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
                       >
                         <svg
                           className={`w-5 h-5 ${GRAY_CLASSES.TEXT_500} group-hover:${TEXT_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}

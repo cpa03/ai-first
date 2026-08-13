@@ -207,9 +207,67 @@ export const CLARIFY_LAYOUT = {
  * Used in: Results page
  */
 export const RESULTS_CTA = {
-  /** text-left - left-aligned text */
   TEXT_LEFT: 'text-left',
 } as const;
+
+export const SELECT_ICON_POSITION =
+  'absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none';
+
+export const SWIPE_PROGRESS_BAR =
+  'absolute left-0 top-0 bottom-0 w-1 bg-current opacity-50 rounded-l-lg';
+
+export const HINT_OVERLAY = 'absolute top-4 right-16 animate-fade-in';
+
+export const NOT_FOUND_404_CONTAINER = 'relative mb-6';
+
+export const NOT_FOUND_BUTTON_INLINE =
+  'inline-flex items-center justify-center gap-2';
+
+export const NOT_FOUND_BUTTON_INLINE_FULL =
+  'inline-flex items-center justify-center gap-2 w-full';
+
+export const TASK_CARD_VERTICAL_MARGIN = 'mt-4 mb-4';
+
+export const TASK_ACTION_GROUP = 'flex gap-2';
+
+export const DASHBOARD_FILTER_BAR = 'mb-6 flex flex-wrap items-center gap-4';
+
+export const DASHBOARD_EMPTY_STATE_CTA = 'flex flex-col items-center gap-3';
+
+export const DASHBOARD_EMPTY_STATE_CTA_ROW = 'flex justify-center gap-3';
+
+export const SIGNUP_TIP_ITEM = 'flex items-center gap-1';
+
+export const ERROR_BOUNDARY_ACTION_GROUP = 'mt-4 flex gap-2';
+
+export const HOMEPAGE_HERO_SECTION = 'text-center mb-12';
+
+export const HOMEPAGE_HERO_ACTIONS = 'mt-6 flex justify-center gap-6';
+
+export const KEYBOARD_HINT_INLINE =
+  'hidden sm:inline-flex items-center gap-1.5';
+
+export const NOT_FOUND_SHORTCUTS_SECTION =
+  'mt-6 flex items-center justify-center gap-4 text-xs';
+
+export const POPULAR_PAGES_SECTION = 'mt-8 pt-6 border-t';
+
+export const POPULAR_PAGES_GRID = 'grid grid-cols-1 sm:grid-cols-3 gap-3';
+
+export const POPULAR_PAGES_ITEM =
+  'group flex items-center gap-3 p-3 rounded-lg border';
+
+export const POPULAR_PAGES_ICON =
+  'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center';
+
+export const COPY_URL_HINT =
+  'text-xs hidden sm:inline-flex items-center gap-1.5';
+
+export const NOT_FOUND_COPY_SECTION =
+  'mt-6 flex flex-col sm:flex-row items-center justify-center gap-3';
+
+export const NOT_FOUND_ACTIONS =
+  'flex flex-col sm:flex-row gap-3 justify-center';
 
 /**
  * Dashboard page specific patterns

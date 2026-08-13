@@ -27,6 +27,7 @@ import {
   MT_CLASSES,
   GAP_CLASSES,
 } from '@/lib/config';
+import { HINT_OVERLAY } from '@/lib/config/remaining-hardcoded-patterns';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
@@ -291,7 +292,7 @@ function MobileNavComponent() {
             </button>
             {/* Micro-UX: Subtle keyboard shortcut hint near close button */}
             <div
-              className="absolute top-4 right-16 animate-fade-in"
+              className={HINT_OVERLAY}
               style={{
                 animationDelay: `${ANIMATION_CONFIG.MOBILE_NAV.HINT_DELAY}ms`,
               }}

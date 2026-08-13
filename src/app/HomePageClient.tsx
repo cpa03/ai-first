@@ -24,7 +24,11 @@ import {
 import { HOMEPAGE_SKELETON_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { HERO_ENTRANCE, CSS_CONTAINMENT } from '@/lib/config';
-import { REMAINING_PATTERNS } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  REMAINING_PATTERNS,
+  HOMEPAGE_HERO_SECTION,
+  HOMEPAGE_HERO_ACTIONS,
+} from '@/lib/config/remaining-hardcoded-patterns';
 
 const ShareButton = dynamic(() => import('@/components/ShareButton'), {
   loading: () => (
@@ -185,7 +189,7 @@ export default function HomePageClient() {
       {/* Respects prefers-reduced-motion for accessibility */}
       <section
         aria-labelledby={ARIA_HEADING_IDS.HERO}
-        className="text-center mb-12"
+        className={HOMEPAGE_HERO_SECTION}
       >
         <h1
           id={HOME_PAGE_ELEMENT_IDS.HERO_HEADING}
@@ -216,7 +220,7 @@ export default function HomePageClient() {
           {HOME_PAGE_CONFIG.HERO.DESCRIPTION}
         </p>
         <div
-          className={`mt-6 flex justify-center ${GAP_CLASSES.LG} ${
+          className={`${HOMEPAGE_HERO_ACTIONS} ${
             prefersReducedMotion ? '' : HERO_ENTRANCE
           }`}
           style={

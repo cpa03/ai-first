@@ -23,6 +23,7 @@ import { useClipboard } from '@/hooks/useClipboard';
 import { useConfetti } from '@/hooks/useConfetti';
 import StatusAnnouncer from './StatusAnnouncer';
 import { CONFETTI_DOT, SPACE_Y_PATTERNS } from '@/lib/config';
+import { ERROR_BOUNDARY_ACTION_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
 
 /**
  * Micro-UX: ErrorCopyButton - Functional component that uses useClipboard hook
@@ -275,7 +276,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                       </>
                     )}
                   </div>
-                  <div className="mt-4 flex gap-2">
+                  <div className={ERROR_BOUNDARY_ACTION_GROUP}>
                     <ErrorCopyButton
                       errorText={`Error: ${this.state.error?.toString()}\n\nStack:\n${this.state.errorInfo?.componentStack || MESSAGES.ERROR_BOUNDARY.NO_STACK_TRACE}`}
                       copyLabel={MESSAGES.ERROR_BOUNDARY.COPY_BUTTON}
