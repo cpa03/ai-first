@@ -1,0 +1,100 @@
+{
+  "timestamp": "2026-08-13T12:43:00.197Z",
+  "baseUrl": "http://localhost:3000",
+  "summary": {
+    "totalPages": 3,
+    "totalOptimizations": 6
+  },
+  "pages": [
+    {
+      "url": "/",
+      "metrics": {
+        "totalElements": 281,
+        "scriptCount": 31,
+        "stylesheetCount": 1,
+        "imageCount": 0,
+        "imagesWithoutLazy": 0,
+        "imagesWithoutDimensions": 0,
+        "preloadCount": 5,
+        "preconnectCount": 8,
+        "dnsPrefetchCount": 0,
+        "largeImageCount": 0,
+        "renderBlockingScriptCount": 1,
+        "thirdPartyScriptCount": 0
+      },
+      "optimizations": [
+        {
+          "type": "Script Count",
+          "value": 31,
+          "threshold": 20,
+          "recommendation": "Consider code splitting or lazy loading non-critical scripts"
+        },
+        {
+          "type": "Render Blocking Scripts",
+          "value": 1,
+          "recommendation": "Add async or defer attribute to non-critical scripts"
+        }
+      ]
+    },
+    {
+      "url": "/login",
+      "metrics": {
+        "totalElements": 223,
+        "scriptCount": 31,
+        "stylesheetCount": 1,
+        "imageCount": 0,
+        "imagesWithoutLazy": 0,
+        "imagesWithoutDimensions": 0,
+        "preloadCount": 6,
+        "preconnectCount": 8,
+        "dnsPrefetchCount": 0,
+        "largeImageCount": 0,
+        "renderBlockingScriptCount": 1,
+        "thirdPartyScriptCount": 0
+      },
+      "optimizations": [
+        {
+          "type": "Script Count",
+          "value": 31,
+          "threshold": 20,
+          "recommendation": "Consider code splitting or lazy loading non-critical scripts"
+        },
+        {
+          "type": "Render Blocking Scripts",
+          "value": 1,
+          "recommendation": "Add async or defer attribute to non-critical scripts"
+        }
+      ]
+    },
+    {
+      "url": "/signup",
+      "metrics": {
+        "totalElements": 259,
+        "scriptCount": 27,
+        "stylesheetCount": 1,
+        "imageCount": 0,
+        "imagesWithoutLazy": 0,
+        "imagesWithoutDimensions": 0,
+        "preloadCount": 3,
+        "preconnectCount": 8,
+        "dnsPrefetchCount": 0,
+        "largeImageCount": 0,
+        "renderBlockingScriptCount": 1,
+        "thirdPartyScriptCount": 0
+      },
+      "optimizations": [
+        {
+          "type": "Script Count",
+          "value": 27,
+          "threshold": 20,
+          "recommendation": "Consider code splitting or lazy loading non-critical scripts"
+        },
+        {
+          "type": "Render Blocking Scripts",
+          "value": 1,
+          "recommendation": "Add async or defer attribute to non-critical scripts"
+        }
+      ]
+    }
+  ]
+}
