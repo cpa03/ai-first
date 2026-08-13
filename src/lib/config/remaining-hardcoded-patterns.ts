@@ -270,6 +270,42 @@ export const NOT_FOUND_ACTIONS =
   'flex flex-col sm:flex-row gap-3 justify-center';
 
 /**
+ * Progress bar fill colors based on completion percentage
+ * Used in: DeliverableCard.tsx inlineProgressFillClasses
+ */
+export const PROGRESS_BAR_COLORS = {
+  /** bg-green-500 - 100% complete */
+  COMPLETE: 'bg-green-500',
+  /** bg-blue-500 - 75-99% */
+  HIGH: 'bg-blue-500',
+  /** bg-blue-400 - 50-74% */
+  MEDIUM: 'bg-blue-400',
+  /** bg-blue-300 - 1-49% */
+  LOW: 'bg-blue-300',
+  /** bg-gray-300 - 0% (empty) */
+  EMPTY: 'bg-gray-300',
+} as const;
+
+/**
+ * Loading spinner elapsed time text style
+ * Used in: LoadingSpinner.tsx elapsed time display
+ */
+export const LOADING_SPINNER_ELAPSED_TEXT = 'text-xs text-gray-400 font-mono';
+
+/**
+ * Password visible state background tint
+ * Used in: InputWithValidation.tsx when password is toggled visible
+ * Provides subtle amber feedback that password text is exposed
+ */
+export const PASSWORD_VISIBLE_TINT = 'bg-amber-50/50 border-amber-300/60';
+
+/**
+ * Valid checkmark icon color
+ * Used in: InputWithValidation.tsx success checkmark SVG
+ */
+export const VALID_CHECKMARK_COLOR = 'text-green-800';
+
+/**
  * Dashboard page specific patterns
  * Used in: Dashboard page
  */
@@ -316,5 +352,9 @@ export const REMAINING_PATTERNS = {
   AUTH_CALLBACK_WIDTH,
   CLARIFY_LAYOUT,
   RESULTS_CTA,
+  PROGRESS_BAR_COLORS,
+  LOADING_SPINNER_ELAPSED_TEXT,
+  PASSWORD_VISIBLE_TINT,
+  VALID_CHECKMARK_COLOR,
   DASHBOARD_SPECIFIC,
 } as const;

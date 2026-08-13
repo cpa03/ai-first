@@ -14,6 +14,7 @@ import {
   CSS_POSITIONING,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
+import { LOADING_SPINNER_ELAPSED_TEXT } from '@/lib/config/remaining-hardcoded-patterns';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface LoadingSpinnerProps {
@@ -209,7 +210,7 @@ function LoadingSpinnerComponent({
       )}
       {showElapsedTime && elapsedSeconds > 0 && (
         <span
-          className={`text-xs text-gray-400 font-mono ${FADE_IN}`}
+          className={`${LOADING_SPINNER_ELAPSED_TEXT} ${FADE_IN}`}
           aria-live="polite"
         >
           {COMPONENT_CONFIG.SPINNER.ELAPSED_TIME_LABEL} ({elapsedSeconds}s)
