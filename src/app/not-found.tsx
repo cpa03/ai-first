@@ -193,26 +193,32 @@ export default function NotFound() {
             </Tooltip>
 
             <Link href={ROUTES.HOME}>
-              <Button
-                variant="secondary"
-                className={NOT_FOUND_BUTTON_INLINE_FULL}
+              <Tooltip
+                content={NOT_FOUND_LABELS.GO_HOME_TOOLTIP}
+                shortcut={['Esc']}
+                position="top"
               >
-                <svg
-                  className={ICON_SIZES.MD}
-                  fill="none"
-                  viewBox={SVG_VIEWBOX.STANDARD}
-                  stroke="currentColor"
-                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-                  aria-hidden="true"
+                <Button
+                  variant="secondary"
+                  className={NOT_FOUND_BUTTON_INLINE_FULL}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                  />
-                </svg>
-                Go home
-              </Button>
+                  <svg
+                    className={ICON_SIZES.MD}
+                    fill="none"
+                    viewBox={SVG_VIEWBOX.STANDARD}
+                    stroke="currentColor"
+                    strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                    />
+                  </svg>
+                  Go home
+                </Button>
+              </Tooltip>
             </Link>
 
             <Link href={ROUTES.DASHBOARD}>
