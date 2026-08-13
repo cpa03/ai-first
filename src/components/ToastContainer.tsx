@@ -30,7 +30,10 @@ import {
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
-import { generateId } from '@/lib/security/crypto';
+
+// PERFORMANCE (⚡ Bolt): Use an incrementing counter for unique, ephemeral toast IDs
+// to avoid the high CPU and OS-level secure entropy/crypto overhead of `generateId()`.
+let toastIdCounter = 0;
 
 export interface Toast {
   id: string;
@@ -400,7 +403,7 @@ function ToastContainerComponent() {
   }, []);
 
   const showToast = useCallback((options: ToastOptions) => {
-    const id = generateId();
+    const id = `toast-${Date.now()}-${toastIdCounter++}`;
     const newToast: Toast = { ...options, id };
     setToasts((prev) => [...prev, newToast]);
   }, []);
