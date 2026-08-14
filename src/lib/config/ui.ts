@@ -145,6 +145,13 @@ export const UI_CONFIG = {
     50,
     100
   ),
+
+  SECTION_INDICATOR_SCROLL_THRESHOLD: EnvLoader.number(
+    'UI_SECTION_INDICATOR_SCROLL_THRESHOLD',
+    200,
+    50,
+    500
+  ),
 } as const;
 
 export const LABELS = {
