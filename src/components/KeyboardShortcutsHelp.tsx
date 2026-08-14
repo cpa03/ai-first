@@ -929,17 +929,13 @@ function KeyboardShortcutsHelpComponent({
                       <div
                         key={`${context}-${index}`}
                         ref={
-                          preferences.vimMode && globalIndex === selectedIndex
-                            ? selectedItemRef
-                            : null
+                          globalIndex === selectedIndex ? selectedItemRef : null
                         }
                       >
                         <ShortcutRow
                           shortcut={shortcut}
                           isMac={isMac}
-                          isSelected={
-                            preferences.vimMode && globalIndex === selectedIndex
-                          }
+                          isSelected={globalIndex === selectedIndex}
                           searchQuery={searchQuery}
                         />
                       </div>
