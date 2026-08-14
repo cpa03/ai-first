@@ -36,10 +36,20 @@ export class CircuitBreaker {
 
     if (this.circuitState.state === 'open') {
       if (now >= (this.circuitState.nextAttemptTime || 0)) {
-        this.circuitState.state = 'half-open';
-        logger.info(
-          `Circuit breaker HALF-OPEN transition for "${this.name}" - starting recovery probe`
-        );
+        // FIX: Race condition - acquire lock BEFORE transitioning to half-open.
+        // Without the lock, multiple concurrent requests can all see 'open' state
+        // and all transition to 'half-open' simultaneously, defeating the purpose
+        // of limiting load during recovery probes.
+        return this.withHalfOpenLock(() => {
+          // Double-check: Another request may have already transitioned the state
+          if (this.circuitState.state === 'open') {
+            this.circuitState.state = 'half-open';
+            logger.info(
+              `Circuit breaker HALF-OPEN transition for "${this.name}" - starting recovery probe`
+            );
+          }
+          return this.executeOperation(operation, now);
+        });
       } else {
         throw new CircuitBreakerError(
           this.name,
