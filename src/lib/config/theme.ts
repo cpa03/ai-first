@@ -9,6 +9,42 @@ import { EnvLoader } from './environment';
 import { PROGRESS_PERCENTAGE } from './modular-constants';
 
 /**
+ * Section indicator colors for active/inactive states
+ * Used by SectionIndicator component
+ */
+export const SECTION_INDICATOR_COLORS = {
+  ACTIVE_BG: 'bg-primary-600',
+  ACTIVE_PING: 'bg-primary-400',
+  INACTIVE_BG: 'bg-gray-100',
+  INACTIVE_HOVER_BG: 'hover:bg-primary-50',
+} as const;
+
+/**
+ * Success state colors for password reset and confirmation screens
+ * Used by forgot-password, signup, and confirmation pages
+ */
+export const SUCCESS_STATE_COLORS = {
+  ICON_BG: 'bg-green-100',
+  ICON_TEXT: 'text-green-600',
+  HEADING: 'text-gray-900',
+  BODY: 'text-gray-600',
+  MUTED: 'text-gray-500',
+} as const;
+
+/**
+ * Landing page feature card colors
+ * Used by WhyChooseSection and FeatureGrid components
+ */
+export const LANDING_PAGE_COLORS = {
+  FEATURE_ICON_BG: 'bg-green-100',
+  FEATURE_ICON_HOVER: 'group-hover:bg-green-200',
+  FEATURE_HOVER_BORDER: 'hover:border-green-200',
+  FEATURE_HOVER_BG: 'hover:bg-green-50/30',
+  FEATURE_TITLE_HOVER: 'group-hover:text-green-800',
+  FEATURE_ICON_CONTAINER_HOVER: 'group-hover:bg-green-200',
+} as const;
+
+/**
  * State shadow utilities for form inputs (non-focus states)
  * Pre-defined shadow classes for success/error/warning visual feedback
  * Use these for transient state indicators like success flash effects

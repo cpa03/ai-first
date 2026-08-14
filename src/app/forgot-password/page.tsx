@@ -19,6 +19,7 @@ import {
   SPACE_Y_PATTERNS,
   VALIDATION_CONFIG,
 } from '@/lib/config';
+import { SUCCESS_STATE_COLORS } from '@/lib/config/theme';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -79,10 +80,10 @@ export default function ForgotPasswordPage() {
         >
           <div className={`${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE}`}>
             <div
-              className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex h-12 w-12 items-center justify-center rounded-full bg-green-100`}
+              className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex h-12 w-12 items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG}`}
             >
               <svg
-                className="h-6 w-6 text-green-600"
+                className={`h-6 w-6 ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
