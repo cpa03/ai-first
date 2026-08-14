@@ -24,6 +24,12 @@ This file contains only **active tasks** that are currently in progress or pendi
 - **Date**: 2026-08-02
 - **Details**: Verified that keyboard shortcut and styling details in `EmailButton` are connected directly to centralized modular configurations in `src/lib/config/`, maintaining zero hardcoded values and consistent architectural layers.
 
+### [STRENGTHEN] Strengthen SectionIndicator Keyboard Accessibility and Reduced Motion Compatibility
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-14
+- **Details**: Strengthened `SectionIndicator` keyboard focus visibility with `focus-visible:scale-125` for tactile parity with mouse hover, integrated `usePrefersReducedMotion` smooth scroll toggling, and added unit tests in `tests/SectionIndicator.test.tsx`.
+
 ---
 
 ## Quick Stats
