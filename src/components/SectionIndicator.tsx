@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
+import Tooltip from './Tooltip';
 import {
   TRANSITION_CLASSES,
   Z_INDEX_LAYERS,
@@ -133,39 +134,40 @@ function SectionIndicatorComponent({
         {sections.map((section) => {
           const isActive = activeSection === section.id;
           return (
-            <button
+            <Tooltip
               key={section.id}
-              type="button"
-              onClick={() => scrollToSection(section.id)}
-              className={`
-                relative
-                w-3 h-3
-                rounded-full
-                ${TRANSITION_CLASSES.DEFAULT}
-                ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}
-                ${
-                  isActive
-                    ? 'bg-primary-600 scale-125'
-                    : `${BG_COLORS.LIGHT} hover:${BG_COLORS.BRAND_LIGHT} hover:scale-110`
-                }
-              `}
-              aria-label={SECTION_INDICATOR_LABELS.SECTION_ARIA_LABEL(
-                section.label
-              )}
-              aria-current={isActive ? 'true' : undefined}
-              title={
-                section.shortcut
-                  ? `${section.label} (${section.shortcut})`
-                  : section.label
-              }
+              content={section.label}
+              shortcut={section.shortcut ? [section.shortcut] : undefined}
+              position="right"
             >
-              {isActive && !prefersReducedMotion && (
-                <span
-                  className="absolute inset-0 rounded-full bg-primary-400 animate-ping opacity-75"
-                  aria-hidden="true"
-                />
-              )}
-            </button>
+              <button
+                type="button"
+                onClick={() => scrollToSection(section.id)}
+                className={`
+                  relative
+                  w-3 h-3
+                  rounded-full
+                  ${TRANSITION_CLASSES.DEFAULT}
+                  ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}
+                  ${
+                    isActive
+                      ? 'bg-primary-600 scale-125'
+                      : `${BG_COLORS.LIGHT} hover:${BG_COLORS.BRAND_LIGHT} hover:scale-110`
+                  }
+                `}
+                aria-label={SECTION_INDICATOR_LABELS.SECTION_ARIA_LABEL(
+                  section.label
+                )}
+                aria-current={isActive ? 'true' : undefined}
+              >
+                {isActive && !prefersReducedMotion && (
+                  <span
+                    className="absolute inset-0 rounded-full bg-primary-400 animate-ping opacity-75"
+                    aria-hidden="true"
+                  />
+                )}
+              </button>
+            </Tooltip>
           );
         })}
       </div>
