@@ -54,6 +54,32 @@ function ScrollToTopButtonComponent() {
     }
   }, [prefersReducedMotion]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
+      const isModifierPressed = e.metaKey || e.ctrlKey;
+      const isHomeKey = e.key === 'Home';
+      const isUpArrow = e.key === 'ArrowUp' && !e.shiftKey;
+
+      // ⌘+↑ on Mac, Ctrl+Home on Windows/Linux
+      if (isModifierPressed && (isHomeKey || isUpArrow)) {
+        if ((isMac && isUpArrow) || (!isMac && isHomeKey)) {
+          e.preventDefault();
+          handleScrollToTop();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleScrollToTop, isMac]);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (e.key === 'Enter' || e.key === ' ') {
