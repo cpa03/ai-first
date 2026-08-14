@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
@@ -12,7 +12,9 @@ import {
   FOCUS_RING_OFFSET_PATTERNS,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
+import { PLATFORM } from '@/lib/dom-utils';
 import { SCROLL_TO_TOP_BUTTON_LABELS } from '@/lib/config/component-labels';
+import Tooltip from './Tooltip';
 
 /**
  * ScrollToTopButton - Footer scroll-to-top link
@@ -25,7 +27,13 @@ import { SCROLL_TO_TOP_BUTTON_LABELS } from '@/lib/config/component-labels';
  */
 function ScrollToTopButtonComponent() {
   const [isHoveredOrFocused, setIsHoveredOrFocused] = useState(false);
+  const [isMac, setIsMac] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
+
+  // Micro-UX: Detect platform for keyboard shortcut display
+  useEffect(() => {
+    setIsMac(PLATFORM.isMac());
+  }, []);
 
   const handleScrollToTop = useCallback(() => {
     triggerHapticFeedback();
@@ -56,7 +64,7 @@ function ScrollToTopButtonComponent() {
     [handleScrollToTop]
   );
 
-  return (
+  const buttonElement = (
     <button
       type="button"
       onClick={handleScrollToTop}
@@ -93,6 +101,16 @@ function ScrollToTopButtonComponent() {
         />
       </svg>
     </button>
+  );
+
+  // Micro-UX: Show keyboard shortcut in tooltip for discoverability
+  // Follows the same pattern as Button component for consistency
+  const shortcut = isMac ? ['⌘', '↑'] : ['Ctrl', 'Home'];
+
+  return (
+    <Tooltip content="Scroll to top" shortcut={shortcut} position="top">
+      {buttonElement}
+    </Tooltip>
   );
 }
 
