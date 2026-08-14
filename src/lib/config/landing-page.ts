@@ -5,7 +5,7 @@
  */
 
 import { EnvLoader } from './environment';
-import { BG_COLORS, TEXT_COLORS } from './theme';
+import { BG_COLORS, TEXT_COLORS, LANDING_PAGE_COLORS } from './theme';
 
 /**
  * Default feature descriptions when not overridden by environment
@@ -139,62 +139,61 @@ export const WHY_CHOOSE_CONFIG = {
       TITLE: 'AI-Powered Intelligence',
       DESCRIPTION:
         'Advanced AI algorithms analyze your ideas and generate comprehensive project plans',
-      ICON_BG: BG_COLORS.SUCCESS_LIGHT,
-      ICON_HOVER_BG: 'group-hover:bg-green-200',
+      ICON_BG: LANDING_PAGE_COLORS.FEATURE_ICON_BG,
+      ICON_HOVER_BG: LANDING_PAGE_COLORS.FEATURE_ICON_HOVER,
       ICON_COLOR: TEXT_COLORS.SUCCESS_DARK,
       SVG_PATH:
         'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
-      HOVER_BORDER: 'hover:border-green-200',
-      HOVER_BG: 'hover:bg-green-50/30',
+      HOVER_BORDER: LANDING_PAGE_COLORS.FEATURE_HOVER_BORDER,
+      HOVER_BG: LANDING_PAGE_COLORS.FEATURE_HOVER_BG,
     },
     {
       id: 'time-saving',
       TITLE: 'Time-Saving Automation',
       DESCRIPTION:
         'Reduce planning time by 80% with automated task breakdown and timeline generation',
-      ICON_BG: BG_COLORS.SUCCESS_LIGHT,
-      ICON_HOVER_BG: 'group-hover:bg-green-200',
+      ICON_BG: LANDING_PAGE_COLORS.FEATURE_ICON_BG,
+      ICON_HOVER_BG: LANDING_PAGE_COLORS.FEATURE_ICON_HOVER,
       ICON_COLOR: TEXT_COLORS.SUCCESS_DARK,
       SVG_PATH:
         'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
-      HOVER_BORDER: 'hover:border-green-200',
-      HOVER_BG: 'hover:bg-green-50/30',
+      HOVER_BORDER: LANDING_PAGE_COLORS.FEATURE_HOVER_BORDER,
+      HOVER_BG: LANDING_PAGE_COLORS.FEATURE_HOVER_BG,
     },
     {
       id: 'developer-friendly',
       TITLE: 'Developer-Friendly',
       DESCRIPTION:
         'Export plans to GitHub, Notion, and other tools your team already uses',
-      ICON_BG: BG_COLORS.SUCCESS_LIGHT,
-      ICON_HOVER_BG: 'group-hover:bg-green-200',
+      ICON_BG: LANDING_PAGE_COLORS.FEATURE_ICON_BG,
+      ICON_HOVER_BG: LANDING_PAGE_COLORS.FEATURE_ICON_HOVER,
       ICON_COLOR: TEXT_COLORS.SUCCESS_DARK,
       SVG_PATH:
         'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
-      HOVER_BORDER: 'hover:border-green-200',
-      HOVER_BG: 'hover:bg-green-50/30',
+      HOVER_BORDER: LANDING_PAGE_COLORS.FEATURE_HOVER_BORDER,
+      HOVER_BG: LANDING_PAGE_COLORS.FEATURE_HOVER_BG,
     },
     {
       id: 'collaborative',
       TITLE: 'Collaborative Planning',
       DESCRIPTION:
         'Share blueprints with your team and iterate on plans in real-time',
-      ICON_BG: BG_COLORS.SUCCESS_LIGHT,
-      ICON_HOVER_BG: 'group-hover:bg-green-200',
+      ICON_BG: LANDING_PAGE_COLORS.FEATURE_ICON_BG,
+      ICON_HOVER_BG: LANDING_PAGE_COLORS.FEATURE_ICON_HOVER,
       ICON_COLOR: TEXT_COLORS.SUCCESS_DARK,
       SVG_PATH:
         'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
-      HOVER_BORDER: 'hover:border-green-200',
-      HOVER_BG: 'hover:bg-green-50/30',
+      HOVER_BORDER: LANDING_PAGE_COLORS.FEATURE_HOVER_BORDER,
+      HOVER_BG: LANDING_PAGE_COLORS.FEATURE_HOVER_BG,
     },
   ],
 
   ARTICLE_STYLES: {
     CONTAINER:
       'flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] active:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 transition-all duration-200 ease-out motion-reduce:transition-none cursor-pointer select-none',
-    ICON_CONTAINER:
-      'rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1 transition-all duration-300 group-hover:scale-125 group-hover:bg-green-200',
+    ICON_CONTAINER: `rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1 transition-all duration-300 group-hover:scale-125 ${LANDING_PAGE_COLORS.FEATURE_ICON_CONTAINER_HOVER}`,
     ICON_SVG: 'w-4 h-4 transition-transform duration-300 group-hover:scale-110',
-    TITLE: `font-semibold ${TEXT_COLORS.PRIMARY} mb-1 group-hover:text-green-800 transition-colors duration-200`,
+    TITLE: `font-semibold ${TEXT_COLORS.PRIMARY} mb-1 ${LANDING_PAGE_COLORS.FEATURE_TITLE_HOVER} transition-colors duration-200`,
     DESCRIPTION: `${TEXT_COLORS.MUTED_DARK} text-sm`,
   },
 } as const;

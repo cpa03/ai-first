@@ -16,6 +16,7 @@ import {
 } from '@/lib/config';
 import { SECTION_INDICATOR_LABELS } from '@/lib/config/component-labels';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
+import { SECTION_INDICATOR_COLORS } from '@/lib/config/theme';
 
 interface Section {
   id: string;
@@ -152,8 +153,8 @@ function SectionIndicatorComponent({
                   ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}
                   ${
                     isActive
-                      ? 'bg-primary-600 scale-125'
-                      : `${BG_COLORS.LIGHT} hover:${BG_COLORS.BRAND_LIGHT} hover:scale-110`
+                      ? `${SECTION_INDICATOR_COLORS.ACTIVE_BG} scale-125`
+                      : `${SECTION_INDICATOR_COLORS.INACTIVE_BG} ${SECTION_INDICATOR_COLORS.INACTIVE_HOVER_BG} hover:scale-110`
                   }
                 `}
                 aria-label={SECTION_INDICATOR_LABELS.SECTION_ARIA_LABEL(
@@ -163,7 +164,7 @@ function SectionIndicatorComponent({
               >
                 {isActive && !prefersReducedMotion && (
                   <span
-                    className="absolute inset-0 rounded-full bg-primary-400 animate-ping opacity-75"
+                    className={`absolute inset-0 rounded-full ${SECTION_INDICATOR_COLORS.ACTIVE_PING} animate-ping opacity-75`}
                     aria-hidden="true"
                   />
                 )}
