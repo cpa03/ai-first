@@ -140,6 +140,7 @@
     /ScrollShadow.tsx       ← Header scroll shadow effect
     /ScrollToTop.tsx        ← Scroll to top button
     /ScrollToTopButton.tsx  ← Scroll to top button with animation
+    /SectionIndicator.tsx   ← Section indicator for results page navigation
     /SessionTracker.tsx     ← Session tracking component
     /ShareButton.tsx        ← Share functionality
     /Skeleton.tsx           ← Skeleton loading component
@@ -159,6 +160,7 @@
       /TaskManagementHeader.tsx ← Header with progress stats
   /hooks/                  ← React custom hooks
     /useAnimatedCounter.ts  ← Animated counter hook
+    /useAnnouncement.ts     ← Screen reader announcement hook
     /useAuthCheck.ts        ← Authentication check hook
     /useBlueprintGeneration.ts ← Blueprint generation hook
     /useCapsLock.ts         ← Caps lock detection hook
