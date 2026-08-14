@@ -11,6 +11,7 @@ import {
   SHADOW_CLASSES,
   DURATION_TAILWIND,
   UI_CONFIG,
+  INTERSECTION_OBSERVER_CONFIG,
 } from '@/lib/config';
 import { SECTION_INDICATOR_LABELS } from '@/lib/config/component-labels';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -67,8 +68,8 @@ function SectionIndicatorComponent({
     };
 
     observerRef.current = new IntersectionObserver(observerCallback, {
-      rootMargin: '-20% 0px -60% 0px',
-      threshold: [0, 0.25, 0.5, 0.75, 1],
+      rootMargin: INTERSECTION_OBSERVER_CONFIG.SECTION_INDICATOR.ROOT_MARGIN,
+      threshold: [...INTERSECTION_OBSERVER_CONFIG.SECTION_INDICATOR.THRESHOLD],
     });
 
     // Observe all section elements

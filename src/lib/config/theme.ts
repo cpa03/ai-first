@@ -2260,6 +2260,20 @@ export const TOOLTIP_CONFIG = {
   CONTENT_GAP: 'gap-2.5',
   SHORTCUT_GAP: 'gap-1',
   SHORTCUT_SECTION: 'pl-2 ml-auto',
+
+  /**
+   * Viewport padding for smart positioning
+   * Replaces hardcoded VIEWPORT_PADDING = 8 in Tooltip.tsx
+   * Env: TOOLTIP_VIEWPORT_PADDING (default: 8)
+   */
+  VIEWPORT_PADDING: EnvLoader.number('TOOLTIP_VIEWPORT_PADDING', 8, 0, 32),
+
+  /**
+   * Minimum spacing from trigger element
+   * Replaces hardcoded `8` in tooltip positioning calculations
+   * Env: TOOLTIP_TRIGGER_SPACING (default: 8)
+   */
+  TRIGGER_SPACING: EnvLoader.number('TOOLTIP_TRIGGER_SPACING', 8, 4, 16),
 } as const;
 
 /**
