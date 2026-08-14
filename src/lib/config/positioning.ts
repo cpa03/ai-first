@@ -58,8 +58,16 @@ export const RIGHT_CLASSES = {
   XXXL: 'right-8',
   /** right-12 = 48px */
   XXXXL: 'right-12',
+  /** right-14 = 56px */
+  XXXXL_SM: 'right-14',
   /** right-16 = 64px */
   XXXXXL: 'right-16',
+  /** right-20 = 80px */
+  XXXXXL_MD: 'right-20',
+  /** right-28 = 112px */
+  XXXXXL_LG: 'right-28',
+  /** right-36 = 144px */
+  XXXXXL_XL: 'right-36',
   /** right-full = 100% */
   FULL: 'right-full',
 } as const;
@@ -116,8 +124,16 @@ export const LEFT_CLASSES = {
   XXXL: 'left-8',
   /** left-12 = 48px */
   XXXXL: 'left-12',
+  /** left-14 = 56px */
+  XXXXL_SM: 'left-14',
   /** left-16 = 64px */
   XXXXXL: 'left-16',
+  /** left-20 = 80px */
+  XXXXXL_MD: 'left-20',
+  /** left-28 = 112px */
+  XXXXXL_LG: 'left-28',
+  /** left-36 = 144px */
+  XXXXXL_XL: 'left-36',
   /** left-1/2 = 50% */
   HALF: 'left-1/2',
   /** left-full = 100% */
