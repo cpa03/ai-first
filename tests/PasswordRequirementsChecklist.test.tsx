@@ -26,6 +26,10 @@ describe('PasswordRequirementsChecklist', () => {
     expect(progressbar).toBeInTheDocument();
     expect(progressbar).toHaveAttribute('aria-valuenow', '0');
 
+    // Requirement list container should have aria-live="polite"
+    const list = screen.getByRole('list');
+    expect(list).toHaveAttribute('aria-live', 'polite');
+
     // All requirement items should be rendered as not met
     const lengthItem = screen.getByLabelText(/At least 8 characters: not met/i);
     expect(lengthItem).toBeInTheDocument();
