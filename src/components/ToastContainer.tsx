@@ -393,12 +393,18 @@ const Toast = memo(ToastComponent);
 function ToastContainerComponent() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [isClearingAll, setIsClearingAll] = useState(false);
+  const [showClearAllHint, setShowClearAllHint] = useState(false);
   const clearAllTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const clearAllHintTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     return () => {
       if (clearAllTimeoutRef.current) {
         clearTimeout(clearAllTimeoutRef.current);
+      }
+      if (clearAllHintTimeoutRef.current) {
+        clearTimeout(clearAllHintTimeoutRef.current);
       }
     };
   }, []);
@@ -453,6 +459,31 @@ function ToastContainerComponent() {
 
   const showClearAll = toasts.length > 1 && !isClearingAll;
 
+  // Micro-UX: Show keyboard shortcut hint briefly when Clear All button appears
+  // Helps users discover they can press Shift+Escape to clear all toasts
+  useEffect(() => {
+    if (showClearAll && !prefersReducedMotion) {
+      const showTimer = setTimeout(() => {
+        setShowClearAllHint(true);
+        clearAllHintTimeoutRef.current = setTimeout(() => {
+          setShowClearAllHint(false);
+        }, UI_CONSTANTS.TOAST_SHORTCUT_HINT_DURATION);
+      }, UI_CONSTANTS.TOAST_SHORTCUT_HINT_DELAY);
+      return () => {
+        clearTimeout(showTimer);
+        if (clearAllHintTimeoutRef.current) {
+          clearTimeout(clearAllHintTimeoutRef.current);
+        }
+      };
+    }
+    setShowClearAllHint(false);
+    return () => {
+      if (clearAllHintTimeoutRef.current) {
+        clearTimeout(clearAllHintTimeoutRef.current);
+      }
+    };
+  }, [showClearAll, prefersReducedMotion]);
+
   return (
     <div
       className={`fixed top-4 right-4 z-[${Z_INDEX_LAYERS.TOAST}] flex flex-col gap-2 max-h-screen overflow-y-auto`}
@@ -460,16 +491,36 @@ function ToastContainerComponent() {
       aria-label={TOAST_CONTAINER_LABELS.REGION_ARIA_LABEL}
     >
       {showClearAll && (
-        <button
-          onClick={clearAllToasts}
-          className={TOAST_CLEAR_ALL_BUTTON}
-          aria-label={TOAST_CONTAINER_LABELS.CLEAR_ALL_ARIA_LABEL(
-            toasts.length
+        <div className="relative inline-flex">
+          <button
+            onClick={clearAllToasts}
+            className={TOAST_CLEAR_ALL_BUTTON}
+            aria-label={TOAST_CONTAINER_LABELS.CLEAR_ALL_ARIA_LABEL(
+              toasts.length
+            )}
+            type="button"
+          >
+            {TOAST_CONTAINER_LABELS.CLEAR_ALL_BUTTON(toasts.length)}
+          </button>
+          {showClearAllHint && (
+            <div
+              className={`absolute -bottom-6 right-0 flex items-center gap-1 ${TEXT_SIZE_CLASSES.XS} ${GRAY_CLASSES.TEXT_500} animate-fade-in`}
+              aria-hidden="true"
+            >
+              <kbd
+                className={`px-1 py-0.5 bg-white border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} font-mono`}
+              >
+                Shift
+              </kbd>
+              <span>+</span>
+              <kbd
+                className={`px-1 py-0.5 bg-white border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} font-mono`}
+              >
+                Esc
+              </kbd>
+            </div>
           )}
-          type="button"
-        >
-          {TOAST_CONTAINER_LABELS.CLEAR_ALL_BUTTON(toasts.length)}
-        </button>
+        </div>
       )}
       {toasts.map((toast) => (
         <Toast key={toast.id} toast={toast} onClose={closeToast} />
