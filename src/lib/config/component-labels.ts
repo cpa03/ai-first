@@ -671,6 +671,37 @@ export const PASSWORD_REQUIREMENTS_LABELS = {
 } as const;
 
 /**
+ * SectionIndicator Labels
+ * Eliminates hardcoded aria-labels in SectionIndicator component
+ */
+export const SECTION_INDICATOR_LABELS = {
+  /** ARIA label for the section navigation */
+  NAV_ARIA_LABEL: 'Section navigation',
+  /** ARIA label template for jumping to a section */
+  SECTION_ARIA_LABEL: (label: string) => `Jump to ${label} section`,
+} as const;
+
+/**
+ * ScrollToTopButton Labels
+ * Eliminates hardcoded aria-labels in ScrollToTopButton component
+ */
+export const SCROLL_TO_TOP_BUTTON_LABELS = {
+  /** ARIA label for the scroll to top button */
+  ARIA_LABEL: 'Scroll to top of page',
+  /** Button text */
+  BUTTON_TEXT: 'Scroll to top',
+} as const;
+
+/**
+ * MobileNav Labels
+ * Eliminates hardcoded titles and aria-labels in MobileNav component
+ */
+export const MOBILE_NAV_LABELS = {
+  /** Title attribute for the close button */
+  CLOSE_TITLE: 'Press Escape to close',
+} as const;
+
+/**
  * ScrollProgress Labels
  * Eliminates hardcoded aria-labels in ScrollProgress component
  */
