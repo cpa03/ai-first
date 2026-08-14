@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState, useRef } from 'react';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
@@ -23,17 +23,39 @@ import Tooltip from './Tooltip';
  * that smoothly scrolls to the top of the page. Provides haptic feedback
  * and keyboard accessibility for a delightful user experience.
  *
+ * Micro-UX: Adds a subtle pulse animation on first appearance to draw
+ * user attention to this useful feature, especially on long pages.
+ *
  * Follows the pattern established by ScrollToTop component for consistency.
  */
 function ScrollToTopButtonComponent() {
   const [isHoveredOrFocused, setIsHoveredOrFocused] = useState(false);
   const [isMac, setIsMac] = useState(false);
+  const [hasAppeared, setHasAppeared] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
+  const pulseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Micro-UX: Detect platform for keyboard shortcut display
   useEffect(() => {
     setIsMac(PLATFORM.isMac());
   }, []);
+
+  useEffect(() => {
+    if (!prefersReducedMotion) {
+      requestAnimationFrame(() => {
+        setHasAppeared(true);
+      });
+      pulseTimeoutRef.current = setTimeout(() => {
+        setHasAppeared(false);
+      }, 1500);
+    }
+
+    return () => {
+      if (pulseTimeoutRef.current) {
+        clearTimeout(pulseTimeoutRef.current);
+      }
+    };
+  }, [prefersReducedMotion]);
 
   const handleScrollToTop = useCallback(() => {
     triggerHapticFeedback();
@@ -106,6 +128,7 @@ function ScrollToTopButtonComponent() {
         ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} rounded-md
         inline-flex items-center gap-1.5
         group
+        ${hasAppeared && !prefersReducedMotion ? 'animate-scroll-to-top-appear' : ''}
       `}
       aria-label={SCROLL_TO_TOP_BUTTON_LABELS.ARIA_LABEL}
     >

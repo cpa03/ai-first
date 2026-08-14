@@ -1125,6 +1125,36 @@ button[aria-disabled='true'].btn-glow-hover {
   }
 }
 
+@keyframes scrollToTopAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.animate-scroll-to-top-appear {
+  animation: scrollToTopAppear 1.2s var(--ease-smooth) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-scroll-to-top-appear {
+    animation: none;
+  }
+}
+
 @keyframes strikethrough {
   0% {
     width: 0;
