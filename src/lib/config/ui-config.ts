@@ -198,4 +198,16 @@ export const UI_CONFIG = {
     50,
     99
   ),
+
+  /**
+   * Scroll threshold in pixels for showing the section indicator
+   * Used by SectionIndicator to determine when to show/hide the floating navigation
+   * Env: UI_SECTION_INDICATOR_SCROLL_THRESHOLD (default: 200)
+   */
+  SECTION_INDICATOR_SCROLL_THRESHOLD: EnvLoader.number(
+    'UI_SECTION_INDICATOR_SCROLL_THRESHOLD',
+    200,
+    50,
+    500
+  ),
 } as const;

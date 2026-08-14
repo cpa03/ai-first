@@ -10,6 +10,7 @@ import {
   BORDER_COLORS,
   SHADOW_CLASSES,
   DURATION_TAILWIND,
+  UI_CONFIG,
 } from '@/lib/config';
 import { SECTION_INDICATOR_LABELS } from '@/lib/config/component-labels';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -89,7 +90,7 @@ function SectionIndicatorComponent({
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       // Show after scrolling past the header area
-      setIsVisible(scrollTop > 200);
+      setIsVisible(scrollTop > UI_CONFIG.SECTION_INDICATOR_SCROLL_THRESHOLD);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
