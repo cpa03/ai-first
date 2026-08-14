@@ -12,6 +12,7 @@ import {
   FOCUS_RING_OFFSET_PATTERNS,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
+import { SCROLL_TO_TOP_BUTTON_LABELS } from '@/lib/config/component-labels';
 
 /**
  * ScrollToTopButton - Footer scroll-to-top link
@@ -72,9 +73,9 @@ function ScrollToTopButtonComponent() {
         inline-flex items-center gap-1.5
         group
       `}
-      aria-label="Scroll to top of page"
+      aria-label={SCROLL_TO_TOP_BUTTON_LABELS.ARIA_LABEL}
     >
-      <span>Scroll to top</span>
+      <span>{SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}</span>
       <svg
         className={`${ICON_SIZES.SM} transition-transform ${TRANSITION_CLASSES.DEFAULT} ${
           isHoveredOrFocused && !prefersReducedMotion ? '-translate-y-0.5' : ''
