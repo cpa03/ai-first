@@ -533,7 +533,7 @@ export default function DashboardPage() {
         triggerHapticFeedback();
         if (ideas.length > 0) {
           setSelectedRowIndex(0);
-        } else {
+        } else if (typeof window !== 'undefined') {
           window.scrollTo({
             top: 0,
             behavior: prefersReducedMotion ? 'auto' : 'smooth',
@@ -547,7 +547,7 @@ export default function DashboardPage() {
         triggerHapticFeedback();
         if (ideas.length > 0) {
           setSelectedRowIndex(ideas.length - 1);
-        } else {
+        } else if (typeof window !== 'undefined') {
           window.scrollTo({
             top: document.documentElement.scrollHeight,
             behavior: prefersReducedMotion ? 'auto' : 'smooth',
@@ -860,7 +860,9 @@ export default function DashboardPage() {
           type="button"
           onClick={() => {
             localStorage.removeItem(LOCAL_STORAGE_KEYS.ONBOARDING_COMPLETED);
-            window.location.reload();
+            if (typeof window !== 'undefined') {
+              window.location.reload();
+            }
           }}
           className={`ml-2 ${DASHBOARD_PATTERNS.ACTION_LINK} cursor-pointer`}
           aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.RESTART_ONBOARDING}
