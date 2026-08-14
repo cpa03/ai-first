@@ -262,7 +262,7 @@ function PasswordRequirementsChecklistComponent({
           />
         </div>
       </div>
-      <ul className={SPACE_Y_PATTERNS.SM_MD}>
+      <ul className={SPACE_Y_PATTERNS.SM_MD} aria-live="polite">
         {requirements.map((req, index) => (
           <li
             key={req.id}
