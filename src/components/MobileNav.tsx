@@ -32,6 +32,7 @@ import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { HAMBURGER_SIZES } from '@/lib/config/icon-sizes';
+import { MOBILE_NAV_LABELS } from '@/lib/config/component-labels';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -277,7 +278,7 @@ function MobileNavComponent() {
               onClick={closeMenu}
               className={`absolute top-4 right-4 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MEDIUM_SIZE} flex items-center justify-center rounded-full bg-white shadow-xl ${BORDER_COLORS.LIGHT} ${GRAY_CLASSES.TEXT_700} hover:${GRAY_CLASSES.TEXT_900} hover:${GRAY_CLASSES.HOVER_BG_50} hover:shadow-2xl hover:scale-105 active:scale-95 ${TRANSITION_CLASSES.DEFAULT} ${FOCUS_RING_PATTERNS.DEFAULT} animate-fade-in`}
               aria-label={`${MOBILE_NAV_CONFIG.CLOSE_ARIA_LABEL} (Escape)`}
-              title="Press Escape to close"
+              title={MOBILE_NAV_LABELS.CLOSE_TITLE}
             >
               <div
                 className={`${HAMBURGER_SIZES.CONTAINER} flex flex-col justify-center items-center`}
