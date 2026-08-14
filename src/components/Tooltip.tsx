@@ -25,6 +25,9 @@ import {
   DURATION_TAILWIND,
   TOOLTIP_CONFIG,
 } from '@/lib/config';
+
+const VIEWPORT_PADDING = TOOLTIP_CONFIG.VIEWPORT_PADDING;
+const TRIGGER_SPACING = TOOLTIP_CONFIG.TRIGGER_SPACING;
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { PLATFORM } from '@/lib/dom-utils';
 
@@ -40,13 +43,6 @@ interface TooltipProps {
   disabled?: boolean;
   className?: string;
 }
-
-/**
- * Micro-UX: Viewport boundary detection for smart tooltip positioning
- * Prevents tooltips from being clipped at viewport edges by automatically
- * flipping to the opposite position when space is insufficient.
- */
-const VIEWPORT_PADDING = 8; // px from viewport edge
 
 function getOppositePosition(pos: TooltipPosition): TooltipPosition {
   const opposites: Record<TooltipPosition, TooltipPosition> = {
@@ -70,13 +66,19 @@ function hasEnoughSpace(
 
   switch (position) {
     case 'top':
-      return top - tooltipHeight - 8 >= VIEWPORT_PADDING;
+      return top - tooltipHeight - TRIGGER_SPACING >= VIEWPORT_PADDING;
     case 'bottom':
-      return bottom + tooltipHeight + 8 <= viewportHeight - VIEWPORT_PADDING;
+      return (
+        bottom + tooltipHeight + TRIGGER_SPACING <=
+        viewportHeight - VIEWPORT_PADDING
+      );
     case 'left':
-      return left - tooltipWidth - 8 >= VIEWPORT_PADDING;
+      return left - tooltipWidth - TRIGGER_SPACING >= VIEWPORT_PADDING;
     case 'right':
-      return right + tooltipWidth + 8 <= viewportWidth - VIEWPORT_PADDING;
+      return (
+        right + tooltipWidth + TRIGGER_SPACING <=
+        viewportWidth - VIEWPORT_PADDING
+      );
     default:
       return true;
   }

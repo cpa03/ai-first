@@ -1074,3 +1074,10 @@ export {
   type CSSPositioning,
   type CSSPositioningValue,
 } from './css-positioning';
+
+// Intersection Observer Configuration
+// Centralizes hardcoded rootMargin and threshold values for IntersectionObserver
+export {
+  INTERSECTION_OBSERVER_CONFIG,
+  type IntersectionObserverConfig,
+} from './intersection-observer';
