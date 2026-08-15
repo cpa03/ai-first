@@ -647,6 +647,15 @@ export const WHY_CHOOSE_SECTION_LABELS = {
  * Password Requirements Labels
  * Eliminates hardcoded aria-labels in PasswordRequirementsChecklist component
  */
+/**
+ * CapsLockWarning Labels
+ * Eliminates hardcoded strings in CapsLockWarning component
+ */
+export const CAPS_LOCK_WARNING_LABELS = {
+  /** Warning text displayed when Caps Lock is enabled */
+  WARNING_TEXT: 'Caps Lock is on',
+} as const;
+
 export const PASSWORD_REQUIREMENTS_LABELS = {
   /** ARIA label for the password requirements group */
   GROUP_ARIA_LABEL: (metCount: number, total: number) =>
@@ -768,6 +777,7 @@ export const COMPONENT_LABELS = {
   BLUEPRINT_DISPLAY: BLUEPRINT_DISPLAY_LABELS,
   SCROLL_PROGRESS: SCROLL_PROGRESS_LABELS,
   PASSWORD_REQUIREMENTS: PASSWORD_REQUIREMENTS_LABELS,
+  CAPS_LOCK_WARNING: CAPS_LOCK_WARNING_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
@@ -800,4 +810,5 @@ export type BlueprintDisplayLabels = typeof BLUEPRINT_DISPLAY_LABELS;
 export type WhyChooseSectionLabels = typeof WHY_CHOOSE_SECTION_LABELS;
 export type ScrollProgressLabels = typeof SCROLL_PROGRESS_LABELS;
 export type PasswordRequirementsLabels = typeof PASSWORD_REQUIREMENTS_LABELS;
+export type CapsLockWarningLabels = typeof CAPS_LOCK_WARNING_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;
