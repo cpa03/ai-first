@@ -49,6 +49,8 @@ async function handlePost(context: ApiContext) {
     finalIdeaId = IDEA_CONFIG.ID.GENERATOR();
   }
 
+  await clarifierAgent.initialize();
+
   const session = await clarifierAgent.startClarification(
     finalIdeaId,
     validatedIdea
