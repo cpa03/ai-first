@@ -29,6 +29,21 @@ Changed `shouldRetry` from `error.message.includes('retryable')` to `error.messa
 
 ## Fixed Bugs
 
+### [x] Bug 5: CapsLockWarning state tracking failure on re-toggle
+
+**File:** `src/components/CapsLockWarning.tsx`
+**Severity:** MEDIUM
+**Status:** ✅ FIXED
+
+**Description:**
+`prevIsOnRef.current` was only updated when `isOn` transitioned to `true`. When `isOn` transitioned back to `false`, `prevIsOnRef.current` remained `true`, causing subsequent Caps Lock toggles from `false` to `true` to fail to re-trigger the warning indicator.
+
+**Root Cause:**
+`prevIsOnRef.current = isOn` was inside the `if (isOn && !prevIsOnRef.current)` block instead of updating on every `isOn` transition.
+
+**Fix:**
+Unified `isOn` transition handling in a synchronized `useEffect` that updates `prevIsOnRef.current = isOn` unconditionally after handling transition states.
+
 ### [x] bug: direct console.error call in src/components/GlobalErrorHandler.tsx
 
 **File:** `src/components/GlobalErrorHandler.tsx`

@@ -8,6 +8,7 @@ import {
   SVG_VIEWBOX,
   TEXT_COLORS,
 } from '@/lib/config';
+import { CAPS_LOCK_WARNING_LABELS } from '@/lib/config/component-labels';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { ANIMATION_DELAYS } from '@/lib/config/theme';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -29,7 +30,8 @@ interface CapsLockWarningProps {
  * - Smooth fade-in/fade-out animation
  * - Respects prefers-reduced-motion
  * - Accessible with proper ARIA attributes
- * - Compact design that doesn't disrupt form layout
+ * - Centralized component strings
+ * - Synchronized state tracking for multiple toggles
  */
 function CapsLockWarningComponent({
   isOn,
@@ -42,33 +44,34 @@ function CapsLockWarningComponent({
   const prevIsOnRef = useRef(isOn);
 
   useEffect(() => {
+    let timer: NodeJS.Timeout | undefined;
+
     if (isOn && !prevIsOnRef.current) {
       setShouldRender(true);
       setIsExiting(false);
       // Micro-UX: Pulse icon once when warning first appears for visual attention
       if (!prefersReducedMotion) {
         setPulseOnce(true);
-        const timer = setTimeout(
+        timer = setTimeout(
           () => setPulseOnce(false),
           ANIMATION_DELAYS.RIPPLE
         );
-        return () => clearTimeout(timer);
       }
-    }
-    prevIsOnRef.current = isOn;
-  }, [isOn, prefersReducedMotion]);
-
-  useEffect(() => {
-    if (!isOn && prevIsOnRef.current) {
+    } else if (!isOn && prevIsOnRef.current) {
       setIsExiting(true);
       // Allow the exit animation to complete before unmounting
-      const timer = setTimeout(() => {
+      timer = setTimeout(() => {
         setShouldRender(false);
         setIsExiting(false);
       }, ANIMATION_DELAYS.LONG);
-      return () => clearTimeout(timer);
     }
-  }, [isOn]);
+
+    prevIsOnRef.current = isOn;
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isOn, prefersReducedMotion]);
 
   if (!shouldRender) return null;
 
@@ -81,7 +84,7 @@ function CapsLockWarningComponent({
       aria-live="polite"
     >
       <svg
-        className={`${SVG_SIZES.SMD} flex-shrink-0 ${pulseOnce ? 'animate-pulse-once' : ''}`}
+        className={`${SVG_SIZES.SMD} flex-shrink-0 ${pulseOnce && !prefersReducedMotion ? 'animate-pulse-once' : ''}`}
         fill="none"
         viewBox={SVG_VIEWBOX.STANDARD}
         stroke="currentColor"
@@ -94,7 +97,7 @@ function CapsLockWarningComponent({
           d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
         />
       </svg>
-      <span>Caps Lock is on</span>
+      <span>{CAPS_LOCK_WARNING_LABELS.WARNING_TEXT}</span>
     </div>
   );
 }

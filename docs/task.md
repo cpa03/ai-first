@@ -30,6 +30,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 - **Date**: 2026-08-14
 - **Details**: Strengthened `SectionIndicator` keyboard focus visibility with `focus-visible:scale-125` for tactile parity with mouse hover, integrated `usePrefersReducedMotion` smooth scroll toggling, and added unit tests in `tests/SectionIndicator.test.tsx`.
 
+### [STRENGTHEN] Strengthen CapsLockWarning Re-toggle State Persistence
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-15
+- **Details**: Unified `isOn` state tracking in `CapsLockWarning.tsx` to ensure `prevIsOnRef.current` is updated on every transition, fixing a bug where subsequent Caps Lock toggling failed to trigger the warning indicator. Verified in `tests/CapsLockWarning.test.tsx`.
+
+### [CONNECT] Connect CapsLockWarning Labels to Central Component Configs
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-08-15
+- **Details**: Connected `CapsLockWarning` UI strings directly to `CAPS_LOCK_WARNING_LABELS` in `src/lib/config/component-labels.ts`, eliminating inline hardcoded text.
+
 ---
 
 ## Quick Stats
