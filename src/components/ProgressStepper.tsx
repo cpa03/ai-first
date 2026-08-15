@@ -18,6 +18,7 @@ import {
   ICON_SIZES,
   HEIGHT_ONLY,
   PROGRESS_STEPPER_STYLES,
+  FLEX_PATTERNS,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -175,7 +176,7 @@ const ProgressStepperComponent = function ProgressStepper({
       role="navigation"
     >
       <div className="sm:hidden">
-        <div className="flex items-center justify-between px-2">
+        <div className={`${FLEX_PATTERNS.BETWEEN} px-2`}>
           <ol className={PROGRESS_STEPPER_STYLES.MOBILE_STEP_LIST}>
             {steps.map((step, index) => {
               const isClickable = onStepClick && index !== currentStep;
@@ -240,7 +241,7 @@ const ProgressStepperComponent = function ProgressStepper({
         </div>
       </div>
 
-      <ol className="hidden sm:flex items-center justify-between">
+      <ol className={`${FLEX_PATTERNS.BETWEEN} hidden sm:flex`}>
         {steps.map((step, index) => {
           const isLast = index === steps.length - 1;
           const isClickable = onStepClick && index !== currentStep;

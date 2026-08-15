@@ -24,6 +24,7 @@ import {
   COMMON_SPACING_PATTERNS,
   HEIGHT_ONLY,
   FLEX_GROW_PATTERNS,
+  TOAST_DISMISS_BUTTON,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -342,7 +343,7 @@ const AlertComponent = function Alert({
             aria-atomic="true"
           >
             {remainingSeconds > 0 && (
-              <span className="text-xs font-medium opacity-60 tabular-nums">
+              <span className={TOAST_DISMISS_BUTTON}>
                 {isPaused ? (
                   <span className={`flex items-center ${GAP_CLASSES.SM}`}>
                     <svg

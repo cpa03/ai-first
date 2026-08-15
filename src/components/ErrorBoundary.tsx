@@ -22,7 +22,7 @@ import { ROUTES } from '@/lib/config/routes';
 import { useClipboard } from '@/hooks/useClipboard';
 import { useConfetti } from '@/hooks/useConfetti';
 import StatusAnnouncer from './StatusAnnouncer';
-import { CONFETTI_DOT, SPACE_Y_PATTERNS } from '@/lib/config';
+import { CONFETTI_DOT, SPACE_Y_PATTERNS, FLEX_PATTERNS } from '@/lib/config';
 import { ERROR_BOUNDARY_ACTION_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
 
 /**
@@ -212,7 +212,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                   {MESSAGES.ERROR_BOUNDARY.DESCRIPTION}
                 </p>
                 <div className={`mt-6 ${SPACE_Y_PATTERNS.LG}`}>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <div className={FLEX_PATTERNS.RESPONSIVE_COL}>
                     <Button
                       variant="primary"
                       onClick={this.handleReset}
@@ -232,7 +232,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                       <span>to retry</span>
                     </span>
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                  <div className={FLEX_PATTERNS.RESPONSIVE_COL}>
                     <Link href={ROUTES.HOME} passHref>
                       <Button
                         variant="secondary"
