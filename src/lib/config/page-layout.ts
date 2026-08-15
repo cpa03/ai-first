@@ -143,6 +143,7 @@ export const FORM_OVERLAY_STYLES = {
 export const FORM_ARIA_LABELS = {
   LOGIN_SUBMITTING: 'Signing in, please wait',
   SIGNUP_SUBMITTING: 'Creating account, please wait',
+  FORGOT_PASSWORD_SUBMITTING: 'Sending reset link, please wait',
 } as const;
 
 export type PageLayout = typeof PAGE_LAYOUT;
