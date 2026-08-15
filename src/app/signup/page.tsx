@@ -225,11 +225,33 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
 
   const prefersReducedMotion = usePrefersReducedMotion();
   const [celebrating, setCelebrating] = useState(false);
+  const [transitioning, setTransitioning] = useState(false);
   const prevStrengthRef = useRef<PasswordStrength>('empty');
+  const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (strength === 'strong' && prevStrengthRef.current !== 'strong') {
+    return () => {
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const prev = prevStrengthRef.current;
+
+    if (strength !== prev && prev !== 'empty') {
       triggerHapticFeedback();
+      setTransitioning(true);
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current);
+      }
+      transitionTimeoutRef.current = setTimeout(() => {
+        setTransitioning(false);
+      }, ANIMATION_DELAYS.LONG);
+    }
+
+    if (strength === 'strong' && prev !== 'strong') {
       setCelebrating(true);
       const timer = setTimeout(
         () => setCelebrating(false),
@@ -301,7 +323,11 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
         >
           {percentage}%
         </span>
-        <span className={`text-xs ${config.textColor}`}>{config.label}</span>
+        <span
+          className={`text-xs ${config.textColor} ${transitioning && !prefersReducedMotion ? 'animate-strength-transition-pulse' : ''}`}
+        >
+          {config.label}
+        </span>
         {celebrating && !prefersReducedMotion && (
           <svg
             className={`${ICON_SIZES.MD} ${TEXT_COLORS.SUCCESS_MEDIUM} animate-in zoom-in ${DURATION_TAILWIND[200]}`}
