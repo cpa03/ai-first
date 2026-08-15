@@ -10,6 +10,7 @@ import {
   SVG_VIEWBOX,
   ICON_SIZES,
   FOCUS_RING_OFFSET_PATTERNS,
+  COMPONENT_CONFIG,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { PLATFORM } from '@/lib/dom-utils';
@@ -47,7 +48,7 @@ function ScrollToTopButtonComponent() {
       });
       pulseTimeoutRef.current = setTimeout(() => {
         setHasAppeared(false);
-      }, 1500);
+      }, COMPONENT_CONFIG.SCROLL_TO_TOP_BUTTON.PULSE_DURATION_MS);
     }
 
     return () => {
