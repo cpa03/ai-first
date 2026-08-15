@@ -39,7 +39,7 @@ interface TaskManagementHeaderProps {
   onScrollToNextIncomplete: () => void;
   hasNextIncomplete: boolean;
   statusFilter: 'all' | 'in_progress' | 'completed';
-  onFilterChange: (filter: 'all' | 'in_progress' | 'completed') => void;
+  onFilterChange: (_filter: 'all' | 'in_progress' | 'completed') => void;
   filterCounts: { all: number; in_progress: number; completed: number };
 }
 

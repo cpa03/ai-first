@@ -84,7 +84,7 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 interface ClarificationFlowProps {
   idea: string;
   ideaId?: string;
-  onComplete: (answers: Record<string, string>) => Promise<void>;
+  onComplete: (_answers: Record<string, string>) => Promise<void>;
   onBackToEdit?: () => void;
 }
 

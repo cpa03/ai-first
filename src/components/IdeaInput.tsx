@@ -59,7 +59,7 @@ import TypingIndicator from './TypingIndicator';
 import { useConfetti } from '@/hooks/useConfetti';
 
 interface IdeaInputProps {
-  onSubmit: (idea: string, ideaId: string) => void;
+  onSubmit: (_idea: string, _ideaId: string) => void;
 }
 
 // PERFORMANCE: Memoize IdeaInput to prevent re-renders when parent components update

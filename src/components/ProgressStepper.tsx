@@ -35,7 +35,7 @@ interface Step {
 interface ProgressStepperProps {
   steps: Step[];
   currentStep: number;
-  onStepClick?: (stepIndex: number) => void;
+  onStepClick?: (_stepIndex: number) => void;
 }
 
 const ProgressStepperComponent = function ProgressStepper({

@@ -34,7 +34,7 @@ interface TaskItemProps {
   task: Task;
   isUpdating: boolean;
   focused?: boolean;
-  onToggle: (taskId: string, currentStatus: TaskStatus) => void;
+  onToggle: (_taskId: string, _currentStatus: TaskStatus) => void;
 }
 
 function TaskItemComponent({

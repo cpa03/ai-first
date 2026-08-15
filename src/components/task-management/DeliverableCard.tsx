@@ -47,8 +47,8 @@ interface DeliverableCardProps {
   isExpanded: boolean;
   updatingTaskId: string | null;
   focusedTaskId?: string | null;
-  onToggleExpand: (deliverableId: string) => void;
-  onToggleTask: (taskId: string, currentStatus: TaskStatus) => Promise<void>;
+  onToggleExpand: (_deliverableId: string) => void;
+  onToggleTask: (_taskId: string, _currentStatus: TaskStatus) => Promise<void>;
 }
 
 function DeliverableCardComponent({
