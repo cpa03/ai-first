@@ -36,6 +36,12 @@ export type UserRole = 'anonymous' | 'authenticated' | 'premium' | 'enterprise';
 const rateLimitLocks = new Map<string, Promise<void>>();
 
 /**
+ * Global lock for store-wide operations (cleanup, stats, clear).
+ * Ensures cleanup operations don't conflict with rate limit checks.
+ */
+let storeGlobalLock: Promise<void> = Promise.resolve();
+
+/**
  * User info extracted from request for rate limiting
  */
 export interface UserRateLimitInfo {
@@ -416,19 +422,35 @@ function findFirstValidIndex(requests: number[], windowStart: number): number {
   return result;
 }
 
+async function withStoreGlobalLock<T>(
+  callback: () => T | Promise<T>
+): Promise<T> {
+  await storeGlobalLock;
+  let resolveLock: () => void;
+  const lockPromise = new Promise<void>((resolve) => {
+    resolveLock = resolve;
+  });
+  storeGlobalLock = lockPromise;
+  try {
+    return await callback();
+  } finally {
+    resolveLock!();
+  }
+}
+
 /**
  * Core rate limit check with atomic operations.
  * This function is called within a lock to prevent race conditions.
  */
-function checkRateLimitInternal(
+async function checkRateLimitInternal(
   identifier: string,
   config: RateLimitConfig,
   now: number
-): { allowed: boolean; info: RateLimitInfo } {
+): Promise<{ allowed: boolean; info: RateLimitInfo }> {
   const windowStart = now - config.windowMs;
 
   if (rateLimitStore.size >= RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE) {
-    cleanupOldestEntries(
+    await cleanupOldestEntries(
       Math.floor(
         RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE *
           RATE_LIMIT_STORE_CONFIG.CLEANUP_PERCENTAGE
@@ -558,21 +580,18 @@ export async function checkRateLimit(
   );
 }
 
-// Helper function to remove oldest entries when store reaches capacity
-function cleanupOldestEntries(count: number): void {
-  // PERFORMANCE: Use Map's insertion order for O(K) eviction instead of O(N log N) sort.
-  // In JS, Map preserves insertion order. Deleting the first K keys effectively
-  // removes the oldest identifiers from the store. This avoids creating a large
-  // temporary array and sorting it.
-  const iterator = rateLimitStore.keys();
-  let deletedCount = 0;
+function cleanupOldestEntries(count: number): Promise<void> {
+  return withStoreGlobalLock(() => {
+    const iterator = rateLimitStore.keys();
+    let deletedCount = 0;
 
-  while (deletedCount < count) {
-    const { value, done } = iterator.next();
-    if (done) break;
-    rateLimitStore.delete(value);
-    deletedCount++;
-  }
+    while (deletedCount < count) {
+      const { value, done } = iterator.next();
+      if (done) break;
+      rateLimitStore.delete(value);
+      deletedCount++;
+    }
+  });
 }
 
 export const rateLimitConfigs = {
@@ -616,25 +635,20 @@ export function createRateLimitMiddleware(config: RateLimitConfig) {
   };
 }
 
-export function cleanupExpiredEntries(): void {
-  const now = Date.now();
-  const windowStart = now - RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_WINDOW_MS;
+export function cleanupExpiredEntries(): Promise<void> {
+  return withStoreGlobalLock(() => {
+    const now = Date.now();
+    const windowStart = now - RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_WINDOW_MS;
 
-  // PERFORMANCE: Replaced rateLimitStore.entries() with native Map forEach traversal
-  // to avoid intermediate [key, requests] array allocation and MapIterator instantiation.
-  rateLimitStore.forEach((requests, key) => {
-    // PERFORMANCE: Use O(log N) binary search instead of O(N) linear scan
-    // to find the first valid entry in the history.
-    const firstValidIndex = findFirstValidIndex(requests, windowStart);
+    rateLimitStore.forEach((requests, key) => {
+      const firstValidIndex = findFirstValidIndex(requests, windowStart);
 
-    if (firstValidIndex === -1) {
-      // All requests in this entry have expired
-      rateLimitStore.delete(key);
-    } else if (firstValidIndex > 0) {
-      // Some requests have expired, update with the remaining ones
-      rateLimitStore.set(key, requests.slice(firstValidIndex));
-    }
-    // If firstValidIndex is 0, all requests are still valid; no action needed.
+      if (firstValidIndex === -1) {
+        rateLimitStore.delete(key);
+      } else if (firstValidIndex > 0) {
+        rateLimitStore.set(key, requests.slice(firstValidIndex));
+      }
+    });
   });
 }
 
@@ -648,31 +662,51 @@ const WARNING_THRESHOLD_PERCENTAGE =
   RATE_LIMIT_VALUES.WARNING_THRESHOLD_PERCENTAGE;
 const MAX_ORPHANED_LOCKS = RATE_LIMIT_VALUES.MAX_ORPHANED_LOCKS;
 
-function performEnhancedCleanup(): void {
-  cleanupExpiredEntries();
-  cleanupCount++;
-  lastCleanupTime = Date.now();
+async function performEnhancedCleanup(): Promise<void> {
+  await withStoreGlobalLock(async () => {
+    const now = Date.now();
+    const windowStart = now - RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_WINDOW_MS;
 
-  const storeSize = rateLimitStore.size;
-  const maxSize = RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE;
-  const warningThreshold = maxSize * WARNING_THRESHOLD_PERCENTAGE;
+    rateLimitStore.forEach((requests, key) => {
+      const firstValidIndex = findFirstValidIndex(requests, windowStart);
+      if (firstValidIndex === -1) {
+        rateLimitStore.delete(key);
+      } else if (firstValidIndex > 0) {
+        rateLimitStore.set(key, requests.slice(firstValidIndex));
+      }
+    });
 
-  if (storeSize > warningThreshold) {
-    const entriesToRemove = Math.floor(
-      storeSize * AGGRESSIVE_CLEANUP_PERCENTAGE
-    );
-    cleanupOldestEntries(entriesToRemove);
+    cleanupCount++;
+    lastCleanupTime = Date.now();
 
-    if (
-      typeof process !== 'undefined' &&
-      process.env?.NODE_ENV === 'development'
-    ) {
-      console.warn(
-        `[RateLimit] Store approaching capacity: ${storeSize}/${maxSize}. ` +
-          `Removed ${entriesToRemove} entries. Cleanup #${cleanupCount}`
+    const storeSize = rateLimitStore.size;
+    const maxSize = RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE;
+    const warningThreshold = maxSize * WARNING_THRESHOLD_PERCENTAGE;
+
+    if (storeSize > warningThreshold) {
+      const entriesToRemove = Math.floor(
+        storeSize * AGGRESSIVE_CLEANUP_PERCENTAGE
       );
+      const iterator = rateLimitStore.keys();
+      let deletedCount = 0;
+      while (deletedCount < entriesToRemove) {
+        const { value, done } = iterator.next();
+        if (done) break;
+        rateLimitStore.delete(value);
+        deletedCount++;
+      }
+
+      if (
+        typeof process !== 'undefined' &&
+        process.env?.NODE_ENV === 'development'
+      ) {
+        console.warn(
+          `[RateLimit] Store approaching capacity: ${storeSize}/${maxSize}. ` +
+            `Removed ${entriesToRemove} entries. Cleanup #${cleanupCount}`
+        );
+      }
     }
-  }
+  });
 
   cleanupOrphanedLocks();
 }
@@ -770,48 +804,53 @@ export function rateLimitResponse(
   });
 }
 
-export function getRateLimitStats() {
-  const now = Date.now();
-  const windowStart = now - RATE_LIMIT_STATS_CONFIG.DEFAULT_STATS_WINDOW_MS;
-  const stats = {
-    totalEntries: 0,
-    expiredEntries: 0,
-    entriesByRole: {} as Record<string, number>,
-    topUsers: [] as Array<{ identifier: string; count: number }>,
-  };
+export function getRateLimitStats(): Promise<{
+  totalEntries: number;
+  expiredEntries: number;
+  entriesByRole: Record<string, number>;
+  topUsers: Array<{ identifier: string; count: number }>;
+}> {
+  return withStoreGlobalLock(() => {
+    const now = Date.now();
+    const windowStart = now - RATE_LIMIT_STATS_CONFIG.DEFAULT_STATS_WINDOW_MS;
+    const stats = {
+      totalEntries: 0,
+      expiredEntries: 0,
+      entriesByRole: {} as Record<string, number>,
+      topUsers: [] as Array<{ identifier: string; count: number }>,
+    };
 
-  // PERFORMANCE: Replaced rateLimitStore.entries() with native Map forEach traversal
-  // to avoid intermediate [key, requests] array allocation and MapIterator instantiation.
-  rateLimitStore.forEach((requests, identifier) => {
-    // PERFORMANCE: Use O(log N) binary search for stats collection.
-    // This provides a measurable speedup for admin dashboards when many requests are tracked.
-    const firstValidIndex = findFirstValidIndex(requests, windowStart);
+    rateLimitStore.forEach((requests, identifier) => {
+      const firstValidIndex = findFirstValidIndex(requests, windowStart);
 
-    const recentCount =
-      firstValidIndex === -1 ? 0 : requests.length - firstValidIndex;
-    stats.totalEntries += recentCount;
+      const recentCount =
+        firstValidIndex === -1 ? 0 : requests.length - firstValidIndex;
+      stats.totalEntries += recentCount;
 
-    if (recentCount === 0) {
-      stats.expiredEntries++;
-    }
+      if (recentCount === 0) {
+        stats.expiredEntries++;
+      }
 
-    stats.topUsers.push({
-      identifier,
-      count: recentCount,
+      stats.topUsers.push({
+        identifier,
+        count: recentCount,
+      });
     });
+
+    stats.topUsers.sort((a, b) => b.count - a.count);
+    stats.topUsers = stats.topUsers.slice(
+      0,
+      RATE_LIMIT_STATS_CONFIG.TOP_USERS_LIMIT
+    );
+
+    return stats;
   });
-
-  stats.topUsers.sort((a, b) => b.count - a.count);
-  stats.topUsers = stats.topUsers.slice(
-    0,
-    RATE_LIMIT_STATS_CONFIG.TOP_USERS_LIMIT
-  );
-
-  return stats;
 }
 
-export function clearRateLimitStore(): void {
-  rateLimitStore.clear();
+export function clearRateLimitStore(): Promise<void> {
+  return withStoreGlobalLock(() => {
+    rateLimitStore.clear();
+  });
 }
 
 export interface StoreHealthMetrics {
@@ -824,19 +863,21 @@ export interface StoreHealthMetrics {
   isHealthy: boolean;
 }
 
-export function getStoreHealthMetrics(): StoreHealthMetrics {
-  const currentSize = rateLimitStore.size;
-  const maxSize = RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE;
-  const utilizationPercent = (currentSize / maxSize) * 100;
+export function getStoreHealthMetrics(): Promise<StoreHealthMetrics> {
+  return withStoreGlobalLock(() => {
+    const currentSize = rateLimitStore.size;
+    const maxSize = RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE;
+    const utilizationPercent = (currentSize / maxSize) * 100;
 
-  return {
-    currentSize,
-    maxSize,
-    utilizationPercent,
-    lockCount: rateLimitLocks.size,
-    cleanupCount,
-    lastCleanupTime,
-    isHealthy:
-      utilizationPercent < 80 && rateLimitLocks.size < MAX_ORPHANED_LOCKS,
-  };
+    return {
+      currentSize,
+      maxSize,
+      utilizationPercent,
+      lockCount: rateLimitLocks.size,
+      cleanupCount,
+      lastCleanupTime,
+      isHealthy:
+        utilizationPercent < 80 && rateLimitLocks.size < MAX_ORPHANED_LOCKS,
+    };
+  });
 }
