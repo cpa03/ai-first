@@ -47,13 +47,16 @@ import {
   ICON_PATTERNS,
   CLARIFICATION_TIMER_CONFIG,
   PY_CLASSES,
+  PX_CLASSES,
   SPACE_Y_PATTERNS,
   FOCUS_RING_OFFSET_PATTERNS,
   FLEX_PATTERNS,
   SPACING_PATTERNS,
   SKELETON_SIZE_PATTERNS,
   MB_CLASSES,
+  MT_CLASSES,
   ANIMATION_CLASSES,
+  GAP_CLASSES,
 } from '@/lib/config';
 import { SELECT_ICON_POSITION } from '@/lib/config/remaining-hardcoded-patterns';
 import {
@@ -584,7 +587,7 @@ function ClarificationFlow({
         className={`group mb-6 ${BG_COLOR_CLASSES.PAGE} rounded-lg border ${BORDER_COLOR_CLASSES.LIGHT} overflow-hidden ${TRANSITION_CLASSES.DEFAULT}`}
       >
         <summary
-          className={`px-4 py-3 text-sm font-medium ${TEXT_COLOR_CLASSES.BODY} cursor-pointer ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} flex justify-between items-center list-none select-none`}
+          className={`${PX_CLASSES.LG} ${PY_CLASSES.MD} text-sm font-medium ${TEXT_COLOR_CLASSES.BODY} cursor-pointer ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} flex justify-between items-center list-none select-none`}
         >
           <div className={FLEX_PATTERNS.GAP_MD}>
             <svg
@@ -623,7 +626,7 @@ function ClarificationFlow({
           </svg>
         </summary>
         <div
-          className={`px-4 pb-4 pt-2 text-sm ${TEXT_COLOR_CLASSES.BODY} border-t ${BORDER_COLOR_CLASSES.EXTRA_LIGHT} ${BG_COLOR_CLASSES.CARD}`}
+          className={`${PX_CLASSES.LG} pb-4 pt-2 text-sm ${TEXT_COLOR_CLASSES.BODY} border-t ${BORDER_COLOR_CLASSES.EXTRA_LIGHT} ${BG_COLOR_CLASSES.CARD}`}
         >
           <div
             className={`${FLEX_PATTERNS.BETWEEN_START} ${SPACING_PATTERNS.GAP4}`}
@@ -681,7 +684,7 @@ function ClarificationFlow({
 
         {elapsedSeconds > 0 && (
           <div
-            className={`mt-2 flex items-center justify-end gap-3 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
+            className={`${MT_CLASSES.SM} flex items-center justify-end ${GAP_CLASSES.LG} text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
             role="status"
             aria-live="polite"
             aria-label={CLARIFICATION_FLOW_LABELS.TIMER_ARIA_LABEL(
@@ -990,7 +993,7 @@ function ClarificationFlow({
                 </div>
                 {currentAnswer && (
                   <p
-                    className={`text-sm ${TEXT_COLORS.SUCCESS_DARK} flex items-center gap-1.5 animate-fade-in`}
+                    className={`text-sm ${TEXT_COLORS.SUCCESS_DARK} flex items-center ${GAP_CLASSES.MD_SM} animate-fade-in`}
                     role="status"
                     aria-live="polite"
                   >
@@ -1111,7 +1114,9 @@ function ClarificationFlow({
         {/* Micro-UX: Clickable keyboard shortcut badges for mouse/touch step navigation */}
         {questions.length > 1 && (
           <div className={CLARIFICATION_FLOW_STEP_INDICATOR}>
-            <span className="inline-flex items-center gap-1 sm:gap-1.5 flex-wrap justify-center">
+            <span
+              className={`inline-flex items-center ${GAP_CLASSES.SM} sm:${GAP_CLASSES.MD_SM} flex-wrap justify-center`}
+            >
               <span className={CLARIFICATION_FLOW_STEP_TEXT}>Jump to:</span>
               {questions
                 .slice(
