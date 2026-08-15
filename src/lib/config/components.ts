@@ -462,6 +462,16 @@ export const COMPONENT_CONFIG = {
     ),
   } as const,
 
+  SCROLL_TO_TOP_BUTTON: {
+    /** Duration to show pulse animation on first appearance (ms) - Env: COMPONENT_SCROLL_TO_TOP_BUTTON_PULSE_DURATION_MS (default: 1500) */
+    PULSE_DURATION_MS: EnvLoader.number(
+      'COMPONENT_SCROLL_TO_TOP_BUTTON_PULSE_DURATION_MS',
+      1500,
+      500,
+      5000
+    ),
+  } as const,
+
   COUNT_UP: {
     /** Default animation duration (ms) - Env: COMPONENT_COUNT_UP_DURATION_MS (default: 600) */
     DEFAULT_DURATION_MS: EnvLoader.number(
