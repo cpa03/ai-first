@@ -352,7 +352,7 @@ Check database health specifically.
 - `200`: Database is healthy
 - `500`: Database error
 
-ZT|---
+---
 
 ### GET /api/health/integrations
 
@@ -435,9 +435,6 @@ Check health status of all external integrations including circuit breakers, exp
 **Caching:** Results are cached for 60 seconds to reduce load on integration services.
 
 ---
-
-VP|## Clarification API
-ST|
 
 ## Clarification API
 
@@ -534,13 +531,13 @@ Submit an answer to a clarification question.
 
 **Request Body:**
 
-`json
+```json
 {
   "ideaId": "550e8400-e29b-41d4-a716-446655440000",
   "questionId": "q_001",
   "answer": "We plan to have 5 team members working on this project"
 }
-`
+```
 
 **Request Field Descriptions:**
 
@@ -550,7 +547,7 @@ Submit an answer to a clarification question.
 
 **Response:**
 
-`json
+```json
 {
   "success": true,
   "data": {
@@ -566,7 +563,7 @@ Submit an answer to a clarification question.
   },
   "requestId": "req_1234567890_abc123"
 }
-`
+```
 
 **Status Codes:**
 
@@ -584,11 +581,11 @@ Complete the clarification process and generate the breakdown.
 
 **Request Body:**
 
-`json
+```json
 {
   "ideaId": "550e8400-e29b-41d4-a716-446655440000"
 }
-`
+```
 
 **Request Field Descriptions:**
 
@@ -596,7 +593,7 @@ Complete the clarification process and generate the breakdown.
 
 **Response:**
 
-`json
+```json
 {
   "success": true,
   "data": {
@@ -611,7 +608,7 @@ Complete the clarification process and generate the breakdown.
   },
   "requestId": "req_1234567890_abc123"
 }
-`
+```
 
 **Status Codes:**
 
@@ -629,7 +626,7 @@ Start a new breakdown session for an idea. This endpoint generates a complete pr
 
 **Request Body:**
 
-`json
+```json
 {
   "ideaId": "550e8400-e29b-41d4-a716-446655440000",
   "refinedIdea": "I want to build a mobile app for tracking fitness goals",
@@ -644,7 +641,7 @@ Start a new breakdown session for an idea. This endpoint generates a complete pr
     "constraints": ["Must use React Native", "iOS and Android support"]
   }
 }
-`
+```
 
 **Request Field Descriptions:**
 
@@ -664,7 +661,7 @@ All fields in the `options` object are optional:
 
 **Response:**
 
-`json
+```json
 {
   "success": true,
   "session": {
@@ -710,7 +707,7 @@ All fields in the `options` object are optional:
   },
   "requestId": "req_1234567890_abc123"
 }
-`
+```
 
 **Status Codes:**
 
@@ -723,8 +720,6 @@ All fields in the `options` object are optional:
 - `500`: Internal error
 
 ---
-
-### GET /api/breakdown
 
 ### GET /api/breakdown
 
@@ -1098,7 +1093,7 @@ Authorization: Bearer <your-supabase-token>
 
 **Rate Limit:** `moderate` (30 requests/minute)
 
-YR|---
+---
 
 ### GET /api/ideas/[id]/similar
 
