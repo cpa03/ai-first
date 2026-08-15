@@ -41,6 +41,7 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
 import Tooltip from './Tooltip';
 import { CONFETTI_DOT } from '@/lib/config';
+import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 
 /**
  * Onboarding Tour Steps
@@ -341,8 +342,7 @@ export default function UserOnboarding() {
               className={CONFETTI_DOT}
               style={
                 {
-                  left: '50%',
-                  top: '50%',
+                  ...CSS_POSITIONING.CENTER_ANIMATED,
                   width: `${particle.size}px`,
                   height: `${particle.size}px`,
                   backgroundColor: particle.color,

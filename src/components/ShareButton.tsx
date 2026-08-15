@@ -23,6 +23,7 @@ import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
 import { useConfetti } from '@/hooks/useConfetti';
 import { useToast } from '@/hooks/useAnnouncement';
+import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 
 export interface ShareButtonProps {
   shareUrl?: string;
@@ -297,8 +298,7 @@ const ShareButtonComponent = function ShareButton({
               className={CONFETTI_DOT}
               style={
                 {
-                  left: '50%',
-                  top: '50%',
+                  ...CSS_POSITIONING.CENTER_ANIMATED,
                   width: `${particle.size}px`,
                   height: `${particle.size}px`,
                   backgroundColor: particle.color,

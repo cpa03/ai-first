@@ -24,6 +24,7 @@ import { useConfetti } from '@/hooks/useConfetti';
 import StatusAnnouncer from './StatusAnnouncer';
 import { CONFETTI_DOT, SPACE_Y_PATTERNS, FLEX_PATTERNS } from '@/lib/config';
 import { ERROR_BOUNDARY_ACTION_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
+import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 
 /**
  * Micro-UX: ErrorCopyButton - Functional component that uses useClipboard hook
@@ -77,8 +78,7 @@ function ErrorCopyButton({
             className={CONFETTI_DOT}
             style={
               {
-                left: '50%',
-                top: '50%',
+                ...CSS_POSITIONING.CENTER_ANIMATED,
                 width: `${particle.size}px`,
                 height: `${particle.size}px`,
                 backgroundColor: particle.color,

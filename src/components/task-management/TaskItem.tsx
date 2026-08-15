@@ -29,6 +29,7 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from '../Tooltip';
 import StatusAnnouncer from '../StatusAnnouncer';
 import { useConfetti } from '@/hooks/useConfetti';
+import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 
 interface TaskItemProps {
   task: Task;
@@ -315,8 +316,7 @@ function TaskItemComponent({
           className={CONFETTI_DOT}
           style={
             {
-              left: '50%',
-              top: '50%',
+              ...CSS_POSITIONING.CENTER_ANIMATED,
               width: `${particle.size}px`,
               height: `${particle.size}px`,
               backgroundColor: particle.color,

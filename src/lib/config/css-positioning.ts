@@ -23,7 +23,8 @@
 export const CSS_POSITIONING = {
   /**
    * Center positioning - centers element both horizontally and vertically
-   * Used in: BlueprintDisplay, ShareButton, IdeaInput, EmailButton, ErrorBoundary, etc.
+   * Used in: Static centering where CSS transform is needed
+   * For animated elements (confetti, etc.), use CENTER_ANIMATED instead
    */
   CENTER: {
     left: '50%',
@@ -131,6 +132,26 @@ export const CSS_POSITIONING = {
     right: '0',
     transform: 'translateY(-50%)',
   } as React.CSSProperties,
+
+  /**
+   * Center for animations - centers element without transform
+   * Used in: Confetti particles, animated elements that use CSS transforms via custom properties
+   * This is different from CENTER because it doesn't include transform,
+   * allowing CSS animations to handle positioning via --confetti-x, --confetti-y, etc.
+   */
+  CENTER_ANIMATED: {
+    left: '50%',
+    top: '50%',
+  } as React.CSSProperties,
+
+  /**
+   * Center top for animations - horizontally centered,30% from top
+   * Used in: TaskManagementHeader confetti particles
+   */
+  CENTER_TOP_ANIMATED: {
+    left: '50%',
+    top: '30%',
+  } as React.CSSProperties,
 } as const;
 
 /**
@@ -168,4 +189,6 @@ export const CSS_POSITIONING_CLASSES = {
   CENTER_BOTTOM: 'absolute bottom-0 left-1/2 -translate-x-1/2',
   MIDDLE_LEFT: 'absolute top-1/2 left-0 -translate-y-1/2',
   MIDDLE_RIGHT: 'absolute top-1/2 right-0 -translate-y-1/2',
+  CENTER_ANIMATED: 'absolute left-1/2 top-1/2',
+  CENTER_TOP_ANIMATED: 'absolute left-1/2 top-[30%]',
 } as const;

@@ -48,6 +48,7 @@ import {
 } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { createLogger } from '@/lib/logger';
+import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -527,8 +528,7 @@ function CopyCodeButton({ text }: { text: string }) {
           className={CONFETTI_DOT}
           style={
             {
-              left: '50%',
-              top: '50%',
+              ...CSS_POSITIONING.CENTER_ANIMATED,
               width: `${particle.size}px`,
               height: `${particle.size}px`,
               backgroundColor: particle.color,
