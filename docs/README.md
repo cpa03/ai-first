@@ -224,7 +224,6 @@ Complete index of all IdeaFlow documentation.
 - [Security Audit P0](./security/SECURITY_AUDIT_P0_1135.md) - Priority-0 security audit
 - [Security Verification #1135](./security/SECURITY_VERIFICATION_1135.md) - Supabase service role key exposure verification
 - [Security Sentinel](./security/sentinel.md) - Security vulnerability log
-- [Minimatch Audit - 2026-07-15](./security/minimatch-audit-2026-07-15.md) - Minimatch regex security audit
 - [Security Fix #1739](./security/SECURITY_FIX_1739.md) - Minimatch vulnerability fix documentation
 
 ## Audit Reports
