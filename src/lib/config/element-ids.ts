@@ -124,6 +124,9 @@ export const AUTH_ELEMENT_IDS = {
 
   /** Signup form ID */
   SIGNUP_FORM: 'signup-form',
+
+  /** Forgot password form ID */
+  FORGOT_PASSWORD_FORM: 'forgot-password-form',
 } as const;
 
 /**
