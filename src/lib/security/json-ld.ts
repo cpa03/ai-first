@@ -22,10 +22,18 @@
  * @returns A safe JSON string for use in dangerouslySetInnerHTML
  */
 export function safeJsonLd(obj: unknown): string {
-  return JSON.stringify(obj)
-    .replace(/</g, '\\u003c')
-    .replace(/>/g, '\\u003e')
-    .replace(/&/g, '\\u0026')
-    .replace(/\u2028/g, '\\u2028')
-    .replace(/\u2029/g, '\\u2029');
+  try {
+    const json = JSON.stringify(obj);
+    if (json === undefined) {
+      return '{}';
+    }
+    return json
+      .replace(/</g, '\\u003c')
+      .replace(/>/g, '\\u003e')
+      .replace(/&/g, '\\u0026')
+      .replace(/\u2028/g, '\\u2028')
+      .replace(/\u2029/g, '\\u2029');
+  } catch {
+    return '{}';
+  }
 }
