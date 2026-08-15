@@ -26,6 +26,7 @@ import {
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import Tooltip from '../Tooltip';
 import StatusAnnouncer from '../StatusAnnouncer';
 import { useConfetti } from '@/hooks/useConfetti';
@@ -141,7 +142,7 @@ function TaskItemComponent({
     const reducedMotionClass = prefersReducedMotion
       ? 'motion-reduce:transition-none motion-reduce:hover:transform-none'
       : '';
-    const focusClass = focused ? 'ring-2 ring-primary-400 ring-offset-1' : '';
+    const focusClass = focused ? FOCUS_RING_OFFSET_PATTERNS.TASK_FOCUSED : '';
     const updatingClass =
       isUpdating && !prefersReducedMotion ? 'animate-task-updating-pulse' : '';
     return `${base} ${riskIndicator} ${celebrationClass} ${reducedMotionClass} ${focusClass} ${updatingClass}`;
