@@ -186,6 +186,36 @@ export const SIGNUP_PAGE_CONFIG = {
 } as const;
 
 /**
+ * Forgot password page metadata configuration
+ */
+export const FORGOT_PASSWORD_PAGE_CONFIG = {
+  METADATA: {
+    title: `Forgot Password | ${APP_CONFIG.NAME}`,
+    description:
+      'Reset your IdeaFlow password. Enter your email to receive a password reset link.',
+    keywords: [
+      'forgot password',
+      'reset password',
+      'password recovery',
+      'IdeaFlow password',
+    ],
+    openGraph: {
+      title: `Forgot Password | ${APP_CONFIG.NAME}`,
+      description:
+        'Reset your IdeaFlow password. Enter your email to receive a password reset link.',
+      url: `${APP_CONFIG.URLS.BASE}/forgot-password`,
+    },
+  },
+  HERO_ANIMATION_DELAYS: {
+    NONE: 'delay-0',
+    STEP_1: 'delay-75',
+    STEP_2: 'delay-150',
+    STEP_3: 'delay-200',
+    STEP_4: 'delay-250',
+  } as const,
+} as const;
+
+/**
  * Auth callback page metadata configuration
  */
 export const AUTH_CALLBACK_PAGE_CONFIG = {
@@ -580,6 +610,7 @@ export const PAGE_CONFIG = {
   DASHBOARD: DASHBOARD_PAGE_CONFIG,
   LOGIN: LOGIN_PAGE_CONFIG,
   SIGNUP: SIGNUP_PAGE_CONFIG,
+  FORGOT_PASSWORD: FORGOT_PASSWORD_PAGE_CONFIG,
   AUTH_CALLBACK: AUTH_CALLBACK_PAGE_CONFIG,
   NOT_FOUND: NOT_FOUND_PAGE_CONFIG,
 } as const;

@@ -22,11 +22,15 @@ import {
   FORM_ARIA_LABELS,
   UI_CONFIG,
   GRAY_CLASSES,
+  FORGOT_PASSWORD_PAGE_CONFIG,
+  DASHBOARD_PATTERNS,
+  KBD_HINT_STYLE,
 } from '@/lib/config';
 import { SUCCESS_STATE_COLORS } from '@/lib/config/theme';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
+import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -35,6 +39,7 @@ export default function ForgotPasswordPage() {
   const [success, setSuccess] = useState(false);
   const [isMac, setIsMac] = useState(false);
   const emailInputRef = useRef<HTMLInputElement>(null);
+  const { openHelp } = useKeyboardShortcuts();
 
   useEffect(() => {
     setIsMac(PLATFORM.isMac());
@@ -119,7 +124,7 @@ export default function ForgotPasswordPage() {
         >
           <div className={`${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE}`}>
             <div
-              className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex h-12 w-12 items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG}`}
+              className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex h-12 w-12 items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.NONE}`}
             >
               <svg
                 className={`h-6 w-6 ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
@@ -136,23 +141,25 @@ export default function ForgotPasswordPage() {
               </svg>
             </div>
             <h1
-              className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING}`}
+              className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
             >
               Check your email
             </h1>
             <p
-              className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY}`}
+              className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
             >
               We&apos;ve sent a password reset link to{' '}
               <span className="font-medium">{email}</span>
             </p>
             <p
-              className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED}`}
+              className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
             >
               Didn&apos;t receive the email? Check your spam folder or try
               again.
             </p>
-            <div className={SPACING_CLASSES.TOP}>
+            <div
+              className={`${SPACING_CLASSES.TOP} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
+            >
               <Link
                 href={ROUTES.LOGIN}
                 className={`${FORM_PATTERNS.AUTH_LINK} text-sm`}
@@ -199,7 +206,7 @@ export default function ForgotPasswordPage() {
             Forgot your password?
           </h1>
           <p
-            className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY}`}
+            className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
           >
             Enter your email address and we&apos;ll send you a link to reset
             your password.
@@ -208,7 +215,7 @@ export default function ForgotPasswordPage() {
 
         <form
           id={AUTH_ELEMENT_IDS.FORGOT_PASSWORD_FORM}
-          className={`mt-8 ${SPACE_Y_PATTERNS.LG} ${HERO_ENTRANCE}`}
+          className={`mt-8 ${SPACE_Y_PATTERNS.LG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           onSubmit={handleSubmit}
         >
           {error && (
@@ -264,13 +271,33 @@ export default function ForgotPasswordPage() {
           </div>
         </form>
 
-        <div className={`${SPACING_CLASSES.TOP} ${LAYOUT_CLASSES.TEXT_CENTER}`}>
+        <div
+          className={`${SPACING_CLASSES.TOP} ${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
+        >
           <p className={`text-sm ${TEXT_COLOR_CLASSES.BODY}`}>
             Remember your password?{' '}
             <Link href={ROUTES.LOGIN} className={FORM_PATTERNS.AUTH_LINK}>
               Sign in
             </Link>
           </p>
+        </div>
+
+        <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_BAR}>
+          <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_GROUP}>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+              <kbd className={KBD_HINT_STYLE}>?</kbd>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                Shortcuts
+              </span>
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={openHelp}
+            className={DASHBOARD_PATTERNS.VIEW_SHORTCUTS_BTN}
+          >
+            View all
+          </button>
         </div>
       </div>
     </div>
