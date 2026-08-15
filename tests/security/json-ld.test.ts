@@ -52,4 +52,21 @@ describe('JSON-LD Security', () => {
     expect(result).not.toContain('<');
     expect(result).not.toContain('>');
   });
+
+  it('should gracefully return empty object string for undefined, functions, or Symbols', () => {
+    expect(safeJsonLd(undefined)).toBe('{}');
+    expect(safeJsonLd(() => {})).toBe('{}');
+    expect(safeJsonLd(Symbol('test'))).toBe('{}');
+  });
+
+  it('should handle circular references without throwing', () => {
+    const circular: Record<string, unknown> = {};
+    circular.self = circular;
+    expect(safeJsonLd(circular)).toBe('{}');
+  });
+
+  it('should handle BigInt serialization errors without throwing', () => {
+    const objWithBigInt = { amount: BigInt(100) };
+    expect(safeJsonLd(objWithBigInt)).toBe('{}');
+  });
 });
