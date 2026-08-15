@@ -410,7 +410,7 @@ function ScrollToTopComponent({
 
           {hasReachedEnd && !prefersReducedMotion ? (
             <svg
-              className={`relative z-10 ${ICON_SIZES.LG} text-emerald-500 ${showReachedEndCelebration ? 'animate-success-pop' : ''}`}
+              className={`relative z-10 ${ICON_SIZES.LG} ${scrollDepthColor.stroke} ${showReachedEndCelebration ? 'animate-success-pop' : ''}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
