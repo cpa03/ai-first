@@ -904,6 +904,8 @@ export {
   FLEX_GROW_PATTERNS,
 } from './spacing';
 
+export { PX_CLASSES } from './component-spacing';
+
 // Centralizes all hardcoded icon size values (w-N h-N patterns)
 export {
   ICON_SIZES,
