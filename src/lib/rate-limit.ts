@@ -334,8 +334,12 @@ function getIpFromProxyHeaders(request: Request): string | null {
  * 2. Standard proxy headers (x-forwarded-for, x-real-ip)
  * 3. Request fingerprint (client-controlled, use with caution)
  *
+ * SECURITY: When RATE_LIMIT_REJECT_UNTRUSTED=true, requests without trusted
+ * headers are rejected to prevent rate limit bypass via header spoofing.
+ *
  * @param request - The incoming request
  * @returns A unique identifier for the client
+ * @throws Error when REJECT_UNTRUSTED=true and no trusted identifier available
  *
  * @see https://developers.cloudflare.com/fundamentals/reference/http-request-headers/
  * @see https://vercel.com/docs/edge-network/headers
@@ -387,6 +391,15 @@ export function getClientIdentifier(request: Request): string {
         return `header:${firstIp}`;
       }
     }
+  }
+
+  // SECURITY: When REJECT_UNTRUSTED is enabled, reject requests without trusted headers
+  // This prevents rate limit bypass via header spoofing in production
+  if (RATE_LIMIT_VALUES.REJECT_UNTRUSTED) {
+    throw new Error(
+      'Rate limiting requires trusted platform headers (CF-Connecting-IP, x-vercel-forwarded-for, ' +
+        'or x-forwarded-for). Set RATE_LIMIT_REJECT_UNTRUSTED=false for development.'
+    );
   }
 
   // Fallback: Use request fingerprinting

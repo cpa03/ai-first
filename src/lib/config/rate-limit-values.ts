@@ -71,4 +71,17 @@ export const RATE_LIMIT_VALUES = {
     100,
     10000
   ),
+
+  /**
+   * Whether to reject requests without trusted platform headers.
+   * When true, requests without CF-Connecting-IP, x-vercel-forwarded-for,
+   * or standard proxy headers will be rejected instead of falling back
+   * to client-controlled fingerprint headers.
+   *
+   * SECURITY: Enable in production to prevent rate limit bypass via
+   * header spoofing. Disable in development for local testing.
+   *
+   * Env: RATE_LIMIT_REJECT_UNTRUSTED (default: false)
+   */
+  REJECT_UNTRUSTED: EnvLoader.boolean('RATE_LIMIT_REJECT_UNTRUSTED', false),
 } as const;
