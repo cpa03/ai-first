@@ -150,7 +150,7 @@ function WhyChooseSectionComponent() {
             data-article-id={article.id}
             role="listitem"
             tabIndex={0}
-            aria-label={article.TITLE}
+            aria-label={`${article.TITLE}: ${article.DESCRIPTION}`}
             onFocus={() => handleFocus(index)}
             onBlur={handleBlur}
             onClick={() => handleClick(article.TITLE)}
