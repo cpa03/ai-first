@@ -153,7 +153,8 @@ function FeatureGridComponent() {
               gradient-border-hover card-lift feature-card-focus
               bg-white
               ${FOCUS_RING_OFFSET_PATTERNS.LARGE}
-              focus-visible:scale-[1.02] focus-visible:shadow-lg focus-visible:shadow-primary-100/50
+              focus-visible:scale-[1.03] focus-visible:shadow-xl focus-visible:shadow-primary-200/60
+              transition-transform transition-shadow duration-200 ease-out
               motion-reduce:transition-none
               ${isVisible ? animationClasses[index] : 'opacity-0'}
               ${focusedIndex === index ? FOCUS_RING_OFFSET_PATTERNS.NAVIGATION_FOCUSED : ''}
@@ -170,7 +171,7 @@ function FeatureGridComponent() {
               flex items-center justify-center mx-auto mb-4
               transition-all ${DURATION_TAILWIND[300]} group-hover:scale-110
               group-hover:${BG_COLORS.BRAND_200}
-              group-focus-visible:scale-110 group-focus-visible:${BG_COLORS.BRAND_200} group-focus-visible:shadow-lg group-focus-visible:shadow-primary-200/50
+              group-focus-visible:scale-110 group-focus-visible:${BG_COLORS.BRAND_200} group-focus-visible:shadow-lg group-focus-visible:shadow-primary-200/50 group-focus-visible:ring-2 group-focus-visible:ring-primary-300/50
               motion-reduce:transition-none motion-reduce:group-hover:scale-100
             `}
               aria-hidden="true"
