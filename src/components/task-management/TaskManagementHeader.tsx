@@ -26,6 +26,7 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
+import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 
 interface TaskManagementHeaderProps {
   totalDeliverables: number;
@@ -401,8 +402,7 @@ function TaskManagementHeaderComponent({
             className={CONFETTI_DOT}
             style={
               {
-                left: '50%',
-                top: '30%',
+                ...CSS_POSITIONING.CENTER_TOP_ANIMATED,
                 width: `${particle.size}px`,
                 height: `${particle.size}px`,
                 backgroundColor: particle.color,

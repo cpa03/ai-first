@@ -47,6 +47,7 @@ import { IDEA_INPUT_LABELS } from '@/lib/config/component-labels';
 import { IDEA_INPUT_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { PLATFORM } from '@/lib/dom-utils';
+import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
@@ -402,8 +403,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 className={CONFETTI_DOT}
                 style={
                   {
-                    left: '50%',
-                    top: '50%',
+                    ...CSS_POSITIONING.CENTER_ANIMATED,
                     width: `${particle.size}px`,
                     height: `${particle.size}px`,
                     backgroundColor: particle.color,

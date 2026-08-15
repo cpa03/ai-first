@@ -20,6 +20,7 @@ import {
   CONFETTI_DOT,
 } from '@/lib/config';
 import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
+import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 
 interface PasswordRequirement {
   id: string;
@@ -351,8 +352,7 @@ function PasswordRequirementsChecklistComponent({
               className={CONFETTI_DOT}
               style={
                 {
-                  left: '50%',
-                  top: '50%',
+                  ...CSS_POSITIONING.CENTER_ANIMATED,
                   width: `${particle.size}px`,
                   height: `${particle.size}px`,
                   backgroundColor: particle.color,

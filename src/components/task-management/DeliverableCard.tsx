@@ -29,6 +29,7 @@ import {
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
+import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 
 interface DeliverableWithTasks {
   id: string;
@@ -309,8 +310,7 @@ function DeliverableCardComponent({
           className={CONFETTI_DOT}
           style={
             {
-              left: '50%',
-              top: '50%',
+              ...CSS_POSITIONING.CENTER_ANIMATED,
               width: `${particle.size}px`,
               height: `${particle.size}px`,
               backgroundColor: particle.color,

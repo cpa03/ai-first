@@ -21,6 +21,7 @@ import {
 import { EMAIL_BUTTON_LABELS } from '@/lib/config/component-labels';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
+import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 
 export interface EmailButtonProps {
   ideaTitle: string;
@@ -222,8 +223,7 @@ const EmailButtonComponent = function EmailButton({
               className={CONFETTI_DOT}
               style={
                 {
-                  left: '50%',
-                  top: '50%',
+                  ...CSS_POSITIONING.CENTER_ANIMATED,
                   width: `${particle.size}px`,
                   height: `${particle.size}px`,
                   backgroundColor: particle.color,
