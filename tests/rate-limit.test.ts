@@ -734,17 +734,17 @@ describe('rateLimitResponse', () => {
 });
 
 describe('getRateLimitStats', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.useFakeTimers();
-    clearRateLimitStore();
+    await clearRateLimitStore();
   });
 
   afterEach(() => {
     jest.useRealTimers();
   });
 
-  it('should return stats with correct structure', () => {
-    const stats = getRateLimitStats();
+  it('should return stats with correct structure', async () => {
+    const stats = await getRateLimitStats();
 
     expect(stats).toHaveProperty('totalEntries');
     expect(stats).toHaveProperty('entriesByRole');
@@ -752,8 +752,8 @@ describe('getRateLimitStats', () => {
     expect(stats).toHaveProperty('topUsers');
   });
 
-  it('should return zero entries when no requests made', () => {
-    const stats = getRateLimitStats();
+  it('should return zero entries when no requests made', async () => {
+    const stats = await getRateLimitStats();
 
     expect(stats.totalEntries).toBe(0);
     expect(stats.expiredEntries).toBe(0);
@@ -765,7 +765,7 @@ describe('getRateLimitStats', () => {
     await checkRateLimit('user-2', rateLimitConfigs.moderate);
     await checkRateLimit('user-3', rateLimitConfigs.strict);
 
-    const stats = getRateLimitStats();
+    const stats = await getRateLimitStats();
 
     expect(stats.totalEntries).toBe(3);
   });
@@ -778,7 +778,7 @@ describe('getRateLimitStats', () => {
       await checkRateLimit(identifier, config);
     }
 
-    const stats = getRateLimitStats();
+    const stats = await getRateLimitStats();
     const topUser = stats.topUsers[0];
 
     expect(topUser.identifier).toBe(identifier);
@@ -801,8 +801,8 @@ describe('RateLimitInfo interface', () => {
 });
 
 describe('Race condition prevention', () => {
-  beforeEach(() => {
-    clearRateLimitStore();
+  beforeEach(async () => {
+    await clearRateLimitStore();
   });
 
   it('should handle concurrent requests without race conditions', async () => {
