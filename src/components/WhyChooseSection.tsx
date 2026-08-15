@@ -6,6 +6,7 @@ import { UI_STRINGS, UI_CONFIG } from '@/lib/config/ui';
 import { SVG_VIEWBOX, TEXT_COLOR_CLASSES } from '@/lib/config/theme';
 import { WHY_CHOOSE_SECTION_LABELS } from '@/lib/config/component-labels';
 import { CSS_CONTAINMENT } from '@/lib/config';
+import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
   HOME_PAGE_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -161,7 +162,7 @@ function WhyChooseSectionComponent() {
             }}
             className={`group ${ARTICLE_STYLES.CONTAINER} ${article.HOVER_BORDER} ${article.HOVER_BG} ${
               isVisible ? animationClasses[index] : 'opacity-0'
-            } ${focusedIndex === index ? 'ring-2 ring-primary-500 ring-offset-2' : ''}`}
+            } ${focusedIndex === index ? FOCUS_RING_OFFSET_PATTERNS.NAVIGATION_FOCUSED : ''}`}
           >
             <div
               className={`${ARTICLE_STYLES.ICON_CONTAINER} ${article.ICON_BG} ${article.ICON_HOVER_BG}`}

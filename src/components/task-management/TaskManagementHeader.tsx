@@ -27,6 +27,7 @@ import { useCountUp } from '@/hooks/useCountUp';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
+import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 
 interface TaskManagementHeaderProps {
   totalDeliverables: number;
@@ -242,7 +243,7 @@ function TaskManagementHeaderComponent({
                 }}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full ${TRANSITION_CLASSES.DEFAULT} ${
                   isActive
-                    ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-500 ring-offset-1'
+                    ? `bg-primary-100 text-primary-700 ${FOCUS_RING_OFFSET_PATTERNS.FILTER_ACTIVE}`
                     : `${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} ${GRAY_CLASSES.HOVER_BG_100} ${GRAY_CLASSES.HOVER_TEXT_800}`
                 }`}
               >

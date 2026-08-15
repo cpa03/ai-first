@@ -66,6 +66,15 @@ export const FOCUS_RING_OFFSET_PATTERNS = {
   /** Focus ring with border-transparent for inputs */
   INPUT:
     'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent',
+
+  /** Focus ring with primary-400 color and 1px offset for focused task items */
+  TASK_FOCUSED: 'ring-2 ring-primary-400 ring-offset-1',
+
+  /** Focus ring with primary-500 color and 1px offset for active filter buttons */
+  FILTER_ACTIVE: 'ring-2 ring-primary-500 ring-offset-1',
+
+  /** Programmatic focus ring with primary-500 color and 2px offset for keyboard navigation */
+  NAVIGATION_FOCUSED: 'ring-2 ring-primary-500 ring-offset-2',
 } as const;
 
 /**

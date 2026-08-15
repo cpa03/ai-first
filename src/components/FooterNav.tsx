@@ -12,6 +12,7 @@ import {
   FOOTER_NAV_STYLES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 
 interface FooterNavColumn {
   readonly title: string;
@@ -141,7 +142,7 @@ function FooterNavComponent({ columns }: FooterNavProps) {
                         ${PRIMARY_FOCUS_RING} rounded-md
                         ${FOOTER_NAV_STYLES.LINK_CONTAINER}
                         ${active ? 'text-primary-600 font-semibold' : `${GRAY_CLASSES.TEXT_600} hover:text-primary-600 hover:translate-x-1 motion-reduce:hover:transform-none`}
-                        ${focusedIndex === globalIndex ? 'ring-2 ring-primary-500 ring-offset-2' : ''}
+                        ${focusedIndex === globalIndex ? FOCUS_RING_OFFSET_PATTERNS.NAVIGATION_FOCUSED : ''}
                       `}
                       aria-label={item.ariaLabel}
                       aria-current={active ? 'page' : undefined}
