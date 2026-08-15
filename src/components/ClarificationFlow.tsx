@@ -52,6 +52,8 @@ import {
   FLEX_PATTERNS,
   SPACING_PATTERNS,
   SKELETON_SIZE_PATTERNS,
+  MB_CLASSES,
+  ANIMATION_CLASSES,
 } from '@/lib/config';
 import { SELECT_ICON_POSITION } from '@/lib/config/remaining-hardcoded-patterns';
 import {
@@ -561,7 +563,7 @@ function ClarificationFlow({
       </div>
 
       {error && (
-        <div className="mb-6 slide-up">
+        <div className={`${MB_CLASSES.XXL} ${ANIMATION_CLASSES.SLIDE_UP}`}>
           <Alert type="error" title={MESSAGES.ERRORS.DEFAULT}>
             <p>{error}</p>
             <p className={CLARIFICATION_FLOW_INFO_TEXT}>

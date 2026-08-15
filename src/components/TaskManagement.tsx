@@ -29,6 +29,8 @@ import {
   SPACE_Y_PATTERNS,
   FLEX_PATTERNS,
   TASK_MANAGEMENT_EMPTY_STYLES,
+  KEYBOARD_HINT_INLINE,
+  MT_CLASSES,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import type { Task } from '@/lib/db';
@@ -418,7 +420,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
               size="sm"
               onClick={() => handleFilterChange('all')}
               aria-label={TASK_MANAGEMENT_LABELS.SHOW_ALL_TASKS_ARIA}
-              className="mt-2"
+              className={MT_CLASSES.MD}
             >
               {TASK_MANAGEMENT_LABELS.SHOW_ALL_TASKS}
             </Button>
@@ -432,7 +434,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
         className={`mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
         aria-hidden="true"
       >
-        <span className="hidden sm:inline-flex items-center gap-1.5">
+        <span className={KEYBOARD_HINT_INLINE}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             ↑↓
           </kbd>
@@ -441,37 +443,37 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
           </kbd>
           navigate
         </span>
-        <span className="hidden sm:inline-flex items-center gap-1.5">
+        <span className={KEYBOARD_HINT_INLINE}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             Enter
           </kbd>
           toggle task
         </span>
-        <span className="hidden sm:inline-flex items-center gap-1.5">
+        <span className={KEYBOARD_HINT_INLINE}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             [
           </kbd>
           expand all
         </span>
-        <span className="hidden sm:inline-flex items-center gap-1.5">
+        <span className={KEYBOARD_HINT_INLINE}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             ]
           </kbd>
           collapse all
         </span>
-        <span className="hidden sm:inline-flex items-center gap-1.5">
+        <span className={KEYBOARD_HINT_INLINE}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             1-3
           </kbd>
           filter
         </span>
-        <span className="hidden sm:inline-flex items-center gap-1.5">
+        <span className={KEYBOARD_HINT_INLINE}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             n
           </kbd>
           next task
         </span>
-        <span className="hidden sm:inline-flex items-center gap-1.5">
+        <span className={KEYBOARD_HINT_INLINE}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             Esc
           </kbd>
