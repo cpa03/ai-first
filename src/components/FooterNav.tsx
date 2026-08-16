@@ -10,9 +10,14 @@ import {
   ACTIVE_DOT,
   SPACE_Y_PATTERNS,
   FOOTER_NAV_STYLES,
+  TRANSITION_CLASSES,
+  TEXT_SIZE_CLASSES,
+  BG_COLORS,
+  TEXT_COLORS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface FooterNavColumn {
   readonly title: string;
@@ -31,11 +36,26 @@ interface FooterNavProps {
  * Micro-UX: Keyboard navigation for footer navigation links.
  * Arrow keys move between items, Home/End jump to first/last.
  * Matches the patterns in FeatureGrid and WhyChooseSection for consistency.
+ *
+ * Micro-UX: Shows a subtle keyboard navigation hint when user focuses on
+ * footer links, helping discover the arrow key navigation feature.
  */
 function FooterNavComponent({ columns }: FooterNavProps) {
   const pathname = usePathname();
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const [showKeyboardHint, setShowKeyboardHint] = useState(false);
   const linkRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
+  const hintTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hintTimeoutRef.current) {
+        clearTimeout(hintTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const isActive = useCallback(
     (href: string): boolean => {
@@ -98,9 +118,21 @@ function FooterNavComponent({ columns }: FooterNavProps) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [allItems]);
 
-  const handleFocus = useCallback((index: number) => {
-    setFocusedIndex(index);
-  }, []);
+  const handleFocus = useCallback(
+    (index: number) => {
+      setFocusedIndex(index);
+      // Micro-UX: Show keyboard navigation hint on first focus
+      // Helps users discover arrow key navigation without cluttering UI
+      if (!showKeyboardHint && !prefersReducedMotion) {
+        setShowKeyboardHint(true);
+        // Auto-hide hint after a brief moment to avoid visual clutter
+        hintTimeoutRef.current = setTimeout(() => {
+          setShowKeyboardHint(false);
+        }, 3000);
+      }
+    },
+    [showKeyboardHint, prefersReducedMotion]
+  );
 
   const handleBlur = useCallback(() => {
     setFocusedIndex(null);
@@ -162,6 +194,28 @@ function FooterNavComponent({ columns }: FooterNavProps) {
           </div>
         );
       })}
+      {/* Micro-UX: Keyboard navigation hint for discoverability */}
+      {/* Appears briefly when user focuses on footer links to teach arrow key navigation */}
+      {showKeyboardHint && (
+        <div
+          className={`col-span-2 md:col-span-4 ${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED} flex items-center gap-2 ${prefersReducedMotion ? '' : `transition-opacity ${TRANSITION_CLASSES.DEFAULT}`} ${showKeyboardHint ? 'opacity-60' : 'opacity-0'}`}
+          role="status"
+          aria-live="polite"
+        >
+          <span>Use</span>
+          <kbd
+            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+          >
+            ←
+          </kbd>
+          <kbd
+            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+          >
+            →
+          </kbd>
+          <span>to navigate</span>
+        </div>
+      )}
     </>
   );
 }
