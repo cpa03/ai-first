@@ -137,6 +137,8 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
           | React.MouseEvent<HTMLButtonElement>
           | React.KeyboardEvent<HTMLButtonElement>
       ) => {
+        if (disabled || loading) return;
+
         const isKeyboardEvent = event.type === 'keydown';
 
         if (isKeyboardEvent) {
@@ -153,7 +155,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
           onClick?.(event as React.MouseEvent<HTMLButtonElement>);
         }
 
-        if (disabled || loading || prefersReducedMotion) return;
+        if (prefersReducedMotion) return;
 
         const button = event.currentTarget;
         const rect = button.getBoundingClientRect();
@@ -211,7 +213,9 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
     const buttonElement = (
       <button
         ref={ref}
-        disabled={disabled || loading}
+        {...(disabled && disabledTooltip
+          ? { 'aria-disabled': true }
+          : { disabled: disabled || loading })}
         onClick={createRipple}
         onKeyDown={handleKeyDown}
         className={`
