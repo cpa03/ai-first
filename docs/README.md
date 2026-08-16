@@ -119,6 +119,7 @@ Complete index of all IdeaFlow documentation.
 
 - [UI/UX Engineer](./ui-ux-engineer.md) - User interface guidelines
 - [Technical Writer](./technical-writer.md) - Documentation standards
+- [Flexy Modular System](./flexy-modular-system.md) - Modular architecture pattern and usage guide
 
 ## Project Management
 
@@ -139,6 +140,8 @@ Complete index of all IdeaFlow documentation.
 - [Code Reviewer](./code-reviewer.md) - Code review guidelines
 - [Disaster Recovery](./disaster-recovery.md) - Disaster recovery procedures and backup strategies
 - [Backup Procedures](./backup-procedures.md) - Automated backup and recovery procedures
+- [Browser Console Audit](./browser-console-audit.md) - Browser console optimization guide
+- [Modularity Audit - 2026-08-14](./modularity-audit-20260814.md) - Modularity audit report (Flexy)
 - [Modular Architecture Review](./audit/archive/flexy-modularization-audit-20260724.md) - Modular architecture analysis and recommendations
 
 ## Task Management
@@ -258,7 +261,9 @@ Older audit reports (2026-07-08 through 2026-08-11) are archived in [audit/archi
 
 - [Repository Health Check - 2026-08-15](./maintenance/2026-08-15-repository-health-check.md) - Repository health check report (latest)
 - [Repository Maintenance Report - 2026-08-15](./maintenance/2026-08-15-repository-maintenance.md) - Repository maintenance report
+- [Repository Maintenance Report - 2026-08-14](./maintenance/2026-08-14-repository-maintenance-report.md) - Repository maintenance report
 - [Repository Maintenance Report - 2026-08-12](./maintenance/2026-08-12-repository-maintenance-report.md) - Repository maintenance report
+- [Issue Status Report - 2026-08-11](./maintenance/2026-08-11-issue-status-report.md) - Issue status tracking report
 - [Repository Maintenance Report - 2026-08-10 (0045)](./maintenance/2026-08-10-repository-maintenance-report-0045.md) - Repository maintenance report
 - [Repository Maintenance Report - 2026-08-10](./maintenance/2026-08-10-repository-maintenance-report.md) - Repository maintenance report
 - [Repository Maintenance Report - 2026-08-09](./maintenance/2026-08-09-repository-maintenance-report.md) - Repository maintenance report

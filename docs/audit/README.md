@@ -4,16 +4,21 @@ This directory contains security audits, code quality reports, and compliance in
 
 ## Active Audit Reports
 
-| Report                                                                                                 | Date       | Description                               |
-| ------------------------------------------------------------------------------------------------------ | ---------- | ----------------------------------------- |
-| [BROCULA-AUDIT-REPORT-20260811.md](./BROCULA-AUDIT-REPORT-20260811.md)                                 | 2026-08-11 | BroCula browser audit report (latest)     |
-| [2026-08-08-brocula-browser-console-lighthouse.md](./2026-08-08-brocula-browser-console-lighthouse.md) | 2026-08-08 | Browser console & Lighthouse audit        |
-| [SECURITY-AUDIT-1739.md](./SECURITY-AUDIT-1739.md)                                                     | 2026-08    | Security audit for issue #1739            |
-| [ISSUE-01-large-files.md](./ISSUE-01-large-files.md)                                                   | 2026-07    | Large file detection and refactoring plan |
-| [ISSUE-02-api-test-coverage.md](./ISSUE-02-api-test-coverage.md)                                       | 2026-07    | API route test coverage gaps              |
-| [ISSUE-03-csrf-protection.md](./ISSUE-03-csrf-protection.md)                                           | 2026-07    | CSRF protection audit                     |
-| [ISSUE-04-structured-logging.md](./ISSUE-04-structured-logging.md)                                     | 2026-07    | Structured logging implementation         |
-| [ISSUE-05-cloudflare-deployment.md](./ISSUE-05-cloudflare-deployment.md)                               | 2026-07    | Cloudflare deployment audit               |
+| Report                                                                                                         | Date       | Description                                 |
+| -------------------------------------------------------------------------------------------------------------- | ---------- | ------------------------------------------- |
+| [BROCULA-AUDIT-BROWSER-CONSOLE-LIGHTHOUSE-20260815.md](./BROCULA-AUDIT-BROWSER-CONSOLE-LIGHTHOUSE-20260815.md) | 2026-08-15 | Browser console & Lighthouse audit (latest) |
+| [BROCULA-AUDIT-20260814.md](./BROCULA-AUDIT-20260814.md)                                                       | 2026-08-14 | BroCula browser audit                       |
+| [BROCULA-AUDIT-REPORT.md](./BROCULA-AUDIT-REPORT.md)                                                           | 2026-08-13 | BroCula browser audit report                |
+| [BROCULA-AUDIT-REPORT-20260811.md](./BROCULA-AUDIT-REPORT-20260811.md)                                         | 2026-08-11 | BroCula browser audit report                |
+| [PHASE1-AUDIT-20260812.md](./PHASE1-AUDIT-20260812.md)                                                         | 2026-08-12 | Comprehensive quality assessment            |
+| [PHASE2-FEATURE-HARDENING-20260812.md](./PHASE2-FEATURE-HARDENING-20260812.md)                                 | 2026-08-12 | Feature hardening assessment                |
+| [2026-08-08-brocula-browser-console-lighthouse.md](./2026-08-08-brocula-browser-console-lighthouse.md)         | 2026-08-08 | Browser console & Lighthouse audit          |
+| [SECURITY-AUDIT-1739.md](./SECURITY-AUDIT-1739.md)                                                             | 2026-08    | Security audit for issue #1739              |
+| [ISSUE-01-large-files.md](./ISSUE-01-large-files.md)                                                           | 2026-07    | Large file detection and refactoring plan   |
+| [ISSUE-02-api-test-coverage.md](./ISSUE-02-api-test-coverage.md)                                               | 2026-07    | API route test coverage gaps                |
+| [ISSUE-03-csrf-protection.md](./ISSUE-03-csrf-protection.md)                                                   | 2026-07    | CSRF protection audit                       |
+| [ISSUE-04-structured-logging.md](./ISSUE-04-structured-logging.md)                                             | 2026-07    | Structured logging implementation           |
+| [ISSUE-05-cloudflare-deployment.md](./ISSUE-05-cloudflare-deployment.md)                                       | 2026-07    | Cloudflare deployment audit                 |
 
 ## Archived Reports
 
