@@ -499,10 +499,11 @@ export default function UserOnboarding() {
                   key={step.id}
                   onClick={() => {
                     if (index < currentStepIndex) {
+                      triggerHapticFeedback();
                       setCurrentStepIndex(index);
                     }
                   }}
-                  className={`rounded-full transition-all ${DURATION_TAILWIND[200]} ease-out ${FOCUS_RING_PATTERNS.DEFAULT} ${
+                  className={`rounded-full transition-all ${DURATION_TAILWIND[200]} ease-out ${FOCUS_RING_PATTERNS.DEFAULT} hover:scale-125 focus-visible:scale-125 ${
                     index === currentStepIndex
                       ? `${INDICATOR_SIZES.PILL} ${BG_COLORS.BRAND}`
                       : index < currentStepIndex

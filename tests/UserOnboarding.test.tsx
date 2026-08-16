@@ -132,4 +132,32 @@ describe('UserOnboarding Component', () => {
 
     expect(window.localStorage.getItem(ONBOARDING_COMPLETED_KEY)).toBe('true');
   });
+
+  it('should allow clicking step indicator dots to navigate to previous steps with haptic feedback and hover/focus styles', () => {
+    const { triggerHapticFeedback } = require('@/lib/utils');
+    render(<UserOnboarding />);
+
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    // Navigate to Step 2
+    const nextButton = screen.getByRole('button', { name: /Next/i });
+    act(() => {
+      fireEvent.click(nextButton);
+    });
+
+    expect(screen.getByLabelText(/Step 2 of 4/i)).toBeInTheDocument();
+
+    // Click step dot 1 to jump back
+    const step1Dot = screen.getByRole('button', { name: /Go to step 1/i });
+    expect(step1Dot).toHaveClass('hover:scale-125', 'focus-visible:scale-125');
+
+    act(() => {
+      fireEvent.click(step1Dot);
+    });
+
+    expect(triggerHapticFeedback).toHaveBeenCalled();
+    expect(screen.getByLabelText(/Step 1 of 4/i)).toBeInTheDocument();
+  });
 });
