@@ -1,9 +1,8 @@
-import { defineConfig, globalIgnores } from 'eslint/config'
 import nextVitals from 'eslint-config-next/core-web-vitals'
 import nextTypescript from 'eslint-config-next/typescript'
 
-/** @type {import('eslint').Linter.FlatConfig[]} */
-const eslintConfig = defineConfig([
+/** @type {import('eslint').Linter.Config[]} */
+const eslintConfig = [
   ...nextVitals,
   ...nextTypescript,
   {
@@ -47,15 +46,19 @@ const eslintConfig = defineConfig([
       'no-undef': 'off',
     },
   },
-  globalIgnores([
-    'node_modules/',
-    '.next/',
-    'out/',
-    'dist/',
-    'coverage/',
-    'scripts/',
-    '**/.opencode/**',
-  ]),
-])
+  {
+    ignores: [
+      'node_modules/',
+      '.next/',
+      'out/',
+      'dist/',
+      'coverage/',
+      'scripts/',
+      '**/.opencode/**',
+      '.open-next/**',
+      '.cloudflare/**',
+    ],
+  },
+]
 
 export default eslintConfig
