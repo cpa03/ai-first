@@ -696,7 +696,7 @@ export const SECTION_INDICATOR_LABELS = {
  */
 export const SCROLL_TO_TOP_BUTTON_LABELS = {
   /** ARIA label for the scroll to top button */
-  ARIA_LABEL: 'Scroll to top of page',
+  ARIA_LABEL: 'Scroll to top',
   /** Button text */
   BUTTON_TEXT: 'Scroll to top',
 } as const;

@@ -7,14 +7,14 @@ export interface NavItem {
 }
 
 const DEFAULT_MAIN_NAV: NavItem[] = [
-  { href: '/', label: 'Home', ariaLabel: 'Navigate to home page' },
+  { href: '/', label: 'Home', ariaLabel: 'Home' },
   {
     href: '/dashboard',
     label: 'Dashboard',
-    ariaLabel: 'Navigate to dashboard',
+    ariaLabel: 'Dashboard',
   },
-  { href: '/clarify', label: 'Clarify', ariaLabel: 'Navigate to clarify page' },
-  { href: '/results', label: 'Results', ariaLabel: 'Navigate to results page' },
+  { href: '/clarify', label: 'Clarify', ariaLabel: 'Clarify' },
+  { href: '/results', label: 'Results', ariaLabel: 'Results' },
 ];
 
 /**
