@@ -19,6 +19,7 @@ import {
   HEIGHT_ONLY,
   PROGRESS_STEPPER_STYLES,
   FLEX_PATTERNS,
+  PROGRESS_PERCENTAGE,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -44,7 +45,7 @@ const ProgressStepperComponent = function ProgressStepper({
   onStepClick,
 }: ProgressStepperProps) {
   const progressPercentage = Math.round(
-    ((currentStep + 1) / steps.length) * 100
+    ((currentStep + 1) / steps.length) * PROGRESS_PERCENTAGE.MAX
   );
   const completedCount = steps.filter((step) => step.completed).length;
   const prefersReducedMotion = usePrefersReducedMotion();

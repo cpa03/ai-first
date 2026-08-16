@@ -18,6 +18,7 @@ import {
   HEIGHT_ONLY,
   SPACE_Y_PATTERNS,
   CONFETTI_DOT,
+  PROGRESS_PERCENTAGE,
 } from '@/lib/config';
 import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
@@ -102,7 +103,8 @@ function PasswordRequirementsChecklistComponent({
   const allMet = requirements.every((req) => req.met);
   const metCount = requirements.filter((req) => req.met).length;
   const total = requirements.length;
-  const progressPercent = total > 0 ? (metCount / total) * 100 : 0;
+  const progressPercent =
+    total > 0 ? (metCount / total) * PROGRESS_PERCENTAGE.MAX : 0;
 
   const getStrengthLevel = (count: number): 'WEAK' | 'MEDIUM' | 'STRONG' => {
     if (count <= 1) return 'WEAK';

@@ -18,6 +18,7 @@ import {
   TYPOGRAPHY_CLASSES,
   PROGRESS_BAR_A11Y,
 } from '@/lib/config/theme';
+import { PROGRESS_PERCENTAGE } from '@/lib/config/modular-constants';
 import { ICON_SIZES, INDICATOR_SIZES } from '@/lib/config/icon-sizes';
 import {
   USER_ONBOARDING_LABELS,
@@ -97,7 +98,8 @@ export default function UserOnboarding() {
 
   const currentStep = TOUR_STEPS[currentStepIndex];
   const isLastStep = currentStepIndex === TOUR_STEPS.length - 1;
-  const progress = ((currentStepIndex + 1) / TOUR_STEPS.length) * 100;
+  const progress =
+    ((currentStepIndex + 1) / TOUR_STEPS.length) * PROGRESS_PERCENTAGE.MAX;
 
   useEffect(() => {
     return () => {

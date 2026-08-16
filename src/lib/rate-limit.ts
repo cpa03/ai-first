@@ -12,7 +12,10 @@ import { HTTP_HEADERS } from './config/http';
 import { ENV_ACCESSORS } from './config/env-keys';
 import { generateRequestId } from './errors';
 import { simpleHash, timingSafeEqualStrings } from './security/crypto';
-import { TIME_CONVERSIONS } from './config/modular-constants';
+import {
+  TIME_CONVERSIONS,
+  PROGRESS_PERCENTAGE,
+} from './config/modular-constants';
 import { API_ERROR_MESSAGES } from './config/error-messages';
 
 export interface RateLimitInfo {
@@ -880,7 +883,8 @@ export function getStoreHealthMetrics(): Promise<StoreHealthMetrics> {
   return withStoreGlobalLock(() => {
     const currentSize = rateLimitStore.size;
     const maxSize = RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE;
-    const utilizationPercent = (currentSize / maxSize) * 100;
+    const utilizationPercent =
+      (currentSize / maxSize) * PROGRESS_PERCENTAGE.MAX;
 
     return {
       currentSize,

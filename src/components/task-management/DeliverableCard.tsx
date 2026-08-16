@@ -217,7 +217,7 @@ function DeliverableCardComponent({
               role="progressbar"
               aria-valuenow={deliverable.progress}
               aria-valuemin={0}
-              aria-valuemax={100}
+              aria-valuemax={PROGRESS_PERCENTAGE.MAX}
               aria-label={`${deliverable.title} progress: ${deliverable.progress}%`}
             >
               <div

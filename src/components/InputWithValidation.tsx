@@ -35,6 +35,7 @@ import {
   ICON_SIZES,
   SPACE_Y_PATTERNS,
   FLEX_PATTERNS,
+  PROGRESS_PERCENTAGE,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { UI_CONFIG } from '@/lib/config/constants';
@@ -750,7 +751,7 @@ const InputWithValidationComponent = forwardRef<
                             : BG_COLORS.SUCCESS
                     }`}
                     style={{
-                      width: `${Math.min((charCount / maxLength) * 100, 100)}%`,
+                      width: `${Math.min((charCount / maxLength) * PROGRESS_PERCENTAGE.MAX, PROGRESS_PERCENTAGE.MAX)}%`,
                     }}
                   />
                 </div>
