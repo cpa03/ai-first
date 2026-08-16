@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { createLogger } from '@/lib/logger';
 import { UI_CONFIG } from '@/lib/config/constants';
 import {
@@ -21,6 +21,7 @@ import { useConfetti } from '@/hooks/useConfetti';
 import { useClipboard } from '@/hooks/useClipboard';
 import { useToast } from '@/hooks/useAnnouncement';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
+import { PLATFORM } from '@/lib/dom-utils';
 
 export interface CopyButtonProps {
   textToCopy: string;
@@ -77,13 +78,18 @@ const CopyButtonComponent = function CopyButton({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'c') {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'c') {
         e.preventDefault();
         e.stopPropagation();
         handleCopy();
       }
     },
     [handleCopy]
+  );
+
+  const shortcutHint = useMemo(
+    () => COPY_BUTTON_LABELS.KEYBOARD_SHORTCUT(PLATFORM.isMac()),
+    []
   );
 
   const baseClasses = `
@@ -120,7 +126,7 @@ const CopyButtonComponent = function CopyButton({
       <StatusAnnouncer message={successLabel} triggered={copied} />
       <Tooltip
         content={copied ? successLabel : ariaLabel}
-        shortcut={copied ? undefined : ['⌘', 'C']}
+        shortcut={copied ? undefined : shortcutHint}
         disabled={false}
         position="top"
       >
