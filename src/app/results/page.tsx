@@ -45,6 +45,10 @@ import {
   SPACE_Y_PATTERNS,
   RESPONSIVE_SPACING,
 } from '@/lib/config';
+import {
+  RESULTS_SUCCESS_CONTAINER,
+  RESULTS_SHARE_BUTTON_CONTAINER,
+} from '@/lib/config/remaining-hardcoded-patterns';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
   ssr: false,
@@ -1014,10 +1018,10 @@ function ResultsContent() {
           </div>
 
           {exportUrl && (
-            <div className="mt-6 relative">
+            <div className={RESULTS_SUCCESS_CONTAINER}>
               <Alert type="success" title={RESULTS_PAGE_CONTENT.SUCCESS_TITLE}>
                 {RESULTS_PAGE_CONTENT.SUCCESS_MESSAGE}
-                <span className="mt-3 block">
+                <span className={RESULTS_SHARE_BUTTON_CONTAINER}>
                   <ShareButton
                     shareTitle="Check out my project blueprint on IdeaFlow!"
                     shareText="I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!"

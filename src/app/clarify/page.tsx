@@ -29,6 +29,10 @@ import {
   REMAINING_PATTERNS,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import {
+  CLARIFY_PARAGRAPH_MARGIN,
+  CLARIFY_EMPTY_STATE,
+} from '@/lib/config/remaining-hardcoded-patterns';
 
 const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
@@ -51,7 +55,7 @@ const DynamicClarificationFlow = dynamic(
         <div className={CARD_PATTERNS.CENTERED}>
           <LoadingSpinner
             size="md"
-            className="mb-4"
+            className={CLARIFY_PARAGRAPH_MARGIN}
             ariaLabel={CLARIFY_PAGE_CONTENT.LOADING}
             label={CLARIFY_PAGE_CONTENT.LOADING}
           />
@@ -68,7 +72,7 @@ function ClarifyPageLoading() {
       <div className={CARD_PATTERNS.ANIMATED}>
         <LoadingSpinner
           size="md"
-          className="mb-4"
+          className={CLARIFY_PARAGRAPH_MARGIN}
           ariaLabel={CLARIFY_PAGE_CONTENT.LOADING}
           label={CLARIFY_PAGE_CONTENT.LOADING_SHORT}
         />
@@ -121,7 +125,9 @@ function ClarifySuccessState({
     <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
       <div className="slide-up">
         <Alert type="success" title={CLARIFY_PAGE_CONTENT.SUCCESS_TITLE}>
-          <p className="mb-4">{CLARIFY_PAGE_CONTENT.SUCCESS_MESSAGE}</p>
+          <p className={CLARIFY_PARAGRAPH_MARGIN}>
+            {CLARIFY_PAGE_CONTENT.SUCCESS_MESSAGE}
+          </p>
           <div className={CARD_PATTERNS.CONTENT}>
             {Object.entries(answers).map(([key, value]) => (
               <div key={key} className={REMAINING_PATTERNS.FORM_TEXT_SIZES.SM}>
@@ -252,7 +258,7 @@ function ClarifyPageContent() {
         <div className={CARD_PATTERNS.ANIMATED}>
           <LoadingSpinner
             size="md"
-            className="mb-4"
+            className={CLARIFY_PARAGRAPH_MARGIN}
             ariaLabel={CLARIFY_PAGE_CONTENT.LOADING}
             label={CLARIFY_PAGE_CONTENT.LOADING_SHORT}
           />
@@ -294,7 +300,7 @@ function ClarifyPageContent() {
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <div className="slide-up">
           <Alert type="error" title={CLARIFY_PAGE_CONTENT.ERROR_TITLE}>
-            <p className="mb-4">{error}</p>
+            <p className={CLARIFY_PARAGRAPH_MARGIN}>{error}</p>
             <div
               className={
                 REMAINING_PATTERNS.CLARIFY_LAYOUT.RESPONSIVE_FLEX_NO_MT
@@ -332,7 +338,9 @@ function ClarifyPageContent() {
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <div className="slide-up">
           <Alert type="warning" title={CLARIFY_PAGE_CONTENT.NO_IDEA_TITLE}>
-            <p className="mb-4">{CLARIFY_PAGE_CONTENT.NO_IDEA_MESSAGE}</p>
+            <p className={CLARIFY_PARAGRAPH_MARGIN}>
+              {CLARIFY_PAGE_CONTENT.NO_IDEA_MESSAGE}
+            </p>
             <Button onClick={() => router.push(ROUTES.HOME)} variant="primary">
               {CLARIFY_PAGE_CONTENT.BUTTONS.GO_TO_HOME}
             </Button>
@@ -343,7 +351,7 @@ function ClarifyPageContent() {
   }
 
   return (
-    <div className="py-12">
+    <div className={CLARIFY_EMPTY_STATE}>
       <div
         className={`${CONTAINER_WIDTHS.SM} mx-auto ${RESPONSIVE_PADDING.CLASS} mb-8`}
       >

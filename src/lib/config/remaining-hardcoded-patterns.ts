@@ -269,6 +269,34 @@ export const NOT_FOUND_COPY_SECTION =
 export const NOT_FOUND_ACTIONS =
   'flex flex-col sm:flex-row gap-3 justify-center';
 
+export const DASHBOARD_PAGINATION_CONTAINER =
+  'flex items-center justify-center gap-2 sm:gap-4 mb-8';
+
+export const DASHBOARD_FILTER_CLEAR_CONTAINER = 'flex items-center gap-2';
+
+export const DASHBOARD_FILTER_BADGE_POSITION =
+  'absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none';
+
+export const DASHBOARD_FILTER_BADGE_ACTIVE = 'bg-primary-600 text-white';
+
+export const DASHBOARD_FILTER_BADGE_INACTIVE =
+  'bg-primary-100 text-primary-700';
+
+export const RESULTS_SUCCESS_CONTAINER = 'mt-6 relative';
+
+export const RESULTS_SHARE_BUTTON_CONTAINER = 'mt-3 block';
+
+export const CLARIFY_PARAGRAPH_MARGIN = 'mb-4';
+
+export const CLARIFY_EMPTY_STATE = 'py-12';
+
+export const COMMON_FLEX_BETWEEN_RESPONSIVE =
+  'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4';
+
+export const COMMON_INLINE_FLEX_GAP = 'flex items-center gap-2';
+
+export const COMMON_INLINE_FLEX_GAP_SM = 'flex items-center gap-1.5';
+
 /**
  * Progress bar fill colors based on completion percentage
  * Used in: DeliverableCard.tsx inlineProgressFillClasses
@@ -322,6 +350,63 @@ export const DASHBOARD_SPECIFIC = {
   DISABLED_LIGHT: DISABLED_OPACITY.LIGHT,
   /** opacity-75 - disabled state */
   DISABLED_MEDIUM: DISABLED_OPACITY.MEDIUM,
+  /** absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none - filter badge position */
+  FILTER_BADGE_POSITION:
+    'absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none',
+  /** bg-primary-600 text-white - active filter badge */
+  FILTER_BADGE_ACTIVE: 'bg-primary-600 text-white',
+  /** bg-primary-100 text-primary-700 - inactive filter badge */
+  FILTER_BADGE_INACTIVE: 'bg-primary-100 text-primary-700',
+  /** flex items-center gap-2 - filter clear container */
+  FILTER_CLEAR_CONTAINER: 'flex items-center gap-2',
+  /** ml-2 - restart tour button margin */
+  RESTART_TOUR_MARGIN: 'ml-2',
+  /** mb-8 - section bottom margin */
+  SECTION_BOTTOM_MARGIN: 'mb-8',
+  /** mt-4 - alert button margin */
+  ALERT_BUTTON_MARGIN: 'mt-4',
+  /** flex items-center justify-center gap-2 sm:gap-4 mb-8 - pagination container */
+  PAGINATION_CONTAINER: 'flex items-center justify-center gap-2 sm:gap-4 mb-8',
+} as const;
+
+/**
+ * Results page specific patterns
+ * Used in: Results page
+ */
+export const RESULTS_SPECIFIC = {
+  /** mt-6 relative - success alert container */
+  SUCCESS_ALERT_CONTAINER: 'mt-6 relative',
+  /** mt-3 block - share button container */
+  SHARE_BUTTON_CONTAINER: 'mt-3 block',
+  /** mb-4 - section bottom margin */
+  SECTION_BOTTOM_MARGIN: 'mb-4',
+} as const;
+
+/**
+ * Clarify page specific patterns
+ * Used in: Clarify page
+ */
+export const CLARIFY_SPECIFIC = {
+  /** mb-4 - paragraph bottom margin */
+  PARAGRAPH_BOTTOM_MARGIN: 'mb-4',
+  /** py-12 - empty state padding */
+  EMPTY_STATE_PADDING: 'py-12',
+} as const;
+
+/**
+ * Common layout patterns
+ * Used across multiple pages
+ */
+export const COMMON_LAYOUT_PATTERNS = {
+  /** flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 - responsive flex with space between */
+  FLEX_BETWEEN_RESPONSIVE:
+    'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4',
+  /** flex items-center justify-center gap-2 sm:gap-4 mb-8 - pagination */
+  PAGINATION: 'flex items-center justify-center gap-2 sm:gap-4 mb-8',
+  /** flex items-center gap-2 - inline flex with gap */
+  INLINE_FLEX_GAP: 'flex items-center gap-2',
+  /** flex items-center gap-1.5 - inline flex with small gap */
+  INLINE_FLEX_GAP_SM: 'flex items-center gap-1.5',
 } as const;
 
 /**
@@ -357,4 +442,16 @@ export const REMAINING_PATTERNS = {
   PASSWORD_VISIBLE_TINT,
   VALID_CHECKMARK_COLOR,
   DASHBOARD_SPECIFIC,
+  DASHBOARD_PAGINATION_CONTAINER,
+  DASHBOARD_FILTER_CLEAR_CONTAINER,
+  DASHBOARD_FILTER_BADGE_POSITION,
+  DASHBOARD_FILTER_BADGE_ACTIVE,
+  DASHBOARD_FILTER_BADGE_INACTIVE,
+  RESULTS_SUCCESS_CONTAINER,
+  RESULTS_SHARE_BUTTON_CONTAINER,
+  CLARIFY_PARAGRAPH_MARGIN,
+  CLARIFY_EMPTY_STATE,
+  COMMON_FLEX_BETWEEN_RESPONSIVE,
+  COMMON_INLINE_FLEX_GAP,
+  COMMON_INLINE_FLEX_GAP_SM,
 } as const;
