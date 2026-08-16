@@ -4,6 +4,7 @@
 
 import { redactPII } from '../pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from '../config/constants';
+import { SECURITY_CONFIG } from '../config/environment';
 import { APP_CONFIG } from '../config/app';
 import { HTTP_HEADERS } from '../config/http';
 import { generateId } from '../security/crypto';
@@ -61,6 +62,9 @@ export function toErrorResponse(
 
   const headers: Record<string, string> = {
     [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.APPLICATION_JSON,
+    'X-Content-Type-Options': SECURITY_CONFIG.X_CONTENT_TYPE_OPTIONS,
+    'X-Frame-Options': SECURITY_CONFIG.X_FRAME_OPTIONS,
+    'Referrer-Policy': SECURITY_CONFIG.REFERRER_POLICY,
     'X-Request-ID': errorResponse.requestId || '',
     'X-Error-Code': appError.code,
     'X-Error-Fingerprint': appError.fingerprint,
