@@ -202,13 +202,17 @@ function validateEnvironmentConfig(): { errors: string[]; warnings: string[] } {
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  // Skip required env var validation in CI environments
-  // CI runs build/test without production credentials - same pattern as env-validation.ts
+  // Skip required env var validation in CI/Build environments
+  // CI/Build containers run without production credentials - same pattern as env-validation.ts
   const isCI =
     process.env.CI === 'true' ||
     process.env.GITHUB_ACTIONS === 'true' ||
     process.env.VERCEL === '1' ||
-    process.env.CF_WORKER === 'true';
+    process.env.CF_WORKER === 'true' ||
+    process.env.CF_PAGES === '1' ||
+    process.env.CF_PAGES === 'true' ||
+    process.env.OPENNEXT_CLOUDFLARE === 'true' ||
+    process.env.NEXT_PHASE === 'phase-production-build';
 
   const requiredEnvVars = APP_CONFIG.ENV_VARS.REQUIRED;
   const missingVars: string[] = [];
@@ -294,7 +298,15 @@ export function validateConfigurationOrThrow(): void {
     const errorMessage = `Configuration validation failed:\n${result.errors.join('\n')}`;
     logger.error(errorMessage);
 
-    if (process.env.NODE_ENV === 'production') {
+    const isBuildOrCI =
+      process.env.NEXT_PHASE === 'phase-production-build' ||
+      process.env.CI === 'true' ||
+      process.env.CF_PAGES === '1' ||
+      process.env.CF_PAGES === 'true' ||
+      process.env.CF_WORKER === 'true' ||
+      process.env.OPENNEXT_CLOUDFLARE === 'true';
+
+    if (process.env.NODE_ENV === 'production' && !isBuildOrCI) {
       throw new Error(errorMessage);
     }
   }

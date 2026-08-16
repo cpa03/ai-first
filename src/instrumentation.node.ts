@@ -92,7 +92,15 @@ export async function registerNodejsInstrumentation(): Promise<void> {
       'Environment validation failed:',
       error instanceof Error ? error.message : String(error)
     );
-    if (ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'production') {
+    const isBuildOrCI =
+      process.env.NEXT_PHASE === 'phase-production-build' ||
+      process.env.CI === 'true' ||
+      process.env.CF_PAGES === '1' ||
+      process.env.CF_PAGES === 'true' ||
+      process.env.CF_WORKER === 'true' ||
+      process.env.OPENNEXT_CLOUDFLARE === 'true';
+
+    if (ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'production' && !isBuildOrCI) {
       throw error;
     }
   }
