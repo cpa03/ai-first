@@ -190,7 +190,7 @@ const ProgressStepperComponent = function ProgressStepper({
                     disabled={!isClickable}
                     className={`
                       rounded-full ${TRANSITION_CLASSES.SLOW_EASE_OUT}
-                      ${isClickable ? `cursor-pointer hover:scale-125 ${FOCUS_RING_PATTERNS.DEFAULT}` : 'cursor-default'}
+                      ${isClickable ? `cursor-pointer hover:scale-125 hover:shadow-md hover:shadow-primary-200/50 ${FOCUS_RING_PATTERNS.DEFAULT}` : 'cursor-default'}
                       ${
                         step.current
                           ? `${ICON_SIZES.MD} ${BG_COLORS.BRAND} scale-110 shadow-md shadow-primary-200 animate-gentle-pulse`
@@ -268,7 +268,7 @@ const ProgressStepperComponent = function ProgressStepper({
                       ${ICON_SIZES.XXXL} rounded-full border-2
                       font-medium text-sm ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE}
                       ${TRANSITION_CLASSES.SLOW}
-                      ${isClickable ? 'group-hover:scale-110 group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-primary-500 group-focus-visible:ring-offset-2' : ''}
+                      ${isClickable ? 'group-hover:scale-110 group-hover:shadow-md group-hover:border-primary-400 group-hover:shadow-primary-200/50 group-focus-visible:ring-2 group-focus-visible:ring-primary-500 group-focus-visible:ring-offset-2' : ''}
                       ${
                         step.completed
                           ? `border-primary-600 ${BG_COLORS.BRAND} text-white`
