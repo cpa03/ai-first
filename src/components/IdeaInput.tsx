@@ -48,6 +48,7 @@ import { IDEA_INPUT_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { PLATFORM } from '@/lib/dom-utils';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
+import { ML_CLASSES } from '@/lib/config/spacing';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
@@ -457,7 +458,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         <TypingIndicator
           isTyping={isTyping}
           hideDelay={ANIMATION_CONFIG.TYPING_INDICATOR.HIDE_DELAY}
-          className="ml-2"
+          className={ML_CLASSES.MD}
         />
 
         {writingProgress > 5 && (

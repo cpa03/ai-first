@@ -11,6 +11,7 @@ import {
   ICON_SIZES,
   FOCUS_RING_OFFSET_PATTERNS,
   COMPONENT_CONFIG,
+  UI_CONFIG,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { PLATFORM } from '@/lib/dom-utils';
@@ -26,6 +27,10 @@ import Tooltip from './Tooltip';
  *
  * Micro-UX: Adds a subtle pulse animation on first appearance to draw
  * user attention to this useful feature, especially on long pages.
+ *
+ * Micro-UX: Shows persistent keyboard shortcut hint (⌘+↑ / Ctrl+Home)
+ * next to the button text on desktop for discoverability. Follows the
+ * pattern established by the login page for inline shortcut hints.
  *
  * Follows the pattern established by ScrollToTop component for consistency.
  */
@@ -134,6 +139,24 @@ function ScrollToTopButtonComponent() {
       aria-label={SCROLL_TO_TOP_BUTTON_LABELS.ARIA_LABEL}
     >
       <span>{SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}</span>
+      {/* Micro-UX: Persistent keyboard shortcut hint for discoverability */}
+      {/* Only visible on desktop (sm+) to avoid cluttering mobile footer */}
+      {/* Subtle opacity ensures it doesn't distract from the main button text */}
+      <span
+        className={`hidden sm:inline-flex items-center gap-1 ${GRAY_CLASSES.TEXT_400} transition-opacity ${TRANSITION_CLASSES.DEFAULT} ${isHoveredOrFocused ? 'opacity-100' : 'opacity-60'}`}
+        aria-hidden="true"
+      >
+        <kbd
+          className={`px-1 py-0.5 ${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}`}
+        >
+          {isMac ? '⌘' : 'Ctrl'}
+        </kbd>
+        <kbd
+          className={`px-1 py-0.5 ${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}`}
+        >
+          {isMac ? '↑' : 'Home'}
+        </kbd>
+      </span>
       <svg
         className={`${ICON_SIZES.SM} transition-transform ${TRANSITION_CLASSES.DEFAULT} ${
           isHoveredOrFocused && !prefersReducedMotion ? '-translate-y-0.5' : ''

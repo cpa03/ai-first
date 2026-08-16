@@ -55,6 +55,7 @@ import {
   SKELETON_SIZE_PATTERNS,
   MB_CLASSES,
   MT_CLASSES,
+  ML_CLASSES,
   ANIMATION_CLASSES,
   GAP_CLASSES,
 } from '@/lib/config';
@@ -635,7 +636,7 @@ function ClarificationFlow({
             <CopyButton
               textToCopy={idea}
               variant="icon-only"
-              className="mt-1"
+              className={MT_CLASSES.SM}
               ariaLabel={COMPONENT_DEFAULTS.ARIA_LABELS.COPY_IDEA}
             />
           </div>
@@ -789,7 +790,10 @@ function ClarificationFlow({
                   ref={textareaRef}
                   disabled={showCelebration || isSubmitting}
                 />
-                <CapsLockWarning isOn={isCapsLockOn} className="mt-1.5" />
+                <CapsLockWarning
+                  isOn={isCapsLockOn}
+                  className={MT_CLASSES.MD_SM}
+                />
               </div>
             )}
 
@@ -818,7 +822,10 @@ function ClarificationFlow({
                   ref={textInputRef}
                   disabled={showCelebration || isSubmitting}
                 />
-                <CapsLockWarning isOn={isCapsLockOn} className="mt-1.5" />
+                <CapsLockWarning
+                  isOn={isCapsLockOn}
+                  className={MT_CLASSES.MD_SM}
+                />
               </div>
             )}
 
@@ -921,7 +928,7 @@ function ClarificationFlow({
               currentQuestion.type === 'text') &&
               !showCelebration &&
               !isSubmitting && (
-                <div className="ml-2">
+                <div className={ML_CLASSES.MD}>
                   <TypingIndicator isTyping={isTyping} />
                 </div>
               )}
