@@ -56,6 +56,11 @@ import {
   DASHBOARD_FILTER_BAR,
   DASHBOARD_EMPTY_STATE_CTA,
   DASHBOARD_EMPTY_STATE_CTA_ROW,
+  DASHBOARD_PAGINATION_CONTAINER,
+  DASHBOARD_FILTER_CLEAR_CONTAINER,
+  DASHBOARD_FILTER_BADGE_POSITION,
+  DASHBOARD_FILTER_BADGE_ACTIVE,
+  DASHBOARD_FILTER_BADGE_INACTIVE,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import type { ComponentConfig } from '@/lib/config/components';
 import {
@@ -804,12 +809,12 @@ export default function DashboardPage() {
             </select>
           </Tooltip>
           {ideas.length > 0 && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+            <div className={DASHBOARD_FILTER_BADGE_POSITION}>
               <span
                 className={`flex items-center justify-center min-w-[${DASHBOARD_TAILWIND.STATUS_BADGE_MIN_W}] h-5 px-1.5 text-xs font-semibold rounded-full transition-all ${DURATION_TAILWIND[300]} ${
                   filter !== IDEA_STATUS_CONFIG.FILTERS.ALL
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-primary-100 text-primary-700'
+                    ? DASHBOARD_FILTER_BADGE_ACTIVE
+                    : DASHBOARD_FILTER_BADGE_INACTIVE
                 }`}
                 aria-live="polite"
               >
@@ -820,7 +825,7 @@ export default function DashboardPage() {
         </div>
         {filter !== 'all' && (
           <div
-            className={`flex items-center gap-2 transition-all ${DURATION_TAILWIND[200]} ease-out ${
+            className={`${DASHBOARD_FILTER_CLEAR_CONTAINER} transition-all ${DURATION_TAILWIND[200]} ease-out ${
               isFilterClearing ? 'opacity-0 scale-95 -translate-x-2' : FADE_IN
             }`}
           >
@@ -945,7 +950,7 @@ export default function DashboardPage() {
               {/* Micro-UX: Animated 3-step visual flow showing the IdeaFlow journey */}
               {/* Helps users understand the product value proposition at a glance */}
               <div
-                className="flex items-center justify-center gap-2 sm:gap-4 mb-8"
+                className={DASHBOARD_PAGINATION_CONTAINER}
                 role="list"
                 aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.HOW_IT_WORKS}
               >
