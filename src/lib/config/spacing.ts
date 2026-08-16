@@ -114,6 +114,21 @@ export const ML_CLASSES = {
 } as const;
 
 /**
+ * Margin X (horizontal) classes
+ * Replaces hardcoded mx-* classes throughout components
+ */
+export const MX_CLASSES = {
+  /** mx-0 = 0px */
+  NONE: 'mx-0',
+  /** mx-0.5 = 2px */
+  XS: 'mx-0.5',
+  /** mx-1 = 4px */
+  SM: 'mx-1',
+  /** mx-2 = 8px */
+  MD: 'mx-2',
+} as const;
+
+/**
  * Padding classes
  * Replaces hardcoded p-* classes throughout components
  */

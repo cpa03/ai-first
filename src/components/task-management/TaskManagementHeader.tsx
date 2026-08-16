@@ -28,6 +28,7 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
+import { MT_CLASSES } from '@/lib/config/spacing';
 
 interface TaskManagementHeaderProps {
   totalDeliverables: number;
@@ -214,7 +215,7 @@ function TaskManagementHeaderComponent({
         />
       </div>
 
-      <div className="mt-4">
+      <div className={MT_CLASSES.XL}>
         <div
           ref={radioGroupRef}
           className={`${FLEX_PATTERNS.GAP_MD} mb-3`}

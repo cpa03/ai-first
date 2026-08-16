@@ -35,6 +35,7 @@ import {
   PRIMARY_LINK,
   BODY_OVERFLOW_CONFIG,
 } from '@/lib/config';
+import { MT_CLASSES, MB_CLASSES } from '@/lib/config/spacing';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
   KEYBOARD_SHORTCUTS_ELEMENT_IDS,
@@ -772,7 +773,7 @@ function KeyboardShortcutsHelpComponent({
               </button>
             )}
           </div>
-          <div className="mt-2 flex items-center justify-between">
+          <div className={`${MT_CLASSES.MD} ${FLEX_PATTERNS.BETWEEN}`}>
             <label
               className={`flex items-center gap-2 text-xs ${TEXT_COLORS.SECONDARY} cursor-pointer`}
             >
@@ -914,7 +915,7 @@ function KeyboardShortcutsHelpComponent({
             </div>
           ) : (
             Object.entries(groupedShortcuts).map(([context, shortcuts]) => (
-              <div key={context} className="mb-6 last:mb-0">
+              <div key={context} className={`${MB_CLASSES.XXL} last:mb-0`}>
                 <h3
                   className={`text-xs font-semibold ${TEXT_COLORS.MUTED} uppercase tracking-wider mb-3`}
                 >

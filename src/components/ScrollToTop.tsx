@@ -30,6 +30,7 @@ import {
 } from '@/lib/config';
 import type { ComponentConfig } from '@/lib/config/components';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
+import { MX_CLASSES } from '@/lib/config/spacing';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
@@ -317,14 +318,18 @@ function ScrollToTopComponent({
               {SCROLL_TO_TOP_LABELS.KEYS.DOWN}
             </kbd>{' '}
             {SCROLL_TO_TOP_LABELS.SCROLL_INSTRUCTION}
-            <span className="mx-1">{SCROLL_TO_TOP_LABELS.SEPARATOR}</span>
+            <span className={MX_CLASSES.SM}>
+              {SCROLL_TO_TOP_LABELS.SEPARATOR}
+            </span>
             <kbd
               className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
             >
               {SCROLL_TO_TOP_LABELS.KEYS.HOME}
             </kbd>{' '}
             {SCROLL_TO_TOP_LABELS.TOP}
-            <span className="mx-1">{SCROLL_TO_TOP_LABELS.SEPARATOR}</span>
+            <span className={MX_CLASSES.SM}>
+              {SCROLL_TO_TOP_LABELS.SEPARATOR}
+            </span>
             <kbd
               className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
             >
