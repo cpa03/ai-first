@@ -28,7 +28,6 @@ import { GAP_CLASSES, MT_CLASSES } from '@/lib/config/spacing';
 import { ICON_SIZES } from '@/lib/config/icon-sizes';
 import { GRAY_CLASSES, ELEMENT_PATTERNS } from '@/lib/config/remaining-styles';
 import { FOOTER_NAV_CONFIG } from '@/lib/config/navigation';
-import { DASHBOARD_PAGE_CONTENT } from '@/lib/config/pages';
 import { PAGE_LAYOUT_CLASSES } from '@/lib/config/page-layout';
 import { ROUTES } from '@/lib/config/routes';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
@@ -219,11 +218,7 @@ export default async function RootLayout({
               >
                 {children}
               </main>
-              <footer
-                className={FOOTER_PATTERNS.CONTAINER}
-                role="contentinfo"
-                aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.SITE_FOOTER}
-              >
+              <footer className={FOOTER_PATTERNS.CONTAINER} role="contentinfo">
                 <div className={PAGE_LAYOUT_CLASSES.CONTAINER_XL}>
                   <div
                     className={`grid grid-cols-2 md:grid-cols-4 ${GAP_CLASSES.XXXL}`}
