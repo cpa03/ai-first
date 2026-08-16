@@ -14,6 +14,7 @@ import {
   TEXT_SIZE_CLASSES,
   BG_COLORS,
   TEXT_COLORS,
+  UI_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -125,10 +126,9 @@ function FooterNavComponent({ columns }: FooterNavProps) {
       // Helps users discover arrow key navigation without cluttering UI
       if (!showKeyboardHint && !prefersReducedMotion) {
         setShowKeyboardHint(true);
-        // Auto-hide hint after a brief moment to avoid visual clutter
         hintTimeoutRef.current = setTimeout(() => {
           setShowKeyboardHint(false);
-        }, 3000);
+        }, UI_CONFIG.FOOTER_KEYBOARD_HINT_DURATION);
       }
     },
     [showKeyboardHint, prefersReducedMotion]

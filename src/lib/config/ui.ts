@@ -152,6 +152,18 @@ export const UI_CONFIG = {
     50,
     500
   ),
+
+  /**
+   * Footer keyboard navigation hint auto-hide duration (in milliseconds)
+   * How long the keyboard navigation hint stays visible in the footer
+   * Env: UI_FOOTER_KEYBOARD_HINT_DURATION (default: 3000)
+   */
+  FOOTER_KEYBOARD_HINT_DURATION: EnvLoader.number(
+    'UI_FOOTER_KEYBOARD_HINT_DURATION',
+    3000,
+    1000,
+    10000
+  ),
 } as const;
 
 export const LABELS = {
