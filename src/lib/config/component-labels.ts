@@ -364,7 +364,7 @@ export const IDEA_INPUT_LABELS = {
   /** Clear input button text */
   CLEAR_BUTTON: 'Clear',
   /** Paste from clipboard button aria-label */
-  PASTE_ARIA_LABEL: 'Paste from clipboard',
+  PASTE_ARIA_LABEL: 'Paste',
   /** Paste from clipboard button text */
   PASTE_BUTTON: 'Paste',
   /** Paste success confirmation text */
@@ -696,7 +696,7 @@ export const SECTION_INDICATOR_LABELS = {
  */
 export const SCROLL_TO_TOP_BUTTON_LABELS = {
   /** ARIA label for the scroll to top button */
-  ARIA_LABEL: 'Scroll to top',
+  ARIA_LABEL: 'Scroll to top (⌘↑ or Ctrl+Home)',
   /** Button text */
   BUTTON_TEXT: 'Scroll to top',
 } as const;

@@ -100,7 +100,7 @@ export const HOME_PAGE_CONFIG = {
     TITLE: 'IdeaFlow - Turn Ideas into Action',
     TEXT: 'Transform your ideas into structured projects with AI-powered planning, task breakdown, and export to your favorite tools.',
     LABEL: 'Share IdeaFlow',
-    ARIA_LABEL: 'Share IdeaFlow with friends',
+    ARIA_LABEL: 'Share IdeaFlow',
   },
   CONFIRMATION: {
     LABEL: 'Your Idea:',
