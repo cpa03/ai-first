@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
@@ -40,6 +40,14 @@ export default function ForgotPasswordPage() {
   const [isMac, setIsMac] = useState(false);
   const emailInputRef = useRef<HTMLInputElement>(null);
   const { openHelp } = useKeyboardShortcuts();
+
+  const isFormValid = useMemo(() => {
+    const trimmedEmail = email.trim();
+    return (
+      trimmedEmail.length > 0 &&
+      VALIDATION_CONFIG.COMMON_REGEX.EMAIL.test(trimmedEmail)
+    );
+  }, [email]);
 
   useEffect(() => {
     setIsMac(PLATFORM.isMac());
@@ -246,6 +254,7 @@ export default function ForgotPasswordPage() {
               className="w-full"
               size="lg"
               enableTransition
+              attention={isFormValid && !isLoading}
               shortcut={isMac ? ['⌘', 'Enter'] : ['Ctrl', 'Enter']}
             >
               {isLoading ? 'Sending...' : 'Send reset link'}
