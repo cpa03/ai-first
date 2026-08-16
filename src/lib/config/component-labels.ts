@@ -40,6 +40,8 @@ export const COPY_BUTTON_LABELS = {
   CLIPBOARD_TOAST: 'Copied to clipboard!',
   /** Error message on clipboard failure */
   CLIPBOARD_ERROR: 'Failed to copy. Please try selecting and copying manually.',
+  /** Keyboard shortcut representation for tooltip hint */
+  KEYBOARD_SHORTCUT: (isMac: boolean) => [isMac ? '⌘' : 'Ctrl', 'C'],
 } as const;
 
 /**

@@ -34,13 +34,13 @@ describe('CopyButton Keyboard Shortcuts & Functionality', () => {
     expect(mockWriteText).toHaveBeenCalledWith('Hello World');
   });
 
-  it('copies text to clipboard when focused and pressing Ctrl+C', async () => {
+  it('copies text to clipboard when focused and pressing Ctrl+C or uppercase C', async () => {
     render(<CopyButton textToCopy="Hello World" />);
     const button = screen.getByRole('button');
     button.focus();
 
     await act(async () => {
-      fireEvent.keyDown(button, { key: 'c', ctrlKey: true });
+      fireEvent.keyDown(button, { key: 'C', ctrlKey: true });
     });
 
     expect(mockWriteText).toHaveBeenCalledWith('Hello World');

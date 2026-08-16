@@ -42,6 +42,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 - **Date**: 2026-08-15
 - **Details**: Connected `CapsLockWarning` UI strings directly to `CAPS_LOCK_WARNING_LABELS` in `src/lib/config/component-labels.ts`, eliminating inline hardcoded text.
 
+### [STRENGTHEN] Strengthen CopyButton Keyboard Shortcut Handling and Tooltip Discovery
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-16
+- **Details**: Enhanced `CopyButton` keyboard interactions to handle case-insensitive key detection (`e.key.toLowerCase() === 'c'`) when `Ctrl` or `Cmd` is pressed, and added platform-aware keyboard shortcut hints (`⌘+C` vs `Ctrl+C` using `PLATFORM.isMac()`) to the component's tooltip.
+
+### [CONNECT] Connect CopyButton Keyboard Shortcut Labels to Central Configs
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-08-16
+- **Details**: Connected platform-aware keyboard shortcut representations for `CopyButton` directly to `COPY_BUTTON_LABELS.KEYBOARD_SHORTCUT` in `src/lib/config/component-labels.ts`.
+
 ---
 
 ## Quick Stats
