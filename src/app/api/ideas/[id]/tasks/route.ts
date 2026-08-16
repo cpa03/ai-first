@@ -8,7 +8,11 @@ import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { STATUS_CODES } from '@/lib/config/constants';
-import { IDEA_STATUS_CONFIG, PRECISION_CONFIG } from '@/lib/config';
+import {
+  IDEA_STATUS_CONFIG,
+  PRECISION_CONFIG,
+  PROGRESS_PERCENTAGE,
+} from '@/lib/config';
 
 async function handleGet(context: ApiContext) {
   const { request, params } = context;
@@ -89,7 +93,9 @@ async function handleGet(context: ApiContext) {
         ) / PRECISION_CONFIG.HOURS_MULTIPLIER;
 
       const deliverableProgress =
-        tasks.length > 0 ? (deliverableCompleted / tasks.length) * 100 : 0;
+        tasks.length > 0
+          ? (deliverableCompleted / tasks.length) * PROGRESS_PERCENTAGE.MAX
+          : 0;
 
       return {
         ...deliverable,
@@ -102,7 +108,9 @@ async function handleGet(context: ApiContext) {
     });
 
     const overallProgress =
-      totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+      totalTasks > 0
+        ? (completedTasks / totalTasks) * PROGRESS_PERCENTAGE.MAX
+        : 0;
 
     return standardSuccessResponse(
       {

@@ -32,6 +32,7 @@ import {
   SPACE_Y_PATTERNS,
   CONFETTI_DOT,
   HEIGHT_ONLY,
+  PROGRESS_PERCENTAGE,
 } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
@@ -138,8 +139,8 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
   }, [idea, encouragementMessages]);
 
   const writingProgress = Math.min(
-    (idea.trim().length / MAX_IDEA_LENGTH) * 100,
-    100
+    (idea.trim().length / MAX_IDEA_LENGTH) * PROGRESS_PERCENTAGE.MAX,
+    PROGRESS_PERCENTAGE.MAX
   );
 
   const focusInput = useCallback(() => {

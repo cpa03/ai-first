@@ -49,6 +49,7 @@ import {
   CHECKLIST_ANIMATIONS,
   COMMON_SPACING_PATTERNS,
   REMAINING_PATTERNS,
+  PROGRESS_PERCENTAGE,
 } from '@/lib/config';
 import { SIGNUP_TIP_ITEM } from '@/lib/config/remaining-hardcoded-patterns';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
@@ -268,7 +269,9 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
   // Micro-UX: Granular progress bar width based on actual score (0-4)
   // Instead of fixed widths (33%/66%/100%), show precise percentage
   // giving users fine-grained feedback about password strength gains
-  const percentage = Math.round((score / NORMALIZATION.MAX_SCORE) * 100);
+  const percentage = Math.round(
+    (score / NORMALIZATION.MAX_SCORE) * PROGRESS_PERCENTAGE.MAX
+  );
 
   const strengthConfig = {
     empty: {

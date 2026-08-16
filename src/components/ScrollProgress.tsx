@@ -16,6 +16,7 @@ import {
   PROGRESS_BAR_A11Y,
   HEIGHT_ONLY,
   SCROLL_STEP_CONFIG,
+  PROGRESS_PERCENTAGE,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
@@ -55,7 +56,12 @@ function ScrollProgressComponent() {
       const docHeight =
         document.documentElement.scrollHeight - window.innerHeight;
       const percent =
-        docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+        docHeight > 0
+          ? Math.min(
+              (scrollTop / docHeight) * PROGRESS_PERCENTAGE.MAX,
+              PROGRESS_PERCENTAGE.MAX
+            )
+          : 0;
       setScrollPercent(percent);
       rafRef.current = null;
     });
@@ -83,12 +89,15 @@ function ScrollProgressComponent() {
       const rect = bar.getBoundingClientRect();
       const clickPercent = Math.max(
         0,
-        Math.min(100, ((clientX - rect.left) / rect.width) * 100)
+        Math.min(
+          PROGRESS_PERCENTAGE.MAX,
+          ((clientX - rect.left) / rect.width) * PROGRESS_PERCENTAGE.MAX
+        )
       );
 
       const docHeight =
         document.documentElement.scrollHeight - window.innerHeight;
-      const scrollTarget = (clickPercent / 100) * docHeight;
+      const scrollTarget = (clickPercent / PROGRESS_PERCENTAGE.MAX) * docHeight;
 
       triggerHapticFeedback();
 
@@ -191,9 +200,12 @@ function ScrollProgressComponent() {
             const step = e.shiftKey
               ? SCROLL_STEP_CONFIG.LARGE
               : SCROLL_STEP_CONFIG.SMALL;
-            const nextPercent = Math.min(scrollPercent + step, 100);
+            const nextPercent = Math.min(
+              scrollPercent + step,
+              PROGRESS_PERCENTAGE.MAX
+            );
             window.scrollTo({
-              top: (nextPercent / 100) * docHeight,
+              top: (nextPercent / PROGRESS_PERCENTAGE.MAX) * docHeight,
               behavior,
             });
             break;
@@ -206,7 +218,7 @@ function ScrollProgressComponent() {
               : SCROLL_STEP_CONFIG.SMALL;
             const prevPercent = Math.max(scrollPercent - step, 0);
             window.scrollTo({
-              top: (prevPercent / 100) * docHeight,
+              top: (prevPercent / PROGRESS_PERCENTAGE.MAX) * docHeight,
               behavior,
             });
             break;
@@ -225,7 +237,7 @@ function ScrollProgressComponent() {
           case ' ': {
             e.preventDefault();
             window.scrollTo({
-              top: (scrollPercent / 100) * docHeight,
+              top: (scrollPercent / PROGRESS_PERCENTAGE.MAX) * docHeight,
               behavior,
             });
             break;

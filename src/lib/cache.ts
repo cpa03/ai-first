@@ -11,6 +11,7 @@ export interface CacheOptions {
 }
 
 import { CACHE_CONFIG } from './config/constants';
+import { PROGRESS_PERCENTAGE } from './config/modular-constants';
 
 export class Cache<T = unknown> {
   private cache: Map<string, CacheEntry<T>>;
@@ -263,7 +264,7 @@ export class Cache<T = unknown> {
   } {
     const stats = this.getStats();
     const utilizationPercent = this.maxSize
-      ? (stats.size / this.maxSize) * 100
+      ? (stats.size / this.maxSize) * PROGRESS_PERCENTAGE.MAX
       : 0;
 
     // PERFORMANCE: Get age of oldest entry in O(1) from the first Map entry.

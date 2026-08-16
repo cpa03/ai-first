@@ -19,7 +19,11 @@ import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
 import { HTTP_HEADERS, HTTP_METHODS } from '@/lib/config/http';
 import { generateId, secureRandom } from '@/lib/security/crypto';
-import { SESSION_STORAGE_KEYS, ID_PREFIX_CONFIG } from '@/lib/config';
+import {
+  SESSION_STORAGE_KEYS,
+  ID_PREFIX_CONFIG,
+  PROGRESS_PERCENTAGE,
+} from '@/lib/config';
 import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
 /**
@@ -259,9 +263,9 @@ function shouldTrackEvent(event: AnalyticsEventType): boolean {
   }
 
   // Check sample rate
-  if (ANALYTICS_CONFIG.SAMPLE_RATE < 100) {
+  if (ANALYTICS_CONFIG.SAMPLE_RATE < PROGRESS_PERCENTAGE.MAX) {
     // SECURITY: Use secureRandom() for cryptographically secure sampling
-    const random = secureRandom() * 100;
+    const random = secureRandom() * PROGRESS_PERCENTAGE.MAX;
     if (random > ANALYTICS_CONFIG.SAMPLE_RATE) {
       return false;
     }
