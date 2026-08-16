@@ -260,7 +260,11 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
       <div className={CARD_PATTERNS.BASE}>
         <Alert type="error" title={MESSAGES.ERRORS.LOADING_TASKS}>
           <p>{error}</p>
-          <Button onClick={handleRetry} variant="primary" className="mt-4">
+          <Button
+            onClick={handleRetry}
+            variant="primary"
+            className={MT_CLASSES.XL}
+          >
             {BUTTON_LABELS.RETRY}
           </Button>
         </Alert>

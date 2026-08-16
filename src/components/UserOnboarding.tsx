@@ -42,6 +42,7 @@ import { useConfetti } from '@/hooks/useConfetti';
 import Tooltip from './Tooltip';
 import { CONFETTI_DOT } from '@/lib/config';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
+import { MX_CLASSES } from '@/lib/config/spacing';
 
 /**
  * Onboarding Tour Steps
@@ -534,7 +535,9 @@ export default function UserOnboarding() {
                 →
               </kbd>{' '}
               {USER_ONBOARDING_COMPLETION_LABELS.NAVIGATE_HINT}
-              <span className="mx-1">{USER_ONBOARDING_LABELS.SEPARATOR}</span>
+              <span className={MX_CLASSES.SM}>
+                {USER_ONBOARDING_LABELS.SEPARATOR}
+              </span>
               <kbd
                 className={`px-1 py-0.5 ${BG_COLORS.LIGHTER} rounded ${TEXT_SIZE_PRESETS.KBD} ${TEXT_COLORS.SECONDARY}`}
               >
