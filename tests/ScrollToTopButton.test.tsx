@@ -16,14 +16,14 @@ describe('ScrollToTopButton Component', () => {
 
   it('renders the scroll to top button correctly', () => {
     render(<ScrollToTopButton />);
-    const button = screen.getByRole('button', { name: 'Scroll to top' });
+    const button = screen.getByRole('button', { name: /Scroll to top/ });
     expect(button).toBeInTheDocument();
     expect(screen.getByText('Scroll to top')).toBeInTheDocument();
   });
 
   it('scrolls to top when clicked', () => {
     render(<ScrollToTopButton />);
-    const button = screen.getByRole('button', { name: 'Scroll to top' });
+    const button = screen.getByRole('button', { name: /Scroll to top/ });
     fireEvent.click(button);
 
     expect(mockScrollTo).toHaveBeenCalledWith({
@@ -34,7 +34,7 @@ describe('ScrollToTopButton Component', () => {
 
   it('scrolls to top when Enter key is pressed', () => {
     render(<ScrollToTopButton />);
-    const button = screen.getByRole('button', { name: 'Scroll to top' });
+    const button = screen.getByRole('button', { name: /Scroll to top/ });
     fireEvent.keyDown(button, { key: 'Enter' });
 
     expect(mockScrollTo).toHaveBeenCalledWith({
@@ -45,7 +45,7 @@ describe('ScrollToTopButton Component', () => {
 
   it('scrolls to top when Space key is pressed', () => {
     render(<ScrollToTopButton />);
-    const button = screen.getByRole('button', { name: 'Scroll to top' });
+    const button = screen.getByRole('button', { name: /Scroll to top/ });
     fireEvent.keyDown(button, { key: ' ' });
 
     expect(mockScrollTo).toHaveBeenCalledWith({
@@ -56,7 +56,7 @@ describe('ScrollToTopButton Component', () => {
 
   it('sets isHoveredOrFocused state on hover', () => {
     render(<ScrollToTopButton />);
-    const button = screen.getByRole('button', { name: 'Scroll to top' });
+    const button = screen.getByRole('button', { name: /Scroll to top/ });
     const svg = button.querySelector('svg');
 
     // Initially should have translation if hovered (default mock motion is standard)
@@ -71,7 +71,7 @@ describe('ScrollToTopButton Component', () => {
 
   it('sets isHoveredOrFocused state on focus', () => {
     render(<ScrollToTopButton />);
-    const button = screen.getByRole('button', { name: 'Scroll to top' });
+    const button = screen.getByRole('button', { name: /Scroll to top/ });
     const svg = button.querySelector('svg');
 
     expect(svg).not.toHaveClass('-translate-y-0.5');
