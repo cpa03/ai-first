@@ -139,7 +139,7 @@ export const FOOTER_NAV_CONFIG = {
             'https://github.com/cpa03/ai-first'
           ),
           label: 'GitHub',
-          ariaLabel: 'View source code on GitHub',
+          ariaLabel: 'GitHub',
         },
       ],
     },
