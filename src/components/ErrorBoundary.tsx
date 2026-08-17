@@ -22,7 +22,12 @@ import { ROUTES } from '@/lib/config/routes';
 import { useClipboard } from '@/hooks/useClipboard';
 import { useConfetti } from '@/hooks/useConfetti';
 import StatusAnnouncer from './StatusAnnouncer';
-import { CONFETTI_DOT, SPACE_Y_PATTERNS, FLEX_PATTERNS } from '@/lib/config';
+import {
+  CONFETTI_DOT,
+  SPACE_Y_PATTERNS,
+  FLEX_PATTERNS,
+  TEXT_FORMAT_PATTERNS,
+} from '@/lib/config';
 import { ERROR_BOUNDARY_ACTION_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 
@@ -264,7 +269,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                     {MESSAGES.ERROR_BOUNDARY.DETAILS_BUTTON}
                   </summary>
                   <div
-                    className={`mt-3 text-xs ${TEXT_COLORS.SECONDARY} font-mono whitespace-pre-wrap overflow-auto max-h-48`}
+                    className={`mt-3 text-xs ${TEXT_COLORS.SECONDARY} ${TEXT_FORMAT_PATTERNS.FONT_MONO} ${TEXT_FORMAT_PATTERNS.WHITESPACE_PRE_WRAP} overflow-auto max-h-48`}
                   >
                     <strong>Error:</strong> {this.state.error.toString()}
                     {this.state.errorInfo && (

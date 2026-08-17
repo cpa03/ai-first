@@ -26,6 +26,7 @@ import {
   BODY_OVERFLOW_CONFIG,
   MT_CLASSES,
   GAP_CLASSES,
+  TEXT_FORMAT_PATTERNS,
 } from '@/lib/config';
 import { HINT_OVERLAY } from '@/lib/config/remaining-hardcoded-patterns';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
@@ -299,7 +300,7 @@ function MobileNavComponent() {
               }}
             >
               <span
-                className={`inline-flex items-center px-2 py-1 rounded-md bg-white/80 shadow-sm text-xs ${GRAY_CLASSES.TEXT_500} font-mono backdrop-blur-sm`}
+                className={`inline-flex items-center px-2 py-1 rounded-md bg-white/80 shadow-sm text-xs ${GRAY_CLASSES.TEXT_500} ${TEXT_FORMAT_PATTERNS.FONT_MONO} backdrop-blur-sm`}
               >
                 Esc
               </span>

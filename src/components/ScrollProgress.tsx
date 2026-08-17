@@ -17,6 +17,7 @@ import {
   HEIGHT_ONLY,
   SCROLL_STEP_CONFIG,
   PROGRESS_PERCENTAGE,
+  TEXT_FORMAT_PATTERNS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
@@ -262,7 +263,7 @@ function ScrollProgressComponent() {
           aria-hidden="true"
         >
           <svg
-            className={`${ICON_SIZES.SM} text-white drop-shadow-sm`}
+            className={`${ICON_SIZES.SM} text-white ${TEXT_FORMAT_PATTERNS.DROP_SHADOW_SM}`}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"
@@ -276,7 +277,7 @@ function ScrollProgressComponent() {
             />
           </svg>
           <span
-            className={`${TEXT_SIZE_CLASSES.XS} font-semibold text-white tabular-nums leading-none drop-shadow-sm`}
+            className={`${TEXT_SIZE_CLASSES.XS} font-semibold text-white tabular-nums leading-none ${TEXT_FORMAT_PATTERNS.DROP_SHADOW_SM}`}
           >
             {displayPercentage}%
           </span>
