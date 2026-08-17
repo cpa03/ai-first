@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import SectionIndicator from '@/components/SectionIndicator';
+import { KeyboardShortcutsProvider } from '@/components/KeyboardShortcutsProvider';
 
 // Mock scrollY and scrollIntoView
 beforeEach(() => {
@@ -16,14 +17,22 @@ describe('SectionIndicator', () => {
   ];
 
   it('renders section navigation when scroll position exceeds threshold', () => {
-    render(<SectionIndicator sections={mockSections} />);
+    render(
+      <KeyboardShortcutsProvider>
+        <SectionIndicator sections={mockSections} />
+      </KeyboardShortcutsProvider>
+    );
 
     const nav = screen.getByRole('navigation', { name: /section navigation/i });
     expect(nav).toBeInTheDocument();
   });
 
   it('includes focus-visible:scale-125 class for enhanced keyboard accessibility', () => {
-    render(<SectionIndicator sections={mockSections} />);
+    render(
+      <KeyboardShortcutsProvider>
+        <SectionIndicator sections={mockSections} />
+      </KeyboardShortcutsProvider>
+    );
 
     const buttons = screen.getAllByRole('button');
     expect(buttons[0]).toHaveClass('focus-visible:scale-125');
@@ -36,9 +45,15 @@ describe('SectionIndicator', () => {
     sectionEl.scrollIntoView = mockScrollIntoView;
     document.body.appendChild(sectionEl);
 
-    render(<SectionIndicator sections={mockSections} />);
+    render(
+      <KeyboardShortcutsProvider>
+        <SectionIndicator sections={mockSections} />
+      </KeyboardShortcutsProvider>
+    );
 
-    const button = screen.getByRole('button', { name: /jump to section one section/i });
+    const button = screen.getByRole('button', {
+      name: /jump to section one section/i,
+    });
     fireEvent.click(button);
 
     expect(mockScrollIntoView).toHaveBeenCalledWith({
