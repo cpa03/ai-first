@@ -444,6 +444,8 @@ export const TASK_MANAGEMENT_LABELS = {
   FILTER_IN_PROGRESS: 'In Progress',
   FILTER_COMPLETED: 'Completed',
   FILTER_ARIA_LABEL: 'Filter tasks by status',
+  FILTER_OPTION_ARIA_LABEL: (label: string, count: number, isActive: boolean) =>
+    `Filter by ${label} tasks, ${count} ${count === 1 ? 'task' : 'tasks'} available${isActive ? ', selected' : ''}`,
   FILTER_ANNOUNCEMENT: (count: number, status: string) =>
     `Showing ${count} ${status === 'all' ? '' : status} tasks`,
   EXPAND_ALL_HINT: 'expand all',
