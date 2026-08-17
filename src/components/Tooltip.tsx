@@ -284,7 +284,7 @@ function TooltipComponent({
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onTouchMove={handleTouchMove}
-      aria-describedby={isMounted ? id : undefined}
+      aria-describedby={isVisible ? id : undefined}
     >
       {children}
       {isMounted && (
