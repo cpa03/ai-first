@@ -445,6 +445,11 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
       severity: 2,
       description: 'Log level injection',
     },
+    {
+      pattern: /\x1b\[[0-9;]*[a-zA-Z]/,
+      severity: 2,
+      description: 'ANSI terminal escape sequence injection',
+    },
   ],
 
   ssti: [
