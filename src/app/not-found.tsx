@@ -41,6 +41,7 @@ import {
   POPULAR_PAGES_ICON,
   COPY_URL_HINT,
   NOT_FOUND_COPY_SECTION,
+  TEXT_LEFT,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import type { ComponentConfig } from '@/lib/config/components';
 import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
@@ -424,7 +425,7 @@ export default function NotFound() {
                           {item.icon}
                         </svg>
                       </span>
-                      <span className="text-left">
+                      <span className={TEXT_LEFT}>
                         <span
                           className={`block text-sm font-medium ${GRAY_CLASSES.TEXT_900} group-hover:${TEXT_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
                         >

@@ -25,6 +25,7 @@ import {
 import {
   TASK_CARD_VERTICAL_MARGIN,
   PROGRESS_BAR_COLORS,
+  FLEX_1,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -177,7 +178,7 @@ function DeliverableCardComponent({
         }
         className={DELIVERABLE_CARD_STYLES.HEADER.BASE}
       >
-        <div className="flex-1">
+        <div className={FLEX_1}>
           <div className={FLEX_PATTERNS.GAP_MD}>
             <h3 className={DELIVERABLE_CARD_STYLES.HEADER.TITLE}>
               {deliverable.title}

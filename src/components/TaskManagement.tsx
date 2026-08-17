@@ -33,6 +33,7 @@ import {
   MT_CLASSES,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
+import { ABSOLUTE_CENTER_OVERLAY } from '@/lib/config/remaining-hardcoded-patterns';
 import type { Task } from '@/lib/db';
 
 interface TaskManagementProps {
@@ -288,7 +289,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
               }}
             />
             <div className={PRIMARY_PULSE_INNER} />
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className={ABSOLUTE_CENTER_OVERLAY}>
               <svg
                 className={`${ICON_SIZES.XXXL} text-primary-500`}
                 fill="none"
@@ -390,7 +391,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
                 }}
               />
               <div className={PRIMARY_PULSE_INNER} />
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className={ABSOLUTE_CENTER_OVERLAY}>
                 <svg
                   className={`${ICON_SIZES.XXL} text-primary-400`}
                   fill="none"

@@ -22,6 +22,7 @@ import { EMAIL_BUTTON_LABELS } from '@/lib/config/component-labels';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
+import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 
 export interface EmailButtonProps {
   ideaTitle: string;
@@ -153,7 +154,7 @@ const EmailButtonComponent = function EmailButton({
         disabled={false}
         position="top"
       >
-        <span className="relative inline-flex">
+        <span className={INLINE_FLEX_RELATIVE}>
           <Button
             variant="primary"
             loading={state === 'loading'}

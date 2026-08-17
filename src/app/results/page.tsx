@@ -48,6 +48,7 @@ import {
 import {
   RESULTS_SUCCESS_CONTAINER,
   RESULTS_SHARE_BUTTON_CONTAINER,
+  FLEX_CENTER,
 } from '@/lib/config/remaining-hardcoded-patterns';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
@@ -75,7 +76,7 @@ const Button = dynamic(() => import('@/components/Button'), {
 const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
   ssr: false,
   loading: () => (
-    <div className="flex justify-center items-center">
+    <div className={FLEX_CENTER}>
       <div
         className={`animate-spin rounded-full ${SPINNER_PATTERNS.default.size.md} ${SPINNER_PATTERNS.default.border} ${SPINNER_PATTERNS.default.borderColor}`}
       ></div>

@@ -22,6 +22,7 @@ import {
 } from '@/lib/config';
 import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
+import { FLEX_PATTERNS } from '@/lib/config/remaining-styles';
 
 interface PasswordRequirement {
   id: string;
@@ -238,7 +239,7 @@ function PasswordRequirementsChecklistComponent({
         {announcement}
       </div>
       <div className={SPACE_Y_PATTERNS.SM_MD}>
-        <div className="flex items-center justify-between">
+        <div className={FLEX_PATTERNS.BETWEEN}>
           <p className={`text-xs font-medium ${TEXT_COLORS.MUTED_DARK}`}>
             {PASSWORD_REQUIREMENTS_LABELS.HEADER_TEXT}
           </p>

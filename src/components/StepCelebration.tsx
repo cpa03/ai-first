@@ -35,6 +35,7 @@ import {
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { ABSOLUTE_CENTER_FLEX_COL } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface StepCelebrationProps {
   stepNumber: number;
@@ -227,7 +228,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
               />
             </svg>
 
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <div className={ABSOLUTE_CENTER_FLEX_COL}>
               <div
                 className={`
                 ${STEP_CELEBRATION_CHECKMARK_CONTAINER}

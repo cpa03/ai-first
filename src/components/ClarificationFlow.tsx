@@ -61,6 +61,7 @@ import {
   TEXT_FORMAT_PATTERNS,
 } from '@/lib/config';
 import { SELECT_ICON_POSITION } from '@/lib/config/remaining-hardcoded-patterns';
+import { INLINE_FLEX_ITEMS_CENTER } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   CLARIFICATION_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -1140,7 +1141,7 @@ function ClarificationFlow({
                 .map((question, index) => {
                   const isCurrentStep = index === currentStep;
                   return (
-                    <span key={index} className="inline-flex items-center">
+                    <span key={index} className={INLINE_FLEX_ITEMS_CENTER}>
                       <button
                         type="button"
                         onClick={() => {

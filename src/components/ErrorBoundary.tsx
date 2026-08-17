@@ -29,6 +29,11 @@ import {
   TEXT_FORMAT_PATTERNS,
 } from '@/lib/config';
 import { ERROR_BOUNDARY_ACTION_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  RESPONSIVE_WIDTH,
+  RESPONSIVE_WIDTH_WITH_MARGIN,
+  INLINE_FLEX_RELATIVE,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 
 /**
@@ -67,7 +72,7 @@ function ErrorCopyButton({
   return (
     <>
       <StatusAnnouncer message={copiedLabel} triggered={hasCopied} />
-      <span className="relative inline-flex">
+      <span className={INLINE_FLEX_RELATIVE}>
         <Button
           variant="outline"
           size="sm"
@@ -221,7 +226,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                     <Button
                       variant="primary"
                       onClick={this.handleReset}
-                      className="w-full sm:w-auto"
+                      className={RESPONSIVE_WIDTH}
                     >
                       {MESSAGES.ERROR_BOUNDARY.RETRY_BUTTON}
                     </Button>
@@ -241,7 +246,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                     <Link href={ROUTES.HOME} passHref>
                       <Button
                         variant="secondary"
-                        className="w-full sm:w-auto ml-0 sm:ml-2"
+                        className={RESPONSIVE_WIDTH_WITH_MARGIN}
                       >
                         {BUTTON_LABELS.CANCEL}
                       </Button>
