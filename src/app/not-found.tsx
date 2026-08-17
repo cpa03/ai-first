@@ -84,7 +84,7 @@ export default function NotFound() {
   }, [router]);
 
   // Micro-UX: Keyboard shortcuts for quick navigation
-  // Enter/Cmd+Enter = Go back, Escape = Go home, Ctrl/Cmd+C = Copy URL (matches ErrorBoundary pattern)
+  // Enter/Cmd+Enter = Go back, Escape = Go home, d = Go to dashboard, Ctrl/Cmd+C = Copy URL
   // Cmd+Enter matches login/signup pages for consistency
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -99,6 +99,13 @@ export default function NotFound() {
       if (e.key === 'Escape') {
         e.preventDefault();
         window.location.href = ROUTES.HOME;
+      }
+
+      // Micro-UX: 'd' key navigates to dashboard (consistent with dashboard shortcut conventions)
+      if (e.key === 'd' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        window.location.href = ROUTES.DASHBOARD;
       }
 
       // Micro-UX: Ctrl/Cmd+C copies page URL for easy sharing of broken links
@@ -221,28 +228,34 @@ export default function NotFound() {
               </Tooltip>
             </Link>
 
-            <Link href={ROUTES.DASHBOARD}>
-              <Button
-                variant="outline"
-                className={NOT_FOUND_BUTTON_INLINE_FULL}
-              >
-                <svg
-                  className={ICON_SIZES.MD}
-                  fill="none"
-                  viewBox={SVG_VIEWBOX.STANDARD}
-                  stroke="currentColor"
-                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-                  aria-hidden="true"
+            <Tooltip
+              content={NOT_FOUND_LABELS.GO_DASHBOARD_TOOLTIP}
+              shortcut={['d']}
+              position="top"
+            >
+              <Link href={ROUTES.DASHBOARD}>
+                <Button
+                  variant="outline"
+                  className={NOT_FOUND_BUTTON_INLINE_FULL}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                  />
-                </svg>
-                Go to dashboard
-              </Button>
-            </Link>
+                  <svg
+                    className={ICON_SIZES.MD}
+                    fill="none"
+                    viewBox={SVG_VIEWBOX.STANDARD}
+                    stroke="currentColor"
+                    strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                    />
+                  </svg>
+                  Go to dashboard
+                </Button>
+              </Link>
+            </Tooltip>
           </div>
 
           <div
@@ -303,6 +316,14 @@ export default function NotFound() {
                 Esc
               </kbd>
               <span>go home</span>
+            </span>
+            <span className={KEYBOARD_HINT_INLINE}>
+              <kbd
+                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+              >
+                d
+              </kbd>
+              <span>dashboard</span>
             </span>
             <span className={KEYBOARD_HINT_INLINE}>
               {hasCopied ? (

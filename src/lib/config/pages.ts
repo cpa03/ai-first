@@ -601,6 +601,7 @@ export const NOT_FOUND_LABELS = {
   COPY_URL_HINT: 'copy URL',
   GO_BACK_TOOLTIP: 'Navigate to previous page',
   GO_HOME_TOOLTIP: 'Return to the home page',
+  GO_DASHBOARD_TOOLTIP: 'Go to dashboard',
 } as const;
 
 export const PAGE_CONFIG = {
