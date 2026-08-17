@@ -2,15 +2,20 @@
 # parallel-check.sh - Run lint, type-check, and tests in parallel for faster CI feedback
 #
 # Usage:
-#   ./scripts/parallel-check.sh          # Run all checks in parallel
-#   ./scripts/parallel-check.sh --shard  # Run tests with sharding (2 shards)
+#   ./scripts/parallel-check.sh              # Run all checks in parallel
+#   ./scripts/parallel-check.sh --shard      # Run tests with sharding (2 shards)
+#   ./scripts/parallel-check.sh --suites     # Run all test suites in parallel
 #
-# This script runs lint, type-check, and test:ci concurrently.
-# Total time = max(lint, type-check, test:ci) instead of sum.
+# This script runs lint, type-check, and test suites concurrently.
+# Total time = max(lint, type-check, test suites) instead of sum.
 #
 # Expected improvement:
 #   Sequential: ~42s (13s lint + 4s type-check + 25s tests)
 #   Parallel:   ~25s (longest single task)
+#
+# With --suites flag:
+#   Sequential: ~15+ minutes (5min comprehensive + 5min integration + 5min e2e)
+#   Parallel:   ~5-8 minutes (longest single suite)
 
 set -euo pipefail
 
@@ -32,9 +37,17 @@ START_TIME=$(date +%s)
 
 # Parse arguments
 USE_SHARD=false
-if [[ "${1:-}" == "--shard" ]]; then
-    USE_SHARD=true
-fi
+USE_SUITES=false
+for arg in "$@"; do
+    case $arg in
+        --shard)
+            USE_SHARD=true
+            ;;
+        --suites)
+            USE_SUITES=true
+            ;;
+    esac
+done
 
 log() {
     echo -e "${CYAN}[$(date +%H:%M:%S)]${NC} $1"
@@ -116,32 +129,90 @@ run_tests() {
     fi
 }
 
+# Run all test suites in parallel
+run_test_suites() {
+    log "Starting all test suites in parallel..."
+    
+    SUITES=("test:comprehensive" "test:integration" "test:e2e" "test:a11y")
+    PIDS=()
+    RESULTS=()
+    
+    # Start all suites in parallel
+    for suite in "${SUITES[@]}"; do
+        log_info "Starting $suite..."
+        npm run "$suite" 2>&1 &
+        PIDS+=($!)
+        RESULTS+=($!)
+    done
+    
+    # Wait for all suites to complete
+    SUITE_RESULT=0
+    for i in "${!PIDS[@]}"; do
+        if ! wait "${PIDS[$i]}"; then
+            log_error "Suite ${SUITES[$i]} failed"
+            SUITE_RESULT=1
+        else
+            log_success "Suite ${SUITES[$i]} passed"
+        fi
+    done
+    
+    if [[ $SUITE_RESULT -eq 0 ]]; then
+        log_success "All test suites passed"
+    else
+        log_error "One or more test suites failed"
+    fi
+    return $SUITE_RESULT
+}
+
 # Main execution
 log "=========================================="
 log "Parallel Quality Checks - Issue #1935"
 log "=========================================="
 log ""
 
-# Start all checks in parallel
-run_lint &
-PID_LINT=$!
+if [[ "$USE_SUITES" == "true" ]]; then
+    # Run all test suites in parallel
+    run_test_suites
+    SUITES_EXIT=$?
+    
+    # Calculate total time
+    END_TIME=$(date +%s)
+    DURATION=$((END_TIME - START_TIME))
+    
+    # Summary
+    log ""
+    log "=========================================="
+    log "RESULTS SUMMARY (Total: ${DURATION}s)"
+    log "=========================================="
+    
+    if [[ $SUITES_EXIT -eq 0 ]]; then
+        log_success "All test suites passed! ✨"
+        exit 0
+    else
+        log_error "One or more test suites failed"
+        exit 1
+    fi
+else
+    # Run all checks in parallel (original behavior)
+    run_lint &
+    PID_LINT=$!
 
-run_typecheck &
-PID_TYPECHECK=$!
+    run_typecheck &
+    PID_TYPECHECK=$!
 
-run_tests &
-PID_TEST=$!
+    run_tests &
+    PID_TEST=$!
 
-# Wait for all to complete
-log "Waiting for all checks to complete..."
-wait $PID_LINT
-LINT_EXIT=$?
+    # Wait for all to complete
+    log "Waiting for all checks to complete..."
+    wait $PID_LINT
+    LINT_EXIT=$?
 
-wait $PID_TYPECHECK
-TYPECHECK_EXIT=$?
+    wait $PID_TYPECHECK
+    TYPECHECK_EXIT=$?
 
-wait $PID_TEST
-TEST_EXIT=$?
+    wait $PID_TEST
+    TEST_EXIT=$?
 
 # Calculate total time
 END_TIME=$(date +%s)
@@ -184,4 +255,5 @@ if [[ "$OVERALL_PASS" == "true" ]]; then
 else
     log_error "One or more checks failed"
     exit 1
+fi
 fi
