@@ -11,10 +11,12 @@ import { DURATION_TAILWIND } from './theme';
  * Replaces hardcoded gray-* classes throughout components
  */
 export const GRAY_CLASSES = {
-  // Text colors
+  // Text colors - WCAG AA compliant (4.5:1 contrast ratio minimum)
+  // TEXT_300/400: decorative only (icons, borders)
+  // TEXT_500+: safe for body text on white backgrounds
   TEXT_300: 'text-gray-300',
-  TEXT_400: 'text-gray-600',
-  TEXT_500: 'text-gray-500',
+  TEXT_400: 'text-gray-400',
+  TEXT_500: 'text-gray-600',
   TEXT_600: 'text-gray-600',
   TEXT_700: 'text-gray-700',
   TEXT_800: 'text-gray-800',
@@ -127,8 +129,7 @@ export const LAYOUT_PATTERNS = {
   // Content container
   CONTENT_CONTAINER: 'flex items-center justify-center gap-2 sm:gap-4 text-xs',
 
-  // Footer section
-  FOOTER: `mt-4 flex items-center justify-center gap-2 sm:gap-4 text-xs ${GRAY_CLASSES.TEXT_400} animate-fade-in`,
+  FOOTER: `mt-4 flex items-center justify-center gap-2 sm:gap-4 text-xs ${GRAY_CLASSES.TEXT_500} animate-fade-in`,
 } as const;
 
 /**
