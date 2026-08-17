@@ -200,6 +200,44 @@ CREATE INDEX idx_analytics_user_date ON analytics_snapshots(user_id, snapshot_da
 3. **Complexity**: Charts and visualizations add UI complexity
    - Mitigation: Start with simple charts, iterate based on feedback
 
+## Definition of Done
+
+- [ ] Analytics database schema created and migrated
+- [ ] Aggregation queries implemented and optimized
+- [ ] Daily snapshot job created and tested
+- [ ] API endpoints implemented with proper authentication
+- [ ] Frontend dashboard page created with responsive design
+- [ ] Charts and visualizations implemented
+- [ ] Export functionality working for CSV and JSON
+- [ ] Unit tests written for all components
+- [ ] Integration tests written for API endpoints
+- [ ] Performance testing completed (page loads < 2 seconds)
+- [ ] Accessibility testing passed (WCAG 2.1 AA)
+- [ ] Documentation updated
+- [ ] Code review completed
+- [ ] Deployed to staging environment
+
+## Resources
+
+- [Recharts Documentation](https://recharts.org/) - Charting library for React
+- [Supabase Analytics](https://supabase.com/docs/guides/analytics) - Database aggregation patterns
+- [Next.js Analytics](https://nextjs.org/docs/app/building-your-application/optimizing/analytics) - Performance monitoring
+
+## Implementation Notes
+
+- Use server-side rendering for initial data load to improve SEO and performance
+- Implement caching with 5-minute TTL for frequently accessed metrics
+- Use React Query for client-side data fetching and caching
+- Consider implementing WebSocket for real-time updates in future iterations
+- Ensure all charts are accessible with proper ARIA labels
+
+## History
+
+| Date       | Author    | Change Description                     |
+| ---------- | --------- | -------------------------------------- |
+| 2026-08-12 | CMZ Agent | Initial user story creation            |
+| 2026-08-17 | BugFixer  | Added Definition of Done and Resources |
+
 ## Success Metrics
 
 1. **Adoption**: 50% of active users view analytics within first month
