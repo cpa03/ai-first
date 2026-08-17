@@ -204,6 +204,7 @@ function LoadingSpinnerComponent({
       {label && (
         <span
           className={`text-sm ${TEXT_COLOR_CLASSES.BODY} font-medium ${FADE_IN}`}
+          aria-hidden={ariaLabel === label ? 'true' : undefined}
         >
           {label}
         </span>

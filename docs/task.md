@@ -12,6 +12,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ## StorX Feature Analysis & Integration Tasks
 
+### [STRENGTHEN] Strengthen LoadingSpinner Accessibility and Non-Redundant Screen Reader Announcements
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-17
+- **Details**: Strengthened `LoadingSpinner` accessibility by setting `aria-hidden="true"` on visible labels when `ariaLabel` matches `label`, preventing duplicate screen reader announcements while maintaining polite status updates. Verified in `tests/LoadingSpinner.test.tsx`.
+
+### [CONNECT] Connect LoadingSpinner Label Handling to Central Component Configurations
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-08-17
+- **Details**: Verified that `LoadingSpinner` styling, timers, and accessibility labels are connected directly to central configurations in `src/lib/config/`, maintaining zero hardcoded values and consistent system architecture.
+
 ### [STRENGTHEN] Standardize EmailButton Hover and Active States
 - **Priority**: MEDIUM
 - **Status**: COMPLETE
