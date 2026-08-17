@@ -98,6 +98,17 @@ export const AI_CONFIG = {
     MAX_TOKENS_DEFAULT: 4000,
     MODEL_NAME_PATTERN: /^[a-zA-Z0-9._-]+$/,
     ALLOWED_MODEL_PREFIXES: ['gpt-', 'claude-', 'o1-', 'o3-'],
+    /**
+     * Maximum length for AI model name strings
+     * SECURITY: Prevents potential DoS and resource exhaustion attacks
+     * Env: AI_MODEL_NAME_MAX_LENGTH (default: 100)
+     */
+    MODEL_NAME_MAX_LENGTH: EnvLoader.number(
+      'AI_MODEL_NAME_MAX_LENGTH',
+      100,
+      10,
+      500
+    ),
   } as const,
 } as const;
 

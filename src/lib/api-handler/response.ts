@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { STATUS_CODES } from '@/lib/config/http';
 import { APP_CONFIG } from '@/lib/config/app';
+import { API_CONFIG } from '@/lib/config/modular-constants';
 import type { RateLimitInfo } from '@/lib/rate-limit';
 import type { ApiResponse } from './types';
 import { generateRequestId } from '@/lib/errors';
@@ -35,7 +36,7 @@ export function standardErrorResponse(
 
   const fingerprint = Buffer.from(`${code}:${message}`)
     .toString('base64')
-    .slice(0, 32);
+    .slice(0, API_CONFIG.FINGERPRINT_LENGTH);
 
   const errorResponse: StandardErrorResponse = {
     success: false,

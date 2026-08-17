@@ -66,4 +66,16 @@ export const SECURITY_CONFIG = {
       2000
     ),
   },
+
+  /**
+   * Key length warning threshold
+   * Keys shorter than this are flagged as potentially placeholder or invalid
+   * Env: SECURITY_KEY_LENGTH_WARNING_THRESHOLD (default: 20)
+   */
+  KEY_LENGTH_WARNING_THRESHOLD: EnvLoader.number(
+    'SECURITY_KEY_LENGTH_WARNING_THRESHOLD',
+    20,
+    5,
+    100
+  ),
 } as const;
