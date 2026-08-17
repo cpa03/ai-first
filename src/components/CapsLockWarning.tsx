@@ -13,6 +13,7 @@ import { CAPS_LOCK_WARNING_LABELS } from '@/lib/config/component-labels';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { ANIMATION_DELAYS } from '@/lib/config/theme';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 interface CapsLockWarningProps {
   /** Whether Caps Lock is currently on */
@@ -33,6 +34,7 @@ interface CapsLockWarningProps {
  * - Accessible with proper ARIA attributes
  * - Centralized component strings
  * - Synchronized state tracking for multiple toggles
+ * - Micro-UX: Haptic feedback on state change for tactile awareness
  */
 function CapsLockWarningComponent({
   isOn,
@@ -46,6 +48,10 @@ function CapsLockWarningComponent({
 
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
+
+    if (isOn !== prevIsOnRef.current) {
+      triggerHapticFeedback();
+    }
 
     if (isOn && !prevIsOnRef.current) {
       setShouldRender(true);
