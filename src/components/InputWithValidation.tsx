@@ -36,6 +36,7 @@ import {
   SPACE_Y_PATTERNS,
   FLEX_PATTERNS,
   PROGRESS_PERCENTAGE,
+  TYPOGRAPHY_UTILITY_PATTERNS,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { UI_CONFIG } from '@/lib/config/constants';
@@ -574,7 +575,11 @@ const InputWithValidationComponent = forwardRef<
                       className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
                       aria-label={INPUT_VALIDATION_LABELS.COPY_PASSWORD_ARIA}
                     >
-                      <span className="text-xs font-medium tabular-nums">
+                      <span
+                        className={
+                          TYPOGRAPHY_UTILITY_PATTERNS.XS_MEDIUM_TABULAR
+                        }
+                      >
                         {passwordCopied
                           ? INPUT_VALIDATION_LABELS.COPY_PASSWORD_SUCCESS
                           : INPUT_VALIDATION_LABELS.COPY_PASSWORD}
@@ -640,7 +645,9 @@ const InputWithValidationComponent = forwardRef<
                         : INPUT_VALIDATION_LABELS.SHOW_PASSWORD_ARIA
                     }
                   >
-                    <span className="text-xs font-medium tabular-nums">
+                    <span
+                      className={TYPOGRAPHY_UTILITY_PATTERNS.XS_MEDIUM_TABULAR}
+                    >
                       {passwordVisible
                         ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD
                         : INPUT_VALIDATION_LABELS.SHOW_PASSWORD}

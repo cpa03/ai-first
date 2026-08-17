@@ -14,6 +14,7 @@ import {
 import {
   SPACE_Y_PATTERNS,
   SPACE_X_PATTERNS,
+  RESPONSIVE_GRID_PATTERNS,
 } from '@/lib/config/remaining-styles';
 import { GAP_CLASSES, MT_CLASSES } from '@/lib/config/spacing';
 import { GRAY_CLASSES } from '@/lib/config/remaining-styles';
@@ -111,7 +112,7 @@ const WhyChooseSection = dynamic(
           variant="text"
           className={`${REMAINING_PATTERNS.SKELETON_SIZES.WHY_CHOOSE_TITLE} mx-auto mb-6 w-3/4`}
         />
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className={RESPONSIVE_GRID_PATTERNS.MD_2_GAP_LG}>
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}

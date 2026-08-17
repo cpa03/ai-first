@@ -51,6 +51,8 @@ import {
   REMAINING_PATTERNS,
   OVERFLOW_PATTERNS,
   INLINE_FLEX_PATTERNS,
+  SPACING_UTILITY_PATTERNS,
+  RESPONSIVE_FLEX_PATTERNS,
 } from '@/lib/config';
 import {
   DASHBOARD_FILTER_BAR,
@@ -687,7 +689,7 @@ export default function DashboardPage() {
             }.`
           : ''}
       </div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+      <div className={`${RESPONSIVE_FLEX_PATTERNS.RESPONSIVE_BETWEEN} mb-8`}>
         <div>
           <h1 className={DASHBOARD_PATTERNS.PAGE_HEADING}>
             {DASHBOARD_PAGE_CONTENT.HEADING}
@@ -717,7 +719,7 @@ export default function DashboardPage() {
       </div>
       {/* Growth: Referral Link - Viral Growth Loop */}
       {isAuthenticated && referralCode && (
-        <div className="mb-8">
+        <div className={SPACING_UTILITY_PATTERNS.MB8}>
           <ReferralLink referralCode={referralCode} />
         </div>
       )}
@@ -1400,7 +1402,7 @@ export default function DashboardPage() {
               {deleteModal.idea.title}&quot;? This action cannot be undone.
             </p>
 
-            <div className="mt-4">
+            <div className={SPACING_UTILITY_PATTERNS.MT4}>
               <label
                 htmlFor={DASHBOARD_ELEMENT_IDS.DELETE_CONFIRM_INPUT}
                 className={DASHBOARD_PATTERNS.DELETE_CONFIRM_LABEL}

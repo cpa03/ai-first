@@ -261,7 +261,7 @@ const ProgressStepperComponent = function ProgressStepper({
                 disabled={!isClickable}
                 className={`flex items-center w-full ${isClickable ? 'cursor-pointer group focus-visible:outline-none' : 'cursor-default'}`}
               >
-                <div className="flex items-center w-full" aria-hidden="true">
+                <div className={FLEX_PATTERNS.BETWEEN} aria-hidden="true">
                   <div
                     className={`
                       flex items-center justify-center
@@ -359,7 +359,7 @@ const ProgressStepperComponent = function ProgressStepper({
           className={`${PROGRESS_STEPPER_STYLES.KEYBOARD_HINT} ${TEXT_COLOR_CLASSES.MUTED}`}
           aria-label={PROGRESS_STEPPER_LABELS.KEYBOARD_NAV_ARIA_LABEL}
         >
-          <span className="flex items-center gap-1.5">
+          <span className={FLEX_PATTERNS.GAP_SM}>
             <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
               ←
             </kbd>

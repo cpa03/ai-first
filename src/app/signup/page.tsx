@@ -50,6 +50,7 @@ import {
   COMMON_SPACING_PATTERNS,
   REMAINING_PATTERNS,
   PROGRESS_PERCENTAGE,
+  RESPONSIVE_FLEX_PATTERNS,
 } from '@/lib/config';
 import { SIGNUP_TIP_ITEM } from '@/lib/config/remaining-hardcoded-patterns';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
@@ -808,10 +809,12 @@ export default function SignupPage() {
         <div
           className={`relative ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
         >
-          <div className="absolute inset-0 flex items-center">
+          <div className={RESPONSIVE_FLEX_PATTERNS.CENTER}>
             <div className={FORM_PATTERNS.OAUTH_SEPARATOR_LINE} />
           </div>
-          <div className="relative flex justify-center text-sm">
+          <div
+            className={`relative ${RESPONSIVE_FLEX_PATTERNS.JUSTIFY_CENTER} text-sm`}
+          >
             <span className={FORM_PATTERNS.OAUTH_SEPARATOR_TEXT}>
               {SIGNUP_PAGE_CONTENT.OAUTH.SEPARATOR}
             </span>
