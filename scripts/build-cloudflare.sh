@@ -6,4 +6,8 @@ set -e
 npx patch-package 2>/dev/null || true
 
 # Run the Cloudflare build
-pnpm opennextjs-cloudflare build
+if command -v pnpm &> /dev/null; then
+  pnpm opennextjs-cloudflare build
+else
+  npx @opennextjs/cloudflare build
+fi
