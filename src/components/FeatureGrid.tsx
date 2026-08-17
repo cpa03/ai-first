@@ -14,6 +14,7 @@ import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { MT_CLASSES, GAP_CLASSES } from '@/lib/config/spacing';
 import { ICON_SIZES, CONNECTOR_SIZES } from '@/lib/config/icon-sizes';
 import { GRAY_CLASSES } from '@/lib/config/remaining-styles';
+import { FLEX_PATTERNS } from '@/lib/config/remaining-styles';
 import { FEATURE_CONFIG } from '@/lib/config/landing-page';
 import { FEATURE_GRID_LABELS } from '@/lib/config/component-labels';
 import { UI_STRINGS, UI_CONFIG } from '@/lib/config/ui';
@@ -245,7 +246,7 @@ function FeatureGridComponent() {
         role="group"
         aria-label={FEATURE_GRID_LABELS.KEYBOARD_NAV_HINT}
       >
-        <span className="flex items-center gap-1.5">
+        <span className={FLEX_PATTERNS.GAP_SM}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             ←
           </kbd>
@@ -257,7 +258,7 @@ function FeatureGridComponent() {
         <span className={`${TEXT_COLORS.MUTED_LIGHT}`} aria-hidden="true">
           ·
         </span>
-        <span className="flex items-center gap-1.5">
+        <span className={FLEX_PATTERNS.GAP_SM}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             Home
           </kbd>

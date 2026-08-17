@@ -43,6 +43,10 @@ import {
   PRINT_PATTERNS,
   TEXT_FORMAT_PATTERNS,
   OVERFLOW_PATTERNS,
+  RESPONSIVE_FLEX_PATTERNS,
+  LAYOUT_UTILITY_PATTERNS,
+  SPACING_UTILITY_PATTERNS,
+  PROSE_PATTERNS,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -170,7 +174,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           <header
             className={`border-b ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_HEADER}`}
           >
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className={RESPONSIVE_FLEX_PATTERNS.RESPONSIVE_BETWEEN}>
               <Skeleton
                 className={SKELETON_SIZE_PATTERNS.HEADING_SM}
                 variant="text"
@@ -233,7 +237,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           <footer
             className={`border-t ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_FOOTER}`}
           >
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className={RESPONSIVE_FLEX_PATTERNS.RESPONSIVE_BETWEEN}>
               <Skeleton
                 className={SKELETON_SIZE_PATTERNS.CAPTION_SM_HALF}
                 variant="text"
@@ -285,7 +289,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             >
               {MESSAGES.BLUEPRINT.PAGE_TITLE}
             </h2>
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <div className={RESPONSIVE_FLEX_PATTERNS.RESPONSIVE_COL}>
               <Tooltip
                 content={
                   copied
@@ -353,8 +357,8 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           </div>
         </header>
 
-        <div className="p-4 sm:p-8">
-          <div className="prose prose-sm sm:prose-lg max-w-none">
+        <div className={SPACING_UTILITY_PATTERNS.RESPONSIVE_P}>
+          <div className={PROSE_PATTERNS.RESPONSIVE}>
             <div className="relative group">
               <pre
                 className={`${TEXT_FORMAT_PATTERNS.WHITESPACE_PRE_WRAP} ${TEXT_FORMAT_PATTERNS.FONT_MONO} text-xs sm:text-sm ${TEXT_COLOR_CLASSES.INPUT} ${BG_COLOR_CLASSES.PAGE} p-4 sm:p-6 rounded-lg ${OVERFLOW_PATTERNS.X_AUTO}`}
@@ -518,7 +522,7 @@ function CopyCodeButton({ text }: { text: string }) {
               <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
             </svg>
           )}
-          <span className="hidden sm:inline">
+          <span className={LAYOUT_UTILITY_PATTERNS.RESPONSIVE_HIDDEN}>
             {copied
               ? BLUEPRINT_DISPLAY_LABELS.COPY_BUTTON_SUCCESS
               : BLUEPRINT_DISPLAY_LABELS.COPY_BUTTON_DEFAULT}

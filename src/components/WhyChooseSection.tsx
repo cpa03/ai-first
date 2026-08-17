@@ -12,6 +12,7 @@ import {
   ARIA_HEADING_IDS,
 } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { FLEX_PATTERNS } from '@/lib/config/remaining-styles';
 
 function WhyChooseSectionComponent() {
   const { TITLE, SECTION_STYLES, ARTICLES, ARTICLE_STYLES } = WHY_CHOOSE_CONFIG;
@@ -193,7 +194,7 @@ function WhyChooseSectionComponent() {
         className={`hidden sm:flex items-center justify-center gap-2 mt-6 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
         aria-label={WHY_CHOOSE_SECTION_LABELS.KEYBOARD_NAV_ARIA_LABEL}
       >
-        <span className="flex items-center gap-1.5">
+        <span className={FLEX_PATTERNS.GAP_SM}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             ←
           </kbd>
@@ -205,7 +206,7 @@ function WhyChooseSectionComponent() {
         <span className={`${TEXT_COLOR_CLASSES.MUTED}`} aria-hidden="true">
           ·
         </span>
-        <span className="flex items-center gap-1.5">
+        <span className={FLEX_PATTERNS.GAP_SM}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             Home
           </kbd>

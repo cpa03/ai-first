@@ -41,6 +41,7 @@ import {
   KEYBOARD_SHORTCUTS_ELEMENT_IDS,
   ARIA_HEADING_IDS,
 } from '@/lib/config/element-ids';
+import { TYPOGRAPHY_UTILITY_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -953,7 +954,10 @@ function KeyboardShortcutsHelpComponent({
           <p
             className={`text-xs ${TEXT_COLORS.SECONDARY} text-center flex items-center justify-center gap-2`}
           >
-            <span aria-hidden="true" className="text-base">
+            <span
+              aria-hidden="true"
+              className={TYPOGRAPHY_UTILITY_PATTERNS.BASE}
+            >
               💡
             </span>
             <span>{KEYBOARD_SHORTCUTS_HELP_LABELS.TIP_TEXT}</span>

@@ -562,3 +562,123 @@ export const OVERFLOW_PATTERNS = {
   Y_AUTO: 'overflow-y-auto',
   HIDDEN: 'overflow-hidden',
 } as const;
+
+/**
+ * Responsive grid patterns
+ * Centralizes responsive grid layouts with gap
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const RESPONSIVE_GRID_PATTERNS = {
+  /** grid md:grid-cols-2 gap-6 */
+  MD_2_GAP_LG: 'grid md:grid-cols-2 gap-6',
+  /** grid grid-cols-1 sm:grid-cols-2 gap-4 */
+  SM_2_GAP_MD: 'grid grid-cols-1 sm:grid-cols-2 gap-4',
+  /** grid grid-cols-1 md:grid-cols-3 gap-6 */
+  MD_3_GAP_LG: 'grid grid-cols-1 md:grid-cols-3 gap-6',
+} as const;
+
+/**
+ * Screen reader patterns
+ * Centralizes screen reader utility classes
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const SCREEN_READER_PATTERNS = {
+  /** sr-only - visually hidden but accessible */
+  ONLY: 'sr-only',
+} as const;
+
+/**
+ * Responsive flex patterns
+ * Centralizes responsive flex layouts
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const RESPONSIVE_FLEX_PATTERNS = {
+  /** flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 */
+  RESPONSIVE_BETWEEN:
+    'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4',
+  /** flex flex-col sm:flex-row gap-2 w-full sm:w-auto */
+  RESPONSIVE_COL: 'flex flex-col sm:flex-row gap-2 w-full sm:w-auto',
+  /** flex items-center justify-center */
+  CENTER: 'flex items-center justify-center',
+  /** flex items-center justify-between */
+  BETWEEN: 'flex items-center justify-between',
+  /** flex items-center gap-1.5 */
+  GAP_SM: 'flex items-center gap-1.5',
+  /** flex justify-center items-center */
+  JUSTIFY_CENTER: 'flex justify-center items-center',
+} as const;
+
+/**
+ * Layout utility patterns
+ * Centralizes common layout utility classes
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const LAYOUT_UTILITY_PATTERNS = {
+  /** flex-1 */
+  FLEX_1: 'flex-1',
+  /** w-full sm:w-auto */
+  RESPONSIVE_WIDTH: 'w-full sm:w-auto',
+  /** hidden sm:inline */
+  RESPONSIVE_HIDDEN: 'hidden sm:inline',
+  /** sm:hidden */
+  HIDDEN_SM: 'sm:hidden',
+  /** relative */
+  RELATIVE: 'relative',
+  /** absolute inset-0 */
+  ABSOLUTE_INSET: 'absolute inset-0',
+  /** absolute inset-0 flex items-center justify-center */
+  ABSOLUTE_CENTER: 'absolute inset-0 flex items-center justify-center',
+  /** absolute inset-0 flex flex-col items-center justify-center */
+  ABSOLUTE_COL_CENTER:
+    'absolute inset-0 flex flex-col items-center justify-center',
+  /** pointer-events-none */
+  POINTER_NONE: 'pointer-events-none',
+} as const;
+
+/**
+ * Typography utility patterns
+ * Centralizes typography utility classes
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const TYPOGRAPHY_UTILITY_PATTERNS = {
+  /** text-xs font-medium tabular-nums */
+  XS_MEDIUM_TABULAR: 'text-xs font-medium tabular-nums',
+  /** text-sm */
+  SM: 'text-sm',
+  /** text-base */
+  BASE: 'text-base',
+  /** font-medium */
+  MEDIUM: 'font-medium',
+  /** tabular-nums */
+  TABULAR: 'tabular-nums',
+} as const;
+
+/**
+ * Spacing utility patterns
+ * Centralizes spacing utility classes
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const SPACING_UTILITY_PATTERNS = {
+  /** mb-4 */
+  MB4: 'mb-4',
+  /** mb-8 */
+  MB8: 'mb-8',
+  /** mt-4 */
+  MT4: 'mt-4',
+  /** p-4 sm:p-8 */
+  RESPONSIVE_P: 'p-4 sm:p-8',
+  /** mx-1.5 */
+  MX1_5: 'mx-1.5',
+  /** space-x-2 sm:space-x-4 */
+  RESPONSIVE_SPACE_X: 'space-x-2 sm:space-x-4',
+} as const;
+
+/**
+ * Prose patterns
+ * Centralizes prose/typography patterns
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const PROSE_PATTERNS = {
+  /** prose prose-sm sm:prose-lg max-w-none */
+  RESPONSIVE: 'prose prose-sm sm:prose-lg max-w-none',
+} as const;
