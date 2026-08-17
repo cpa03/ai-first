@@ -53,6 +53,7 @@ import {
   INLINE_FLEX_PATTERNS,
   SPACING_UTILITY_PATTERNS,
   RESPONSIVE_FLEX_PATTERNS,
+  API_CONFIG,
 } from '@/lib/config';
 import {
   DASHBOARD_FILTER_BAR,
@@ -206,8 +207,10 @@ export default function DashboardPage() {
     );
   }, []);
 
-  // Growth: Generate referral code from user ID (first 8 chars)
-  const referralCode = userId ? userId.slice(0, 8).toLowerCase() : '';
+  // Growth: Generate referral code from user ID
+  const referralCode = userId
+    ? userId.slice(0, API_CONFIG.REFERRAL_CODE_LENGTH).toLowerCase()
+    : '';
 
   const fetchIdeas = useCallback(async () => {
     try {

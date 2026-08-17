@@ -363,6 +363,7 @@ export {
   ERROR_CONTEXT_CONFIG,
   PRECISION_CONFIG,
   SCROLL_STEP_CONFIG,
+  API_CONFIG,
   type ModularConstants,
 } from './modular-constants';
 

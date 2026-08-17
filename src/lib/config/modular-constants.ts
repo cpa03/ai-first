@@ -376,6 +376,18 @@ export const SECURITY_CONFIG = {
   ),
 
   /**
+   * Key length warning threshold
+   * Keys shorter than this are flagged as potentially placeholder or invalid
+   * Env: SECURITY_KEY_LENGTH_WARNING_THRESHOLD (default: 20)
+   */
+  KEY_LENGTH_WARNING_THRESHOLD: EnvLoader.number(
+    'SECURITY_KEY_LENGTH_WARNING_THRESHOLD',
+    20,
+    5,
+    100
+  ),
+
+  /**
    * Fallback secrets for non-production environments
    * These are used when INTERNAL_API_SECRET is not set
    * WARNING: Never use these in production!
@@ -638,6 +650,24 @@ export const RESOURCE_TYPES = {
 export type ResourceType = (typeof RESOURCE_TYPES)[keyof typeof RESOURCE_TYPES];
 
 /**
+ * API Configuration
+ * Centralizes API-related constants
+ */
+export const API_CONFIG = {
+  /**
+   * Length of referral code generated from user ID
+   * Env: API_REFERRAL_CODE_LENGTH (default: 8)
+   */
+  REFERRAL_CODE_LENGTH: EnvLoader.number('API_REFERRAL_CODE_LENGTH', 8, 4, 16),
+
+  /**
+   * Length of API error fingerprint (base64 encoded)
+   * Env: API_FINGERPRINT_LENGTH (default: 32)
+   */
+  FINGERPRINT_LENGTH: EnvLoader.number('API_FINGERPRINT_LENGTH', 32, 16, 64),
+} as const;
+
+/**
  * Export all configurations as a combined object for convenience
  */
 export const MODULAR_CONSTANTS = {
@@ -659,6 +689,7 @@ export const MODULAR_CONSTANTS = {
   PRECISION: PRECISION_CONFIG,
   SCROLL_DEPTH_THRESHOLDS,
   SCROLL_STEP: SCROLL_STEP_CONFIG,
+  API: API_CONFIG,
 } as const;
 
 export type ModularConstants = typeof MODULAR_CONSTANTS;

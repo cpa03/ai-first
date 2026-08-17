@@ -258,7 +258,7 @@ function checkKeySafety(): string[] {
       }
 
       // Check for suspiciously short keys
-      if (value.length < 20) {
+      if (value.length < SECURITY_CONFIG.KEY_LENGTH_WARNING_THRESHOLD) {
         warnings.push(
           `WARNING: ${key} is suspiciously short (${value.length} chars). ` +
             `This may be a placeholder or invalid key.`
