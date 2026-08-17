@@ -58,6 +58,7 @@ import {
   ML_CLASSES,
   ANIMATION_CLASSES,
   GAP_CLASSES,
+  TEXT_FORMAT_PATTERNS,
 } from '@/lib/config';
 import { SELECT_ICON_POSITION } from '@/lib/config/remaining-hardcoded-patterns';
 import {
@@ -478,7 +479,9 @@ function ClarificationFlow({
         </div>
 
         {error && (
-          <div className={`${SPACING_PATTERNS.MB6} slide-up`}>
+          <div
+            className={`${SPACING_PATTERNS.MB6} ${ANIMATION_CLASSES.SLIDE_UP}`}
+          >
             <Alert type="error" title={MESSAGES.ERRORS.DEFAULT}>
               <p>{error}</p>
               <p className={CLARIFICATION_FLOW_INFO_TEXT}>
@@ -632,7 +635,11 @@ function ClarificationFlow({
           <div
             className={`${FLEX_PATTERNS.BETWEEN_START} ${SPACING_PATTERNS.GAP4}`}
           >
-            <p className="italic leading-relaxed">&quot;{idea}&quot;</p>
+            <p
+              className={`${TEXT_FORMAT_PATTERNS.ITALIC} ${TEXT_FORMAT_PATTERNS.LEADING_RELAXED}`}
+            >
+              &quot;{idea}&quot;
+            </p>
             <CopyButton
               textToCopy={idea}
               variant="icon-only"
@@ -655,7 +662,7 @@ function ClarificationFlow({
             </span>
             {currentStep === questions.length - 1 && (
               <span
-                className={`inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} animate-in fade-in zoom-in ${TRANSITION_CLASSES.SLOW}`}
+                className={`inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} ${ANIMATION_CLASSES.SCALE_IN} fade-in zoom-in ${TRANSITION_CLASSES.SLOW}`}
                 role="status"
                 aria-label={CLARIFICATION_FLOW_LABELS.FINAL_STEP}
               >
@@ -665,7 +672,7 @@ function ClarificationFlow({
           </div>
           <span
             key={currentStep}
-            className={`text-sm font-medium animate-scale-in tabular-nums ${
+            className={`text-sm font-medium ${ANIMATION_CLASSES.SCALE_IN} tabular-nums ${
               currentStep === questions.length - 1
                 ? TEXT_COLORS.SUCCESS_MEDIUM
                 : TEXT_COLORS.PRIMARY
@@ -1000,7 +1007,7 @@ function ClarificationFlow({
                 </div>
                 {currentAnswer && (
                   <p
-                    className={`text-sm ${TEXT_COLORS.SUCCESS_DARK} flex items-center ${GAP_CLASSES.MD_SM} animate-fade-in`}
+                    className={`text-sm ${TEXT_COLORS.SUCCESS_DARK} flex items-center ${GAP_CLASSES.MD_SM} ${ANIMATION_CLASSES.FADE_IN}`}
                     role="status"
                     aria-live="polite"
                   >

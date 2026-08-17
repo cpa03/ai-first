@@ -27,6 +27,7 @@ import {
   PAGE_ELEMENT_IDS,
   COMMON_SPACING_PATTERNS,
   COORDINATE_POSITION_PATTERNS,
+  SUCCESS_POP,
 } from '@/lib/config';
 import type { ComponentConfig } from '@/lib/config/components';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -415,7 +416,7 @@ function ScrollToTopComponent({
 
           {hasReachedEnd && !prefersReducedMotion ? (
             <svg
-              className={`relative z-10 ${ICON_SIZES.LG} ${scrollDepthColor.stroke} ${showReachedEndCelebration ? 'animate-success-pop' : ''}`}
+              className={`relative z-10 ${ICON_SIZES.LG} ${scrollDepthColor.stroke} ${showReachedEndCelebration ? SUCCESS_POP : ''}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
