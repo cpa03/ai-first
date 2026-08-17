@@ -726,6 +726,9 @@ export {
   REMAINING_STYLES,
   TEXT_ALIGNMENT,
   OVERFLOW_PATTERNS,
+  PRINT_PATTERNS,
+  TEXT_FORMAT_PATTERNS,
+  SLIDE_PATTERN,
 } from './remaining-styles';
 
 // Component-Specific Tailwind Class Configuration

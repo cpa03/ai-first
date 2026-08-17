@@ -27,6 +27,7 @@ import {
   GRAY_CLASSES,
   BREATHE,
   REMAINING_PATTERNS,
+  ANIMATION_CLASSES,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import {
@@ -123,7 +124,7 @@ function ClarifySuccessState({
 
   return (
     <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
-      <div className="slide-up">
+      <div className={ANIMATION_CLASSES.SLIDE_UP}>
         <Alert type="success" title={CLARIFY_PAGE_CONTENT.SUCCESS_TITLE}>
           <p className={CLARIFY_PARAGRAPH_MARGIN}>
             {CLARIFY_PAGE_CONTENT.SUCCESS_MESSAGE}
@@ -298,7 +299,7 @@ function ClarifyPageContent() {
   if (error) {
     return (
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
-        <div className="slide-up">
+        <div className={ANIMATION_CLASSES.SLIDE_UP}>
           <Alert type="error" title={CLARIFY_PAGE_CONTENT.ERROR_TITLE}>
             <p className={CLARIFY_PARAGRAPH_MARGIN}>{error}</p>
             <div
@@ -336,7 +337,7 @@ function ClarifyPageContent() {
   if (!idea) {
     return (
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
-        <div className="slide-up">
+        <div className={ANIMATION_CLASSES.SLIDE_UP}>
           <Alert type="warning" title={CLARIFY_PAGE_CONTENT.NO_IDEA_TITLE}>
             <p className={CLARIFY_PARAGRAPH_MARGIN}>
               {CLARIFY_PAGE_CONTENT.NO_IDEA_MESSAGE}

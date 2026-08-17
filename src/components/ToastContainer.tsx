@@ -26,6 +26,7 @@ import {
   GRAY_CLASSES,
   TEXT_SIZE_CLASSES,
   FLEX_GROW_PATTERNS,
+  TEXT_FORMAT_PATTERNS,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { SWIPE_PROGRESS_BAR } from '@/lib/config/remaining-hardcoded-patterns';
@@ -326,7 +327,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
           aria-hidden="true"
         >
           <kbd
-            className={`px-1 py-0.5 bg-white/80 border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} font-mono ${GRAY_CLASSES.TEXT_500}`}
+            className={`px-1 py-0.5 bg-white/80 border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} ${TEXT_FORMAT_PATTERNS.FONT_MONO} ${GRAY_CLASSES.TEXT_500}`}
           >
             Esc
           </kbd>
@@ -508,13 +509,13 @@ function ToastContainerComponent() {
               aria-hidden="true"
             >
               <kbd
-                className={`px-1 py-0.5 bg-white border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} font-mono`}
+                className={`px-1 py-0.5 bg-white border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} ${TEXT_FORMAT_PATTERNS.FONT_MONO}`}
               >
                 Shift
               </kbd>
               <span>+</span>
               <kbd
-                className={`px-1 py-0.5 bg-white border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} font-mono`}
+                className={`px-1 py-0.5 bg-white border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} ${TEXT_FORMAT_PATTERNS.FONT_MONO}`}
               >
                 Esc
               </kbd>

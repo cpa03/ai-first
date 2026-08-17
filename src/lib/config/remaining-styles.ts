@@ -483,6 +483,42 @@ export const FORM_PATTERNS = {
 } as const;
 
 /**
+ * Print patterns
+ * Centralizes print-related utility classes
+ */
+export const PRINT_PATTERNS = {
+  /** Hide element only when printing */
+  ONLY: 'print-only',
+  /** Hide element from print output */
+  NO_PRINT: 'no-print',
+} as const;
+
+/**
+ * Text formatting patterns
+ * Centralizes text formatting utility classes
+ */
+export const TEXT_FORMAT_PATTERNS = {
+  /** Italic text */
+  ITALIC: 'italic',
+  /** Relaxed line height */
+  LEADING_RELAXED: 'leading-relaxed',
+  /** Monospace font */
+  FONT_MONO: 'font-mono',
+  /** Pre-wrap whitespace */
+  WHITESPACE_PRE_WRAP: 'whitespace-pre-wrap',
+  /** Drop shadow */
+  DROP_SHADOW_SM: 'drop-shadow-sm',
+} as const;
+
+/**
+ * Slide animation pattern
+ * Centralizes the slide-up CSS animation class
+ */
+export const SLIDE_PATTERN = {
+  UP: 'slide-up',
+} as const;
+
+/**
  * Export all patterns for easy access
  */
 export const REMAINING_STYLES = {
@@ -509,6 +545,9 @@ export const REMAINING_STYLES = {
   COMPONENT_PATTERNS,
   FOOTER_PATTERNS,
   FORM_PATTERNS,
+  PRINT_PATTERNS,
+  TEXT_FORMAT_PATTERNS,
+  SLIDE_PATTERN,
 } as const;
 
 export const TEXT_ALIGNMENT = {

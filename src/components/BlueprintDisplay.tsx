@@ -40,6 +40,9 @@ import {
   SPACE_Y_PATTERNS,
   SPACE_X_PATTERNS,
   BLUEPRINT_DISPLAY_STYLES,
+  PRINT_PATTERNS,
+  TEXT_FORMAT_PATTERNS,
+  OVERFLOW_PATTERNS,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -254,7 +257,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 
   return (
     <div className={UI_CONFIG.LAYOUT.CONTAINER}>
-      <div className="print-only hidden">
+      <div className={`${PRINT_PATTERNS.ONLY} hidden`}>
         <h1 className={BLUEPRINT_DISPLAY_STYLES.PRINT_TITLE}>
           {MESSAGES.BLUEPRINT.PAGE_TITLE}
         </h1>
@@ -267,7 +270,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
       </div>
       <section
         aria-labelledby={ARIA_HEADING_IDS.BLUEPRINT}
-        className={`${CARD_PATTERNS.BASE} no-print`}
+        className={`${CARD_PATTERNS.BASE} ${PRINT_PATTERNS.NO_PRINT}`}
       >
         <header
           className={`border-b ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_HEADER}`}
@@ -354,12 +357,12 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           <div className="prose prose-sm sm:prose-lg max-w-none">
             <div className="relative group">
               <pre
-                className={`whitespace-pre-wrap font-mono text-xs sm:text-sm ${TEXT_COLOR_CLASSES.INPUT} ${BG_COLOR_CLASSES.PAGE} p-4 sm:p-6 rounded-lg overflow-x-auto`}
+                className={`${TEXT_FORMAT_PATTERNS.WHITESPACE_PRE_WRAP} ${TEXT_FORMAT_PATTERNS.FONT_MONO} text-xs sm:text-sm ${TEXT_COLOR_CLASSES.INPUT} ${BG_COLOR_CLASSES.PAGE} p-4 sm:p-6 rounded-lg ${OVERFLOW_PATTERNS.X_AUTO}`}
                 aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_CONTENT}
               >
                 {blueprint}
               </pre>
-              <div className="no-print">
+              <div className={PRINT_PATTERNS.NO_PRINT}>
                 <CopyCodeButton text={blueprint || ''} />
               </div>
             </div>
@@ -367,7 +370,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
         </div>
 
         <footer
-          className={`border-t ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_FOOTER} no-print`}
+          className={`border-t ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_FOOTER} ${PRINT_PATTERNS.NO_PRINT}`}
         >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <p className={`text-xs sm:text-sm ${TEXT_COLOR_CLASSES.BODY}`}>
