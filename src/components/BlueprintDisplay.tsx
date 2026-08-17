@@ -48,6 +48,7 @@ import {
   SPACING_UTILITY_PATTERNS,
   PROSE_PATTERNS,
   TYPOGRAPHY_CLASSES,
+  COMMON_FLEX_BETWEEN_RESPONSIVE,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -288,7 +289,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
         <header
           className={`border-b ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_HEADER}`}
         >
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className={COMMON_FLEX_BETWEEN_RESPONSIVE}>
             <h2
               id={BLUEPRINT_ELEMENT_IDS.BLUEPRINT_HEADING}
               ref={headingRef}
@@ -429,7 +430,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
         <footer
           className={`border-t ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_FOOTER} ${PRINT_PATTERNS.NO_PRINT}`}
         >
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className={COMMON_FLEX_BETWEEN_RESPONSIVE}>
             <p className={`text-xs sm:text-sm ${TEXT_COLOR_CLASSES.BODY}`}>
               {MESSAGES.BLUEPRINT.FOOTER_TEXT}
             </p>
