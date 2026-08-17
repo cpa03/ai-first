@@ -1,6 +1,13 @@
 'use client';
 
-import { useState, useEffect, Suspense, useMemo, useCallback } from 'react';
+import {
+  useState,
+  useEffect,
+  Suspense,
+  useMemo,
+  useCallback,
+  useRef,
+} from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
@@ -189,6 +196,9 @@ function ResultsContent() {
   const { particles, fire } = useConfetti();
   const [showExportSuccess, setShowExportSuccess] = useState(false);
   const { openHelp } = useKeyboardShortcuts();
+  // Micro-UX: Ref for auto-scrolling to export success alert
+  // Ensures users see their export confirmation even if they've scrolled down to the export buttons
+  const exportSuccessRef = useRef<HTMLDivElement>(null);
 
   // Detect platform for keyboard shortcut display
   useEffect(() => {
@@ -478,6 +488,20 @@ function ResultsContent() {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [idea, loading, prefersReducedMotion]);
+
+  // Micro-UX: Auto-scroll to export success alert when export completes
+  // Users may have scrolled down to click export buttons; this ensures they see the confirmation
+  useEffect(() => {
+    if (showExportSuccess && exportSuccessRef.current) {
+      const timer = setTimeout(() => {
+        exportSuccessRef.current?.scrollIntoView({
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          block: 'center',
+        });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [showExportSuccess, prefersReducedMotion]);
 
   // PERFORMANCE: Memoize formatted answers to prevent unnecessary re-renders of memoized
   // child components (BlueprintDisplay, EmailButton) when ResultsContent re-renders.
@@ -1019,7 +1043,7 @@ function ResultsContent() {
           </div>
 
           {exportUrl && (
-            <div className={RESULTS_SUCCESS_CONTAINER}>
+            <div ref={exportSuccessRef} className={RESULTS_SUCCESS_CONTAINER}>
               <Alert type="success" title={RESULTS_PAGE_CONTENT.SUCCESS_TITLE}>
                 {RESULTS_PAGE_CONTENT.SUCCESS_MESSAGE}
                 <span className={RESULTS_SHARE_BUTTON_CONTAINER}>
