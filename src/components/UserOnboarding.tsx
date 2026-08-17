@@ -35,7 +35,11 @@ import {
 import { CONTAINER_WIDTH_CLASSES } from '@/lib/config/ui-dimensions';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { COORDINATE_POSITION_PATTERNS } from '@/lib/config/positioning';
-import { MT_CLASSES, COMMON_SPACING_PATTERNS } from '@/lib/config/spacing';
+import {
+  MT_CLASSES,
+  MB_CLASSES,
+  COMMON_SPACING_PATTERNS,
+} from '@/lib/config/spacing';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -358,7 +362,7 @@ export default function UserOnboarding() {
             />
           ))}
           <div
-            className={`${ICON_SIZES.XXL_20} mx-auto mb-5 rounded-full flex items-center justify-center ${
+            className={`${ICON_SIZES.XXL_20} mx-auto ${MB_CLASSES.XXL_SM} rounded-full flex items-center justify-center ${
               prefersReducedMotion
                 ? BG_COLORS.SUCCESS_LIGHT
                 : `${BG_COLORS.SUCCESS_LIGHT} animate-success-pop`
@@ -379,7 +383,7 @@ export default function UserOnboarding() {
             </svg>
           </div>
           <h3
-            className={`${TYPOGRAPHY_CLASSES.COMPONENT_HEADING} ${TEXT_COLORS.PRIMARY} mb-2`}
+            className={`${TYPOGRAPHY_CLASSES.COMPONENT_HEADING} ${TEXT_COLORS.PRIMARY} ${MB_CLASSES.MD}`}
           >
             {USER_ONBOARDING_COMPLETION_LABELS.TITLE}
           </h3>
@@ -472,7 +476,7 @@ export default function UserOnboarding() {
         <div className={MT_CLASSES.MD}>
           <h3
             id={ONBOARDING_ELEMENT_IDS.ONBOARDING_TITLE}
-            className={`${TYPOGRAPHY_CLASSES.SUBHEADING} ${TEXT_COLORS.PRIMARY} mb-2`}
+            className={`${TYPOGRAPHY_CLASSES.SUBHEADING} ${TEXT_COLORS.PRIMARY} ${MB_CLASSES.MD}`}
           >
             {currentStep.title}
           </h3>

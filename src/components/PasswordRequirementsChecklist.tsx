@@ -19,6 +19,7 @@ import {
   SPACE_Y_PATTERNS,
   CONFETTI_DOT,
   PROGRESS_PERCENTAGE,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
@@ -245,11 +246,13 @@ function PasswordRequirementsChecklistComponent({
       </div>
       <div className={SPACE_Y_PATTERNS.SM_MD}>
         <div className={FLEX_PATTERNS.BETWEEN}>
-          <p className={`text-xs font-medium ${TEXT_COLORS.MUTED_DARK}`}>
+          <p
+            className={`${TYPOGRAPHY_CLASSES.XS_MEDIUM} ${TEXT_COLORS.MUTED_DARK}`}
+          >
             {PASSWORD_REQUIREMENTS_LABELS.HEADER_TEXT}
           </p>
           <span
-            className={`text-xs font-medium tabular-nums ${TRANSITION_CLASSES.COLOR_DEFAULT} ${countTextColor}`}
+            className={`${TYPOGRAPHY_CLASSES.XS_MEDIUM} tabular-nums ${TRANSITION_CLASSES.COLOR_DEFAULT} ${countTextColor}`}
           >
             {strengthLabel} · {metCount} of {total}
           </span>

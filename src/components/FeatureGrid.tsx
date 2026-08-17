@@ -8,6 +8,7 @@ import {
   TEXT_COLORS,
   GRADIENT_CONFIG,
   BG_COLORS,
+  ROUNDED_CLASSES,
 } from '@/lib/config/theme';
 import { CSS_CONTAINMENT } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -150,9 +151,9 @@ function FeatureGridComponent() {
               }
             }}
             className={`
-              group relative text-center p-6 rounded-xl
+              group relative text-center p-6 ${ROUNDED_CLASSES.EXTRA_LARGE}
               gradient-border-hover card-lift feature-card-focus
-              bg-white
+              ${BG_COLORS.DEFAULT}
               ${FOCUS_RING_OFFSET_PATTERNS.LARGE}
               focus-visible:scale-[1.03] focus-visible:shadow-xl focus-visible:shadow-primary-200/60
               transition-transform transition-shadow duration-200 ease-out
@@ -192,7 +193,7 @@ function FeatureGridComponent() {
             </div>
 
             <h3
-              className={`text-lg font-semibold ${TEXT_COLORS.PRIMARY} mb-2 group-hover:text-primary-700 transition-colors ${DURATION_TAILWIND[300]}`}
+              className={`${TYPOGRAPHY_CLASSES.LG_SEMIBOLD} ${TEXT_COLORS.PRIMARY} mb-2 group-hover:text-primary-700 transition-colors ${DURATION_TAILWIND[300]}`}
             >
               {feature.title}
             </h3>

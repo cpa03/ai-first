@@ -27,6 +27,8 @@ import {
   TEXT_SIZE_CLASSES,
   FLEX_GROW_PATTERNS,
   TEXT_FORMAT_PATTERNS,
+  TYPOGRAPHY_CLASSES,
+  BG_COLORS,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { SWIPE_PROGRESS_BAR } from '@/lib/config/remaining-hardcoded-patterns';
@@ -295,7 +297,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
         {toastIcons[toast.type]}
       </svg>
       <div className={FLEX_GROW_PATTERNS.GROW}>
-        <p className={`text-sm font-medium ${styles.titleColor}`}>
+        <p className={`${TYPOGRAPHY_CLASSES.SM_MEDIUM} ${styles.titleColor}`}>
           {toast.message}
         </p>
       </div>
@@ -328,7 +330,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
           aria-hidden="true"
         >
           <kbd
-            className={`px-1 py-0.5 bg-white/80 border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} ${TEXT_FORMAT_PATTERNS.FONT_MONO} ${GRAY_CLASSES.TEXT_500}`}
+            className={`px-1 py-0.5 ${BG_COLORS.DEFAULT}/80 border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} ${TEXT_FORMAT_PATTERNS.FONT_MONO} ${GRAY_CLASSES.TEXT_500}`}
           >
             Esc
           </kbd>
@@ -510,13 +512,13 @@ function ToastContainerComponent() {
               aria-hidden="true"
             >
               <kbd
-                className={`px-1 py-0.5 bg-white border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} ${TEXT_FORMAT_PATTERNS.FONT_MONO}`}
+                className={`px-1 py-0.5 ${BG_COLORS.DEFAULT} border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} ${TEXT_FORMAT_PATTERNS.FONT_MONO}`}
               >
                 Shift
               </kbd>
               <span>+</span>
               <kbd
-                className={`px-1 py-0.5 bg-white border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} ${TEXT_FORMAT_PATTERNS.FONT_MONO}`}
+                className={`px-1 py-0.5 ${BG_COLORS.DEFAULT} border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} ${TEXT_FORMAT_PATTERNS.FONT_MONO}`}
               >
                 Esc
               </kbd>

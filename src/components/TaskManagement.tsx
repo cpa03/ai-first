@@ -31,6 +31,7 @@ import {
   TASK_MANAGEMENT_EMPTY_STYLES,
   KEYBOARD_HINT_INLINE,
   MT_CLASSES,
+  MB_CLASSES,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { ABSOLUTE_CENTER_OVERLAY } from '@/lib/config/remaining-hardcoded-patterns';
@@ -279,7 +280,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
         <div className={`${FLEX_PATTERNS.COL} items-center text-center py-6`}>
           {/* Micro-UX improvement: Friendly animated empty state with visual guidance */}
           <div
-            className={`relative ${ICON_SIZES.MASSIVE} mb-6`}
+            className={`relative ${ICON_SIZES.MASSIVE} ${MB_CLASSES.XXL}`}
             aria-hidden="true"
           >
             <div
@@ -381,7 +382,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
             {/* Micro-UX: Enhanced filtered empty state with animated icon */}
             {/* Matches the visual pattern of other empty states in the app */}
             <div
-              className={`relative ${ICON_SIZES.HUGE} mx-auto mb-4`}
+              className={`relative ${ICON_SIZES.HUGE} mx-auto ${MB_CLASSES.XL}`}
               aria-hidden="true"
             >
               <div

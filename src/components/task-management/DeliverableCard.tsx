@@ -21,6 +21,7 @@ import {
   PROGRESS_PERCENTAGE,
   CONFETTI_DOT,
   TEXT_ALIGNMENT,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import {
   TASK_CARD_VERTICAL_MARGIN,
@@ -185,7 +186,7 @@ function DeliverableCardComponent({
             </h3>
             {isCompleted && (
               <span
-                className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} ${showCompletionCelebration && !prefersReducedMotion ? 'animate-success-pop' : ''}`}
+                className={`inline-flex items-center gap-1 px-2 py-0.5 ${TYPOGRAPHY_CLASSES.XS_SEMIBOLD} rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} ${showCompletionCelebration && !prefersReducedMotion ? 'animate-success-pop' : ''}`}
                 role="status"
                 aria-label={DELIVERABLE_CARD_LABELS.COMPLETE_ARIA_LABEL}
               >

@@ -278,7 +278,7 @@ function MobileNavComponent() {
             <button
               type="button"
               onClick={closeMenu}
-              className={`absolute top-4 right-4 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MEDIUM_SIZE} flex items-center justify-center rounded-full bg-white shadow-xl ${BORDER_COLORS.LIGHT} ${GRAY_CLASSES.TEXT_700} hover:${GRAY_CLASSES.TEXT_900} hover:${GRAY_CLASSES.HOVER_BG_50} hover:shadow-2xl hover:scale-105 active:scale-95 ${TRANSITION_CLASSES.DEFAULT} ${FOCUS_RING_PATTERNS.DEFAULT} animate-fade-in`}
+              className={`absolute top-4 right-4 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MEDIUM_SIZE} flex items-center justify-center rounded-full ${BG_COLORS.DEFAULT} shadow-xl ${BORDER_COLORS.LIGHT} ${GRAY_CLASSES.TEXT_700} hover:${GRAY_CLASSES.TEXT_900} hover:${GRAY_CLASSES.HOVER_BG_50} hover:shadow-2xl hover:scale-105 active:scale-95 ${TRANSITION_CLASSES.DEFAULT} ${FOCUS_RING_PATTERNS.DEFAULT} animate-fade-in`}
               aria-label={`${MOBILE_NAV_CONFIG.CLOSE_ARIA_LABEL} (Escape)`}
               title={MOBILE_NAV_LABELS.CLOSE_TITLE}
             >
@@ -301,7 +301,7 @@ function MobileNavComponent() {
               }}
             >
               <span
-                className={`inline-flex items-center px-2 py-1 rounded-md bg-white/80 shadow-sm text-xs ${GRAY_CLASSES.TEXT_500} ${TEXT_FORMAT_PATTERNS.FONT_MONO} backdrop-blur-sm`}
+                className={`inline-flex items-center px-2 py-1 rounded-md ${BG_COLORS.DEFAULT}/80 shadow-sm text-xs ${GRAY_CLASSES.TEXT_500} ${TEXT_FORMAT_PATTERNS.FONT_MONO} backdrop-blur-sm`}
               >
                 Esc
               </span>

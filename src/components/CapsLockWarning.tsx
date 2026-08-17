@@ -7,6 +7,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   TEXT_COLORS,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { CAPS_LOCK_WARNING_LABELS } from '@/lib/config/component-labels';
 import { FADE_IN } from '@/lib/config/animation-classes';
@@ -52,10 +53,7 @@ function CapsLockWarningComponent({
       // Micro-UX: Pulse icon once when warning first appears for visual attention
       if (!prefersReducedMotion) {
         setPulseOnce(true);
-        timer = setTimeout(
-          () => setPulseOnce(false),
-          ANIMATION_DELAYS.RIPPLE
-        );
+        timer = setTimeout(() => setPulseOnce(false), ANIMATION_DELAYS.RIPPLE);
       }
     } else if (!isOn && prevIsOnRef.current) {
       setIsExiting(true);
@@ -77,7 +75,7 @@ function CapsLockWarningComponent({
 
   return (
     <div
-      className={`flex items-center gap-1.5 ${TEXT_COLORS.WARNING_LIGHT} text-xs font-medium transition-all ${DURATION_TAILWIND[200]} ease-out ${
+      className={`flex items-center gap-1.5 ${TEXT_COLORS.WARNING_LIGHT} ${TYPOGRAPHY_CLASSES.XS_MEDIUM} transition-all ${DURATION_TAILWIND[200]} ease-out ${
         prefersReducedMotion ? '' : isExiting ? 'opacity-0 scale-95' : FADE_IN
       } ${className}`}
       role="status"

@@ -13,6 +13,7 @@ import {
   BORDER_COLORS,
   BG_COLORS,
   COMPONENT_STATE_COLORS,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config/theme';
 import { ERROR_ELEMENT_IDS, ARIA_HEADING_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
@@ -27,6 +28,7 @@ import {
   SPACE_Y_PATTERNS,
   FLEX_PATTERNS,
   TEXT_FORMAT_PATTERNS,
+  MB_CLASSES,
 } from '@/lib/config';
 import { ERROR_BOUNDARY_ACTION_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
 import {
@@ -218,7 +220,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                 {this.state.error?.message}
               </div>
               <Alert type="error" title={MESSAGES.ERROR_BOUNDARY.TITLE}>
-                <p className={`${TEXT_COLORS.SECONDARY} mb-4`}>
+                <p className={`${TEXT_COLORS.SECONDARY} ${MB_CLASSES.XL}`}>
                   {MESSAGES.ERROR_BOUNDARY.DESCRIPTION}
                 </p>
                 <div className={`mt-6 ${SPACE_Y_PATTERNS.LG}`}>
@@ -269,7 +271,7 @@ export default class ErrorBoundary extends Component<Props, State> {
               {this.state.error && (
                 <details className={`mt-6 p-4 ${BG_COLORS.LIGHT} rounded-md`}>
                   <summary
-                    className={`cursor-pointer text-sm font-medium ${TEXT_COLORS.SECONDARY}`}
+                    className={`cursor-pointer ${TYPOGRAPHY_CLASSES.SM_MEDIUM} ${TEXT_COLORS.SECONDARY}`}
                   >
                     {MESSAGES.ERROR_BOUNDARY.DETAILS_BUTTON}
                   </summary>

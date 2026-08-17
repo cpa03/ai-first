@@ -17,6 +17,7 @@ import {
   SPACING_PATTERNS,
   SKELETON_SIZE_PATTERNS,
   TEXT_ALIGNMENT,
+  MB_CLASSES,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import {
@@ -117,7 +118,7 @@ function TaskManagementSkeletonComponent() {
               <div className={FLEX_PATTERNS.BETWEEN}>
                 <div className={FLEX_1}>
                   <Skeleton
-                    className={`${SKELETON_SIZE_PATTERNS.TAG_MD} mb-2`}
+                    className={`${SKELETON_SIZE_PATTERNS.TAG_MD} ${MB_CLASSES.MD}`}
                     variant="text"
                   />
                   <Skeleton
@@ -128,7 +129,7 @@ function TaskManagementSkeletonComponent() {
                 <div className={FLEX_PATTERNS.GAP_XL}>
                   <div className={TEXT_ALIGNMENT.RIGHT}>
                     <Skeleton
-                      className={`${SKELETON_SIZE_PATTERNS.BADGE_SM} mb-1 ml-auto`}
+                      className={`${SKELETON_SIZE_PATTERNS.BADGE_SM} ${MB_CLASSES.SM} ml-auto`}
                       variant="text"
                     />
                     <Skeleton

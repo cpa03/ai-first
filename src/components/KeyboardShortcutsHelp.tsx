@@ -34,6 +34,7 @@ import {
   SPACE_Y_PATTERNS,
   PRIMARY_LINK,
   BODY_OVERFLOW_CONFIG,
+  ROUNDED_CLASSES,
 } from '@/lib/config';
 import { MT_CLASSES, MB_CLASSES } from '@/lib/config/spacing';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -715,7 +716,7 @@ function KeyboardShortcutsHelpComponent({
       />
       <div
         ref={modalRef}
-        className={`relative ${BG_COLORS.DEFAULT} rounded-xl ${SHADOW_CLASSES.EXTRA_LARGE} max-w-lg w-full ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} overflow-hidden transform ${TRANSITION_CLASSES.DEFAULT} ${isLeaving ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}
+        className={`relative ${BG_COLORS.DEFAULT} ${ROUNDED_CLASSES.EXTRA_LARGE} ${SHADOW_CLASSES.EXTRA_LARGE} max-w-lg w-full ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} overflow-hidden transform ${TRANSITION_CLASSES.DEFAULT} ${isLeaving ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}
       >
         {/* Search */}
         <div
@@ -877,7 +878,7 @@ function KeyboardShortcutsHelpComponent({
               className={`${FLEX_PATTERNS.COL} items-center justify-center py-12 text-center`}
             >
               <div
-                className={`${ICON_SIZES.HUGE} rounded-full ${BG_COLORS.LIGHTER} flex items-center justify-center mb-4`}
+                className={`${ICON_SIZES.HUGE} rounded-full ${BG_COLORS.LIGHTER} flex items-center justify-center ${MB_CLASSES.XL}`}
               >
                 <svg
                   className={`${ICON_SIZES.XXL} ${TEXT_COLORS.SECONDARY}`}
@@ -895,11 +896,13 @@ function KeyboardShortcutsHelpComponent({
                 </svg>
               </div>
               <h3
-                className={`text-sm font-semibold ${TEXT_COLORS.PRIMARY} mb-1`}
+                className={`${TYPOGRAPHY_CLASSES.SM_SEMIBOLD} ${TEXT_COLORS.PRIMARY} ${MB_CLASSES.SM}`}
               >
                 {KEYBOARD_SHORTCUTS_HELP_LABELS.NO_RESULTS_TITLE}
               </h3>
-              <p className={`text-sm ${TEXT_COLORS.MUTED} max-w-xs mb-4`}>
+              <p
+                className={`text-sm ${TEXT_COLORS.MUTED} max-w-xs ${MB_CLASSES.XL}`}
+              >
                 {KEYBOARD_SHORTCUTS_HELP_LABELS.NO_RESULTS_DESCRIPTION}
               </p>
               <button
@@ -909,7 +912,7 @@ function KeyboardShortcutsHelpComponent({
                   setSelectedIndex(0);
                   searchInputRef.current?.focus();
                 }}
-                className={`text-sm font-medium ${PRIMARY_LINK} underline underline-offset-2 ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} rounded`}
+                className={`${TYPOGRAPHY_CLASSES.SM_MEDIUM} ${PRIMARY_LINK} underline underline-offset-2 ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} rounded`}
               >
                 {KEYBOARD_SHORTCUTS_HELP_LABELS.CLEAR_SEARCH_LABEL}
               </button>
@@ -918,7 +921,7 @@ function KeyboardShortcutsHelpComponent({
             Object.entries(groupedShortcuts).map(([context, shortcuts]) => (
               <div key={context} className={`${MB_CLASSES.XXL} last:mb-0`}>
                 <h3
-                  className={`text-xs font-semibold ${TEXT_COLORS.MUTED} uppercase tracking-wider mb-3`}
+                  className={`${TYPOGRAPHY_CLASSES.XS_SEMIBOLD} ${TEXT_COLORS.MUTED} uppercase tracking-wider ${MB_CLASSES.LG}`}
                 >
                   {contextLabels[context as KeyboardShortcut['context']]}
                 </h3>

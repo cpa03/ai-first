@@ -19,6 +19,8 @@ import {
   PROGRESS_PERCENTAGE,
   CONFETTI_DOT,
   TEXT_ALIGNMENT,
+  TYPOGRAPHY_CLASSES,
+  MB_CLASSES,
 } from '@/lib/config';
 import { TASK_ACTION_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
 import { DASHBOARD_TAILWIND } from '@/lib/config/tailwind-arbitrary';
@@ -218,7 +220,7 @@ function TaskManagementHeaderComponent({
       <div className={MT_CLASSES.XL}>
         <div
           ref={radioGroupRef}
-          className={`${FLEX_PATTERNS.GAP_MD} mb-3`}
+          className={`${FLEX_PATTERNS.GAP_MD} ${MB_CLASSES.LG}`}
           role="radiogroup"
           aria-label={TASK_MANAGEMENT_LABELS.FILTER_ARIA_LABEL}
           onKeyDown={handleRadioGroupKeyDown}
@@ -242,7 +244,7 @@ function TaskManagementHeaderComponent({
                   triggerHapticFeedback();
                   onFilterChange(filter);
                 }}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full ${TRANSITION_CLASSES.DEFAULT} ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${TYPOGRAPHY_CLASSES.XS_MEDIUM} rounded-full ${TRANSITION_CLASSES.DEFAULT} ${
                   isActive
                     ? `bg-primary-100 text-primary-700 ${FOCUS_RING_OFFSET_PATTERNS.FILTER_ACTIVE}`
                     : `${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} ${GRAY_CLASSES.HOVER_BG_100} ${GRAY_CLASSES.HOVER_TEXT_800}`

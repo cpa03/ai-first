@@ -1830,6 +1830,34 @@ export const TYPOGRAPHY_CLASSES = {
 
   /** Light weight text (font-light) */
   LIGHT: 'font-light',
+
+  // Combined typography patterns - eliminate hardcoded "text-X font-Y" in components
+  /** text-xs font-medium */
+  XS_MEDIUM: 'text-xs font-medium',
+  /** text-xs font-semibold */
+  XS_SEMIBOLD: 'text-xs font-semibold',
+  /** text-xs font-bold */
+  XS_BOLD: 'text-xs font-bold',
+  /** text-sm font-medium */
+  SM_MEDIUM: 'text-sm font-medium',
+  /** text-sm font-semibold */
+  SM_SEMIBOLD: 'text-sm font-semibold',
+  /** text-sm font-bold */
+  SM_BOLD: 'text-sm font-bold',
+  /** text-base font-medium */
+  BASE_MEDIUM: 'text-base font-medium',
+  /** text-base font-semibold */
+  BASE_SEMIBOLD: 'text-base font-semibold',
+  /** text-lg font-semibold */
+  LG_SEMIBOLD: 'text-lg font-semibold',
+  /** text-xl font-semibold */
+  XL_SEMIBOLD: 'text-xl font-semibold',
+  /** text-2xl font-semibold */
+  XXL_SEMIBOLD: 'text-2xl font-semibold',
+  /** text-2xl font-bold */
+  XXL_BOLD: 'text-2xl font-bold',
+  /** text-3xl font-bold */
+  XXXL_BOLD: 'text-3xl font-bold',
 } as const;
 
 /**
