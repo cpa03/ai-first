@@ -239,6 +239,11 @@ function TaskManagementHeaderComponent({
                 key={filter}
                 role="radio"
                 aria-checked={isActive}
+                aria-label={TASK_MANAGEMENT_LABELS.FILTER_OPTION_ARIA_LABEL(
+                  label,
+                  count,
+                  isActive
+                )}
                 tabIndex={isActive ? 0 : -1}
                 onClick={() => {
                   triggerHapticFeedback();
