@@ -23,6 +23,7 @@ import {
 import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { FLEX_PATTERNS } from '@/lib/config/remaining-styles';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 interface PasswordRequirement {
   id: string;
@@ -157,6 +158,10 @@ function PasswordRequirementsChecklistComponent({
         newlyMet.forEach((id) => next.add(id));
         return next;
       });
+
+      // Micro-UX: Haptic feedback when individual requirements are newly met
+      // Provides delightful tactile feedback at the exact moment each requirement is satisfied
+      triggerHapticFeedback();
 
       newlyMet.forEach((id) => {
         const existingTimeout = newlyMetTimeoutsRef.current.get(id);
