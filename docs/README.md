@@ -259,7 +259,8 @@ Older audit reports (2026-07-08 through 2026-08-11) are archived in [audit/archi
 
 ### Active Reports
 
-- [Repository Maintenance Report - 2026-08-16 (0300)](./maintenance/2026-08-16-repository-maintenance-report-0300.md) - Repository maintenance report (latest)
+- [Repository Maintenance Report - 2026-08-17](./maintenance/2026-08-17-repository-maintenance-report.md) - Repository maintenance report (latest)
+- [Repository Maintenance Report - 2026-08-16 (2100)](./maintenance/2026-08-16-repository-maintenance-report-2100.md) - Repository maintenance report
 - [Repository Maintenance Report - 2026-08-16](./maintenance/2026-08-16-repository-maintenance-report.md) - Repository maintenance report
 - [Repository Health Check - 2026-08-15](./maintenance/2026-08-15-repository-health-check.md) - Repository health check report
 - [Repository Maintenance Report - 2026-08-15](./maintenance/2026-08-15-repository-maintenance.md) - Repository maintenance report
