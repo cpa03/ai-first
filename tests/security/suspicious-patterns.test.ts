@@ -260,6 +260,30 @@ describe('Suspicious Pattern Detection Improvements', () => {
       }
     });
 
+    describe('Log Injection', () => {
+      it('should detect ANSI terminal escape sequences in query parameters or headers', () => {
+        // ANSI escape sequence: \x1b[31m (red text) or \x1b[2J (clear screen)
+        const requestQuery = createMockRequest(
+          'https://example.com/api/test?msg=\x1b[31mRED_ALERT\x1b[0m'
+        );
+        const resultQuery = detectSuspiciousPatterns(requestQuery, { minSeverity: 2 });
+        expect(resultQuery.detected).toBe(true);
+        expect(
+          resultQuery.patterns.some((p) => p.category === 'log_injection')
+        ).toBe(true);
+
+        const requestHeader = createMockRequest(
+          'https://example.com/api/test',
+          { 'X-Custom-Header': '\x1b[2J\x1b[H' }
+        );
+        const resultHeader = detectSuspiciousPatterns(requestHeader, { minSeverity: 2 });
+        expect(resultHeader.detected).toBe(true);
+        expect(
+          resultHeader.patterns.some((p) => p.category === 'log_injection')
+        ).toBe(true);
+      });
+    });
+
     describe('Complex Regex Correctness (Bolt Optimization)', () => {
       it('should correctly detect patterns with backreferences', () => {
         // SQL OR tautology uses backreferences: /(\bor\b\s+['"]?([^'"]+)['"]?\s*=\s*['"]?\2['"]?)/is
