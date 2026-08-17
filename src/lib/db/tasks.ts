@@ -52,7 +52,9 @@ export class TaskService {
 
     const { data, error } = await client
       .from(DB_TABLES.TASKS)
-      .select('*')
+      .select(
+        'id, deliverable_id, title, description, assignee, status, estimate, start_date, end_date, actual_hours, completion_percentage, priority_score, complexity_score, risk_level, tags, custom_fields, milestone_id, created_at, updated_at, deleted_at'
+      )
       .eq('deliverable_id', deliverableId)
       .is('deleted_at', null)
       .order('created_at', { ascending: true });
@@ -70,7 +72,9 @@ export class TaskService {
 
     const { data, error } = await client
       .from(DB_TABLES.TASKS)
-      .select('*')
+      .select(
+        'id, deliverable_id, title, description, assignee, status, estimate, start_date, end_date, actual_hours, completion_percentage, priority_score, complexity_score, risk_level, tags, custom_fields, milestone_id, created_at, updated_at, deleted_at'
+      )
       .eq('id', id)
       .is('deleted_at', null)
       .single();
@@ -137,9 +141,9 @@ export class TaskService {
       .from(DB_TABLES.TASKS)
       .select(
         `
-        *,
-        deliverable:deliverables!inner(*),
-        idea:deliverables!inner(idea:ideas!inner(*))
+        id, deliverable_id, title, description, assignee, status, estimate, start_date, end_date, actual_hours, completion_percentage, priority_score, complexity_score, risk_level, tags, custom_fields, milestone_id, created_at, updated_at, deleted_at,
+        deliverable:deliverables!inner(id, idea_id, title, description, priority, estimate_hours, milestone_id, completion_percentage, business_value, risk_factors, acceptance_criteria, deliverable_type, created_at, updated_at, deleted_at),
+        idea:deliverables!inner(idea:ideas!inner(id, user_id, title, raw_text, status, deleted_at, created_at, updated_at))
       `
       )
       .eq('id', id)
