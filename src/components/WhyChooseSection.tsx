@@ -13,12 +13,12 @@ import {
 } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { FLEX_PATTERNS } from '@/lib/config/remaining-styles';
+import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
 function WhyChooseSectionComponent() {
   const { TITLE, SECTION_STYLES, ARTICLES, ARTICLE_STYLES } = WHY_CHOOSE_CONFIG;
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const [announcement, setAnnouncement] = useState('');
 
   useEffect(() => {
@@ -42,75 +42,18 @@ function WhyChooseSectionComponent() {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      const isArticleFocused = target.closest('[data-why-choose-article]');
-
-      if (!isArticleFocused) return;
-
-      const currentIndex = ARTICLES.findIndex(
-        (article) => article.id === target.dataset.articleId
-      );
-      if (currentIndex === -1) return;
-
-      let nextIndex = currentIndex;
-
-      switch (e.key) {
-        case 'ArrowRight':
-        case 'ArrowDown':
-          e.preventDefault();
-          nextIndex = Math.min(currentIndex + 1, ARTICLES.length - 1);
-          break;
-        case 'ArrowLeft':
-        case 'ArrowUp':
-          e.preventDefault();
-          nextIndex = Math.max(currentIndex - 1, 0);
-          break;
-        case 'Home':
-          e.preventDefault();
-          nextIndex = 0;
-          break;
-        case 'End':
-          e.preventDefault();
-          nextIndex = ARTICLES.length - 1;
-          break;
-        default:
-          return;
-      }
-
-      if (nextIndex !== currentIndex) {
-        const nextArticle = document.querySelector(
-          `[data-article-id="${ARTICLES[nextIndex].id}"]`
-        ) as HTMLElement;
-        if (nextArticle) {
-          nextArticle.focus();
-          setFocusedIndex(nextIndex);
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [ARTICLES]);
-
-  const handleFocus = useCallback(
-    (index: number) => {
-      setFocusedIndex(index);
-      setAnnouncement(
-        WHY_CHOOSE_SECTION_LABELS.ITEM_NAVIGATION_ANNOUNCEMENT(
-          ARTICLES[index].TITLE,
-          index + 1,
-          ARTICLES.length
-        )
-      );
-    },
-    [ARTICLES]
-  );
-
-  const handleBlur = useCallback(() => {
-    setFocusedIndex(null);
-  }, []);
+  const { focusedIndex, handleFocus, handleBlur } = useKeyboardNavigation({
+    items: ARTICLES,
+    getItemId: (article) => article.id,
+    cardSelector: '[data-why-choose-article]',
+    onAnnounce: setAnnouncement,
+    getAnnouncement: (article, index, total) =>
+      WHY_CHOOSE_SECTION_LABELS.ITEM_NAVIGATION_ANNOUNCEMENT(
+        article.TITLE,
+        index + 1,
+        total
+      ),
+  });
 
   const handleClick = useCallback((_articleTitle: string) => {
     triggerHapticFeedback();

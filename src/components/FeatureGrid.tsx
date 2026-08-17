@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useEffect, useRef, useState, useCallback } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import {
   ANIMATION_DELAYS,
   DURATION_TAILWIND,
@@ -24,11 +24,11 @@ import {
   HOME_PAGE_ELEMENT_IDS,
   ARIA_HEADING_IDS,
 } from '@/lib/config/element-ids';
+import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
 function FeatureGridComponent() {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const [announcement, setAnnouncement] = useState<string>('');
 
   useEffect(() => {
@@ -53,71 +53,14 @@ function FeatureGridComponent() {
   }, []);
 
   // Micro-UX: Keyboard navigation between feature cards (consistent with WhyChooseSection)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      const isFeatureCardFocused = target.closest('[data-feature-card]');
-      if (!isFeatureCardFocused) return;
-
-      const currentIndex = FEATURE_CONFIG.FEATURES.findIndex(
-        (feature) => feature.step.toString() === target.dataset.featureStep
-      );
-      if (currentIndex === -1) return;
-
-      let nextIndex = currentIndex;
-
-      switch (e.key) {
-        case 'ArrowRight':
-        case 'ArrowDown':
-          e.preventDefault();
-          nextIndex = Math.min(
-            currentIndex + 1,
-            FEATURE_CONFIG.FEATURES.length - 1
-          );
-          break;
-        case 'ArrowLeft':
-        case 'ArrowUp':
-          e.preventDefault();
-          nextIndex = Math.max(currentIndex - 1, 0);
-          break;
-        case 'Home':
-          e.preventDefault();
-          nextIndex = 0;
-          break;
-        case 'End':
-          e.preventDefault();
-          nextIndex = FEATURE_CONFIG.FEATURES.length - 1;
-          break;
-        default:
-          return;
-      }
-
-      if (nextIndex !== currentIndex) {
-        const nextCard = document.querySelector(
-          `[data-feature-step="${FEATURE_CONFIG.FEATURES[nextIndex].step}"]`
-        ) as HTMLElement;
-        if (nextCard) {
-          nextCard.focus();
-          setFocusedIndex(nextIndex);
-          const nextFeature = FEATURE_CONFIG.FEATURES[nextIndex];
-          setAnnouncement(
-            `Step ${nextFeature.step} of ${FEATURE_CONFIG.FEATURES.length}: ${nextFeature.title}`
-          );
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  const handleFocus = useCallback((index: number) => {
-    setFocusedIndex(index);
-  }, []);
-
-  const handleBlur = useCallback(() => {
-    setFocusedIndex(null);
-  }, []);
+  const { focusedIndex, handleFocus, handleBlur } = useKeyboardNavigation({
+    items: FEATURE_CONFIG.FEATURES,
+    getItemId: (feature) => feature.step.toString(),
+    cardSelector: '[data-feature-card]',
+    onAnnounce: setAnnouncement,
+    getAnnouncement: (feature, index, total) =>
+      `Step ${feature.step} of ${total}: ${feature.title}`,
+  });
 
   const animationClasses = UI_STRINGS.ANIMATION.FEATURE_GRID;
 
