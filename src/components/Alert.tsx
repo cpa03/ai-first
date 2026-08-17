@@ -25,6 +25,7 @@ import {
   HEIGHT_ONLY,
   FLEX_GROW_PATTERNS,
   TOAST_DISMISS_BUTTON,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -293,7 +294,7 @@ const AlertComponent = function Alert({
       <div className={FLEX_GROW_PATTERNS.GROW}>
         {title && (
           <h3
-            className={`text-lg font-semibold ${styles.titleColor} ${MB_CLASSES.MD}`}
+            className={`${TYPOGRAPHY_CLASSES.LG_SEMIBOLD} ${styles.titleColor} ${MB_CLASSES.MD}`}
           >
             {title}
           </h3>
@@ -367,7 +368,7 @@ const AlertComponent = function Alert({
             )}
             <button
               onClick={handleSnooze}
-              className={`text-xs font-medium opacity-50 hover:opacity-100 transition-opacity p-0.5 rounded ${FOCUS_RING_OFFSET_PATTERNS.SUBTLE}`}
+              className={`${TYPOGRAPHY_CLASSES.XS_MEDIUM} opacity-50 hover:opacity-100 transition-opacity p-0.5 rounded ${FOCUS_RING_OFFSET_PATTERNS.SUBTLE}`}
               aria-label={ALERT_LABELS.SNOOZE_ARIA_LABEL}
               type="button"
             >

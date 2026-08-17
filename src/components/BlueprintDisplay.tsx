@@ -47,6 +47,7 @@ import {
   LAYOUT_UTILITY_PATTERNS,
   SPACING_UTILITY_PATTERNS,
   PROSE_PATTERNS,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -283,7 +284,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             <h2
               id={BLUEPRINT_ELEMENT_IDS.BLUEPRINT_HEADING}
               ref={headingRef}
-              className={`text-xl sm:text-2xl font-semibold ${TEXT_COLOR_CLASSES.HEADING}`}
+              className={`text-xl sm:text-2xl ${TYPOGRAPHY_CLASSES.XL_SEMIBOLD} ${TEXT_COLOR_CLASSES.HEADING}`}
               tabIndex={-1}
               aria-live="polite"
             >

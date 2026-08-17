@@ -59,6 +59,7 @@ import {
   ANIMATION_CLASSES,
   GAP_CLASSES,
   TEXT_FORMAT_PATTERNS,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { SELECT_ICON_POSITION } from '@/lib/config/remaining-hardcoded-patterns';
 import { INLINE_FLEX_ITEMS_CENTER } from '@/lib/config/remaining-hardcoded-patterns';
@@ -589,10 +590,10 @@ function ClarificationFlow({
       <details
         ref={detailsRef}
         onToggle={handleToggleReference}
-        className={`group mb-6 ${BG_COLOR_CLASSES.PAGE} rounded-lg border ${BORDER_COLOR_CLASSES.LIGHT} overflow-hidden ${TRANSITION_CLASSES.DEFAULT}`}
+        className={`group ${MB_CLASSES.XXL} ${BG_COLOR_CLASSES.PAGE} rounded-lg border ${BORDER_COLOR_CLASSES.LIGHT} overflow-hidden ${TRANSITION_CLASSES.DEFAULT}`}
       >
         <summary
-          className={`${PX_CLASSES.LG} ${PY_CLASSES.MD} text-sm font-medium ${TEXT_COLOR_CLASSES.BODY} cursor-pointer ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} flex justify-between items-center list-none select-none`}
+          className={`${PX_CLASSES.LG} ${PY_CLASSES.MD} ${TYPOGRAPHY_CLASSES.SM_MEDIUM} ${TEXT_COLOR_CLASSES.BODY} cursor-pointer ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} flex justify-between items-center list-none select-none`}
         >
           <div className={FLEX_PATTERNS.GAP_MD}>
             <svg
@@ -657,13 +658,13 @@ function ClarificationFlow({
         >
           <div className={FLEX_PATTERNS.GAP_MD}>
             <span
-              className={`text-sm font-medium ${TEXT_COLOR_CLASSES.HEADING}`}
+              className={`${TYPOGRAPHY_CLASSES.SM_MEDIUM} ${TEXT_COLOR_CLASSES.HEADING}`}
             >
               {LABELS.QUESTION(currentStep)} of {questions.length}
             </span>
             {currentStep === questions.length - 1 && (
               <span
-                className={`inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} ${ANIMATION_CLASSES.SCALE_IN} fade-in zoom-in ${TRANSITION_CLASSES.SLOW}`}
+                className={`inline-flex items-center px-2 py-0.5 ${TYPOGRAPHY_CLASSES.XS_SEMIBOLD} rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} ${ANIMATION_CLASSES.SCALE_IN} fade-in zoom-in ${TRANSITION_CLASSES.SLOW}`}
                 role="status"
                 aria-label={CLARIFICATION_FLOW_LABELS.FINAL_STEP}
               >
@@ -673,7 +674,7 @@ function ClarificationFlow({
           </div>
           <span
             key={currentStep}
-            className={`text-sm font-medium ${ANIMATION_CLASSES.SCALE_IN} tabular-nums ${
+            className={`${TYPOGRAPHY_CLASSES.SM_MEDIUM} ${ANIMATION_CLASSES.SCALE_IN} tabular-nums ${
               currentStep === questions.length - 1
                 ? TEXT_COLORS.SUCCESS_MEDIUM
                 : TEXT_COLORS.PRIMARY
@@ -965,7 +966,7 @@ function ClarificationFlow({
                       setCurrentAnswer(e.target.value);
                     }}
                     onKeyDown={handleKeyDown}
-                    className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} ${INPUT_HEIGHT_CLASSES.SELECT} cursor-pointer appearance-none bg-white pr-10 ${TRANSITION_CLASSES.DEFAULT} ${BORDER_COLOR_CLASSES.HOVER_DEFAULT} ${
+                    className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} ${INPUT_HEIGHT_CLASSES.SELECT} cursor-pointer appearance-none ${BG_COLORS.DEFAULT} pr-10 ${TRANSITION_CLASSES.DEFAULT} ${BORDER_COLOR_CLASSES.HOVER_DEFAULT} ${
                       currentAnswer
                         ? `${TEXT_COLOR_CLASSES.HEADING} font-medium`
                         : `${TEXT_COLOR_CLASSES.MUTED}`

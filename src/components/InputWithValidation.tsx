@@ -37,6 +37,7 @@ import {
   FLEX_PATTERNS,
   PROGRESS_PERCENTAGE,
   TYPOGRAPHY_UTILITY_PATTERNS,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { UI_CONFIG } from '@/lib/config/constants';
@@ -393,7 +394,7 @@ const InputWithValidationComponent = forwardRef<
       <div className={SPACE_Y_PATTERNS.SM}>
         <label
           htmlFor={props.id}
-          className={`block text-sm font-medium ${TEXT_COLOR_CLASSES.HEADING} cursor-pointer`}
+          className={`block ${TYPOGRAPHY_CLASSES.SM_MEDIUM} ${TEXT_COLOR_CLASSES.HEADING} cursor-pointer`}
         >
           {label}
           {props.required && (
@@ -764,7 +765,7 @@ const InputWithValidationComponent = forwardRef<
                 </div>
               )}
               <span
-                className={`text-sm font-medium transition-colors ${DURATION_TAILWIND[300]} ease-out ${
+                className={`${TYPOGRAPHY_CLASSES.SM_MEDIUM} transition-colors ${DURATION_TAILWIND[300]} ease-out ${
                   maxLength && charCount > maxLength
                     ? 'animate-counter-pulse'
                     : ''
