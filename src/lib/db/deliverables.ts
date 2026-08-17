@@ -56,7 +56,9 @@ export class DeliverableService {
 
     const { data, error } = await client
       .from(DB_TABLES.DELIVERABLES)
-      .select('*')
+      .select(
+        'id, idea_id, title, description, priority, estimate_hours, milestone_id, completion_percentage, business_value, risk_factors, acceptance_criteria, deliverable_type, created_at, updated_at, deleted_at'
+      )
       .eq('idea_id', ideaId)
       .is('deleted_at', null)
       .order('priority', { ascending: false });
@@ -106,9 +108,9 @@ export class DeliverableService {
       .from(DB_TABLES.DELIVERABLES)
       .select(
         `
-        *,
+        id, idea_id, title, description, priority, estimate_hours, milestone_id, completion_percentage, business_value, risk_factors, acceptance_criteria, deliverable_type, created_at, updated_at, deleted_at,
         tasks!tasks_deliverable_id_fkey (
-          *
+          id, deliverable_id, title, description, assignee, status, estimate, start_date, end_date, actual_hours, completion_percentage, priority_score, complexity_score, risk_level, tags, custom_fields, milestone_id, created_at, updated_at, deleted_at
         )
       `
       )
@@ -142,8 +144,8 @@ export class DeliverableService {
       .from(DB_TABLES.DELIVERABLES)
       .select(
         `
-        *,
-        idea:ideas!inner(*)
+        id, idea_id, title, description, priority, estimate_hours, milestone_id, completion_percentage, business_value, risk_factors, acceptance_criteria, deliverable_type, created_at, updated_at, deleted_at,
+        idea:ideas!inner(id, user_id, title, raw_text, status, deleted_at, created_at, updated_at)
       `
       )
       .eq('id', id)

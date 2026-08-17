@@ -56,7 +56,9 @@ export class IdeaService {
 
     const { data, error } = await client
       .from(DB_TABLES.IDEAS)
-      .select('*')
+      .select(
+        'id, user_id, title, raw_text, status, deleted_at, created_at, updated_at'
+      )
       .eq('id', id)
       .is('deleted_at', null)
       .single();
@@ -74,7 +76,9 @@ export class IdeaService {
 
     const { data, error } = await client
       .from(DB_TABLES.IDEAS)
-      .select('*')
+      .select(
+        'id, user_id, title, raw_text, status, deleted_at, created_at, updated_at'
+      )
       .eq('user_id', userId)
       .is('deleted_at', null)
       .order('created_at', { ascending: false });
@@ -116,7 +120,10 @@ export class IdeaService {
     // round-trips from 2 to 1.
     let query = client
       .from(DB_TABLES.IDEAS)
-      .select('*', { count: 'exact' })
+      .select(
+        'id, user_id, title, raw_text, status, deleted_at, created_at, updated_at',
+        { count: 'exact' }
+      )
       .eq('user_id', userId)
       .is('deleted_at', null)
       .order('created_at', { ascending: false })
@@ -232,7 +239,7 @@ export class IdeaService {
 
     const { data, error } = await client
       .from(DB_TABLES.IDEA_SESSIONS)
-      .select('*')
+      .select('idea_id, state, last_agent, metadata, updated_at')
       .eq('idea_id', ideaId)
       .single();
 

@@ -101,7 +101,7 @@ export class ClarificationService {
 
     let query = client
       .from(DB_TABLES.AGENT_LOGS)
-      .select('*')
+      .select('id, agent, action, payload, timestamp')
       .order('timestamp', { ascending: false })
       .limit(limit);
 
@@ -137,7 +137,7 @@ export class ClarificationService {
     // round-trips from 2 to 1.
     let query = client
       .from(DB_TABLES.AGENT_LOGS)
-      .select('*', { count: 'exact' })
+      .select('id, agent, action, payload, timestamp', { count: 'exact' })
       .order('timestamp', { ascending: false })
       .range(offset, offset + pageSize - 1);
 

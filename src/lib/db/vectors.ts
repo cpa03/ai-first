@@ -41,7 +41,9 @@ export class VectorService {
 
     let query = client
       .from(DB_TABLES.VECTORS)
-      .select('*')
+      .select(
+        'id, idea_id, vector_data, reference_type, reference_id, created_at, embedding'
+      )
       .eq('idea_id', ideaId);
 
     if (referenceType) {
@@ -79,7 +81,10 @@ export class VectorService {
     // round-trips from 2 to 1.
     let query = client
       .from(DB_TABLES.VECTORS)
-      .select('*', { count: 'exact' })
+      .select(
+        'id, idea_id, vector_data, reference_type, reference_id, created_at, embedding',
+        { count: 'exact' }
+      )
       .eq('idea_id', ideaId)
       .order('created_at', { ascending: false })
       .range(offset, offset + pageSize - 1);
@@ -116,7 +121,9 @@ export class VectorService {
 
     let query = client
       .from(DB_TABLES.VECTORS)
-      .select('*')
+      .select(
+        'id, idea_id, vector_data, reference_type, reference_id, created_at, embedding'
+      )
       .in('idea_id', ideaIds);
 
     if (referenceType) {

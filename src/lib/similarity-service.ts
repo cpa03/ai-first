@@ -131,7 +131,9 @@ export async function findSimilarIdeas(
 
   const { data: ideasData, error: ideasError } = await supabase
     .from(DB_TABLES.IDEAS)
-    .select('*')
+    .select(
+      'id, user_id, title, raw_text, status, deleted_at, created_at, updated_at'
+    )
     .in(DB_COLUMNS.ID, ideaIds)
     .eq(DB_COLUMNS.USER_ID, userId)
     .is(DB_COLUMNS.DELETED_AT, null);
