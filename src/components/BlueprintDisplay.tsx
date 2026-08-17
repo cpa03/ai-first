@@ -57,6 +57,8 @@ import {
 import { triggerHapticFeedback } from '@/lib/utils';
 import { createLogger } from '@/lib/logger';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
+import { PLATFORM } from '@/lib/dom-utils';
+import { KEYBOARD_HINT_INLINE } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -80,6 +82,12 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   const prefersReducedMotion = usePrefersReducedMotion();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [wasGenerating, setWasGenerating] = useState(isGenerating);
+  // Micro-UX: Detect platform for keyboard shortcut display
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    setIsMac(PLATFORM.isMac());
+  }, []);
 
   const { storeFocus } = useFocusManagement(!isGenerating && wasGenerating, {
     delay: 0,
@@ -354,6 +362,50 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                   {MESSAGES.BLUEPRINT.DOWNLOAD_BUTTON}
                 </Button>
               </Tooltip>
+            </div>
+            {/* Micro-UX: Persistent keyboard shortcut hints for discoverability */}
+            {/* Follows the pattern from TaskManagementHeader and FooterNav */}
+            {/* Only visible on desktop (sm+) to avoid cluttering mobile header */}
+            <div
+              className={`hidden sm:flex items-center gap-3 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
+              aria-hidden="true"
+            >
+              <span className={KEYBOARD_HINT_INLINE}>
+                <kbd
+                  className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+                >
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
+                <kbd
+                  className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+                >
+                  C
+                </kbd>
+              </span>
+              <span className={KEYBOARD_HINT_INLINE}>
+                <kbd
+                  className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+                >
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
+                <kbd
+                  className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+                >
+                  P
+                </kbd>
+              </span>
+              <span className={KEYBOARD_HINT_INLINE}>
+                <kbd
+                  className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+                >
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
+                <kbd
+                  className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+                >
+                  D
+                </kbd>
+              </span>
             </div>
           </div>
         </header>
