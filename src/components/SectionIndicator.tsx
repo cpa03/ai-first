@@ -13,10 +13,12 @@ import {
   DURATION_TAILWIND,
   UI_CONFIG,
   INTERSECTION_OBSERVER_CONFIG,
+  TEXT_COLORS,
 } from '@/lib/config';
 import { SECTION_INDICATOR_LABELS } from '@/lib/config/component-labels';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { SECTION_INDICATOR_COLORS } from '@/lib/config/theme';
+import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 
 interface Section {
   id: string;
@@ -29,31 +31,22 @@ interface SectionIndicatorProps {
   className?: string;
 }
 
-/**
- * SectionIndicator - Fixed position section navigation indicator
- *
- * Micro-UX: Shows which section is currently in view as user scrolls.
- * Provides spatial awareness on long pages and makes keyboard shortcuts
- * (b, t, e) more discoverable.
- *
- * Follows the pattern of ScrollProgress for positioning and styling.
- */
 function SectionIndicatorComponent({
   sections,
   className = '',
 }: SectionIndicatorProps) {
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [announcement, setAnnouncement] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
   const observerRef = useRef<IntersectionObserver | null>(null);
   const sectionsRef = useRef<Map<string, Element>>(new Map());
+  const { openHelp } = useKeyboardShortcuts();
 
-  // Set up intersection observer to track which section is in view
   useEffect(() => {
     if (sections.length === 0) return;
 
     const observerCallback: IntersectionObserverCallback = (entries) => {
-      // Find the most visible section
       let maxRatio = 0;
       let visibleSection: string | null = null;
 
@@ -74,7 +67,6 @@ function SectionIndicatorComponent({
       threshold: [...INTERSECTION_OBSERVER_CONFIG.SECTION_INDICATOR.THRESHOLD],
     });
 
-    // Observe all section elements
     sections.forEach((section) => {
       const element = document.getElementById(section.id);
       if (element) {
@@ -88,19 +80,74 @@ function SectionIndicatorComponent({
     };
   }, [sections]);
 
-  // Show/hide indicator based on scroll position
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
-      // Show after scrolling past the header area
       setIsVisible(scrollTop > UI_CONFIG.SECTION_INDICATOR_SCROLL_THRESHOLD);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Check initial state
+    handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isSectionDot = target.closest('[data-section-dot]');
+      if (!isSectionDot) return;
+
+      const currentIndex = sections.findIndex(
+        (section) => section.id === target.dataset.sectionId
+      );
+      if (currentIndex === -1) return;
+
+      let nextIndex = currentIndex;
+
+      switch (e.key) {
+        case 'ArrowUp':
+        case 'ArrowLeft':
+          e.preventDefault();
+          nextIndex = Math.max(currentIndex - 1, 0);
+          break;
+        case 'ArrowDown':
+        case 'ArrowRight':
+          e.preventDefault();
+          nextIndex = Math.min(currentIndex + 1, sections.length - 1);
+          break;
+        case 'Home':
+          e.preventDefault();
+          nextIndex = 0;
+          break;
+        case 'End':
+          e.preventDefault();
+          nextIndex = sections.length - 1;
+          break;
+        case '?':
+          e.preventDefault();
+          openHelp();
+          return;
+        default:
+          return;
+      }
+
+      if (nextIndex !== currentIndex) {
+        const nextDot = document.querySelector(
+          `[data-section-id="${sections[nextIndex].id}"]`
+        ) as HTMLElement;
+        if (nextDot) {
+          nextDot.focus();
+          setAnnouncement(
+            SECTION_INDICATOR_LABELS.ANNOUNCEMENT(sections[nextIndex].label)
+          );
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [sections, openHelp]);
 
   const scrollToSection = useCallback(
     (sectionId: string) => {
@@ -133,7 +180,7 @@ function SectionIndicatorComponent({
           ${prefersReducedMotion ? '' : 'transition-all ' + DURATION_TAILWIND[300]}
         `}
       >
-        {sections.map((section) => {
+        {sections.map((section, index) => {
           const isActive = activeSection === section.id;
           return (
             <Tooltip
@@ -144,6 +191,8 @@ function SectionIndicatorComponent({
             >
               <button
                 type="button"
+                data-section-dot
+                data-section-id={section.id}
                 onClick={() => scrollToSection(section.id)}
                 className={`
                   relative
@@ -172,6 +221,21 @@ function SectionIndicatorComponent({
             </Tooltip>
           );
         })}
+      </div>
+      <div
+        className={`hidden sm:flex items-center justify-center gap-1.5 mt-2 text-xs ${TEXT_COLORS.MUTED}`}
+        aria-hidden="true"
+      >
+        <span>↑</span>
+        <span>↓</span>
+      </div>
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {announcement}
       </div>
     </nav>
   );

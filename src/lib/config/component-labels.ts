@@ -690,6 +690,10 @@ export const SECTION_INDICATOR_LABELS = {
   NAV_ARIA_LABEL: 'Section navigation',
   /** ARIA label template for jumping to a section */
   SECTION_ARIA_LABEL: (label: string) => `Jump to ${label} section`,
+  /** Keyboard navigation hint text */
+  KEYBOARD_NAV_HINT: 'navigate sections',
+  /** ARIA live announcement when focused section changes */
+  ANNOUNCEMENT: (label: string) => `${label} section`,
 } as const;
 
 /**
