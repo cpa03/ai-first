@@ -233,9 +233,9 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
-- [Phase 1 Audit Report - 2026-08-12](./audit/PHASE1-AUDIT-20260812.md) - Comprehensive quality assessment (latest)
-- [BroCula Browser Audit Report - 2026-08-11](./audit/BROCULA-AUDIT-REPORT-20260811.md) - BroCula browser audit
-- [BroCula Browser Console Lighthouse - 2026-08-08](./audit/2026-08-08-brocula-browser-console-lighthouse.md) - Browser console & Lighthouse audit
+- [BroCula Browser Audit - 2026-08-17](./audit/BROCULA-AUDIT-20260817.md) - BroCula browser audit (latest)
+- [BroCula Browser Audit - 2026-08-16](./audit/BROCULA-AUDIT-20260816.md) - BroCula browser audit
+- [Security Audit #1739](./audit/SECURITY-AUDIT-1739.md) - Security audit for issue #1739
 - [Issue: Large Files](./audit/ISSUE-01-large-files.md) - Files exceeding 250 LOC maintainability threshold
 - [Issue: API Test Coverage](./audit/ISSUE-02-api-test-coverage.md) - API route test coverage gaps
 - [Issue: CSRF Protection](./audit/ISSUE-03-csrf-protection.md) - CSRF protection audit
@@ -264,16 +264,10 @@ Older audit reports (2026-07-08 through 2026-08-11) are archived in [audit/archi
 - [Repository Maintenance Report - 2026-08-16](./maintenance/2026-08-16-repository-maintenance-report.md) - Repository maintenance report
 - [Repository Health Check - 2026-08-15](./maintenance/2026-08-15-repository-health-check.md) - Repository health check report
 - [Repository Maintenance Report - 2026-08-15](./maintenance/2026-08-15-repository-maintenance.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-14](./maintenance/2026-08-14-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-12](./maintenance/2026-08-12-repository-maintenance-report.md) - Repository maintenance report
-- [Issue Status Report - 2026-08-11](./maintenance/2026-08-11-issue-status-report.md) - Issue status tracking report
-- [Repository Maintenance Report - 2026-08-10 (0045)](./maintenance/2026-08-10-repository-maintenance-report-0045.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-10](./maintenance/2026-08-10-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-09](./maintenance/2026-08-09-repository-maintenance-report.md) - Repository maintenance report
 
 ### Archived Reports
 
-Older maintenance reports (2026-07-07 through 2026-08-08) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/).
+Older maintenance reports (2026-07-07 through 2026-08-14) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/).
 
 ---
 
