@@ -24,6 +24,7 @@ import StatusAnnouncer from './StatusAnnouncer';
 import { useConfetti } from '@/hooks/useConfetti';
 import { useToast } from '@/hooks/useAnnouncement';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
+import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 
 export interface ShareButtonProps {
   shareUrl?: string;
@@ -231,7 +232,7 @@ const ShareButtonComponent = function ShareButton({
         disabled={false}
         position="top"
       >
-        <span className="relative inline-flex">
+        <span className={INLINE_FLEX_RELATIVE}>
           <button
             onClick={handleShare}
             className={`${baseClasses} ${variantClasses[variant]} ${glowClass} ${className}`}

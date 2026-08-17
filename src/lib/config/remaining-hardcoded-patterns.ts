@@ -410,6 +410,106 @@ export const COMMON_LAYOUT_PATTERNS = {
 } as const;
 
 /**
+ * Common inline-flex patterns
+ * Used in: ShareButton, CopyButton, EmailButton, ToastContainer
+ */
+export const INLINE_FLEX_RELATIVE = 'relative inline-flex';
+
+/**
+ * Responsive width patterns
+ * Used in: Auth callback buttons, ErrorBoundary buttons
+ */
+export const RESPONSIVE_WIDTH = 'w-full sm:w-auto';
+
+/**
+ * Responsive width with margin patterns
+ * Used in: ErrorBoundary cancel button
+ */
+export const RESPONSIVE_WIDTH_WITH_MARGIN = 'w-full sm:w-auto ml-0 sm:ml-2';
+
+/**
+ * Absolute center patterns
+ * Used in: TaskManagement loading overlay, StepCelebration
+ */
+export const ABSOLUTE_CENTER_OVERLAY =
+  'absolute inset-0 flex items-center justify-center';
+
+/**
+ * Absolute center with flex-col patterns
+ * Used in: StepCelebration
+ */
+export const ABSOLUTE_CENTER_FLEX_COL =
+  'absolute inset-0 flex flex-col items-center justify-center';
+
+/**
+ * Responsive flex with justify-between and gap patterns
+ * Used in: ReferralLink
+ */
+export const RESPONSIVE_FLEX_BETWEEN_GAP =
+  'flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+
+/**
+ * Flex with space-x patterns
+ * Used in: MobileNav
+ */
+export const FLEX_SPACE_X = 'flex space-x-2 sm:space-x-4';
+
+/**
+ * Tabular nums with font-medium patterns
+ * Used in: Dashboard page
+ */
+export const TABULAR_NUMS_MEDIUM = 'tabular-nums font-medium';
+
+/**
+ * Skeleton sizing patterns
+ * Used in: TaskManagementSkeleton
+ */
+export const SKELETON_FULL_THIRD = 'h-full w-1/3';
+
+/**
+ * Flex-1 with min-width patterns
+ * Used in: TaskManagementSkeleton, DeliverableCard
+ */
+export const FLEX_1 = 'flex-1';
+
+/**
+ * Flex items-center (simple)
+ * Used in: ErrorBoundary, layout.tsx, various components
+ */
+export const FLEX_ITEMS_CENTER = 'flex items-center';
+
+/**
+ * Text left alignment
+ * Used in: Not found page
+ */
+export const TEXT_LEFT = 'text-left';
+
+/**
+ * Font medium text
+ * Used in: Forgot password page
+ */
+export const FONT_MEDIUM = 'font-medium';
+
+/**
+ * Inline flex items-center
+ * Used in: ClarificationFlow
+ */
+export const INLINE_FLEX_ITEMS_CENTER = 'inline-flex items-center';
+
+/**
+ * Centering container pattern
+ * Used in: Auth callback page
+ */
+export const CENTER_INLINE_FLEX =
+  'relative inline-flex items-center justify-center';
+
+/**
+ * Flex justify-center items-center
+ * Used in: Results page loading
+ */
+export const FLEX_CENTER = 'flex justify-center items-center';
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -454,4 +554,20 @@ export const REMAINING_PATTERNS = {
   COMMON_FLEX_BETWEEN_RESPONSIVE,
   COMMON_INLINE_FLEX_GAP,
   COMMON_INLINE_FLEX_GAP_SM,
+  INLINE_FLEX_RELATIVE,
+  RESPONSIVE_WIDTH,
+  RESPONSIVE_WIDTH_WITH_MARGIN,
+  ABSOLUTE_CENTER_OVERLAY,
+  ABSOLUTE_CENTER_FLEX_COL,
+  RESPONSIVE_FLEX_BETWEEN_GAP,
+  FLEX_SPACE_X,
+  TABULAR_NUMS_MEDIUM,
+  SKELETON_FULL_THIRD,
+  FLEX_1,
+  FLEX_ITEMS_CENTER,
+  TEXT_LEFT,
+  FONT_MEDIUM,
+  INLINE_FLEX_ITEMS_CENTER,
+  CENTER_INLINE_FLEX,
+  FLEX_CENTER,
 } as const;

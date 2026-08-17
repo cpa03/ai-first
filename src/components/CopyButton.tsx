@@ -22,6 +22,7 @@ import { useClipboard } from '@/hooks/useClipboard';
 import { useToast } from '@/hooks/useAnnouncement';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { PLATFORM } from '@/lib/dom-utils';
+import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 
 export interface CopyButtonProps {
   textToCopy: string;
@@ -130,7 +131,7 @@ const CopyButtonComponent = function CopyButton({
         disabled={false}
         position="top"
       >
-        <span className="relative inline-flex">
+        <span className={INLINE_FLEX_RELATIVE}>
           <button
             onClick={handleCopy}
             onKeyDown={handleKeyDown}

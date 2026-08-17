@@ -31,6 +31,7 @@ import {
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { RESPONSIVE_FLEX_BETWEEN_GAP } from '@/lib/config/remaining-hardcoded-patterns';
 
 // Logger for growth tracking events
 const logger = createLogger('ReferralLink');
@@ -153,7 +154,7 @@ function ReferralLinkComponent({
       role="region"
       aria-label={REFERRAL_LINK_LABELS.REGION_ARIA_LABEL}
     >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className={RESPONSIVE_FLEX_BETWEEN_GAP}>
         <div className={FLEX_GROW_PATTERNS.GROW}>
           <h3 className={`${REFERRAL_LINK_STYLES.TITLE} text-primary-900`}>
             {REFERRAL_LINK_LABELS.TITLE}

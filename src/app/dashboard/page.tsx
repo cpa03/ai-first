@@ -63,6 +63,7 @@ import {
   DASHBOARD_FILTER_BADGE_POSITION,
   DASHBOARD_FILTER_BADGE_ACTIVE,
   DASHBOARD_FILTER_BADGE_INACTIVE,
+  TABULAR_NUMS_MEDIUM,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import type { ComponentConfig } from '@/lib/config/components';
 import {
@@ -695,9 +696,7 @@ export default function DashboardPage() {
             {DASHBOARD_PAGE_CONTENT.HEADING}
           </h1>
           <p className={DASHBOARD_PATTERNS.PAGE_SUBHEADING}>
-            <span className="tabular-nums font-medium">
-              {animatedIdeaCount}
-            </span>{' '}
+            <span className={TABULAR_NUMS_MEDIUM}>{animatedIdeaCount}</span>{' '}
             {pagination?.total !== 1
               ? DASHBOARD_PAGE_CONTENT.IDEA_COUNT.PLURAL
               : DASHBOARD_PAGE_CONTENT.IDEA_COUNT.SINGULAR}{' '}

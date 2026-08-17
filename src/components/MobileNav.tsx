@@ -28,6 +28,7 @@ import {
   GAP_CLASSES,
   TEXT_FORMAT_PATTERNS,
 } from '@/lib/config';
+import { FLEX_SPACE_X } from '@/lib/config/remaining-hardcoded-patterns';
 import { HINT_OVERLAY } from '@/lib/config/remaining-hardcoded-patterns';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
@@ -207,7 +208,7 @@ function MobileNavComponent() {
   if (!isMobile) {
     return (
       <nav aria-label={MOBILE_NAV_CONFIG.ARIA_LABEL}>
-        <ul className="flex space-x-2 sm:space-x-4">
+        <ul className={FLEX_SPACE_X}>
           {navLinks.map((link) => {
             const active = isActive(link.href);
             return (

@@ -40,6 +40,7 @@ import Tooltip from '@/components/Tooltip';
 import FooterNav from '@/components/FooterNav';
 import { FOOTER_PATTERNS } from '@/lib/config/remaining-styles';
 import { REMAINING_PATTERNS } from '@/lib/config/remaining-hardcoded-patterns';
+import { FLEX_ITEMS_CENTER } from '@/lib/config/remaining-hardcoded-patterns';
 
 // JSON-LD Structured Data for SEO - Growth: Better search visibility
 const jsonLd = {
@@ -195,7 +196,7 @@ export default async function RootLayout({
               >
                 <div className={PAGE_LAYOUT_CLASSES.CONTAINER_XL}>
                   <div className={REMAINING_PATTERNS.HEADER}>
-                    <div className="flex items-center">
+                    <div className={FLEX_ITEMS_CENTER}>
                       <Link
                         href={ROUTES.HOME}
                         className={`text-xl font-semibold ${GRAY_CLASSES.TEXT_900} hover:text-primary-600 transition-colors ${PRIMARY_FOCUS_RING} rounded-md px-2 py-1`}

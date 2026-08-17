@@ -19,6 +19,10 @@ import {
   TEXT_ALIGNMENT,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
+import {
+  SKELETON_FULL_THIRD,
+  FLEX_1,
+} from '@/lib/config/remaining-hardcoded-patterns';
 
 /**
  * TaskManagementSkeleton - Skeleton loading state for TaskManagement component
@@ -77,7 +81,7 @@ function TaskManagementSkeletonComponent() {
 
         {/* Progress bar skeleton */}
         <div className={SKELETON_PROGRESS}>
-          <Skeleton className="h-full w-1/3" variant="rect" />
+          <Skeleton className={SKELETON_FULL_THIRD} variant="rect" />
         </div>
 
         {/* Action buttons skeleton */}
@@ -111,7 +115,7 @@ function TaskManagementSkeletonComponent() {
             >
               {/* Deliverable header */}
               <div className={FLEX_PATTERNS.BETWEEN}>
-                <div className="flex-1">
+                <div className={FLEX_1}>
                   <Skeleton
                     className={`${SKELETON_SIZE_PATTERNS.TAG_MD} mb-2`}
                     variant="text"

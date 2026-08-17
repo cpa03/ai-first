@@ -26,6 +26,10 @@ import {
   DASHBOARD_PATTERNS,
   KBD_HINT_STYLE,
 } from '@/lib/config';
+import {
+  RESPONSIVE_WIDTH,
+  FONT_MEDIUM,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { SUCCESS_STATE_COLORS } from '@/lib/config/theme';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -157,7 +161,7 @@ export default function ForgotPasswordPage() {
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
             >
               We&apos;ve sent a password reset link to{' '}
-              <span className="font-medium">{email}</span>
+              <span className={FONT_MEDIUM}>{email}</span>
             </p>
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
@@ -251,7 +255,7 @@ export default function ForgotPasswordPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full"
+              className={RESPONSIVE_WIDTH}
               size="lg"
               enableTransition
               attention={isFormValid && !isLoading}

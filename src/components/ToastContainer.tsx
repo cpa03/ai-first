@@ -30,6 +30,7 @@ import {
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { SWIPE_PROGRESS_BAR } from '@/lib/config/remaining-hardcoded-patterns';
+import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 
@@ -492,7 +493,7 @@ function ToastContainerComponent() {
       aria-label={TOAST_CONTAINER_LABELS.REGION_ARIA_LABEL}
     >
       {showClearAll && (
-        <div className="relative inline-flex">
+        <div className={INLINE_FLEX_RELATIVE}>
           <button
             onClick={clearAllToasts}
             className={TOAST_CLEAR_ALL_BUTTON}

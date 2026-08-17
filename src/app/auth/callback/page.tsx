@@ -23,6 +23,11 @@ import {
   FADE_IN,
   REMAINING_PATTERNS,
 } from '@/lib/config';
+import {
+  CENTER_INLINE_FLEX,
+  RESPONSIVE_WIDTH,
+  FLEX_1,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -232,7 +237,7 @@ export default function AuthCallbackPage() {
       <div id="auth-content" className={`${CONTAINER_WIDTHS.XS} w-full`}>
         <div className={`text-center ${SPACE_Y_PATTERNS.XL}`}>
           {/* Micro-UX: Animated spinner with progress feedback */}
-          <div className="relative inline-flex items-center justify-center">
+          <div className={CENTER_INLINE_FLEX}>
             <div
               className={`animate-spin rounded-full ${SPINNER_PATTERNS.default.size.lg} ${SPINNER_PATTERNS.default.border} border-primary-600 ${prefersReducedMotion ? '' : 'motion-reduce:animate-none'}`}
             />
@@ -300,7 +305,7 @@ export default function AuthCallbackPage() {
                     d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                   />
                 </svg>
-                <div className="flex-1">
+                <div className={FLEX_1}>
                   <p
                     className={`${COMPONENT_CONFIG.AUTH_CALLBACK.STYLES.TIMEOUT_WARNING_TITLE} ${TEXT_COLORS.WARNING}`}
                   >
@@ -329,7 +334,7 @@ export default function AuthCallbackPage() {
                 <Button
                   variant="primary"
                   onClick={handleRetry}
-                  className="w-full sm:w-auto"
+                  className={RESPONSIVE_WIDTH}
                 >
                   <svg
                     className={`${ICON_SIZES.MD} mr-2`}
@@ -358,7 +363,7 @@ export default function AuthCallbackPage() {
               <Button
                 variant={hasTimedOut ? 'secondary' : 'ghost'}
                 onClick={handleCancel}
-                className="w-full sm:w-auto"
+                className={RESPONSIVE_WIDTH}
               >
                 <svg
                   className={`${ICON_SIZES.MD} mr-2`}
