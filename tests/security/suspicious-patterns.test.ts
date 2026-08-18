@@ -138,6 +138,26 @@ describe('Suspicious Pattern Detection Improvements', () => {
       }
     });
 
+    it('should detect quoted bracket notation prototype pollution attempts', () => {
+      const payloads = [
+        "constructor['prototype']",
+        'constructor["prototype"]',
+        "prototype['isAdmin'] = true",
+        'prototype["polluted"] = true',
+      ];
+      for (const payload of payloads) {
+        const request = createMockRequest(
+          `https://example.com/api/test?q=${encodeURIComponent(payload)}`
+        );
+        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        expect(result.detected).toBe(true);
+        expect(result.maxSeverity).toBe(3);
+        expect(
+          result.patterns.some((p) => p.category === 'prototype_pollution')
+        ).toBe(true);
+      }
+    });
+
     it('should detect Windows sensitive paths', () => {
       const paths = [
         'C:\\Windows\\System32',
