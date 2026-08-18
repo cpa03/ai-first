@@ -14,6 +14,8 @@ import {
   RIPPLE_RING_2,
   COMPONENT_STATE_COLORS,
   ICON_SIZES,
+  SUCCESS_POP,
+  SUCCESS_CHECK,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -153,12 +155,12 @@ function SuccessCelebrationComponent({
       <div className="relative">
         <div
           className={`${ICON_SIZES.MASSIVE} rounded-full ${COMPONENT_STATE_COLORS.CELEBRATION.CIRCLE_BG} flex items-center justify-center shadow-lg ${
-            shouldAnimate ? 'animate-success-pop' : ''
+            shouldAnimate ? SUCCESS_POP : ''
           }`}
         >
           <svg
             className={`${ICON_SIZES.XXXXL} ${TEXT_COLORS.SUCCESS_DARK} ${
-              shouldAnimate ? 'animate-success-check' : ''
+              shouldAnimate ? SUCCESS_CHECK : ''
             }`}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}

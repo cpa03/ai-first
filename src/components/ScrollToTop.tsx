@@ -28,6 +28,7 @@ import {
   COMMON_SPACING_PATTERNS,
   COORDINATE_POSITION_PATTERNS,
   SUCCESS_POP,
+  SCROLL_TO_TOP_BOUNCE,
 } from '@/lib/config';
 import type { ComponentConfig } from '@/lib/config/components';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -363,7 +364,7 @@ function ScrollToTopComponent({
             ${FOCUS_RING_OFFSET_PATTERNS.LARGE}
             focus-visible:scale-110
             active:scale-95
-            ${prefersReducedMotion ? '' : hasAppeared ? 'animate-scroll-to-top-bounce' : 'opacity-0'}
+            ${prefersReducedMotion ? '' : hasAppeared ? SCROLL_TO_TOP_BOUNCE : 'opacity-0'}
             ${className}
           `}
           aria-label={

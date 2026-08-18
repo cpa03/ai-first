@@ -22,6 +22,9 @@ import {
   CONFETTI_DOT,
   TEXT_ALIGNMENT,
   TYPOGRAPHY_CLASSES,
+  DELIVERABLE_COMPLETE,
+  SUCCESS_POP,
+  EXPAND_CONTENT,
 } from '@/lib/config';
 import {
   TASK_CARD_VERTICAL_MARGIN,
@@ -169,7 +172,7 @@ function DeliverableCardComponent({
 
   return (
     <div
-      className={`${containerClasses} ${showCompletionCelebration ? 'animate-deliverable-complete' : ''}`}
+      className={`${containerClasses} ${showCompletionCelebration ? DELIVERABLE_COMPLETE : ''}`}
     >
       <button
         onClick={handleToggleExpand}
@@ -186,7 +189,7 @@ function DeliverableCardComponent({
             </h3>
             {isCompleted && (
               <span
-                className={`inline-flex items-center gap-1 px-2 py-0.5 ${TYPOGRAPHY_CLASSES.XS_SEMIBOLD} rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} ${showCompletionCelebration && !prefersReducedMotion ? 'animate-success-pop' : ''}`}
+                className={`inline-flex items-center gap-1 px-2 py-0.5 ${TYPOGRAPHY_CLASSES.XS_SEMIBOLD} rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} ${showCompletionCelebration && !prefersReducedMotion ? SUCCESS_POP : ''}`}
                 role="status"
                 aria-label={DELIVERABLE_CARD_LABELS.COMPLETE_ARIA_LABEL}
               >
@@ -266,7 +269,7 @@ function DeliverableCardComponent({
         <div
           ref={contentRef}
           id={`deliverable-tasks-${deliverable.id}`}
-          className={`${DELIVERABLE_CARD_STYLES.CONTENT.CONTAINER} ${prefersReducedMotion ? '' : 'animate-expand-content'}`}
+          className={`${DELIVERABLE_CARD_STYLES.CONTENT.CONTAINER} ${prefersReducedMotion ? '' : EXPAND_CONTENT}`}
         >
           <div className={TASK_CARD_VERTICAL_MARGIN}>
             <div

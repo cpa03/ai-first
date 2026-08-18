@@ -18,6 +18,7 @@ import {
   TYPOGRAPHY_CLASSES,
   PROGRESS_BAR_A11Y,
 } from '@/lib/config/theme';
+import { ANIMATION_CLASSES, SUCCESS_POP, SUCCESS_CHECK } from '@/lib/config';
 import { PROGRESS_PERCENTAGE } from '@/lib/config/modular-constants';
 import { ICON_SIZES, INDICATOR_SIZES } from '@/lib/config/icon-sizes';
 import {
@@ -339,7 +340,7 @@ export default function UserOnboarding() {
           className={`relative ${BG_COLORS.DEFAULT} rounded-2xl ${SHADOW_CLASSES.EXTRA_LARGE} p-8 text-center max-w-sm mx-4 ${
             prefersReducedMotion
               ? ''
-              : `animate-in fade-in zoom-in ${DURATION_TAILWIND[300]}`
+              : `animate-in ${ANIMATION_CLASSES.FADE_IN} zoom-in ${DURATION_TAILWIND[300]}`
           }`}
         >
           {/* Confetti particles */}
@@ -365,11 +366,11 @@ export default function UserOnboarding() {
             className={`${ICON_SIZES.XXL_20} mx-auto ${MB_CLASSES.XXL_SM} rounded-full flex items-center justify-center ${
               prefersReducedMotion
                 ? BG_COLORS.SUCCESS_LIGHT
-                : `${BG_COLORS.SUCCESS_LIGHT} animate-success-pop`
+                : `${BG_COLORS.SUCCESS_LIGHT} ${SUCCESS_POP}`
             }`}
           >
             <svg
-              className={`${ICON_SIZES.XXXL} ${TEXT_COLORS.SUCCESS_DARK} ${prefersReducedMotion ? '' : 'animate-success-check'}`}
+              className={`${ICON_SIZES.XXXL} ${TEXT_COLORS.SUCCESS_DARK} ${prefersReducedMotion ? '' : SUCCESS_CHECK}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"

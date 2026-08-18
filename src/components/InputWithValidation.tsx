@@ -38,6 +38,13 @@ import {
   PROGRESS_PERCENTAGE,
   TYPOGRAPHY_UTILITY_PATTERNS,
   TYPOGRAPHY_CLASSES,
+  SHAKE,
+  INPUT_VALID_CELEBRATION,
+  PLACEHOLDER_BREATHE,
+  FOCUS_RING_GLOW,
+  FADE_IN,
+  COUNTER_PULSE,
+  COUNTER_GLOW,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { UI_CONFIG } from '@/lib/config/constants';
@@ -361,11 +368,11 @@ const InputWithValidationComponent = forwardRef<
       INPUT_STYLES.BASE,
       isInvalid ? INPUT_STYLES.ERROR : INPUT_STYLES.NORMAL,
       paddingClass,
-      shouldShake && 'animate-shake',
+      shouldShake && SHAKE,
       showSuccessFlash &&
         `${COMPONENT_STATE_COLORS.INPUT_SUCCESS.FLASH} ${STATE_SHADOWS.SUCCESS}`,
-      showValidCelebration && 'animate-input-valid-celebration',
-      isFocused && !currentValue.trim() && 'animate-placeholder-breathe',
+      showValidCelebration && INPUT_VALID_CELEBRATION,
+      isFocused && !currentValue.trim() && PLACEHOLDER_BREATHE,
       // Micro-UX: Subtle amber background tint when password is visible
       // Provides clear visual feedback that password text is exposed
       passwordVisible &&
@@ -411,7 +418,7 @@ const InputWithValidationComponent = forwardRef<
               id={props.id}
               value={value}
               onChange={handleChange}
-              className={`${baseInputClasses} ${isFocused ? 'animate-focus-ring-glow' : ''} ${textareaResizeClass} ${INPUT_HEIGHT_CLASSES.TEXTAREA} overflow-hidden`}
+              className={`${baseInputClasses} ${isFocused ? FOCUS_RING_GLOW : ''} ${textareaResizeClass} ${INPUT_HEIGHT_CLASSES.TEXTAREA} overflow-hidden`}
               aria-invalid={isInvalid}
               aria-required={props.required}
               aria-describedby={
@@ -432,7 +439,7 @@ const InputWithValidationComponent = forwardRef<
               id={props.id}
               value={value}
               onChange={handleChange}
-              className={`${baseInputClasses} ${isFocused ? 'animate-focus-ring-glow' : ''}`}
+              className={`${baseInputClasses} ${isFocused ? FOCUS_RING_GLOW : ''}`}
               type={
                 showPasswordToggle && inputType === 'password'
                   ? passwordVisible
@@ -467,7 +474,7 @@ const InputWithValidationComponent = forwardRef<
               >
                 <div className="pointer-events-none">
                   <svg
-                    className={`${ICON_SIZES.LG} ${VALID_CHECKMARK_COLOR} animate-in fade-in ${TRANSITION_CLASSES.DEFAULT} ${DRAW_CHECK}`}
+                    className={`${ICON_SIZES.LG} ${VALID_CHECKMARK_COLOR} animate-in ${FADE_IN} ${TRANSITION_CLASSES.DEFAULT} ${DRAW_CHECK}`}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
@@ -500,7 +507,7 @@ const InputWithValidationComponent = forwardRef<
               >
                 <div className="pointer-events-none">
                   <svg
-                    className={`${ICON_SIZES.LG} ${TEXT_COLORS.ERROR} animate-in fade-in ${TRANSITION_CLASSES.DEFAULT}`}
+                    className={`${ICON_SIZES.LG} ${TEXT_COLORS.ERROR} animate-in ${FADE_IN} ${TRANSITION_CLASSES.DEFAULT}`}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
@@ -530,7 +537,7 @@ const InputWithValidationComponent = forwardRef<
                 <button
                   type="button"
                   onClick={handleClear}
-                  className={`${INPUT_BUTTON_SIZES.CLEAR_BUTTON} flex items-center justify-center ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} rounded-full ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
+                  className={`${INPUT_BUTTON_SIZES.CLEAR_BUTTON} flex items-center justify-center ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} rounded-full ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
                   aria-label={`Clear ${label}`}
                 >
                   <svg
@@ -573,7 +580,7 @@ const InputWithValidationComponent = forwardRef<
                         triggerHapticFeedback();
                         copyPassword(currentValue);
                       }}
-                      className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
+                      className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
                       aria-label={INPUT_VALIDATION_LABELS.COPY_PASSWORD_ARIA}
                     >
                       <span
@@ -639,7 +646,7 @@ const InputWithValidationComponent = forwardRef<
                       triggerHapticFeedback();
                       setPasswordVisible(!passwordVisible);
                     }}
-                    className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
+                    className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
                     aria-label={
                       passwordVisible
                         ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA
@@ -748,10 +755,10 @@ const InputWithValidationComponent = forwardRef<
                   <div
                     className={`h-full ${TRANSITION_CLASSES.SLOW} rounded-full ${
                       charCount > maxLength
-                        ? `${BG_COLORS.ERROR} animate-counter-pulse`
+                        ? `${BG_COLORS.ERROR} ${COUNTER_PULSE}`
                         : charCount >=
                             maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
-                          ? `${BG_COLORS.WARNING} animate-counter-glow`
+                          ? `${BG_COLORS.WARNING} ${COUNTER_GLOW}`
                           : charCount >=
                               maxLength *
                                 (UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD * 0.7)
@@ -766,9 +773,7 @@ const InputWithValidationComponent = forwardRef<
               )}
               <span
                 className={`${TYPOGRAPHY_CLASSES.SM_MEDIUM} transition-colors ${DURATION_TAILWIND[300]} ease-out ${
-                  maxLength && charCount > maxLength
-                    ? 'animate-counter-pulse'
-                    : ''
+                  maxLength && charCount > maxLength ? COUNTER_PULSE : ''
                 }`}
                 style={
                   maxLength

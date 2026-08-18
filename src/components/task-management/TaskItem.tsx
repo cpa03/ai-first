@@ -23,6 +23,9 @@ import {
   CONFETTI_DOT,
   REMAINING_PATTERNS,
   FLEX_GROW_PATTERNS,
+  CHECKBOX_PULSE,
+  TASK_COMPLETE,
+  TASK_UPDATING_PULSE,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -118,7 +121,7 @@ function TaskItemComponent({
       ? TASK_ITEM_STYLES.CHECKBOX.DISABLED
       : '';
     const togglePulseClass =
-      isToggled && !prefersReducedMotion ? 'animate-checkbox-pulse' : '';
+      isToggled && !prefersReducedMotion ? CHECKBOX_PULSE : '';
     return `${baseClasses} ${stateClasses} ${disabledClasses} ${togglePulseClass}`;
   }, [isCompleted, isUpdating, isToggled, prefersReducedMotion]);
 
@@ -138,13 +141,13 @@ function TaskItemComponent({
       task.risk_level !== 'low'
         ? `${TASK_ITEM_STYLES.RISK_INDICATOR} ${RISK_LEVEL_CONFIG[task.risk_level].indicatorColor}`
         : '';
-    const celebrationClass = showCelebration ? 'animate-task-complete' : '';
+    const celebrationClass = showCelebration ? TASK_COMPLETE : '';
     const reducedMotionClass = prefersReducedMotion
       ? 'motion-reduce:transition-none motion-reduce:hover:transform-none'
       : '';
     const focusClass = focused ? FOCUS_RING_OFFSET_PATTERNS.TASK_FOCUSED : '';
     const updatingClass =
-      isUpdating && !prefersReducedMotion ? 'animate-task-updating-pulse' : '';
+      isUpdating && !prefersReducedMotion ? TASK_UPDATING_PULSE : '';
     return `${base} ${riskIndicator} ${celebrationClass} ${reducedMotionClass} ${focusClass} ${updatingClass}`;
   }, [
     isCompleted,

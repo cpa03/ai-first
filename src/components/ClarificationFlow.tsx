@@ -213,8 +213,8 @@ function ClarificationFlow({
 
         const animClass =
           slideDirection === 'forward'
-            ? 'animate-slide-from-right'
-            : 'animate-slide-from-left';
+            ? ANIMATION_CLASSES.SLIDE_FROM_RIGHT
+            : ANIMATION_CLASSES.SLIDE_FROM_LEFT;
 
         el.classList.add(animClass);
 
@@ -408,7 +408,9 @@ function ClarificationFlow({
 
   if (loading) {
     return (
-      <div className={`${CONTAINER_WIDTHS.SM} mx-auto fade-in`}>
+      <div
+        className={`${CONTAINER_WIDTHS.SM} mx-auto ${ANIMATION_CLASSES.FADE_IN}`}
+      >
         <LoadingAnnouncer
           message={MESSAGES.CLARIFICATION.GENERATING_QUESTIONS}
         />
@@ -425,7 +427,7 @@ function ClarificationFlow({
         </div>
 
         <div
-          className={`${CARD_PATTERNS.RESPONSIVE} mt-6 ${SPACE_Y_PATTERNS.XL} animate-fade-in`}
+          className={`${CARD_PATTERNS.RESPONSIVE} mt-6 ${SPACE_Y_PATTERNS.XL} ${ANIMATION_CLASSES.FADE_IN}`}
         >
           <div className={SPACE_Y_PATTERNS.MD}>
             <Skeleton className={SKELETON_SIZE_PATTERNS.TITLE} variant="text" />
@@ -467,7 +469,7 @@ function ClarificationFlow({
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className={`${ICON_SIZES.XS} rounded-full ${BG_COLORS.BRAND_200} animate-pulse`}
+                className={`${ICON_SIZES.XS} rounded-full ${BG_COLORS.BRAND_200} ${ANIMATION_CLASSES.PULSE}`}
                 style={{
                   animationDelay: `${i * ANIMATION_DELAYS.LONG}ms`,
                   animationDuration: `${ANIMATION_CONFIG.SLOW}ms`,
@@ -525,7 +527,9 @@ function ClarificationFlow({
   }
 
   return (
-    <div className={`${CONTAINER_WIDTHS.SM} mx-auto fade-in`}>
+    <div
+      className={`${CONTAINER_WIDTHS.SM} mx-auto ${ANIMATION_CLASSES.FADE_IN}`}
+    >
       <StepCelebration
         stepNumber={currentStep}
         totalSteps={questions.length}
@@ -664,7 +668,7 @@ function ClarificationFlow({
             </span>
             {currentStep === questions.length - 1 && (
               <span
-                className={`inline-flex items-center px-2 py-0.5 ${TYPOGRAPHY_CLASSES.XS_SEMIBOLD} rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} ${ANIMATION_CLASSES.SCALE_IN} fade-in zoom-in ${TRANSITION_CLASSES.SLOW}`}
+                className={`inline-flex items-center px-2 py-0.5 ${TYPOGRAPHY_CLASSES.XS_SEMIBOLD} rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} ${ANIMATION_CLASSES.SCALE_IN} ${ANIMATION_CLASSES.FADE_IN} zoom-in ${TRANSITION_CLASSES.SLOW}`}
                 role="status"
                 aria-label={CLARIFICATION_FLOW_LABELS.FINAL_STEP}
               >

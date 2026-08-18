@@ -7,6 +7,7 @@ import {
   TRANSITION_CLASSES,
   TYPING_INDICATOR_DOT_PATTERN,
   INLINE_FLEX_PATTERNS,
+  TYPING_DOT,
 } from '@/lib/config';
 
 interface TypingIndicatorProps {
@@ -96,7 +97,7 @@ function TypingIndicatorComponent({
             className={`
               ${TYPING_INDICATOR_DOT_PATTERN}
               ${TRANSITION_CLASSES.COLOR}
-              ${isAnimating && !prefersReducedMotion ? 'animate-typing-dot' : 'opacity-40'}
+              ${isAnimating && !prefersReducedMotion ? TYPING_DOT : 'opacity-40'}
             `}
             style={{
               animationDelay: `${index * ANIMATION_CONFIG.TYPING_INDICATOR.DOT_STAGGER}ms`,

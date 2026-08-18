@@ -15,6 +15,7 @@ import {
   COMPONENT_STATE_COLORS,
   BG_COLORS,
   CONFETTI_DOT,
+  SHARE_SUCCESS_GLOW,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -221,7 +222,7 @@ const ShareButtonComponent = function ShareButton({
     `,
   };
 
-  const glowClass = shared ? 'animate-share-success-glow' : '';
+  const glowClass = shared ? SHARE_SUCCESS_GLOW : '';
 
   return (
     <>

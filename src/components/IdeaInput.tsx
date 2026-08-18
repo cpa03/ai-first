@@ -33,6 +33,9 @@ import {
   CONFETTI_DOT,
   HEIGHT_ONLY,
   PROGRESS_PERCENTAGE,
+  SHAKE,
+  FADE_IN,
+  SUCCESS_POP,
 } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
@@ -369,18 +372,18 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           required={true}
           disabled={isSubmitting}
           autoFocus
-          className={`${COMPONENT_CONFIG.IDEA_INPUT.MIN_HEIGHT_CLASS} ${isShaking ? 'animate-shake' : ''}`}
+          className={`${COMPONENT_CONFIG.IDEA_INPUT.MIN_HEIGHT_CLASS} ${isShaking ? SHAKE : ''}`}
         />
 
         {milestoneReached && (
           <div className="relative">
             <div
-              className={`flex items-center gap-2 text-sm ${TEXT_COLORS.SUCCESS_DARK} font-medium animate-fade-in`}
+              className={`flex items-center gap-2 text-sm ${TEXT_COLORS.SUCCESS_DARK} font-medium ${FADE_IN}`}
               role="status"
               aria-live="polite"
             >
               <span
-                className={`inline-flex items-center justify-center ${ICON_SIZES.LG} rounded-full ${BG_COLORS.SUCCESS_LIGHT} animate-success-pop`}
+                className={`inline-flex items-center justify-center ${ICON_SIZES.LG} rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${SUCCESS_POP}`}
               >
                 <svg
                   className={ICON_SIZES.SM}
@@ -422,7 +425,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
         {!milestoneReached && charactersNeededData ? (
           <p
-            className={`text-sm animate-fade-in flex items-center gap-2 ${
+            className={`text-sm ${FADE_IN} flex items-center gap-2 ${
               charactersNeededData.isNearMinimum
                 ? `${TEXT_COLOR_CLASSES.WARNING_LIGHT} font-medium`
                 : TEXT_COLOR_CLASSES.BRAND
