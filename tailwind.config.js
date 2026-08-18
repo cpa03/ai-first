@@ -45,6 +45,11 @@ module.exports = {
     'border-b-gray-800',
     'border-l-gray-800',
     'border-r-gray-800',
+    // Primary brand colors (dynamic from BUTTON_STYLES and THEME_CONFIG)
+    'bg-primary-600',
+    'text-primary-600',
+    'border-primary-600',
+    'hover:bg-primary-700',
   ],
   theme: {
     extend: {

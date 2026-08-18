@@ -831,11 +831,6 @@ export default function SignupPage() {
             disabled={oauthLoading !== null}
             loading={oauthLoading === 'google'}
             loadingText={SIGNUP_PAGE_CONTENT.OAUTH.GOOGLE_LOADING}
-            aria-label={
-              oauthLoading === 'google'
-                ? SIGNUP_PAGE_CONTENT.OAUTH.GOOGLE_LOADING_ARIA_LABEL
-                : SIGNUP_PAGE_CONTENT.OAUTH.GOOGLE_ARIA_LABEL
-            }
             className="justify-center"
           >
             {oauthLoading !== 'google' && (
@@ -861,7 +856,7 @@ export default function SignupPage() {
                 />
               </svg>
             )}
-            {SIGNUP_PAGE_CONTENT.OAUTH.GOOGLE}
+            {SIGNUP_PAGE_CONTENT.OAUTH.GOOGLE_ARIA_LABEL}
           </Button>
 
           <Button
@@ -871,11 +866,6 @@ export default function SignupPage() {
             disabled={oauthLoading !== null}
             loading={oauthLoading === 'github'}
             loadingText={SIGNUP_PAGE_CONTENT.OAUTH.GITHUB_LOADING}
-            aria-label={
-              oauthLoading === 'github'
-                ? SIGNUP_PAGE_CONTENT.OAUTH.GITHUB_LOADING_ARIA_LABEL
-                : SIGNUP_PAGE_CONTENT.OAUTH.GITHUB_ARIA_LABEL
-            }
             className="justify-center"
           >
             {oauthLoading !== 'github' && (
@@ -891,7 +881,7 @@ export default function SignupPage() {
                 />
               </svg>
             )}
-            {SIGNUP_PAGE_CONTENT.OAUTH.GITHUB}
+            {SIGNUP_PAGE_CONTENT.OAUTH.GITHUB_ARIA_LABEL}
           </Button>
         </div>
 
