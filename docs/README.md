@@ -73,6 +73,7 @@ Complete index of all IdeaFlow documentation.
 - [API Reference](./api.md) - Complete API documentation with examples
 - [Agent Guidelines](./agent-guidelines.md) - AI agent behavior rules and guidelines
 - [Database Schema](./database-schema.md) - Database schema documentation with ERD diagram
+- [Database Service Decomposition Status](./database/db-service-decomposition-status.md) - Current status of database service decomposition
 
 ## Development Guides
 
@@ -109,6 +110,9 @@ Complete index of all IdeaFlow documentation.
 - [Security Headers](./security-headers.md) - HTTP security headers reference
 - [Security Sentinel](./security/sentinel.md) - Security vulnerability log and lessons learned
 - [Security Validation](./security/SECURITY_VALIDATION.md) - Credential exposure prevention and validation
+- [Security Audit - 2026-08-11](./security/SECURITY-AUDIT-20260811.md) - Security audit report
+- [NPM Vulnerabilities](./security/npm-vulnerabilities.md) - NPM dependency vulnerability tracking
+- [Security Verification #1739](./security-verification-1739.md) - Issue #1739 security verification
 - [Quality Assurance](./quality-assurance.md) - Testing and quality standards
 - [Performance Engineer](./performance-engineer.md) - Performance optimization
 - [Performance Optimization](./performance-optimization.md) - Detailed optimization guide
@@ -216,6 +220,15 @@ Complete index of all IdeaFlow documentation.
 
 - [User Personas](./user-stories/personas.md) - Primary user personas
 
+### Analytics
+
+- [Analytics Index](./user-stories/analytics/README.md) - Analytics user stories dashboard
+- [US-ANALYTICS-001: Dashboard](./user-stories/analytics/us-analytics-001-dashboard.md) - Analytics dashboard
+
+### Collaboration
+
+- [US-COLLAB-001: Real-time Indicators](./user-stories/collaboration/us-collab-001-realtime-indicators.md) - Real-time collaboration indicators
+
 ## Implementation Plans
 
 - [Flexy Modularity Plan](./plans/2026-06-30-flexy-modularization.md) - Hardcoded values elimination (completed)
@@ -262,6 +275,7 @@ Older audit reports (2026-07-08 through 2026-08-11) are archived in [audit/archi
 - [Repository Maintenance Report - 2026-08-18 (Loop)](./maintenance/2026-08-18-repository-maintenance-report-loop.md) - Repository maintenance loop report (latest)
 - [Repository Maintenance Report - 2026-08-18](./maintenance/2026-08-18-repository-maintenance-report.md) - Repository maintenance report
 - [Repository Maintenance Report - 2026-08-17](./maintenance/2026-08-17-repository-maintenance-report.md) - Repository maintenance report
+- [Repository Maintenance Report - 2026-08-17 (Loop)](./maintenance/2026-08-17-repository-maintenance-report-loop.md) - Repository maintenance loop report
 - [Repository Maintenance Report - 2026-08-16 (2100)](./maintenance/2026-08-16-repository-maintenance-report-2100.md) - Repository maintenance report
 - [Repository Maintenance Report - 2026-08-16](./maintenance/2026-08-16-repository-maintenance-report.md) - Repository maintenance report
 - [Repository Health Check - 2026-08-15](./maintenance/2026-08-15-repository-health-check.md) - Repository health check report
