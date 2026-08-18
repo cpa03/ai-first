@@ -182,7 +182,7 @@ for table in "${TABLE_ARRAY[@]}"; do
         # Note: This is a simplified restore that inserts data
         # For production use, consider using pg_dump/pg_restore for full schema restoration
         
-        python3 << EOF
+        if python3 << EOF
 import json
 import os
 import sys
@@ -205,8 +205,7 @@ except Exception as e:
     print(f"  ✗ Error restoring ${table}: {e}")
     sys.exit(1)
 EOF
-        
-        if [[ $? -eq 0 ]]; then
+        then
             log_info "✓ Table ${table} restored successfully"
             ((RESTORED++))
         else
