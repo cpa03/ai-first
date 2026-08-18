@@ -393,12 +393,14 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
       description: 'Prototype pollution via internal methods',
     },
     {
-      pattern: /constructor\s*[\[.]\s*prototype/i,
+      // SECURITY: Enhanced to detect bracket notation with quotes (e.g., constructor['prototype'], constructor["prototype"])
+      pattern: /constructor\s*[\[.]\s*['"]?prototype/i,
       severity: 3,
       description: 'Prototype pollution via constructor',
     },
     {
-      pattern: /prototype\s*[\[.]\s*\w+\s*=/i,
+      // SECURITY: Enhanced to detect bracket notation with quotes and closing bracket (e.g., prototype['isAdmin'] =, prototype["field"] =)
+      pattern: /prototype\s*[\[.]\s*['"]?\w+['"]?\s*\]?\s*=/i,
       severity: 3,
       description: 'Direct prototype modification',
     },
