@@ -21,6 +21,7 @@ import {
   REMAINING_PATTERNS,
   ENABLE_FEEDBACK,
   SPIN,
+  ICON_SIZES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { PLATFORM } from '@/lib/dom-utils';
@@ -235,7 +236,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading && shouldShowSpinner && (
           <svg
-            className={`${prefersReducedMotion ? '' : SPIN} -ml-1 mr-2 h-4 w-4 inline-block`}
+            className={`${prefersReducedMotion ? '' : SPIN} -ml-1 mr-2 ${ICON_SIZES.MD} inline-block`}
             xmlns={SVG_NAMESPACE.SVG}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}

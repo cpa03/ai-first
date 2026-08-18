@@ -25,6 +25,7 @@ import {
   FORGOT_PASSWORD_PAGE_CONFIG,
   DASHBOARD_PATTERNS,
   KBD_HINT_STYLE,
+  ICON_SIZES,
 } from '@/lib/config';
 import {
   RESPONSIVE_WIDTH,
@@ -136,10 +137,10 @@ export default function ForgotPasswordPage() {
         >
           <div className={`${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE}`}>
             <div
-              className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex h-12 w-12 items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.NONE}`}
+              className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex ${ICON_SIZES.XXXXL} items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.NONE}`}
             >
               <svg
-                className={`h-6 w-6 ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
+                className={`${ICON_SIZES.XL} ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

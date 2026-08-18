@@ -144,7 +144,7 @@ export default function NotFound() {
         >
           <div className={NOT_FOUND_404_CONTAINER}>
             <div
-              className={`inline-flex items-center justify-center w-24 h-24 rounded-full ${GRAY_CLASSES.BG_100}`}
+              className={`inline-flex items-center justify-center ${ICON_SIZES.MASSIVE} rounded-full ${GRAY_CLASSES.BG_100}`}
             >
               <span
                 className={`text-4xl font-bold ${GRAY_CLASSES.TEXT_300} select-none ${prefersReducedMotion ? '' : BREATHE}`}
@@ -415,7 +415,7 @@ export default function NotFound() {
                         className={`${POPULAR_PAGES_ICON} ${BG_COLORS.LIGHT} group-hover:${BG_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
                       >
                         <svg
-                          className={`w-5 h-5 ${GRAY_CLASSES.TEXT_500} group-hover:${TEXT_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
+                          className={`${ICON_SIZES.LG} ${GRAY_CLASSES.TEXT_500} group-hover:${TEXT_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
                           fill="none"
                           viewBox={SVG_VIEWBOX.STANDARD}
                           stroke="currentColor"

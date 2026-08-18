@@ -14,6 +14,7 @@ import {
   UI_CONFIG,
   INTERSECTION_OBSERVER_CONFIG,
   TEXT_COLORS,
+  ICON_SIZES,
 } from '@/lib/config';
 import { SECTION_INDICATOR_LABELS } from '@/lib/config/component-labels';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -197,7 +198,7 @@ function SectionIndicatorComponent({
                 onClick={() => scrollToSection(section.id)}
                 className={`
                   relative
-                  w-3 h-3
+                  ${ICON_SIZES.SM}
                   rounded-full
                   ${TRANSITION_CLASSES.DEFAULT}
                   ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}
