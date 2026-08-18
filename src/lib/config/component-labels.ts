@@ -536,6 +536,11 @@ export const CLARIFICATION_FLOW_LABELS = {
     remaining
       ? `Time elapsed: ${elapsed}. Estimated time remaining: ${remaining}`
       : `Time elapsed: ${elapsed}`,
+  // Micro-UX: Keyboard shortcut hint for select dropdown option selection
+  SELECT_KEYBOARD_HINT: 'Press',
+  SELECT_KEYBOARD_HINT_SUFFIX: 'to select',
+  SELECT_KEYBOARD_ARIA: (optionCount: number) =>
+    `Press number keys 1-${optionCount} to select an option`,
 } as const;
 
 /**

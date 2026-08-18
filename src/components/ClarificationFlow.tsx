@@ -385,6 +385,28 @@ function ClarificationFlow({
         handleClear();
       }
 
+      // Micro-UX: Number key shortcuts for select option selection
+      // When on a select question, pressing 1-9 selects the corresponding option
+      // This provides quick keyboard access without requiring mouse/touch interaction
+      if (
+        currentQuestion?.type === 'select' &&
+        currentQuestion.options &&
+        !showCelebration &&
+        !isSubmitting
+      ) {
+        const optionNumber = parseInt(e.key, 10);
+        if (
+          optionNumber >= 1 &&
+          optionNumber <= currentQuestion.options.length
+        ) {
+          e.preventDefault();
+          triggerHapticFeedback();
+          const selectedOption = currentQuestion.options[optionNumber - 1];
+          setCurrentAnswer(selectedOption);
+          return;
+        }
+      }
+
       const stepNumber = parseInt(e.key, 10);
       if (stepNumber >= 1 && stepNumber <= questions.length) {
         e.preventDefault();
@@ -404,6 +426,10 @@ function ClarificationFlow({
     isSubmitting,
     onBackToEdit,
     router,
+    currentQuestion?.type,
+    currentQuestion?.options,
+    setCurrentAnswer,
+    showCelebration,
   ]);
 
   if (loading) {
@@ -1034,6 +1060,36 @@ function ClarificationFlow({
                     Selected: {currentAnswer}
                   </p>
                 )}
+                {/* Micro-UX: Keyboard shortcut hint for select option selection */}
+                {/* Shows number keys 1-N to help users discover quick selection method */}
+                {currentQuestion.options &&
+                  currentQuestion.options.length > 0 &&
+                  !showCelebration &&
+                  !isSubmitting && (
+                    <div
+                      className={`flex items-center gap-2 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
+                      role="status"
+                      aria-live="polite"
+                      aria-label={CLARIFICATION_FLOW_LABELS.SELECT_KEYBOARD_ARIA(
+                        currentQuestion.options.length
+                      )}
+                    >
+                      <span>
+                        {CLARIFICATION_FLOW_LABELS.SELECT_KEYBOARD_HINT}
+                      </span>
+                      {currentQuestion.options.map((_, index) => (
+                        <kbd
+                          key={index}
+                          className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                        >
+                          {index + 1}
+                        </kbd>
+                      ))}
+                      <span>
+                        {CLARIFICATION_FLOW_LABELS.SELECT_KEYBOARD_HINT_SUFFIX}
+                      </span>
+                    </div>
+                  )}
               </div>
             )}
           </div>
