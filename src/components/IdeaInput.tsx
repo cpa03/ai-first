@@ -537,7 +537,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 >
                   {pasteSuccess ? (
                     <svg
-                      className={`w-4 h-4 mr-1 ${TEXT_COLORS.SUCCESS_MEDIUM}`}
+                      className={`${ICON_SIZES.MD} mr-1 ${TEXT_COLORS.SUCCESS_MEDIUM}`}
                       fill="none"
                       viewBox={SVG_VIEWBOX.STANDARD}
                       stroke="currentColor"
