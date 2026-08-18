@@ -38,13 +38,19 @@ import {
 const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
   loading: () => (
-    <div className={SPINNER_PATTERNS.placeholder.container}>Loading...</div>
+    <div className={SPINNER_PATTERNS.placeholder.container}>
+      {CLARIFY_PAGE_CONTENT.LOADING_SHORT}
+    </div>
   ),
 });
 
 const Alert = dynamic(() => import('@/components/Alert'), {
   ssr: false,
-  loading: () => <div className={LOADING_PATTERNS.SIMPLE}>Loading...</div>,
+  loading: () => (
+    <div className={LOADING_PATTERNS.SIMPLE}>
+      {CLARIFY_PAGE_CONTENT.LOADING_SHORT}
+    </div>
+  ),
 });
 
 const DynamicClarificationFlow = dynamic(
