@@ -245,6 +245,32 @@ function ScrollProgressComponent() {
             });
             break;
           }
+          // Micro-UX: Page Up/Page Down for faster keyboard navigation
+          // Matches standard scroll behavior users expect in browsers and apps
+          // Moves by ~80% of viewport height (consistent with browser defaults)
+          case 'PageUp': {
+            e.preventDefault();
+            const pageUpStep = SCROLL_STEP_CONFIG.LARGE * 4;
+            const pageUpPercent = Math.max(scrollPercent - pageUpStep, 0);
+            window.scrollTo({
+              top: (pageUpPercent / PROGRESS_PERCENTAGE.MAX) * docHeight,
+              behavior,
+            });
+            break;
+          }
+          case 'PageDown': {
+            e.preventDefault();
+            const pageDownStep = SCROLL_STEP_CONFIG.LARGE * 4;
+            const pageDownPercent = Math.min(
+              scrollPercent + pageDownStep,
+              PROGRESS_PERCENTAGE.MAX
+            );
+            window.scrollTo({
+              top: (pageDownPercent / PROGRESS_PERCENTAGE.MAX) * docHeight,
+              behavior,
+            });
+            break;
+          }
           case 'Home': {
             e.preventDefault();
             window.scrollTo({ top: 0, behavior });
