@@ -105,7 +105,7 @@ function FeatureGridComponent() {
               ${BG_COLORS.DEFAULT}
               ${FOCUS_RING_OFFSET_PATTERNS.LARGE}
               focus-visible:scale-[1.03] focus-visible:shadow-xl focus-visible:shadow-primary-200/60
-              transition-transform transition-shadow duration-200 ease-out
+              transition-transform transition-shadow ${DURATION_TAILWIND[200]} ease-out
               motion-reduce:transition-none
               ${isVisible ? animationClasses[index] : 'opacity-0'}
               ${focusedIndex === index ? FOCUS_RING_OFFSET_PATTERNS.NAVIGATION_FOCUSED : ''}
