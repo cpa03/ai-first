@@ -165,6 +165,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             size="lg"
             className={BLUEPRINT_DISPLAY_STYLES.LOADING_SPINNER}
             ariaLabel={MESSAGES.BLUEPRINT.ARIA_LABEL_GENERATING}
+            showElapsedTime
           />
           <h2
             className={`${BLUEPRINT_DISPLAY_STYLES.LOADING_TITLE} ${TEXT_COLOR_CLASSES.HEADING}`}
