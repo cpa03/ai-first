@@ -53,10 +53,10 @@ export const INPUT_VALIDATION_LABELS = {
   SHOW_PASSWORD: 'Show',
   /** Hide password label */
   HIDE_PASSWORD: 'Hide',
-  /** ARIA label to show password */
-  SHOW_PASSWORD_ARIA: 'Show password',
-  /** ARIA label to hide password */
-  HIDE_PASSWORD_ARIA: 'Hide password',
+  /** ARIA label to show password - matches visible text for accessibility */
+  SHOW_PASSWORD_ARIA: 'Show',
+  /** ARIA label to hide password - matches visible text for accessibility */
+  HIDE_PASSWORD_ARIA: 'Hide',
   /** Copy password label when password is visible */
   COPY_PASSWORD: 'Copy',
   /** Copy password success label */
