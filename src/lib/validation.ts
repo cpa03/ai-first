@@ -337,6 +337,14 @@ export function sanitizeHtml(input: string): string {
 /**
  * Recursively sanitizes all string values within an object or array.
  * Useful for flexible JSON fields like custom_fields.
+ *
+ * PERFORMANCE OPTIMIZATION (⚡ Bolt):
+ * - Fast-path for non-string primitives (numbers, booleans, null, undefined).
+ * - Implements copy-on-change semantics for arrays and plain objects.
+ * - Replaces Array.map and Object.entries (which allocate intermediate tuple arrays)
+ *   with index/key loops.
+ * - Returns the exact input reference when no values require sanitization, completely
+ *   bypassing object/array allocations and eliminating garbage collection pressure.
  */
 export function sanitizeObject<T>(input: T): T {
   if (input === null || input === undefined) {
@@ -348,15 +356,59 @@ export function sanitizeObject<T>(input: T): T {
   }
 
   if (Array.isArray(input)) {
-    return input.map((item) => sanitizeObject(item)) as unknown as T;
+    let result: unknown[] | null = null;
+    for (let i = 0; i < input.length; i++) {
+      const item = input[i];
+
+      let sanitizedItem: unknown;
+      if (
+        item === null ||
+        (typeof item !== 'object' && typeof item !== 'string')
+      ) {
+        sanitizedItem = item;
+      } else {
+        sanitizedItem = sanitizeObject(item);
+      }
+
+      if (result) {
+        result[i] = sanitizedItem;
+      } else if (sanitizedItem !== item) {
+        result = input.slice();
+        result[i] = sanitizedItem;
+      }
+    }
+    return (result || input) as unknown as T;
   }
 
   if (typeof input === 'object' && input.constructor === Object) {
-    const sanitized: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(input)) {
-      sanitized[key] = sanitizeObject(value);
+    let result: Record<string, unknown> | null = null;
+    const keys = Object.keys(input);
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      const value = (input as Record<string, unknown>)[key];
+
+      let sanitizedValue: unknown;
+      if (
+        value === null ||
+        (typeof value !== 'object' && typeof value !== 'string')
+      ) {
+        sanitizedValue = value;
+      } else {
+        sanitizedValue = sanitizeObject(value);
+      }
+
+      if (result) {
+        result[key] = sanitizedValue;
+      } else if (sanitizedValue !== value) {
+        result = {};
+        for (let j = 0; j < i; j++) {
+          const prevKey = keys[j];
+          result[prevKey] = (input as Record<string, unknown>)[prevKey];
+        }
+        result[key] = sanitizedValue;
+      }
     }
-    return sanitized as unknown as T;
+    return (result || input) as unknown as T;
   }
 
   return input;
