@@ -263,7 +263,7 @@ const ProgressStepperComponent = function ProgressStepper({
                 onClick={() => handleStepClick(index)}
                 onKeyDown={(e) => handleStepKeyDown(e, index)}
                 disabled={!isClickable}
-                className={`flex items-center w-full ${isClickable ? 'cursor-pointer group focus-visible:outline-none' : 'cursor-default'}`}
+                className={`flex items-center w-full rounded-full transition-all duration-200 ${isClickable ? `cursor-pointer group ${FOCUS_RING_PATTERNS.DEFAULT}` : 'cursor-default'}`}
               >
                 <div className={FLEX_PATTERNS.BETWEEN} aria-hidden="true">
                   <div
@@ -272,7 +272,7 @@ const ProgressStepperComponent = function ProgressStepper({
                       ${ICON_SIZES.XXXL} rounded-full border-2
                       font-medium text-sm ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE}
                       ${TRANSITION_CLASSES.SLOW}
-                      ${isClickable ? `group-hover:scale-110 group-hover:shadow-md ${COMPONENT_PRIMARY_PATTERNS.PROGRESS_HOVER} group-focus-visible:ring-2 ${COMPONENT_PRIMARY_PATTERNS.PROGRESS_FOCUS} group-focus-visible:ring-offset-2` : ''}
+                      ${isClickable ? `group-hover:scale-110 group-focus-visible:scale-110 group-hover:shadow-md ${COMPONENT_PRIMARY_PATTERNS.PROGRESS_HOVER}` : ''}
                       ${
                         step.completed
                           ? `${COMPONENT_PRIMARY_PATTERNS.ACTIVE_STEP} ${BG_COLORS.BRAND} text-white`
