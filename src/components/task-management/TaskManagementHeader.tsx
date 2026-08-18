@@ -86,7 +86,10 @@ function TaskManagementHeaderComponent({
     );
     if (changedFilter && !prefersReducedMotion) {
       setAnimatingCount(changedFilter);
-      const timer = setTimeout(() => setAnimatingCount(null), 300);
+      const timer = setTimeout(
+        () => setAnimatingCount(null),
+        ANIMATION_CONFIG.STANDARD
+      );
       prevFilterCountsRef.current = filterCounts;
       return () => clearTimeout(timer);
     }
