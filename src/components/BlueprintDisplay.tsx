@@ -48,6 +48,8 @@ import {
   SPACING_UTILITY_PATTERNS,
   PROSE_PATTERNS,
   TYPOGRAPHY_CLASSES,
+  COMING_SOON_BADGE,
+  ANIMATION_CLASSES,
   COMMON_FLEX_BETWEEN_RESPONSIVE,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -151,9 +153,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     handleDownload();
   };
 
-  const comingSoonBadgeClass = prefersReducedMotion
-    ? ''
-    : 'animate-coming-soon-badge';
+  const comingSoonBadgeClass = prefersReducedMotion ? '' : COMING_SOON_BADGE;
 
   if (isGenerating) {
     return (
@@ -550,7 +550,7 @@ function CopyCodeButton({ text }: { text: string }) {
         >
           {copied ? (
             <svg
-              className={`${SVG_SIZES.SMD} ${prefersReducedMotion ? '' : `animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}`}`}
+              className={`${SVG_SIZES.SMD} ${prefersReducedMotion ? '' : `animate-in ${ANIMATION_CLASSES.FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT}`}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"

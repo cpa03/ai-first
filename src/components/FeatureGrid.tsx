@@ -10,7 +10,11 @@ import {
   BG_COLORS,
   ROUNDED_CLASSES,
 } from '@/lib/config/theme';
-import { CSS_CONTAINMENT } from '@/lib/config';
+import {
+  CSS_CONTAINMENT,
+  BADGE_ENTRANCE_GLOW,
+  CONNECTOR_REVEAL,
+} from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { MT_CLASSES, GAP_CLASSES } from '@/lib/config/spacing';
 import { ICON_SIZES, CONNECTOR_SIZES } from '@/lib/config/icon-sizes';
@@ -123,7 +127,7 @@ function FeatureGridComponent() {
             >
               <span
                 className={`badge-animate ${TEXT_COLORS.BRAND} text-2xl ${TYPOGRAPHY_CLASSES.BOLD} ${
-                  isVisible ? `animate-badge-entrance-glow` : 'opacity-0'
+                  isVisible ? BADGE_ENTRANCE_GLOW : 'opacity-0'
                 }`}
                 style={{
                   animationDelay: isVisible
@@ -157,7 +161,7 @@ function FeatureGridComponent() {
                   hidden md:block absolute top-1/2 -right-4 
                   ${CONNECTOR_SIZES.HORIZONTAL} ${GRADIENT_CONFIG.CONNECTOR.HORIZONTAL}
                   transform -translate-y-1/2
-                  ${isVisible ? 'animate-connector-reveal' : 'opacity-0'}
+                  ${isVisible ? CONNECTOR_REVEAL : 'opacity-0'}
                   group-hover:opacity-100 group-focus-visible:opacity-100
                   transition-opacity ${DURATION_TAILWIND[500]}
                   ${index === 0 ? ANIMATION_DELAYS.TAILWIND[200] : index === 1 ? ANIMATION_DELAYS.TAILWIND[300] : ANIMATION_DELAYS.TAILWIND[500]}
@@ -173,7 +177,7 @@ function FeatureGridComponent() {
                   md:hidden absolute left-1/2 -bottom-4
                   ${CONNECTOR_SIZES.VERTICAL} ${GRADIENT_CONFIG.CONNECTOR.VERTICAL}
                   transform -translate-x-1/2
-                  ${isVisible ? 'animate-connector-reveal' : 'opacity-0'}
+                  ${isVisible ? CONNECTOR_REVEAL : 'opacity-0'}
                   group-hover:opacity-100 group-focus-visible:opacity-100
                   transition-opacity ${DURATION_TAILWIND[500]}
                   ${index === 0 ? ANIMATION_DELAYS.TAILWIND[200] : index === 1 ? ANIMATION_DELAYS.TAILWIND[300] : ANIMATION_DELAYS.TAILWIND[500]}

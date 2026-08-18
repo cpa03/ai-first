@@ -148,6 +148,8 @@ export const TASK_ANIMATIONS = {
 
   /** Collapse content animation */
   COLLAPSE_CONTENT: 'animate-collapse-content',
+
+  TASK_UPDATING_PULSE: 'animate-task-updating-pulse',
 } as const;
 
 /**
@@ -182,10 +184,8 @@ export const MOBILE_NAV_ANIMATIONS = {
  * Animations related to scrolling behavior
  */
 export const SCROLL_ANIMATIONS = {
-  /** Scroll to top bounce animation */
   SCROLL_TO_TOP_BOUNCE: 'animate-scroll-to-top-bounce',
-
-  /** Scroll progress animation */
+  SCROLL_TO_TOP_APPEAR: 'animate-scroll-to-top-appear',
   SCROLL_PROGRESS: 'animate-scroll-progress',
 } as const;
 
@@ -230,17 +230,18 @@ export const TYPING_ANIMATIONS = {
  * Other animations used across the application
  */
 export const MISC_ANIMATIONS = {
-  /** Breathe animation (subtle pulsing effect) */
   BREATHE: 'animate-breathe',
-
-  /** Hero entrance animation (for page hero sections) */
   HERO_ENTRANCE: 'animate-hero-entrance',
-
-  /** Ripple ring animation 1 (first ring) */
   RIPPLE_RING_1: 'animate-ripple-ring-1',
-
-  /** Ripple ring animation 2 (second ring) */
   RIPPLE_RING_2: 'animate-ripple-ring-2',
+  CONNECTOR_REVEAL: 'animate-connector-reveal',
+  STRIKETHROUGH: 'animate-strikethrough',
+  PLACEHOLDER_BREATHE: 'animate-placeholder-breathe',
+  FOCUS_RING_GLOW: 'animate-focus-ring-glow',
+  COUNTER_PULSE: 'animate-counter-pulse',
+  DISCOVER_PULSE: 'animate-discover-pulse',
+  ENABLE_FEEDBACK: 'animate-enable-feedback',
+  PULSE_ONCE: 'animate-pulse-once',
 } as const;
 
 /**
@@ -315,18 +316,28 @@ export const POP = ANIMATION_CLASSES.POP;
 export const BOUNCE = ANIMATION_CLASSES.BOUNCE;
 export const PULSE = ANIMATION_CLASSES.PULSE;
 export const SPIN = ANIMATION_CLASSES.SPIN;
+export const SHAKE = ANIMATION_CLASSES.SHAKE;
 
 // UI Feedback quick access
 export const SUCCESS_CHECK = UI_FEEDBACK_ANIMATIONS.SUCCESS_CHECK;
 export const SUCCESS_POP = UI_FEEDBACK_ANIMATIONS.SUCCESS_POP;
 export const DRAW_CHECK = UI_FEEDBACK_ANIMATIONS.DRAW_CHECK;
 export const COPY_SUCCESS_GLOW = UI_FEEDBACK_ANIMATIONS.COPY_SUCCESS_GLOW;
+export const SHARE_SUCCESS_GLOW = UI_FEEDBACK_ANIMATIONS.SHARE_SUCCESS_GLOW;
+export const INPUT_VALID_CELEBRATION =
+  UI_FEEDBACK_ANIMATIONS.INPUT_VALID_CELEBRATION;
 export const FOCUS_RING = UI_FEEDBACK_ANIMATIONS.FOCUS_RING;
+export const GENTLE_PULSE = UI_FEEDBACK_ANIMATIONS.GENTLE_PULSE;
+export const STEP_CHECK_POP = UI_FEEDBACK_ANIMATIONS.STEP_CHECK_POP;
+export const COUNTER_GLOW = UI_FEEDBACK_ANIMATIONS.COUNTER_GLOW;
 
 // Task animation quick access
 export const TASK_COMPLETE = TASK_ANIMATIONS.TASK_COMPLETE;
 export const CHECKBOX_PULSE = TASK_ANIMATIONS.CHECKBOX_PULSE;
 export const DELIVERABLE_COMPLETE = TASK_ANIMATIONS.DELIVERABLE_COMPLETE;
+export const TASK_UPDATING_PULSE = TASK_ANIMATIONS.TASK_UPDATING_PULSE;
+export const EXPAND_CONTENT = TASK_ANIMATIONS.EXPAND_CONTENT;
+export const COLLAPSE_CONTENT = TASK_ANIMATIONS.COLLAPSE_CONTENT;
 
 // Celebration animation quick access
 export const COPY_CONFETTI = CELEBRATION_ANIMATIONS.COPY_CONFETTI;
@@ -336,6 +347,7 @@ export const MOBILE_MENU_ITEM = MOBILE_NAV_ANIMATIONS.MENU_ITEM;
 
 // Scroll animation quick access
 export const SCROLL_TO_TOP_BOUNCE = SCROLL_ANIMATIONS.SCROLL_TO_TOP_BOUNCE;
+export const SCROLL_TO_TOP_APPEAR = SCROLL_ANIMATIONS.SCROLL_TO_TOP_APPEAR;
 
 // Badge animation quick access
 export const BADGE_ENTRANCE_GLOW = BADGE_ANIMATIONS.BADGE_ENTRANCE_GLOW;
@@ -353,3 +365,11 @@ export const BREATHE = MISC_ANIMATIONS.BREATHE;
 export const HERO_ENTRANCE = MISC_ANIMATIONS.HERO_ENTRANCE;
 export const RIPPLE_RING_1 = MISC_ANIMATIONS.RIPPLE_RING_1;
 export const RIPPLE_RING_2 = MISC_ANIMATIONS.RIPPLE_RING_2;
+export const CONNECTOR_REVEAL = MISC_ANIMATIONS.CONNECTOR_REVEAL;
+export const STRIKETHROUGH = MISC_ANIMATIONS.STRIKETHROUGH;
+export const PLACEHOLDER_BREATHE = MISC_ANIMATIONS.PLACEHOLDER_BREATHE;
+export const FOCUS_RING_GLOW = MISC_ANIMATIONS.FOCUS_RING_GLOW;
+export const COUNTER_PULSE = MISC_ANIMATIONS.COUNTER_PULSE;
+export const DISCOVER_PULSE = MISC_ANIMATIONS.DISCOVER_PULSE;
+export const ENABLE_FEEDBACK = MISC_ANIMATIONS.ENABLE_FEEDBACK;
+export const PULSE_ONCE = MISC_ANIMATIONS.PULSE_ONCE;

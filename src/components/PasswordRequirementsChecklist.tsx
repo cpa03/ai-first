@@ -20,6 +20,10 @@ import {
   CONFETTI_DOT,
   PROGRESS_PERCENTAGE,
   TYPOGRAPHY_CLASSES,
+  CHECKLIST_ITEM,
+  REQUIREMENT_MET,
+  STRIKETHROUGH,
+  FADE_IN,
 } from '@/lib/config';
 import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
@@ -282,7 +286,7 @@ function PasswordRequirementsChecklistComponent({
               req.met
                 ? `${TEXT_COLORS.SUCCESS_DARK} font-medium`
                 : TEXT_COLORS.MUTED
-            } ${hasAppeared && !prefersReducedMotion ? `animate-checklist-item animate-checklist-item-${index + 1}` : ''} ${newlyMetIds.has(req.id) && !prefersReducedMotion ? 'animate-requirement-met' : ''}`}
+            } ${hasAppeared && !prefersReducedMotion ? `${CHECKLIST_ITEM} ${CHECKLIST_ITEM}-${index + 1}` : ''} ${newlyMetIds.has(req.id) && !prefersReducedMotion ? REQUIREMENT_MET : ''}`}
             aria-label={PASSWORD_REQUIREMENTS_LABELS.REQUIREMENT_ARIA_LABEL(
               req.label,
               req.met
@@ -325,7 +329,7 @@ function PasswordRequirementsChecklistComponent({
               )}
             </span>
             <span
-              className={`leading-none ${req.met && !prefersReducedMotion ? 'animate-strikethrough' : ''}`}
+              className={`leading-none ${req.met && !prefersReducedMotion ? STRIKETHROUGH : ''}`}
             >
               {req.label}
             </span>
@@ -334,7 +338,7 @@ function PasswordRequirementsChecklistComponent({
       </ul>
       {allMet && (
         <p
-          className={`relative text-xs ${TEXT_COLORS.SUCCESS_DARK} font-medium flex items-center gap-1.5 mt-2 ${showCompleteCelebration && !prefersReducedMotion ? 'animate-fade-in' : ''}`}
+          className={`relative text-xs ${TEXT_COLORS.SUCCESS_DARK} font-medium flex items-center gap-1.5 mt-2 ${showCompleteCelebration && !prefersReducedMotion ? FADE_IN : ''}`}
           role="status"
           aria-live="polite"
         >

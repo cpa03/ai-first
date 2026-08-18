@@ -8,6 +8,7 @@ import {
   SVG_VIEWBOX,
   TEXT_COLORS,
   TYPOGRAPHY_CLASSES,
+  PULSE_ONCE,
 } from '@/lib/config';
 import { CAPS_LOCK_WARNING_LABELS } from '@/lib/config/component-labels';
 import { FADE_IN } from '@/lib/config/animation-classes';
@@ -88,7 +89,7 @@ function CapsLockWarningComponent({
       aria-live="polite"
     >
       <svg
-        className={`${SVG_SIZES.SMD} flex-shrink-0 ${pulseOnce && !prefersReducedMotion ? 'animate-pulse-once' : ''}`}
+        className={`${SVG_SIZES.SMD} flex-shrink-0 ${pulseOnce && !prefersReducedMotion ? PULSE_ONCE : ''}`}
         fill="none"
         viewBox={SVG_VIEWBOX.STANDARD}
         stroke="currentColor"

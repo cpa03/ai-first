@@ -12,6 +12,7 @@ import {
   FOCUS_RING_OFFSET_PATTERNS,
   COMPONENT_CONFIG,
   UI_CONFIG,
+  SCROLL_TO_TOP_APPEAR,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { PLATFORM } from '@/lib/dom-utils';
@@ -134,7 +135,7 @@ function ScrollToTopButtonComponent() {
         ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} rounded-md
         inline-flex items-center gap-1.5
         group
-        ${hasAppeared && !prefersReducedMotion ? 'animate-scroll-to-top-appear' : ''}
+        ${hasAppeared && !prefersReducedMotion ? SCROLL_TO_TOP_APPEAR : ''}
       `}
       aria-label={SCROLL_TO_TOP_BUTTON_LABELS.ARIA_LABEL}
     >

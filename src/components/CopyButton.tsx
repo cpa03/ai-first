@@ -13,6 +13,7 @@ import {
   TEXT_COLORS,
   COMPONENT_STATE_COLORS,
   CONFETTI_DOT,
+  COPY_SUCCESS_GLOW,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import Tooltip from './Tooltip';
@@ -120,7 +121,7 @@ const CopyButtonComponent = function CopyButton({
     `,
   };
 
-  const glowClass = copied ? 'animate-copy-success-glow' : '';
+  const glowClass = copied ? COPY_SUCCESS_GLOW : '';
 
   return (
     <>
