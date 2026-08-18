@@ -63,6 +63,7 @@ import IdeaReadyIndicator from './IdeaReadyIndicator';
 import Tooltip from './Tooltip';
 import TypingIndicator from './TypingIndicator';
 import { useConfetti } from '@/hooks/useConfetti';
+import { RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface IdeaInputProps {
   onSubmit: (_idea: string, _ideaId: string) => void;
@@ -376,7 +377,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         />
 
         {milestoneReached && (
-          <div className="relative">
+          <div className={RELATIVE}>
             <div
               className={`flex items-center gap-2 text-sm ${TEXT_COLORS.SUCCESS_DARK} font-medium ${FADE_IN}`}
               role="status"

@@ -19,6 +19,7 @@ import {
   OVERFLOW_PATTERNS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
+import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
 function DashboardSkeletonComponent() {
   return (
@@ -28,7 +29,7 @@ function DashboardSkeletonComponent() {
       aria-live="polite"
       aria-label={DASHBOARD_LABELS.SKELETON_ARIA_LABEL}
     >
-      <span className="sr-only">{DASHBOARD_LABELS.SKELETON_SR_TEXT}</span>
+      <span className={SR_ONLY}>{DASHBOARD_LABELS.SKELETON_SR_TEXT}</span>
 
       <div className={`${FLEX_PATTERNS.RESPONSIVE_BETWEEN} ${MB_CLASSES.XXXL}`}>
         <div className={SPACE_Y_PATTERNS.SM}>

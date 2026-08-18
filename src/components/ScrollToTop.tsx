@@ -37,6 +37,7 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 import Tooltip from './Tooltip';
+import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface ScrollToTopProps {
   showAt?: number;
@@ -465,7 +466,7 @@ function ScrollToTopComponent({
             </svg>
           )}
 
-          <span className="sr-only">
+          <span className={SR_ONLY}>
             {hasReachedEnd
               ? SCROLL_TO_TOP_LABELS.SR_TEXT_REACHED_END
               : isNearTop

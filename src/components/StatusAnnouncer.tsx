@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, memo } from 'react';
 import { UI_CONFIG } from '@/lib/config/ui';
+import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface StatusAnnouncerProps {
   message: string;
@@ -50,7 +51,7 @@ function StatusAnnouncerComponent({
   return (
     <div
       ref={announcerRef}
-      className="sr-only"
+      className={SR_ONLY}
       role="status"
       aria-live={politeness}
       aria-atomic="true"

@@ -14,6 +14,7 @@ import {
 import { triggerHapticFeedback } from '@/lib/utils';
 import { FLEX_PATTERNS } from '@/lib/config/remaining-styles';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
+import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
 function WhyChooseSectionComponent() {
   const { TITLE, SECTION_STYLES, ARTICLES, ARTICLE_STYLES } = WHY_CHOOSE_CONFIG;
@@ -72,7 +73,7 @@ function WhyChooseSectionComponent() {
         role="status"
         aria-live="polite"
         aria-atomic="true"
-        className="sr-only"
+        className={SR_ONLY}
       >
         {announcement}
       </div>

@@ -9,6 +9,7 @@ import {
   INLINE_FLEX_PATTERNS,
   TYPING_DOT,
 } from '@/lib/config';
+import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface TypingIndicatorProps {
   /** Whether the user is currently typing */
@@ -106,7 +107,7 @@ function TypingIndicatorComponent({
         ))}
       </span>
       {/* Screen reader text for accessibility */}
-      <span className="sr-only">Typing...</span>
+      <span className={SR_ONLY}>Typing...</span>
     </div>
   );
 }
