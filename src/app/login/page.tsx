@@ -486,11 +486,6 @@ export default function LoginPage() {
             loading={oauthLoading === 'google'}
             loadingText={LOGIN_PAGE_CONTENT.OAUTH.GOOGLE_LOADING}
             enableTransition
-            aria-label={
-              oauthLoading === 'google'
-                ? LOGIN_PAGE_CONTENT.OAUTH.GOOGLE_LOADING_ARIA_LABEL
-                : LOGIN_PAGE_CONTENT.OAUTH.GOOGLE_ARIA_LABEL
-            }
             className="justify-center"
           >
             {oauthLoading !== 'google' && (
@@ -516,7 +511,7 @@ export default function LoginPage() {
                 />
               </svg>
             )}
-            {LOGIN_PAGE_CONTENT.OAUTH.GOOGLE}
+            {LOGIN_PAGE_CONTENT.OAUTH.GOOGLE_ARIA_LABEL}
           </Button>
 
           <Button
@@ -527,11 +522,6 @@ export default function LoginPage() {
             loading={oauthLoading === 'github'}
             loadingText={LOGIN_PAGE_CONTENT.OAUTH.GITHUB_LOADING}
             enableTransition
-            aria-label={
-              oauthLoading === 'github'
-                ? LOGIN_PAGE_CONTENT.OAUTH.GITHUB_LOADING_ARIA_LABEL
-                : LOGIN_PAGE_CONTENT.OAUTH.GITHUB_ARIA_LABEL
-            }
             className="justify-center"
           >
             {oauthLoading !== 'github' && (
@@ -547,7 +537,7 @@ export default function LoginPage() {
                 />
               </svg>
             )}
-            {LOGIN_PAGE_CONTENT.OAUTH.GITHUB}
+            {LOGIN_PAGE_CONTENT.OAUTH.GITHUB_ARIA_LABEL}
           </Button>
         </div>
 
