@@ -21,6 +21,7 @@ import {
   TEXT_ALIGNMENT,
   TYPOGRAPHY_CLASSES,
   MB_CLASSES,
+  POP,
 } from '@/lib/config';
 import { TASK_ACTION_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
 import { DASHBOARD_TAILWIND } from '@/lib/config/tailwind-arbitrary';
@@ -70,8 +71,27 @@ function TaskManagementHeaderComponent({
   const prevProgressRef = useRef(overallProgress);
   const radioGroupRef = useRef<HTMLDivElement>(null);
 
-  // Micro-UX: Fire confetti celebration when all tasks are completed (100%)
-  // Mirrors the pattern from TaskItem, IdeaInput, and CopyButton for consistent delight
+  // Micro-UX: Track filter count changes to trigger badge pop animation
+  // Provides visual feedback when counts update after filter selection
+  const [animatingCount, setAnimatingCount] = useState<string | null>(null);
+  const prevFilterCountsRef = useRef(filterCounts);
+
+  useEffect(() => {
+    const prevCounts = prevFilterCountsRef.current;
+    const changedFilter = Object.keys(filterCounts).find(
+      (key) =>
+        filterCounts[key as keyof typeof filterCounts] !==
+        prevCounts[key as keyof typeof prevCounts]
+    );
+    if (changedFilter && !prefersReducedMotion) {
+      setAnimatingCount(changedFilter);
+      const timer = setTimeout(() => setAnimatingCount(null), 300);
+      prevFilterCountsRef.current = filterCounts;
+      return () => clearTimeout(timer);
+    }
+    prevFilterCountsRef.current = filterCounts;
+  }, [filterCounts, prefersReducedMotion]);
+
   useEffect(() => {
     const justReached100 =
       overallProgress === PROGRESS_PERCENTAGE.COMPLETE &&
@@ -261,7 +281,7 @@ function TaskManagementHeaderComponent({
                     isActive
                       ? 'bg-primary-200 text-primary-800'
                       : `${GRAY_CLASSES.BG_200} ${GRAY_CLASSES.TEXT_500}`
-                  }`}
+                  } ${animatingCount === filter && !prefersReducedMotion ? POP : ''}`}
                 >
                   {count}
                 </span>
