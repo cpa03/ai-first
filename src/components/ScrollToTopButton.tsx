@@ -137,14 +137,14 @@ function ScrollToTopButtonComponent() {
         group
         ${hasAppeared && !prefersReducedMotion ? SCROLL_TO_TOP_APPEAR : ''}
       `}
-      aria-label={SCROLL_TO_TOP_BUTTON_LABELS.ARIA_LABEL}
+      aria-label={SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}
     >
       <span>{SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}</span>
       {/* Micro-UX: Persistent keyboard shortcut hint for discoverability */}
       {/* Only visible on desktop (sm+) to avoid cluttering mobile footer */}
       {/* Subtle opacity ensures it doesn't distract from the main button text */}
       <span
-        className={`hidden sm:inline-flex items-center gap-1 ${GRAY_CLASSES.TEXT_400} transition-opacity ${TRANSITION_CLASSES.DEFAULT} ${isHoveredOrFocused ? 'opacity-100' : 'opacity-60'}`}
+        className={`hidden sm:inline-flex items-center gap-1 transition-opacity ${TRANSITION_CLASSES.DEFAULT}`}
         aria-hidden="true"
       >
         <kbd
