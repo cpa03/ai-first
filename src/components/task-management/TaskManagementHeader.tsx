@@ -31,6 +31,7 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
+import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 import { MT_CLASSES } from '@/lib/config/spacing';
 
 interface TaskManagementHeaderProps {
@@ -271,7 +272,7 @@ function TaskManagementHeaderComponent({
                 }}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${TYPOGRAPHY_CLASSES.XS_MEDIUM} rounded-full ${TRANSITION_CLASSES.DEFAULT} ${
                   isActive
-                    ? `bg-primary-100 text-primary-700 ${FOCUS_RING_OFFSET_PATTERNS.FILTER_ACTIVE}`
+                    ? `${COMPONENT_PRIMARY_PATTERNS.BADGE_SECONDARY} ${FOCUS_RING_OFFSET_PATTERNS.FILTER_ACTIVE}`
                     : `${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} ${GRAY_CLASSES.HOVER_BG_100} ${GRAY_CLASSES.HOVER_TEXT_800}`
                 }`}
               >
@@ -279,7 +280,7 @@ function TaskManagementHeaderComponent({
                 <span
                   className={`ml-0.5 px-1.5 py-0.5 text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] rounded-full font-semibold ${
                     isActive
-                      ? 'bg-primary-200 text-primary-800'
+                      ? COMPONENT_PRIMARY_PATTERNS.BADGE_DARK
                       : `${GRAY_CLASSES.BG_200} ${GRAY_CLASSES.TEXT_500}`
                   } ${animatingCount === filter && !prefersReducedMotion ? POP : ''}`}
                 >

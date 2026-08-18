@@ -53,6 +53,7 @@ import {
   RESPONSIVE_FLEX_PATTERNS,
 } from '@/lib/config';
 import { SIGNUP_TIP_ITEM } from '@/lib/config/remaining-hardcoded-patterns';
+import { PRIMARY_COMBINATIONS } from '@/lib/config/primary-colors';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
 import { useScrollToError } from '@/hooks/useScrollToError';
@@ -634,7 +635,7 @@ export default function SignupPage() {
           </p>
           <Link
             href={ROUTES.LOGIN}
-            className={`inline-block font-medium text-primary-600 hover:text-primary-500 ${PRIMARY_FOCUS_RING} rounded ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+            className={`inline-block font-medium ${PRIMARY_COMBINATIONS.LINK_HOVER_LIGHT} ${PRIMARY_FOCUS_RING} rounded ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           >
             {SIGNUP_PAGE_CONTENT.SUCCESS.RETURN_LINK}
           </Link>

@@ -48,6 +48,11 @@ import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useFocusManagement } from '@/hooks/useAnnouncement';
 import { RELATIVE, MX_SMALL } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  PRIMARY_TEXT,
+  PRIMARY_RING,
+  COMPONENT_PRIMARY_PATTERNS,
+} from '@/lib/config/primary-colors';
 
 const { CONTEXT_LABELS, CONTEXT_ORDER, SHORTCUT_DESCRIPTIONS } =
   KEYBOARD_SHORTCUTS_HELP_LABELS;
@@ -430,7 +435,7 @@ const ShortcutRow = memo(function ShortcutRow({
       }`}
     >
       <span
-        className={`text-sm ${TRANSITION_CLASSES.COLOR} ${isSelected ? 'text-primary-700 font-medium' : `${TEXT_COLORS.SECONDARY} group-hover:${TEXT_COLORS.PRIMARY}`}`}
+        className={`text-sm ${TRANSITION_CLASSES.COLOR} ${isSelected ? `${PRIMARY_TEXT._700} font-medium` : `${TEXT_COLORS.SECONDARY} group-hover:${TEXT_COLORS.PRIMARY}`}`}
       >
         <HighlightedText text={shortcut.description} query={searchQuery} />
       </span>
@@ -786,14 +791,14 @@ function KeyboardShortcutsHelpComponent({
                 onChange={(e) =>
                   updatePreferences({ vimMode: e.target.checked })
                 }
-                className={`rounded ${BORDER_COLORS.DEFAULT} text-primary-600 focus:ring-primary-500`}
+                className={`rounded ${BORDER_COLORS.DEFAULT} ${PRIMARY_TEXT._600} ${PRIMARY_RING.FOCUS_500}`}
               />
               {KEYBOARD_SHORTCUTS_MESSAGES.VIM_MODE_LABEL}
             </label>
             <div className={FLEX_PATTERNS.GAP_MD}>
               {searchQuery && (
                 <span
-                  className={`text-xs text-primary-600 font-medium px-2 py-0.5 bg-primary-50 rounded-full`}
+                  className={COMPONENT_PRIMARY_PATTERNS.SEARCH_RESULT_BADGE}
                   aria-live="polite"
                   aria-atomic="true"
                 >
@@ -817,7 +822,7 @@ function KeyboardShortcutsHelpComponent({
           <div className={FLEX_PATTERNS.GAP_LG}>
             <div className={KEYBOARD_SHORTCUT_CATEGORY_ICON}>
               <svg
-                className={`${ICON_SIZES.LG} text-primary-600`}
+                className={`${ICON_SIZES.LG} ${COMPONENT_PRIMARY_PATTERNS.CATEGORY_ICON}`}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"

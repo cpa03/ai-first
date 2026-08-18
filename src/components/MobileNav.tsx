@@ -38,6 +38,7 @@ import { MOBILE_NAV_LABELS } from '@/lib/config/component-labels';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 
 const navLinks = MOBILE_NAV_CONFIG.ITEMS;
 
@@ -218,9 +219,9 @@ function MobileNavComponent() {
                   className={`
                     px-4 py-3 text-sm sm:text-base font-medium
                     ${TRANSITION_CLASSES.SLOW} ease-out
-                    border-b-2                     ${active ? 'border-primary-600 text-primary-600' : `border-transparent ${GRAY_CLASSES.TEXT_800} hover:text-primary-600 hover:border-primary-300`}
+                    border-b-2                     ${active ? COMPONENT_PRIMARY_PATTERNS.NAV_ACTIVE_LINK : `border-transparent ${GRAY_CLASSES.TEXT_800} ${COMPONENT_PRIMARY_PATTERNS.NAV_HOVER}`}
                     ${FOCUS_RING_PATTERNS.DEFAULT} rounded-t-md ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} inline-flex items-center
-                    ${active ? 'bg-primary-50/30' : `${GRAY_CLASSES.HOVER_BG_50}`}
+                    ${active ? COMPONENT_PRIMARY_PATTERNS.NAV_ACTIVE_BG : `${GRAY_CLASSES.HOVER_BG_50}`}
                   `}
                   aria-label={link.ariaLabel}
                   aria-current={active ? 'page' : undefined}

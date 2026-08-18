@@ -68,6 +68,7 @@ import {
   CLARIFICATION_ELEMENT_IDS,
   ARIA_HEADING_IDS,
 } from '@/lib/config/element-ids';
+import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -759,7 +760,7 @@ function ClarificationFlow({
                   <span
                     className={`transition-all ${DURATION_TAILWIND[300]} ${
                       estimatePulse
-                        ? `text-primary-600 font-medium ${ANIMATION_VALUES.SCALE_CLASSES.LARGE}`
+                        ? `${COMPONENT_PRIMARY_PATTERNS.CLARIFICATION_ACTIVE} ${ANIMATION_VALUES.SCALE_CLASSES.LARGE}`
                         : ''
                     }`}
                   >

@@ -66,6 +66,10 @@ import {
   DASHBOARD_FILTER_BADGE_INACTIVE,
   TABULAR_NUMS_MEDIUM,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  PRIMARY_RING,
+  COMPONENT_PRIMARY_PATTERNS,
+} from '@/lib/config/primary-colors';
 import type { ComponentConfig } from '@/lib/config/components';
 import {
   DASHBOARD_ELEMENT_IDS,
@@ -743,7 +747,7 @@ export default function DashboardPage() {
                 triggerHapticFeedback();
                 setFilter(e.target.value);
               }}
-              className={`block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer ${FOCUS_RING} transition-all ${DURATION_TAILWIND[200]} ${
+              className={`block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg focus:ring-2 ${PRIMARY_RING.FOCUS_500} focus:border-primary-500 cursor-pointer ${FOCUS_RING} transition-all ${DURATION_TAILWIND[200]} ${
                 filter !== 'all'
                   ? DASHBOARD_PATTERNS.FILTER_ACTIVE
                   : DASHBOARD_PATTERNS.FILTER_INACTIVE
@@ -1018,7 +1022,7 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.STANDARD }}
                 >
                   <div
-                    className={`${DASHBOARD_PATTERNS.STEP_ICON} bg-primary-50 border border-primary-200 ${prefersReducedMotion ? '' : ANIMATION_DELAYS.CSS_CLASSES.FLOAT_DELAY_1}`}
+                    className={`${DASHBOARD_PATTERNS.STEP_ICON} ${COMPONENT_PRIMARY_PATTERNS.DASHBOARD_STEP_ICON} ${prefersReducedMotion ? '' : ANIMATION_DELAYS.CSS_CLASSES.FLOAT_DELAY_1}`}
                   >
                     <svg
                       className={`${DASHBOARD_PATTERNS.STEP_ICON_SIZE} ${TEXT_COLORS.BRAND_LIGHT}`}

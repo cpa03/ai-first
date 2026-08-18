@@ -26,6 +26,7 @@ import { useConfetti } from '@/hooks/useConfetti';
 import { useToast } from '@/hooks/useAnnouncement';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
+import { PRIMARY_COMBINATIONS } from '@/lib/config/primary-colors';
 
 export interface ShareButtonProps {
   shareUrl?: string;
@@ -214,7 +215,7 @@ const ShareButtonComponent = function ShareButton({
     `,
     'icon-only': `
       p-1.5
-      ${TEXT_COLORS.MUTED} hover:text-primary-600 hover:bg-primary-50
+      ${TEXT_COLORS.MUTED} ${PRIMARY_COMBINATIONS.INTERACTIVE_HOVER}
       ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.ICON_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-full
       ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.COMPACT}

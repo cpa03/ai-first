@@ -38,6 +38,7 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 import Tooltip from './Tooltip';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 
 interface ScrollToTopProps {
   showAt?: number;
@@ -360,8 +361,8 @@ function ScrollToTopComponent({
             rounded-full ${SHADOW_CLASSES.LARGE}
             border ${BORDER_COLORS.LIGHT}
             ${TRANSITION_CLASSES.SLOW} ease-out
-            ${GRAY_CLASSES.HOVER_BG_50} hover:text-primary-600 hover:${SHADOW_CLASSES.EXTRA_LARGE} hover:scale-110
-            hover:border-primary-200
+            ${GRAY_CLASSES.HOVER_BG_50} ${COMPONENT_PRIMARY_PATTERNS.SCROLL_TO_TOP_HOVER} hover:${SHADOW_CLASSES.EXTRA_LARGE} hover:scale-110
+            ${COMPONENT_PRIMARY_PATTERNS.SCROLL_TO_TOP_BORDER_HOVER}
             ${FOCUS_RING_OFFSET_PATTERNS.LARGE}
             focus-visible:scale-110
             active:scale-95
