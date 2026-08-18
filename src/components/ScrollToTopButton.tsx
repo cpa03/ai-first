@@ -18,6 +18,7 @@ import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { PLATFORM } from '@/lib/dom-utils';
 import { SCROLL_TO_TOP_BUTTON_LABELS } from '@/lib/config/component-labels';
 import Tooltip from './Tooltip';
+import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 
 /**
  * ScrollToTopButton - Footer scroll-to-top link
@@ -131,7 +132,7 @@ function ScrollToTopButtonComponent() {
       className={`
         text-sm ${GRAY_CLASSES.TEXT_500}
         ${TRANSITION_CLASSES.COLOR} ease-out
-        hover:text-primary-600
+        ${COMPONENT_PRIMARY_PATTERNS.SCROLL_TO_TOP_HOVER}
         ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} rounded-md
         inline-flex items-center gap-1.5
         group

@@ -19,6 +19,7 @@ import {
 import { triggerHapticFeedback } from '@/lib/utils';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 
 interface FooterNavColumn {
   readonly title: string;
@@ -173,7 +174,7 @@ function FooterNavComponent({ columns }: FooterNavProps) {
                         ${FOOTER_NAV_STYLES.LINK_TEXT} ${DURATION_TAILWIND[200]}
                         ${PRIMARY_FOCUS_RING} rounded-md
                         ${FOOTER_NAV_STYLES.LINK_CONTAINER}
-                        ${active ? 'text-primary-600 font-semibold' : `${GRAY_CLASSES.TEXT_600} hover:text-primary-600 hover:translate-x-1 motion-reduce:hover:transform-none`}
+                        ${active ? COMPONENT_PRIMARY_PATTERNS.FOOTER_ACTIVE : `${GRAY_CLASSES.TEXT_600} ${COMPONENT_PRIMARY_PATTERNS.FOOTER_HOVER} hover:translate-x-1 motion-reduce:hover:transform-none`}
                         ${focusedIndex === globalIndex ? FOCUS_RING_OFFSET_PATTERNS.NAVIGATION_FOCUSED : ''}
                       `}
                       aria-label={item.ariaLabel}

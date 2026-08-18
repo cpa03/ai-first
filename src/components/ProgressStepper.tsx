@@ -28,6 +28,7 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { SR_ONLY, HIDDEN_SM } from '@/lib/config/remaining-hardcoded-patterns';
+import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 
 interface Step {
   id: string;
@@ -271,12 +272,12 @@ const ProgressStepperComponent = function ProgressStepper({
                       ${ICON_SIZES.XXXL} rounded-full border-2
                       font-medium text-sm ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE}
                       ${TRANSITION_CLASSES.SLOW}
-                      ${isClickable ? 'group-hover:scale-110 group-hover:shadow-md group-hover:border-primary-400 group-hover:shadow-primary-200/50 group-focus-visible:ring-2 group-focus-visible:ring-primary-500 group-focus-visible:ring-offset-2' : ''}
+                      ${isClickable ? `group-hover:scale-110 group-hover:shadow-md ${COMPONENT_PRIMARY_PATTERNS.PROGRESS_HOVER} group-focus-visible:ring-2 ${COMPONENT_PRIMARY_PATTERNS.PROGRESS_FOCUS} group-focus-visible:ring-offset-2` : ''}
                       ${
                         step.completed
-                          ? `border-primary-600 ${BG_COLORS.BRAND} text-white`
+                          ? `${COMPONENT_PRIMARY_PATTERNS.ACTIVE_STEP} ${BG_COLORS.BRAND} text-white`
                           : step.current
-                            ? `border-primary-600 text-primary-600 ${GENTLE_PULSE}`
+                            ? `${COMPONENT_PRIMARY_PATTERNS.ACTIVE_STEP_OUTLINE} ${GENTLE_PULSE}`
                             : `${BORDER_COLOR_CLASSES.DEFAULT} ${TEXT_COLOR_CLASSES.MUTED}`
                       }
                     `}

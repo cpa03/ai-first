@@ -29,6 +29,7 @@ import {
   ARIA_HEADING_IDS,
 } from '@/lib/config/element-ids';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
 function FeatureGridComponent() {
@@ -141,7 +142,7 @@ function FeatureGridComponent() {
             </div>
 
             <h3
-              className={`${TYPOGRAPHY_CLASSES.LG_SEMIBOLD} ${TEXT_COLORS.PRIMARY} mb-2 group-hover:text-primary-700 transition-colors ${DURATION_TAILWIND[300]}`}
+              className={`${TYPOGRAPHY_CLASSES.LG_SEMIBOLD} ${TEXT_COLORS.PRIMARY} mb-2 ${COMPONENT_PRIMARY_PATTERNS.FEATURE_HOVER} transition-colors ${DURATION_TAILWIND[300]}`}
             >
               {feature.title}
             </h3>

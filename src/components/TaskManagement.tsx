@@ -35,6 +35,7 @@ import {
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { ABSOLUTE_CENTER_OVERLAY } from '@/lib/config/remaining-hardcoded-patterns';
+import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 import type { Task } from '@/lib/db';
 
 interface TaskManagementProps {
@@ -292,7 +293,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
             <div className={PRIMARY_PULSE_INNER} />
             <div className={ABSOLUTE_CENTER_OVERLAY}>
               <svg
-                className={`${ICON_SIZES.XXXL} text-primary-500`}
+                className={`${ICON_SIZES.XXXL} ${COMPONENT_PRIMARY_PATTERNS.TASK_ICON}`}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"
@@ -320,7 +321,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
             className={`${LAYOUT_CLASSES.FLEX_ROW} gap-2 ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${BG_COLOR_CLASSES.PAGE} px-4 py-2 ${ROUNDED_CLASSES.LARGE}`}
           >
             <svg
-              className={`${ICON_SIZES.MD} text-primary-500 flex-shrink-0`}
+              className={`${ICON_SIZES.MD} ${COMPONENT_PRIMARY_PATTERNS.TASK_ICON} flex-shrink-0`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -394,7 +395,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
               <div className={PRIMARY_PULSE_INNER} />
               <div className={ABSOLUTE_CENTER_OVERLAY}>
                 <svg
-                  className={`${ICON_SIZES.XXL} text-primary-400`}
+                  className={`${ICON_SIZES.XXL} ${COMPONENT_PRIMARY_PATTERNS.TASK_ICON_LARGE}`}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"

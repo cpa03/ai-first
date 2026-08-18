@@ -36,6 +36,7 @@ import {
 import { CONTAINER_WIDTH_CLASSES } from '@/lib/config/ui-dimensions';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { COORDINATE_POSITION_PATTERNS } from '@/lib/config/positioning';
+import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 import {
   MT_CLASSES,
   MB_CLASSES,
@@ -409,7 +410,7 @@ export default function UserOnboarding() {
 
       {/* Highlighted area indicator (simplified) */}
       <div
-        className={`fixed pointer-events-none z-[${Z_INDEX_LAYERS.CONTENT}] border-2 border-primary-500 rounded-lg transition-all ${DURATION_TAILWIND[300]}`}
+        className={`fixed pointer-events-none z-[${Z_INDEX_LAYERS.CONTENT}] ${COMPONENT_PRIMARY_PATTERNS.ONBOARDING_SPOTLIGHT} transition-all ${DURATION_TAILWIND[300]}`}
         style={{
           opacity: 0,
         }}

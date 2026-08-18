@@ -1126,3 +1126,22 @@ export {
   INTERSECTION_OBSERVER_CONFIG,
   type IntersectionObserverConfig,
 } from './intersection-observer';
+
+// Primary Color Patterns Configuration
+// Centralizes all hardcoded primary color Tailwind classes used throughout components
+export {
+  PRIMARY_TEXT,
+  PRIMARY_BG,
+  PRIMARY_BORDER,
+  PRIMARY_RING,
+  PRIMARY_COLOR_PATTERNS,
+  PRIMARY_COMBINATIONS,
+  COMPONENT_PRIMARY_PATTERNS,
+  type PrimaryText,
+  type PrimaryBg,
+  type PrimaryBorder,
+  type PrimaryRing,
+  type PrimaryColorPatterns,
+  type PrimaryCombinations,
+  type ComponentPrimaryPatterns,
+} from './primary-colors';
