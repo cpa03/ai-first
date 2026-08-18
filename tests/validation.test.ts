@@ -5,6 +5,7 @@ import {
   validateUserResponses,
   validateRequestSize,
   sanitizeString,
+  sanitizeObject,
   buildErrorResponse,
   MAX_IDEA_LENGTH,
   MIN_IDEA_LENGTH,
@@ -202,6 +203,86 @@ describe('validateIdea', () => {
       const result = validateIdeaToMessage(123);
       expect(result).toBe('Idea is required and must be a string');
     });
+  });
+});
+
+describe('sanitizeObject', () => {
+  it('should return null and undefined inputs unchanged', () => {
+    expect(sanitizeObject(null)).toBeNull();
+    expect(sanitizeObject(undefined)).toBeUndefined();
+  });
+
+  it('should sanitize individual strings', () => {
+    expect(sanitizeObject('<script>alert(1)</script>hello')).toBe('hello');
+    expect(sanitizeObject('plain text')).toBe('plain text');
+  });
+
+  it('should preserve reference for clean objects (copy-on-change optimization)', () => {
+    const cleanObject = {
+      title: 'Valid title',
+      count: 42,
+      active: true,
+      tags: ['tag1', 'tag2', 'tag3'],
+      metadata: {
+        nestedKey: 'safe value',
+        num: 100,
+      },
+    };
+
+    const result = sanitizeObject(cleanObject);
+
+    // Reference equality checks: verify zero allocations occurred
+    expect(result).toBe(cleanObject);
+    expect(result.tags).toBe(cleanObject.tags);
+    expect(result.metadata).toBe(cleanObject.metadata);
+  });
+
+  it('should sanitize unsafe strings in objects while preserving safe unchanged properties', () => {
+    const input = {
+      safeTitle: 'Safe Title',
+      unsafeField: '<script>alert("xss")</script>Clean Value',
+      numeric: 123,
+    };
+
+    const result = sanitizeObject(input);
+
+    expect(result).not.toBe(input);
+    expect(result.safeTitle).toBe('Safe Title');
+    expect(result.unsafeField).toBe('Clean Value');
+    expect(result.numeric).toBe(123);
+  });
+
+  it('should sanitize unsafe strings in arrays using copy-on-change', () => {
+    const cleanArray = ['a', 'b', 'c', 123, true];
+    const cleanResult = sanitizeObject(cleanArray);
+    expect(cleanResult).toBe(cleanArray);
+
+    const dirtyArray = ['safe', '<script>bad()</script>good', 'safe2'];
+    const dirtyResult = sanitizeObject(dirtyArray);
+
+    expect(dirtyResult).not.toBe(dirtyArray);
+    expect(dirtyResult).toEqual(['safe', 'good', 'safe2']);
+  });
+
+  it('should handle deeply nested mixed objects and arrays', () => {
+    const complex = {
+      id: 'task-1',
+      details: {
+        description: 'Plain description',
+        comments: [
+          { author: 'Alice', text: 'Looks good' },
+          { author: 'Bob', text: '<img src=x onerror=alert(1)>Malicious' },
+        ],
+      },
+    };
+
+    const result = sanitizeObject(complex);
+
+    expect(result.id).toBe('task-1');
+    expect(result.details.description).toBe('Plain description');
+    expect(result.details.comments[0].text).toBe('Looks good');
+    expect(result.details.comments[1].text).not.toContain('<img');
+    expect(result.details.comments[1].text).toContain('Malicious');
   });
 });
 
