@@ -165,12 +165,23 @@ function SectionIndicatorComponent({
     [prefersReducedMotion]
   );
 
-  if (!isVisible || sections.length === 0) return null;
+  if (sections.length === 0) return null;
 
   return (
     <nav
       className={`fixed left-4 top-1/2 -translate-y-1/2 z-${Z_INDEX_LAYERS.TOAST} ${className}`}
       aria-label={SECTION_INDICATOR_LABELS.NAV_ARIA_LABEL}
+      aria-hidden={!isVisible}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible
+          ? 'translateY(-50%) translateX(0)'
+          : 'translateY(-50%) translateX(-8px)',
+        pointerEvents: isVisible ? 'auto' : 'none',
+        transition: prefersReducedMotion
+          ? 'opacity 0.15s ease, transform 0.15s ease'
+          : 'opacity 0.3s ease, transform 0.3s ease',
+      }}
     >
       <div
         className={`
