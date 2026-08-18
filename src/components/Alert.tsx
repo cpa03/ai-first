@@ -228,7 +228,7 @@ const AlertComponent = function Alert({
     }
     // Micro-UX: Show keyboard shortcut hints when alert is hovered
     // Helps users discover shortcuts without cluttering the UI permanently
-    if (onClose && !prefersReducedMotion) {
+    if (onClose) {
       setShowShortcutHint(true);
     }
   };
@@ -249,7 +249,7 @@ const AlertComponent = function Alert({
     }
     // Micro-UX: Show keyboard shortcut hints when alert is focused
     // Critical for keyboard-only users to discover shortcuts (d=dismiss, s=snooze)
-    if (onClose && !prefersReducedMotion) {
+    if (onClose) {
       setShowShortcutHint(true);
     }
   };
@@ -269,7 +269,7 @@ const AlertComponent = function Alert({
       role="alert"
       tabIndex={0}
       aria-live={type === 'error' ? 'assertive' : 'polite'}
-      aria-label={`${type} alert. ${ALERT_LABELS.SNOOZE_SHORTCUT_HINT}. ${ALERT_LABELS.DISMISS_SHORTCUT_HINT}`}
+      aria-label={`${type} alert.${shouldAutoDismiss ? ` ${ALERT_LABELS.SNOOZE_SHORTCUT_HINT}.` : ''}${onClose ? ` ${ALERT_LABELS.DISMISS_SHORTCUT_HINT}` : ''}`}
       className={`
         ${styles.container} ${ALERT_BASE_STYLES.container}
         ${ALERT_BASE_STYLES.transition}
