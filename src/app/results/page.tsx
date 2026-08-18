@@ -93,7 +93,11 @@ const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
 
 const Alert = dynamic(() => import('@/components/Alert'), {
   ssr: false,
-  loading: () => <div className={LOADING_PATTERNS.ROUNDED}>Loading...</div>,
+  loading: () => (
+    <div className={LOADING_PATTERNS.ROUNDED}>
+      {RESULTS_PAGE_CONTENT.LOADING_SHORT}
+    </div>
+  ),
 });
 
 const Tooltip = dynamic(() => import('@/components/Tooltip'), {
@@ -104,7 +108,7 @@ const ShareButton = dynamic(() => import('@/components/ShareButton'), {
   ssr: false,
   loading: () => (
     <button className={SPINNER_PATTERNS.placeholder.container}>
-      Loading...
+      {RESULTS_PAGE_CONTENT.LOADING_SHORT}
     </button>
   ),
 });
@@ -113,7 +117,7 @@ const EmailButton = dynamic(() => import('@/components/EmailButton'), {
   ssr: false,
   loading: () => (
     <button className={SPINNER_PATTERNS.placeholder.container}>
-      Loading...
+      {RESULTS_PAGE_CONTENT.LOADING_SHORT}
     </button>
   ),
 });
@@ -498,7 +502,7 @@ function ResultsContent() {
           behavior: prefersReducedMotion ? 'auto' : 'smooth',
           block: 'center',
         });
-      }, 100);
+      }, COMPONENT_CONFIG.DELIVERABLE_CARD.EXPAND_SCROLL_DELAY_MS);
       return () => clearTimeout(timer);
     }
   }, [showExportSuccess, prefersReducedMotion]);
