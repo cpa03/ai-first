@@ -36,6 +36,7 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { ABSOLUTE_CENTER_FLEX_COL } from '@/lib/config/remaining-hardcoded-patterns';
+import { RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface StepCelebrationProps {
   stepNumber: number;
@@ -190,7 +191,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
               />
             ))}
 
-          <div className="relative">
+          <div className={RELATIVE}>
             <svg
               className={`${COMPONENT_CONFIG.STEP_CELEBRATION.CONTAINER_SIZE} -rotate-90`}
               viewBox={`0 0 ${COMPONENT_CONFIG.STEP_CELEBRATION.VIEWBOX_SIZE} ${COMPONENT_CONFIG.STEP_CELEBRATION.VIEWBOX_SIZE}`}

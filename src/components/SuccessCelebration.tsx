@@ -19,6 +19,7 @@ import {
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 
 // PERFORMANCE: Flatten particle interface to reduce object allocations per frame
 // velocity.x -> vx, velocity.y -> vy
@@ -152,7 +153,7 @@ function SuccessCelebrationComponent({
       aria-hidden="true"
       role="presentation"
     >
-      <div className="relative">
+      <div className={RELATIVE}>
         <div
           className={`${ICON_SIZES.MASSIVE} rounded-full ${COMPONENT_STATE_COLORS.CELEBRATION.CIRCLE_BG} flex items-center justify-center shadow-lg ${
             shouldAnimate ? SUCCESS_POP : ''

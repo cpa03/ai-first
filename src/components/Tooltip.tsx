@@ -30,6 +30,7 @@ const VIEWPORT_PADDING = TOOLTIP_CONFIG.VIEWPORT_PADDING;
 const TRIGGER_SPACING = TOOLTIP_CONFIG.TRIGGER_SPACING;
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { PLATFORM } from '@/lib/dom-utils';
+import { RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -300,7 +301,7 @@ function TooltipComponent({
           `}
           style={tooltipStyle}
         >
-          <div className="relative">
+          <div className={RELATIVE}>
             <div
               className={`
                 ${TOOLTIP_CONFIG.CONTENT_PADDING} ${BG_COLORS.DARKER} text-white text-xs font-medium rounded-md

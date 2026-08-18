@@ -24,6 +24,7 @@ import {
   SKELETON_FULL_THIRD,
   FLEX_1,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
 /**
  * TaskManagementSkeleton - Skeleton loading state for TaskManagement component
@@ -47,7 +48,7 @@ function TaskManagementSkeletonComponent() {
       aria-live="polite"
       aria-label={TASK_MANAGEMENT_LABELS.SKELETON_ARIA_LABEL}
     >
-      <span className="sr-only">{TASK_MANAGEMENT_LABELS.SKELETON_SR_TEXT}</span>
+      <span className={SR_ONLY}>{TASK_MANAGEMENT_LABELS.SKELETON_SR_TEXT}</span>
 
       {/* Header skeleton - mirrors TaskManagementHeader layout */}
       <div className={CARD_PATTERNS.BASE}>

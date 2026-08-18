@@ -27,6 +27,7 @@ import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
+import { SR_ONLY, HIDDEN_SM } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface Step {
   id: string;
@@ -178,7 +179,7 @@ const ProgressStepperComponent = function ProgressStepper({
       aria-label={PROGRESS_STEPPER_LABELS.NAV_ARIA_LABEL}
       role="navigation"
     >
-      <div className="sm:hidden">
+      <div className={HIDDEN_SM}>
         <div className={`${FLEX_PATTERNS.BETWEEN} px-2`}>
           <ol className={PROGRESS_STEPPER_STYLES.MOBILE_STEP_LIST}>
             {steps.map((step, index) => {
@@ -353,7 +354,7 @@ const ProgressStepperComponent = function ProgressStepper({
           steps.length,
           progressPercentage
         )}
-        className="sr-only"
+        className={SR_ONLY}
       />
       {/* Micro-UX: Keyboard navigation hints for step navigation */}
       {onStepClick && steps.length > 1 && (

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, memo } from 'react';
+import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface LoadingAnnouncerProps {
   message: string;
@@ -27,7 +28,7 @@ function LoadingAnnouncerComponent({
   return (
     <div
       ref={announcerRef}
-      className="sr-only"
+      className={SR_ONLY}
       role="status"
       aria-live={ariaLive}
       aria-atomic="true"

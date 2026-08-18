@@ -47,6 +47,7 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useFocusManagement } from '@/hooks/useAnnouncement';
+import { RELATIVE, MX_SMALL } from '@/lib/config/remaining-hardcoded-patterns';
 
 const { CONTEXT_LABELS, CONTEXT_ORDER, SHORTCUT_DESCRIPTIONS } =
   KEYBOARD_SHORTCUTS_HELP_LABELS;
@@ -722,7 +723,7 @@ function KeyboardShortcutsHelpComponent({
         <div
           className={`px-6 py-3 border-b ${BORDER_COLORS.DEFAULT} ${BG_COLORS.LIGHT}`}
         >
-          <div className="relative">
+          <div className={RELATIVE}>
             <svg
               className={`absolute left-3 top-1/2 -translate-y-1/2 ${ICON_SIZES.MD} ${TEXT_COLORS.SECONDARY}`}
               fill="none"
@@ -840,7 +841,7 @@ function KeyboardShortcutsHelpComponent({
                 {KEYBOARD_SHORTCUTS_MESSAGES.CLOSE_INSTRUCTION.split('Esc')[0]}
                 <KeyboardKey>Esc</KeyboardKey>
                 {KEYBOARD_SHORTCUTS_MESSAGES.CLOSE_INSTRUCTION.split('Esc')[1]}
-                <span className="mx-1.5">
+                <span className={MX_SMALL}>
                   {KEYBOARD_SHORTCUTS_HELP_LABELS.SEPARATOR}
                 </span>
                 Press <KeyboardKey>?</KeyboardKey> to open

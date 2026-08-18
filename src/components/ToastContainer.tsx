@@ -33,6 +33,7 @@ import {
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { SWIPE_PROGRESS_BAR } from '@/lib/config/remaining-hardcoded-patterns';
 import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
+import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 
@@ -321,7 +322,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
           />
         </svg>
       </button>
-      <span className="sr-only">
+      <span className={SR_ONLY}>
         {TOAST_CONTAINER_LABELS.DISMISS_INSTRUCTION}
       </span>
       {showShortcutHint && !prefersReducedMotion && (

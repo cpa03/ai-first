@@ -28,6 +28,7 @@ import {
   HOME_PAGE_ELEMENT_IDS,
   ARIA_HEADING_IDS,
 } from '@/lib/config/element-ids';
+import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
 function FeatureGridComponent() {
@@ -75,7 +76,7 @@ function FeatureGridComponent() {
       className={MT_CLASSES.XXXXL}
       style={CSS_CONTAINMENT.LAYOUT}
     >
-      <h2 id={HOME_PAGE_ELEMENT_IDS.HOW_IT_WORKS_HEADING} className="sr-only">
+      <h2 id={HOME_PAGE_ELEMENT_IDS.HOW_IT_WORKS_HEADING} className={SR_ONLY}>
         How It Works
       </h2>
       <ul
@@ -220,7 +221,7 @@ function FeatureGridComponent() {
         role="status"
         aria-live="polite"
         aria-atomic="true"
-        className="sr-only"
+        className={SR_ONLY}
       >
         {announcement}
       </div>

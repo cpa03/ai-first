@@ -15,6 +15,7 @@ import {
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { LOADING_SPINNER_ELAPSED_TEXT } from '@/lib/config/remaining-hardcoded-patterns';
+import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface LoadingSpinnerProps {
@@ -156,7 +157,7 @@ function LoadingSpinnerComponent({
       aria-live={COMPONENT_CONFIG.ARIA.POLITE}
       aria-label={ariaLabel}
     >
-      <span className="sr-only">{ariaLabel}</span>
+      <span className={SR_ONLY}>{ariaLabel}</span>
       {!prefersReducedMotion && (
         <div
           className={LOADING_SPINNER_RIPPLE}

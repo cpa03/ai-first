@@ -28,6 +28,7 @@ import {
 import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { FLEX_PATTERNS } from '@/lib/config/remaining-styles';
+import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 interface PasswordRequirement {
@@ -244,7 +245,7 @@ function PasswordRequirementsChecklistComponent({
         role="status"
         aria-live="polite"
         aria-atomic="true"
-        className="sr-only"
+        className={SR_ONLY}
       >
         {announcement}
       </div>

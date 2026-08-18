@@ -62,6 +62,7 @@ import { createLogger } from '@/lib/logger';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { PLATFORM } from '@/lib/dom-utils';
 import { KEYBOARD_HINT_INLINE } from '@/lib/config/remaining-hardcoded-patterns';
+import { RELATIVE_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -413,7 +414,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 
         <div className={SPACING_UTILITY_PATTERNS.RESPONSIVE_P}>
           <div className={PROSE_PATTERNS.RESPONSIVE}>
-            <div className="relative group">
+            <div className={RELATIVE_GROUP}>
               <pre
                 className={`${TEXT_FORMAT_PATTERNS.WHITESPACE_PRE_WRAP} ${TEXT_FORMAT_PATTERNS.FONT_MONO} text-xs sm:text-sm ${TEXT_COLOR_CLASSES.INPUT} ${BG_COLOR_CLASSES.PAGE} p-4 sm:p-6 rounded-lg ${OVERFLOW_PATTERNS.X_AUTO}`}
                 aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_CONTENT}

@@ -36,6 +36,7 @@ import {
   RESPONSIVE_WIDTH_WITH_MARGIN,
   INLINE_FLEX_RELATIVE,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 
 /**
@@ -215,7 +216,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             <div
               className={`${CONTAINER_WIDTHS.SM} w-full ${CARD_PATTERNS.BASE}`}
             >
-              <div role="alert" aria-live="assertive" className="sr-only">
+              <div role="alert" aria-live="assertive" className={SR_ONLY}>
                 {MESSAGES.ERROR_BOUNDARY.DESCRIPTION}{' '}
                 {this.state.error?.message}
               </div>

@@ -510,6 +510,42 @@ export const CENTER_INLINE_FLEX =
 export const FLEX_CENTER = 'flex justify-center items-center';
 
 /**
+ * Screen reader only class
+ * Used in: ClarificationFlow, TaskItem, ScrollToTop, TypingIndicator, BlueprintDisplay, FeatureGrid, ToastContainer, SuccessCelebration, ErrorBoundary, StepCelebration, Tooltip, SectionIndicator, ProgressStepper, TaskManagementSkeleton, WhyChooseSection, PasswordRequirementsChecklist, IdeaInput, LoadingSpinner, InputWithValidation, StatusAnnouncer, DashboardSkeleton, LoadingAnnouncer, KeyboardShortcutsHelp
+ */
+export const SR_ONLY = 'sr-only';
+
+/**
+ * Relative positioning
+ * Used in: ClarificationFlow, TaskItem, ScrollToTop, SuccessCelebration, StepCelebration, Tooltip, IdeaInput, InputWithValidation, KeyboardShortcutsHelp
+ */
+export const RELATIVE = 'relative';
+
+/**
+ * Relative positioning with group hover
+ * Used in: TaskItem, BlueprintDisplay
+ */
+export const RELATIVE_GROUP = 'relative group';
+
+/**
+ * Hidden on small screens
+ * Used in: ProgressStepper
+ */
+export const HIDDEN_SM = 'sm:hidden';
+
+/**
+ * Pointer events none
+ * Used in: InputWithValidation
+ */
+export const POINTER_EVENTS_NONE = 'pointer-events-none';
+
+/**
+ * Small horizontal margin
+ * Used in: KeyboardShortcutsHelp
+ */
+export const MX_SMALL = 'mx-1.5';
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -570,4 +606,10 @@ export const REMAINING_PATTERNS = {
   INLINE_FLEX_ITEMS_CENTER,
   CENTER_INLINE_FLEX,
   FLEX_CENTER,
+  SR_ONLY,
+  RELATIVE,
+  RELATIVE_GROUP,
+  HIDDEN_SM,
+  POINTER_EVENTS_NONE,
+  MX_SMALL,
 } as const;

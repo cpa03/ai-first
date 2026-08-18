@@ -60,6 +60,11 @@ import {
   PASSWORD_VISIBLE_TINT,
   VALID_CHECKMARK_COLOR,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  SR_ONLY,
+  RELATIVE,
+  POINTER_EVENTS_NONE,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { useClipboard } from '@/hooks/useClipboard';
 import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -411,7 +416,7 @@ const InputWithValidationComponent = forwardRef<
           )}
         </label>
 
-        <div className="relative">
+        <div className={RELATIVE}>
           {multiline ? (
             <textarea
               ref={setTextareaRef}
@@ -472,7 +477,7 @@ const InputWithValidationComponent = forwardRef<
                 position="top"
                 disabled={false}
               >
-                <div className="pointer-events-none">
+                <div className={POINTER_EVENTS_NONE}>
                   <svg
                     className={`${ICON_SIZES.LG} ${VALID_CHECKMARK_COLOR} animate-in ${FADE_IN} ${TRANSITION_CLASSES.DEFAULT} ${DRAW_CHECK}`}
                     fill="none"
@@ -505,7 +510,7 @@ const InputWithValidationComponent = forwardRef<
                 position="top"
                 disabled={false}
               >
-                <div className="pointer-events-none">
+                <div className={POINTER_EVENTS_NONE}>
                   <svg
                     className={`${ICON_SIZES.LG} ${TEXT_COLORS.ERROR} animate-in ${FADE_IN} ${TRANSITION_CLASSES.DEFAULT}`}
                     fill="none"
@@ -724,7 +729,7 @@ const InputWithValidationComponent = forwardRef<
             )}
             {isValid && successAnnounced && charCount > 0 && (
               <div role="status" aria-live="polite">
-                <p id={`${props.id}-success`} className="sr-only">
+                <p id={`${props.id}-success`} className={SR_ONLY}>
                   {label} is valid
                 </p>
               </div>

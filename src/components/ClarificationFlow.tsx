@@ -63,6 +63,7 @@ import {
 } from '@/lib/config';
 import { SELECT_ICON_POSITION } from '@/lib/config/remaining-hardcoded-patterns';
 import { INLINE_FLEX_ITEMS_CENTER } from '@/lib/config/remaining-hardcoded-patterns';
+import { SR_ONLY, RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   CLARIFICATION_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -769,7 +770,7 @@ function ClarificationFlow({
           </h2>
           <p
             id={CLARIFICATION_ELEMENT_IDS.QUESTION_DESCRIPTION}
-            className="sr-only"
+            className={SR_ONLY}
           >
             {COMPONENT_DEFAULTS.CLARIFICATION_FLOW.STEP_DESCRIPTION(
               currentStep + 1,
@@ -960,7 +961,7 @@ function ClarificationFlow({
                     *
                   </span>
                 </label>
-                <div className="relative">
+                <div className={RELATIVE}>
                   <select
                     id={CLARIFICATION_ELEMENT_IDS.ANSWER_SELECT}
                     ref={selectRef}

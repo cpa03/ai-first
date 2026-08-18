@@ -34,6 +34,7 @@ import Tooltip from '../Tooltip';
 import StatusAnnouncer from '../StatusAnnouncer';
 import { useConfetti } from '@/hooks/useConfetti';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
+import { RELATIVE_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface TaskItemProps {
   task: Task;
@@ -159,7 +160,7 @@ function TaskItemComponent({
   ]);
 
   return (
-    <div className="relative group">
+    <div className={RELATIVE_GROUP}>
       <StatusAnnouncer
         message={
           isCompleted
