@@ -55,10 +55,9 @@ main = ".open-next/worker.js"
 command = "npm run build:cloudflare"
 watch_dir = ".next"
 
-# Assets binding for static files served by Cloudflare
+# Assets directory for static files served by Cloudflare
 [assets]
 directory = ".open-next/assets"
-binding = "ASSETS"
 
 # ============================================================
 # Production Environment
