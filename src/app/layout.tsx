@@ -41,6 +41,10 @@ import FooterNav from '@/components/FooterNav';
 import { FOOTER_PATTERNS } from '@/lib/config/remaining-styles';
 import { REMAINING_PATTERNS } from '@/lib/config/remaining-hardcoded-patterns';
 import { FLEX_ITEMS_CENTER } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  SKIP_LINK,
+  GRID_COL_SPAN,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { PRIMARY_COMBINATIONS } from '@/lib/config/primary-colors';
 
 // JSON-LD Structured Data for SEO - Growth: Better search visibility
@@ -166,7 +170,7 @@ export default async function RootLayout({
           <GlobalErrorHandler />
           <ScrollShadow />
           <KeyboardShortcutsProvider>
-            <a href="#main-content" className="skip-link">
+            <a href="#main-content" className={SKIP_LINK}>
               <span className={`flex items-center ${GAP_CLASSES.MD}`}>
                 <svg
                   className={ICON_SIZES.MD}
@@ -226,7 +230,7 @@ export default async function RootLayout({
                     className={`grid grid-cols-2 md:grid-cols-4 ${GAP_CLASSES.XXXL}`}
                   >
                     {/* Brand column */}
-                    <div className="col-span-2 md:col-span-1">
+                    <div className={GRID_COL_SPAN}>
                       <Link
                         href={ROUTES.HOME}
                         className={`text-lg font-semibold ${GRAY_CLASSES.TEXT_900} ${PRIMARY_COMBINATIONS.LINK_HOVER} transition-colors ${PRIMARY_FOCUS_RING} rounded-md`}

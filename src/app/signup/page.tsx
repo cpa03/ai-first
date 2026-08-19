@@ -52,7 +52,10 @@ import {
   PROGRESS_PERCENTAGE,
   RESPONSIVE_FLEX_PATTERNS,
 } from '@/lib/config';
-import { SIGNUP_TIP_ITEM } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  SIGNUP_TIP_ITEM,
+  JUSTIFY_CENTER,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { PRIMARY_COMBINATIONS } from '@/lib/config/primary-colors';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
@@ -832,7 +835,7 @@ export default function SignupPage() {
             disabled={oauthLoading !== null}
             loading={oauthLoading === 'google'}
             loadingText={SIGNUP_PAGE_CONTENT.OAUTH.GOOGLE_LOADING}
-            className="justify-center"
+            className={JUSTIFY_CENTER}
           >
             {oauthLoading !== 'google' && (
               <svg
@@ -867,7 +870,7 @@ export default function SignupPage() {
             disabled={oauthLoading !== null}
             loading={oauthLoading === 'github'}
             loadingText={SIGNUP_PAGE_CONTENT.OAUTH.GITHUB_LOADING}
-            className="justify-center"
+            className={JUSTIFY_CENTER}
           >
             {oauthLoading !== 'github' && (
               <svg

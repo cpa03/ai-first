@@ -56,6 +56,7 @@ import {
   RESULTS_SUCCESS_CONTAINER,
   RESULTS_SHARE_BUTTON_CONTAINER,
   FLEX_CENTER,
+  MARGIN_BOTTOM_4,
 } from '@/lib/config/remaining-hardcoded-patterns';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
@@ -148,7 +149,7 @@ const BlueprintDisplay = dynamic(
       <div className={CARD_PATTERNS.CENTERED}>
         <LoadingSpinner
           size="md"
-          className="mb-4"
+          className={MARGIN_BOTTOM_4}
           ariaLabel={RESULTS_PAGE_CONTENT.LOADING}
           label={RESULTS_PAGE_CONTENT.LOADING}
         />

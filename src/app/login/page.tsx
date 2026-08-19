@@ -42,6 +42,11 @@ import {
   RESPONSIVE_FLEX_PATTERNS,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
+import {
+  RELATIVE,
+  PEER_SR_ONLY,
+  JUSTIFY_CENTER,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useScrollToError } from '@/hooks/useScrollToError';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
@@ -366,7 +371,7 @@ export default function LoginPage() {
                 htmlFor={AUTH_ELEMENT_IDS.REMEMBER_ME}
                 className={`flex items-center ${GAP_CLASSES.MD_LG} cursor-pointer group`}
               >
-                <span className="relative">
+                <span className={RELATIVE}>
                   <input
                     id={AUTH_ELEMENT_IDS.REMEMBER_ME}
                     name="remember-me"
@@ -378,7 +383,7 @@ export default function LoginPage() {
                         triggerHapticFeedback();
                       }
                     }}
-                    className="peer sr-only"
+                    className={PEER_SR_ONLY}
                     disabled={isLoading}
                   />
                   <span
@@ -486,7 +491,7 @@ export default function LoginPage() {
             loading={oauthLoading === 'google'}
             loadingText={LOGIN_PAGE_CONTENT.OAUTH.GOOGLE_LOADING}
             enableTransition
-            className="justify-center"
+            className={JUSTIFY_CENTER}
           >
             {oauthLoading !== 'google' && (
               <svg
@@ -522,7 +527,7 @@ export default function LoginPage() {
             loading={oauthLoading === 'github'}
             loadingText={LOGIN_PAGE_CONTENT.OAUTH.GITHUB_LOADING}
             enableTransition
-            className="justify-center"
+            className={JUSTIFY_CENTER}
           >
             {oauthLoading !== 'github' && (
               <svg
