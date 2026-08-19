@@ -1,6 +1,5 @@
 import { Logger, LogLevel, setLogLevel } from '@/lib/logger';
 import { toErrorResponse } from '@/lib/errors';
-import { redactPII } from '@/lib/pii-redaction';
 import { MOCK_SECRETS } from './utils/test-secrets';
 
 describe('Security Redaction Integration', () => {

@@ -1,5 +1,3 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import {
   PromptService,
   PromptVariable,
@@ -8,14 +6,6 @@ import {
 
 describe('PromptService', () => {
   let service: PromptService;
-  const testCacheKey = 'test-service';
-  const testTemplatesDir = path.join(
-    process.cwd(),
-    'src',
-    'lib',
-    'prompts',
-    'clarifier'
-  );
 
   beforeEach(() => {
     service = new PromptService();

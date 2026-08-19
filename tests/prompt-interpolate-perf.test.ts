@@ -1,8 +1,4 @@
-import {
-  PromptService,
-  parseTemplate,
-  clearTemplateChunksCache,
-} from '@/lib/prompt-service';
+import { PromptService, clearTemplateChunksCache } from '@/lib/prompt-service';
 import { TEST_CONFIG } from './config/test-config';
 
 // Previous regex-based implementation to verify correctness and compare performance

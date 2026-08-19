@@ -1,7 +1,6 @@
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/clarify/route';
 import { clarifierAgent, ClarificationSession } from '@/lib/agents/clarifier';
-import { dbService } from '@/lib/db';
 import { buildApiUrl } from '../config/test-config';
 
 // Mock the dependencies

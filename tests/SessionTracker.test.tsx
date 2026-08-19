@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { render, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SessionTracker from '@/components/SessionTracker';

@@ -1,7 +1,6 @@
 import {
   CircuitBreaker,
   CircuitBreakerState,
-  RetryManager,
   withRetry,
   withTimeout,
   resilienceManager,

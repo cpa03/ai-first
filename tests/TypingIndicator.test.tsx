@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import TypingIndicator from '@/components/TypingIndicator';
@@ -43,7 +42,9 @@ describe('TypingIndicator', () => {
   });
 
   it('hides after delay when isTyping becomes false', async () => {
-    const { rerender } = render(<TypingIndicator isTyping={true} hideDelay={1000} />);
+    const { rerender } = render(
+      <TypingIndicator isTyping={true} hideDelay={1000} />
+    );
 
     expect(screen.getByRole('status')).toBeInTheDocument();
 

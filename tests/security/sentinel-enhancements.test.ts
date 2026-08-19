@@ -1,6 +1,5 @@
 import { sanitizeHtml } from '@/lib/validation';
 import { withApiHandler } from '@/lib/api-handler/wrapper';
-import { detectSuspiciousPatterns } from '@/lib/security/suspicious-patterns';
 import { NextRequest } from 'next/server';
 import { POST as handleCSPReportPOST } from '@/app/api/csp-report/route';
 
@@ -52,7 +51,7 @@ describe('Sentinel Security Enhancements', () => {
         { input: '<img/style="border:0">', expected: '<img [REDACTED_STYLE]>' },
       ];
 
-      for (const { input, expected } of cases) {
+      for (const { input } of cases) {
         expect(sanitizeHtml(input)).toContain('[REDACTED_STYLE]');
         // Also ensure it escapes the < and >
         const sanitized = sanitizeHtml(input);

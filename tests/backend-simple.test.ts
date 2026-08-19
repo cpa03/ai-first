@@ -2,11 +2,7 @@
  * Simplified Backend Service Tests - Compatible with existing codebase
  */
 
-import {
-  mockEnvVars,
-  createMockSupabaseClient,
-  createMockFetch,
-} from './utils/_testHelpers';
+import { mockEnvVars, createMockFetch } from './utils/_testHelpers';
 
 // Mock environment variables
 Object.assign(process.env, mockEnvVars);
@@ -129,20 +125,6 @@ describe('Backend Service Tests', () => {
 
   describe('AI Service Integration', () => {
     it('should handle OpenAI API format', () => {
-      const mockOpenAI = {
-        chat: {
-          completions: {
-            create: jest.fn().mockResolvedValue({
-              choices: [
-                {
-                  message: { content: 'Test response' },
-                },
-              ],
-            }),
-          },
-        },
-      };
-
       // Mock the OpenAI constructor
       const OpenAIConstructor = require('openai').default;
       const instance = new OpenAIConstructor();

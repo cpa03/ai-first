@@ -10,7 +10,6 @@
  * - Focus on essential integration flows
  */
 
-import React from 'react';
 import {
   render,
   screen,

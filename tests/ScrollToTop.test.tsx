@@ -23,21 +23,19 @@ describe('ScrollToTop', () => {
       configurable: true,
       value: 1000,
     });
-    const requestAnimationFrameMock = jest
-      .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation((cb) => {
-        const win = window as Window & { isAnimating?: boolean };
-        if (win.isAnimating) {
-          return setTimeout(() => cb(Date.now()), 0) as unknown as number;
-        }
-        win.isAnimating = true;
-        try {
-          cb(Date.now());
-        } finally {
-          win.isAnimating = false;
-        }
-        return 1;
-      });
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+      const win = window as Window & { isAnimating?: boolean };
+      if (win.isAnimating) {
+        return setTimeout(() => cb(Date.now()), 0) as unknown as number;
+      }
+      win.isAnimating = true;
+      try {
+        cb(Date.now());
+      } finally {
+        win.isAnimating = false;
+      }
+      return 1;
+    });
   });
 
   it('should not render when scroll position is below threshold', () => {

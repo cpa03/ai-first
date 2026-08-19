@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ProgressStepper from '@/components/ProgressStepper';
 
@@ -29,9 +28,10 @@ describe('ProgressStepper Component', () => {
     // Find and click the step button by accessible label or item content
     const stepButtons = screen.getAllByRole('button');
     // Step 1 button is index 0 or index 1
-    const step1Button = stepButtons.find((btn) =>
-      btn.getAttribute('aria-label')?.includes('Step 1: Idea') ||
-      btn.getAttribute('aria-label')?.includes('Question 1')
+    const step1Button = stepButtons.find(
+      (btn) =>
+        btn.getAttribute('aria-label')?.includes('Step 1: Idea') ||
+        btn.getAttribute('aria-label')?.includes('Question 1')
     );
 
     expect(step1Button).toBeDefined();
@@ -74,9 +74,10 @@ describe('ProgressStepper Component', () => {
     );
 
     const stepButtons = screen.getAllByRole('button');
-    const step1Button = stepButtons.find((btn) =>
-      btn.getAttribute('aria-label')?.includes('Step 1: Idea') ||
-      btn.getAttribute('aria-label')?.includes('Question 1')
+    const step1Button = stepButtons.find(
+      (btn) =>
+        btn.getAttribute('aria-label')?.includes('Step 1: Idea') ||
+        btn.getAttribute('aria-label')?.includes('Question 1')
     );
 
     expect(step1Button).toBeDefined();

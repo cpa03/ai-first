@@ -13,11 +13,7 @@ import {
   getRedactionStats,
   clearRedactionCache,
 } from '@/lib/pii-redaction';
-import {
-  TEST_API_KEY_OPENAI,
-  TEST_API_KEY_LONG,
-  TEST_API_KEY_SHORT,
-} from './utils/test-secrets';
+import { TEST_API_KEY_LONG, TEST_API_KEY_SHORT } from './utils/test-secrets';
 
 describe('PII Redaction Utility', () => {
   describe('redactPII', () => {

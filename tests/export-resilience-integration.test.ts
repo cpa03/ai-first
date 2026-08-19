@@ -248,7 +248,7 @@ describe('Export Connectors Integration with Resilience Framework', () => {
       const notionData = createMockExportData();
       const trelloData = createMockExportData();
 
-      const [notionResult, trelloResult] = await Promise.allSettled([
+      const [notionResult] = await Promise.allSettled([
         exportManager.exportToNotion(notionData),
         exportManager.exportToTrello(trelloData),
       ]);

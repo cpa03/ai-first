@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
@@ -19,12 +18,16 @@ describe('LoadingSpinner', () => {
 
   it('hides visible label from screen readers when label equals ariaLabel to avoid duplicate reading', () => {
     render(<LoadingSpinner label="Loading..." ariaLabel="Loading..." />);
-    const visibleLabel = screen.getByText('Loading...', { selector: 'span:not(.sr-only)' });
+    const visibleLabel = screen.getByText('Loading...', {
+      selector: 'span:not(.sr-only)',
+    });
     expect(visibleLabel).toHaveAttribute('aria-hidden', 'true');
   });
 
   it('does not hide visible label when label differs from ariaLabel', () => {
-    render(<LoadingSpinner label="Processing request" ariaLabel="Please wait..." />);
+    render(
+      <LoadingSpinner label="Processing request" ariaLabel="Please wait..." />
+    );
     const visibleLabel = screen.getByText('Processing request');
     expect(visibleLabel).not.toHaveAttribute('aria-hidden');
   });

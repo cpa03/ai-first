@@ -57,7 +57,7 @@ describe('useCountUp Hook', () => {
   });
 
   it('smoothly animates from current value to target value', () => {
-    const { result, rerender } = renderHook(
+    const { result } = renderHook(
       ({ target }) => useCountUp({ target, duration: 100, delay: 0 }),
       { initialProps: { target: 10 } }
     );
