@@ -601,6 +601,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 disabled={!idea.trim() || !!validationError}
                 attention={!!idea.trim() && !validationError && !isSubmitting}
                 enableTransition
+                aria-label={IDEA_INPUT_LABELS.SUBMIT_ARIA_LABEL}
               >
                 {MESSAGES.IDEA_INPUT.SUBMIT_BUTTON}
               </Button>

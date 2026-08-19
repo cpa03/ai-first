@@ -125,9 +125,17 @@ export const FOOTER_NAV_CONFIG = {
     {
       title: 'Product',
       items: [
-        { href: '/', label: 'Home' },
-        { href: '/clarify', label: 'Get Started' },
-        { href: '/dashboard', label: 'Dashboard' },
+        { href: '/', label: 'Home', ariaLabel: 'Go to homepage' },
+        {
+          href: '/clarify',
+          label: 'Get Started',
+          ariaLabel: 'Start clarifying your idea',
+        },
+        {
+          href: '/dashboard',
+          label: 'Dashboard',
+          ariaLabel: 'Go to dashboard',
+        },
       ],
     },
     {
@@ -139,7 +147,7 @@ export const FOOTER_NAV_CONFIG = {
             'https://github.com/cpa03/ai-first'
           ),
           label: 'GitHub',
-          ariaLabel: 'GitHub',
+          ariaLabel: 'View project on GitHub',
         },
       ],
     },

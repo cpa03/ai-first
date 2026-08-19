@@ -373,6 +373,8 @@ export const IDEA_INPUT_LABELS = {
   PASTE_SUCCESS: 'Pasted!',
   /** Submit button tooltip text */
   SUBMIT_TOOLTIP: 'Submit your idea',
+  /** Submit button aria-label */
+  SUBMIT_ARIA_LABEL: 'Submit your idea to start clarifying',
   /** Submit button tooltip keyboard shortcut */
   SUBMIT_SHORTCUT: ['⌘', 'Enter'],
 } as const;

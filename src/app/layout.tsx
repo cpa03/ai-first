@@ -170,7 +170,11 @@ export default async function RootLayout({
           <GlobalErrorHandler />
           <ScrollShadow />
           <KeyboardShortcutsProvider>
-            <a href="#main-content" className={SKIP_LINK}>
+            <a
+              href="#main-content"
+              className={SKIP_LINK}
+              aria-label="Skip to main content"
+            >
               <span className={`flex items-center ${GAP_CLASSES.MD}`}>
                 <svg
                   className={ICON_SIZES.MD}
@@ -205,6 +209,7 @@ export default async function RootLayout({
                       <Link
                         href={ROUTES.HOME}
                         className={`text-xl font-semibold ${GRAY_CLASSES.TEXT_900} ${PRIMARY_COMBINATIONS.LINK_HOVER} transition-colors ${PRIMARY_FOCUS_RING} rounded-md px-2 py-1`}
+                        aria-label="IdeaFlow - Go to homepage"
                       >
                         IdeaFlow
                       </Link>
@@ -234,6 +239,7 @@ export default async function RootLayout({
                       <Link
                         href={ROUTES.HOME}
                         className={`text-lg font-semibold ${GRAY_CLASSES.TEXT_900} ${PRIMARY_COMBINATIONS.LINK_HOVER} transition-colors ${PRIMARY_FOCUS_RING} rounded-md`}
+                        aria-label="IdeaFlow - Go to homepage"
                       >
                         {APP_CONFIG.NAME}
                       </Link>
