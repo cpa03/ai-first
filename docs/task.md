@@ -66,18 +66,6 @@ This file contains only **active tasks** that are currently in progress or pendi
 - **Date**: 2026-08-16
 - **Details**: Connected platform-aware keyboard shortcut representations for `CopyButton` directly to `COPY_BUTTON_LABELS.KEYBOARD_SHORTCUT` in `src/lib/config/component-labels.ts`.
 
-### [STRENGTHEN] Strengthen IdeaReadyIndicator Reduced Motion Compatibility and Live Region
-- **Priority**: MEDIUM
-- **Status**: COMPLETE
-- **Date**: 2026-08-19
-- **Details**: Enhanced `IdeaReadyIndicator` status live region accessibility (`aria-atomic="true"`) and ensured CSS transitions respect `prefers-reduced-motion`. Verified in `tests/IdeaReadyIndicator.test.tsx`.
-
-### [CONNECT] Connect IdeaReadyIndicator Labels and Timers to Central Config
-- **Priority**: LOW
-- **Status**: COMPLETE
-- **Date**: 2026-08-19
-- **Details**: Verified that `IdeaReadyIndicator` labels and animation delay constants are connected directly to `IDEA_READY_INDICATOR_LABELS` and `COMPONENT_CONFIG.IDEA_READY_INDICATOR`.
-
 ---
 
 ## Quick Stats
