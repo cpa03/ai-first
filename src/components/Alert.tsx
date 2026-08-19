@@ -99,7 +99,9 @@ const AlertComponent = function Alert({
   // Micro-UX: Briefly show keyboard shortcut hints when alert appears
   // Helps users discover shortcuts (d=dismiss, s=snooze) without cluttering UI
   const [showShortcutHint, setShowShortcutHint] = useState(false);
+  const [snoozeFeedback, setSnoozeFeedback] = useState(false);
   const shortcutHintTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const snoozeFeedbackTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const styles = ALERT_STYLES[type];
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<NodeJS.Timeout | null>(null);
@@ -128,6 +130,10 @@ const AlertComponent = function Alert({
     if (shortcutHintTimeoutRef.current) {
       clearTimeout(shortcutHintTimeoutRef.current);
       shortcutHintTimeoutRef.current = null;
+    }
+    if (snoozeFeedbackTimeoutRef.current) {
+      clearTimeout(snoozeFeedbackTimeoutRef.current);
+      snoozeFeedbackTimeoutRef.current = null;
     }
   }, []);
 
@@ -196,6 +202,13 @@ const AlertComponent = function Alert({
         (prev ?? effectiveDelay) + COMPONENT_CONFIG.ALERT.SNOOZE_DURATION_MS
     );
     setProgress(COMPONENT_DEFAULTS.PROGRESS.COMPLETE);
+
+    // Micro-UX: Show brief feedback animation when snooze is clicked
+    // Provides delightful confirmation that the snooze action was successful
+    setSnoozeFeedback(true);
+    snoozeFeedbackTimeoutRef.current = setTimeout(() => {
+      setSnoozeFeedback(false);
+    }, 1000);
   }, [cleanupTimers, effectiveDelay]);
 
   const handleKeyDown = useCallback(
@@ -329,7 +342,7 @@ const AlertComponent = function Alert({
       {shouldAutoDismiss && !prefersReducedMotion && (
         <>
           <div
-            className={`absolute bottom-0 left-0 ${HEIGHT_ONLY.XXS} bg-current opacity-30 transition-all ${DURATION_TAILWIND[75]} ease-linear rounded-b-lg`}
+            className={`absolute bottom-0 left-0 ${HEIGHT_ONLY.XXS} ${snoozeFeedback ? 'bg-green-500 opacity-60' : 'bg-current opacity-30'} transition-all ${DURATION_TAILWIND[75]} ease-linear rounded-b-lg`}
             style={{
               width: `${progress}%`,
               transitionDuration: isPaused
@@ -344,7 +357,9 @@ const AlertComponent = function Alert({
             aria-atomic="true"
           >
             {remainingSeconds > 0 && (
-              <span className={TOAST_DISMISS_BUTTON}>
+              <span
+                className={`${TOAST_DISMISS_BUTTON} ${snoozeFeedback ? 'text-green-600 font-semibold transition-all duration-300' : ''}`}
+              >
                 {isPaused ? (
                   <span className={`flex items-center ${GAP_CLASSES.SM}`}>
                     <svg
@@ -368,14 +383,34 @@ const AlertComponent = function Alert({
             )}
             <button
               onClick={handleSnooze}
-              className={`${TYPOGRAPHY_CLASSES.XS_MEDIUM} opacity-50 hover:opacity-100 transition-opacity p-0.5 rounded ${FOCUS_RING_OFFSET_PATTERNS.SUBTLE}`}
+              className={`${TYPOGRAPHY_CLASSES.XS_MEDIUM} opacity-50 hover:opacity-100 transition-opacity p-0.5 rounded ${FOCUS_RING_OFFSET_PATTERNS.SUBTLE} ${snoozeFeedback ? 'text-green-600 font-semibold scale-110' : ''}`}
               aria-label={ALERT_LABELS.SNOOZE_ARIA_LABEL}
               type="button"
             >
-              +
-              {COMPONENT_CONFIG.ALERT.SNOOZE_DURATION_MS /
-                TIME_CONVERSIONS.MS_PER_SECOND}
-              s
+              {snoozeFeedback ? (
+                <span className="inline-flex items-center gap-1">
+                  <svg
+                    className="w-3 h-3"
+                    fill="none"
+                    viewBox={SVG_VIEWBOX.STANDARD}
+                    stroke="currentColor"
+                    strokeWidth={SVG_STROKE_WIDTHS.THICK}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  +
+                  {COMPONENT_CONFIG.ALERT.SNOOZE_DURATION_MS /
+                    TIME_CONVERSIONS.MS_PER_SECOND}
+                  s
+                </span>
+              ) : (
+                `+${COMPONENT_CONFIG.ALERT.SNOOZE_DURATION_MS / TIME_CONVERSIONS.MS_PER_SECOND}s`
+              )}
             </button>
           </div>
         </>
