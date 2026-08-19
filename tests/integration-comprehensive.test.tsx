@@ -10,7 +10,6 @@
  * - Issue #1903: Investigate and Enable Skipped Tests
  */
 
-import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 

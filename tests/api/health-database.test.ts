@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { buildApiUrl, TEST_CONFIG } from '../config/test-config';
+import { buildApiUrl } from '../config/test-config';
 
 // Mock the dependencies BEFORE importing the route
 jest.mock('@/lib/db', () => ({

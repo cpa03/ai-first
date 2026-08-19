@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import AutoSaveIndicator from '../src/components/AutoSaveIndicator';
@@ -31,7 +30,9 @@ describe('AutoSaveIndicator Component', () => {
     render(<AutoSaveIndicator value="My new draft" />);
     await flushMicrotasks();
     expect(screen.getByText('Typing...')).toBeInTheDocument();
-    expect(screen.getByText('Typing...')).toHaveClass('motion-safe:animate-pulse');
+    expect(screen.getByText('Typing...')).toHaveClass(
+      'motion-safe:animate-pulse'
+    );
   });
 
   it('transitions to saving and then saved state over time', async () => {
@@ -48,7 +49,9 @@ describe('AutoSaveIndicator Component', () => {
     await flushMicrotasks();
 
     expect(screen.getByText('Saving...')).toBeInTheDocument();
-    expect(screen.getByText('Saving...')).toHaveClass('motion-safe:animate-pulse');
+    expect(screen.getByText('Saving...')).toHaveClass(
+      'motion-safe:animate-pulse'
+    );
 
     // Advance time to transition from saving to saved (500ms save duration in config)
     act(() => {
@@ -61,7 +64,9 @@ describe('AutoSaveIndicator Component', () => {
   });
 
   it('resets progress and timers when value changes while typing', async () => {
-    const { rerender } = render(<AutoSaveIndicator value="Draft v1" delay={1000} />);
+    const { rerender } = render(
+      <AutoSaveIndicator value="Draft v1" delay={1000} />
+    );
     await flushMicrotasks();
 
     expect(screen.getByText('Typing...')).toBeInTheDocument();
@@ -94,7 +99,9 @@ describe('AutoSaveIndicator Component', () => {
   });
 
   it('hides the indicator after saving completes and hide timeout passes', async () => {
-    const { container } = render(<AutoSaveIndicator value="Draft content" delay={1000} />);
+    const { container } = render(
+      <AutoSaveIndicator value="Draft content" delay={1000} />
+    );
     await flushMicrotasks();
 
     // 1. Trigger Saving

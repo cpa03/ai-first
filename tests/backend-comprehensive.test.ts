@@ -22,7 +22,7 @@ jest.mock('openai', () => {
   return jest.fn();
 });
 
-import { AIService, aiService } from '@/lib/ai';
+import { AIService } from '@/lib/ai';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import { ExportService } from '@/lib/export-connectors';
@@ -195,7 +195,6 @@ describe('Backend Service Tests', () => {
     });
 
     it('should handle database errors', async () => {
-      const mockError = { message: 'Database error' };
       mockSupabase.mockSingle.mockRejectedValue(new Error('Database error'));
 
       await expect(

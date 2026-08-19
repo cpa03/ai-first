@@ -6,9 +6,6 @@ import { findSimilarIdeas } from '@/lib/similarity-service';
 
 // Mock Supabase client
 const mockSingle = jest.fn();
-const mockEq = jest
-  .fn()
-  .mockReturnValue({ eq: jest.fn().mockReturnValue({ single: mockSingle }) });
 const mockRpc = jest.fn();
 const mockIn = jest.fn().mockReturnThis();
 

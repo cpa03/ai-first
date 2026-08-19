@@ -10,7 +10,6 @@
  * - Focus on essential functionality
  */
 
-import React from 'react';
 import {
   render,
   screen,

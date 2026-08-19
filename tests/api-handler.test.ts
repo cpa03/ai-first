@@ -9,10 +9,6 @@ import {
 import { AppError, ErrorCode } from '@/lib/errors';
 import { rateLimitConfigs } from '@/lib/rate-limit';
 import { buildApiUrl } from './config/test-config';
-import {
-  createMockApiHandler,
-  createTypedMockHandler,
-} from './utils/_testHelpers';
 
 jest.mock('@/lib/rate-limit', () => ({
   checkUserRateLimit: jest.fn(),

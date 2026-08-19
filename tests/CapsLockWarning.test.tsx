@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { CapsLockWarning } from '@/components/CapsLockWarning';
@@ -33,7 +32,9 @@ describe('CapsLockWarning', () => {
     render(<CapsLockWarning isOn={true} />);
 
     // Warning text should be displayed using centralized label
-    expect(screen.getByText(CAPS_LOCK_WARNING_LABELS.WARNING_TEXT)).toBeInTheDocument();
+    expect(
+      screen.getByText(CAPS_LOCK_WARNING_LABELS.WARNING_TEXT)
+    ).toBeInTheDocument();
 
     // Must have a "status" role with "polite" live region for accessibility
     const warningRegion = screen.getByRole('status');
@@ -46,18 +47,24 @@ describe('CapsLockWarning', () => {
 
   it('handles repeated toggles of Caps Lock state correctly', () => {
     const { rerender } = render(<CapsLockWarning isOn={true} />);
-    expect(screen.getByText(CAPS_LOCK_WARNING_LABELS.WARNING_TEXT)).toBeInTheDocument();
+    expect(
+      screen.getByText(CAPS_LOCK_WARNING_LABELS.WARNING_TEXT)
+    ).toBeInTheDocument();
 
     // Toggle OFF
     rerender(<CapsLockWarning isOn={false} />);
     act(() => {
       jest.advanceTimersByTime(500);
     });
-    expect(screen.queryByText(CAPS_LOCK_WARNING_LABELS.WARNING_TEXT)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(CAPS_LOCK_WARNING_LABELS.WARNING_TEXT)
+    ).not.toBeInTheDocument();
 
     // Toggle back ON - should re-appear cleanly
     rerender(<CapsLockWarning isOn={true} />);
-    expect(screen.getByText(CAPS_LOCK_WARNING_LABELS.WARNING_TEXT)).toBeInTheDocument();
+    expect(
+      screen.getByText(CAPS_LOCK_WARNING_LABELS.WARNING_TEXT)
+    ).toBeInTheDocument();
   });
 
   it('respects prefers-reduced-motion', () => {
