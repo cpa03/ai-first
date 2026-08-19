@@ -4,7 +4,7 @@
  * Scans all pages for console errors and warnings
  */
 
-const { chromium } = require('playwright');
+const { firefox } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
 const { CONSOLE_SCANNER_CONFIG, LIGHTHOUSE_CONFIG } = require('./config');
@@ -139,12 +139,13 @@ async function main() {
 
   let browser;
   try {
-    browser = await chromium.launch({
+    const { firefox } = require('playwright');
+    browser = await firefox.launch({
       headless: true,
     });
   } catch (launchError) {
     console.error(`❌ Failed to launch browser: ${launchError.message}`);
-    console.error('   Please run: npx playwright install chromium');
+    console.error('   Please run: npx playwright install firefox');
     process.exit(1);
   }
 
