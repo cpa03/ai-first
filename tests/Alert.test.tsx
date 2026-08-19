@@ -132,7 +132,7 @@ describe('Alert Component', () => {
       expect(alert).toHaveAttribute('aria-live', 'polite');
     });
 
-    it('should include keyboard shortcut hints in aria-label', async () => {
+    it('should include dismiss shortcut hint in aria-label when onClose is provided', async () => {
       await act(async () => {
         render(
           <Alert type="error" onClose={jest.fn()}>
@@ -143,8 +143,41 @@ describe('Alert Component', () => {
 
       const alert = screen.getByRole('alert');
       const ariaLabel = alert.getAttribute('aria-label');
+      expect(ariaLabel).not.toContain('Press s to snooze');
+      expect(ariaLabel).toContain('Press d to dismiss');
+    });
+
+    it('should include snooze shortcut hint in aria-label only when autoDismiss is enabled', async () => {
+      await act(async () => {
+        render(
+          <Alert type="info" onClose={jest.fn()} autoDismiss>
+            Info message
+          </Alert>
+        );
+      });
+
+      const alert = screen.getByRole('alert');
+      const ariaLabel = alert.getAttribute('aria-label');
       expect(ariaLabel).toContain('Press s to snooze');
       expect(ariaLabel).toContain('Press d to dismiss');
+    });
+
+    it('should show shortcut hint container on focus when onClose is provided', async () => {
+      await act(async () => {
+        render(
+          <Alert type="info" onClose={jest.fn()}>
+            Info message
+          </Alert>
+        );
+      });
+
+      const alert = screen.getByRole('alert');
+      await act(async () => {
+        fireEvent.focus(alert);
+      });
+
+      const hintText = screen.getByText('dismiss');
+      expect(hintText).toBeInTheDocument();
     });
   });
 
