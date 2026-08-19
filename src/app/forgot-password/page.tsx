@@ -37,13 +37,20 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 
+/** Cooldown period (seconds) before the resend button becomes active again */
+const RESEND_COOLDOWN_SECONDS = 60;
+
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isMac, setIsMac] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [isResending, setIsResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
   const emailInputRef = useRef<HTMLInputElement>(null);
+  const cooldownTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { openHelp } = useKeyboardShortcuts();
 
   const isFormValid = useMemo(() => {
@@ -63,6 +70,48 @@ export default function ForgotPasswordPage() {
       emailInputRef.current?.focus();
     }
   }, [error]);
+
+  // Cooldown timer cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (cooldownTimerRef.current) {
+        clearInterval(cooldownTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Start cooldown timer after successful send
+  useEffect(() => {
+    if (success && resendCooldown === 0) {
+      setResendCooldown(RESEND_COOLDOWN_SECONDS);
+    }
+  }, [success, resendCooldown]);
+
+  // Manage cooldown countdown
+  useEffect(() => {
+    if (resendCooldown <= 0) {
+      if (cooldownTimerRef.current) {
+        clearInterval(cooldownTimerRef.current);
+        cooldownTimerRef.current = null;
+      }
+      return;
+    }
+
+    cooldownTimerRef.current = setInterval(() => {
+      setResendCooldown((prev) => {
+        if (prev <= 1) {
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (cooldownTimerRef.current) {
+        clearInterval(cooldownTimerRef.current);
+      }
+    };
+  }, [resendCooldown]);
 
   const validateEmail = useCallback((value: string): boolean => {
     return VALIDATION_CONFIG.COMMON_REGEX.EMAIL.test(value);
@@ -113,6 +162,45 @@ export default function ForgotPasswordPage() {
     const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
     await handleSubmit(fakeEvent);
   }, [handleSubmit]);
+
+  const handleResend = useCallback(async () => {
+    if (resendCooldown > 0 || isResending) return;
+
+    setIsResending(true);
+    setResendSuccess(false);
+    setError(null);
+
+    try {
+      if (!supabaseClient) {
+        throw new Error('Authentication service is unavailable');
+      }
+
+      const trimmedEmail = email.trim();
+      const { error: resetError } =
+        await supabaseClient.auth.resetPasswordForEmail(trimmedEmail, {
+          redirectTo: `${window.location.origin}${ROUTES.LOGIN}`,
+        });
+
+      if (resetError) {
+        throw resetError;
+      }
+
+      triggerHapticFeedback();
+      setResendSuccess(true);
+      setResendCooldown(RESEND_COOLDOWN_SECONDS);
+
+      // Auto-clear success message after a brief moment
+      setTimeout(() => setResendSuccess(false), 3000);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : 'Failed to resend email. Please try again.';
+      setError(errorMessage);
+    } finally {
+      setIsResending(false);
+    }
+  }, [email, resendCooldown, isResending]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -167,11 +255,49 @@ export default function ForgotPasswordPage() {
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
             >
-              Didn&apos;t receive the email? Check your spam folder or try
-              again.
+              Didn&apos;t receive the email? Check your spam folder or resend
+              below.
             </p>
+
+            {error && (
+              <div className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE}`}>
+                <Alert type="error" title="Error">
+                  {error}
+                </Alert>
+              </div>
+            )}
+
+            {resendSuccess && (
+              <p
+                className={`${SPACING_CLASSES.TOP_SMALL} text-sm ${SUCCESS_STATE_COLORS.ICON_TEXT} ${HERO_ENTRANCE}`}
+                role="status"
+                aria-live="polite"
+              >
+                Reset email resent successfully!
+              </p>
+            )}
+
             <div
               className={`${SPACING_CLASSES.TOP} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
+            >
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleResend}
+                disabled={resendCooldown > 0 || isResending}
+                loading={isResending}
+                loadingText="Sending..."
+                className={RESPONSIVE_WIDTH}
+                size="md"
+              >
+                {resendCooldown > 0
+                  ? `Resend in ${resendCooldown}s`
+                  : 'Resend email'}
+              </Button>
+            </div>
+
+            <div
+              className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
             >
               <Link
                 href={ROUTES.LOGIN}
