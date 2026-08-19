@@ -485,6 +485,9 @@ function KeyboardShortcutsHelpComponent({
   const [isMac, setIsMac] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedContext, setSelectedContext] = useState<
+    KeyboardShortcut['context'] | 'all'
+  >('all');
   const { preferences, updatePreferences } = useShortcutsPreferences();
   const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -523,6 +526,7 @@ function KeyboardShortcutsHelpComponent({
       setIsLeaving(false);
       setSearchQuery('');
       setSelectedIndex(0);
+      setSelectedContext('all');
       onClose();
       restoreFocusFn();
     }, ANIMATION_CONFIG.STANDARD);
@@ -679,7 +683,7 @@ function KeyboardShortcutsHelpComponent({
 
   // Filter and group shortcuts
   const groupedShortcuts = useMemo(() => {
-    const filtered = searchQuery
+    let filtered = searchQuery
       ? keyboardShortcuts.filter(
           (s) =>
             s.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -688,6 +692,13 @@ function KeyboardShortcutsHelpComponent({
             )
         )
       : keyboardShortcuts;
+
+    // Micro-UX: Filter by context category when a filter chip is selected
+    // Provides quick visual filtering without requiring text search
+    if (selectedContext !== 'all') {
+      filtered = filtered.filter((s) => s.context === selectedContext);
+    }
+
     return contextOrder.reduce(
       (acc, context) => {
         const shortcuts = filtered.filter((s) => s.context === context);
@@ -696,7 +707,7 @@ function KeyboardShortcutsHelpComponent({
       },
       {} as Record<KeyboardShortcut['context'], KeyboardShortcut[]>
     );
-  }, [searchQuery]);
+  }, [searchQuery, selectedContext]);
 
   // Flatten for selection tracking
   const flatShortcuts = useMemo(
@@ -813,6 +824,65 @@ function KeyboardShortcutsHelpComponent({
               </span>
             </div>
           </div>
+        </div>
+
+        {/* Category filter chips */}
+        <div
+          className={`px-6 py-3 border-b ${BORDER_COLORS.DEFAULT} flex flex-wrap gap-2`}
+          role="tablist"
+          aria-label="Filter shortcuts by category"
+        >
+          <button
+            type="button"
+            role="tab"
+            aria-selected={selectedContext === 'all'}
+            onClick={() => {
+              setSelectedContext('all');
+              setSelectedIndex(0);
+              triggerHapticFeedback();
+            }}
+            className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+              selectedContext === 'all'
+                ? `${BG_COLORS.BRAND} text-white`
+                : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
+            } ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
+          >
+            All
+          </button>
+          {contextOrder.map((context) => {
+            const count = keyboardShortcuts.filter(
+              (s) => s.context === context
+            ).length;
+            return (
+              <button
+                key={context}
+                type="button"
+                role="tab"
+                aria-selected={selectedContext === context}
+                onClick={() => {
+                  setSelectedContext(
+                    selectedContext === context ? 'all' : context
+                  );
+                  setSelectedIndex(0);
+                  triggerHapticFeedback();
+                }}
+                className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+                  selectedContext === context
+                    ? `${BG_COLORS.BRAND} text-white`
+                    : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
+                } ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
+              >
+                {contextLabels[context]}{' '}
+                <span
+                  className={
+                    selectedContext === context ? 'opacity-75' : 'opacity-50'
+                  }
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Header */}
