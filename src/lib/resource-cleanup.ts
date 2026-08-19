@@ -121,6 +121,13 @@ export function createAbortableTimeout(
   ms: number,
   signal?: AbortSignal
 ): Promise<void> {
+  // If signal is already aborted, reject immediately without waiting for timeout
+  if (signal?.aborted) {
+    return Promise.reject(
+      new Error(API_ERROR_MESSAGES.CLEANUP.TIMEOUT_ABORTED)
+    );
+  }
+
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(resolve, ms);
 
