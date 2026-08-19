@@ -26,6 +26,7 @@ import {
   DASHBOARD_PATTERNS,
   KBD_HINT_STYLE,
   ICON_SIZES,
+  COMPONENT_CONFIG,
 } from '@/lib/config';
 import {
   RESPONSIVE_WIDTH,
@@ -36,9 +37,6 @@ import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
-
-/** Cooldown period (seconds) before the resend button becomes active again */
-const RESEND_COOLDOWN_SECONDS = 60;
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -83,7 +81,9 @@ export default function ForgotPasswordPage() {
   // Start cooldown timer after successful send
   useEffect(() => {
     if (success && resendCooldown === 0) {
-      setResendCooldown(RESEND_COOLDOWN_SECONDS);
+      setResendCooldown(
+        COMPONENT_CONFIG.FORGOT_PASSWORD.RESEND_COOLDOWN_SECONDS
+      );
     }
   }, [success, resendCooldown]);
 
@@ -104,7 +104,7 @@ export default function ForgotPasswordPage() {
         }
         return prev - 1;
       });
-    }, 1000);
+    }, COMPONENT_CONFIG.FORGOT_PASSWORD.COOLDOWN_INTERVAL_MS);
 
     return () => {
       if (cooldownTimerRef.current) {
@@ -187,10 +187,15 @@ export default function ForgotPasswordPage() {
 
       triggerHapticFeedback();
       setResendSuccess(true);
-      setResendCooldown(RESEND_COOLDOWN_SECONDS);
+      setResendCooldown(
+        COMPONENT_CONFIG.FORGOT_PASSWORD.RESEND_COOLDOWN_SECONDS
+      );
 
       // Auto-clear success message after a brief moment
-      setTimeout(() => setResendSuccess(false), 3000);
+      setTimeout(
+        () => setResendSuccess(false),
+        COMPONENT_CONFIG.FORGOT_PASSWORD.SUCCESS_MESSAGE_DURATION_MS
+      );
     } catch (err) {
       const errorMessage =
         err instanceof Error
