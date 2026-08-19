@@ -65,6 +65,9 @@ import {
   DASHBOARD_FILTER_BADGE_ACTIVE,
   DASHBOARD_FILTER_BADGE_INACTIVE,
   TABULAR_NUMS_MEDIUM,
+  MARGIN_TOP_4,
+  SR_ONLY,
+  RELATIVE,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   PRIMARY_RING,
@@ -668,7 +671,7 @@ export default function DashboardPage() {
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_LG}>
         <Alert type="error" title={DASHBOARD_PAGE_CONTENT.ERROR_TITLE}>
           {error}
-          <div className="mt-4">
+          <div className={MARGIN_TOP_4}>
             <Button onClick={fetchIdeas} variant="primary">
               {DASHBOARD_PAGE_CONTENT.TRY_AGAIN}
             </Button>
@@ -686,7 +689,7 @@ export default function DashboardPage() {
         role="status"
         aria-live="polite"
         aria-atomic="true"
-        className="sr-only"
+        className={SR_ONLY}
       >
         {selectedRowIndex >= 0 && ideas[selectedRowIndex]
           ? `Row ${selectedRowIndex + 1} of ${ideas.length}: ${ideas[selectedRowIndex].title}. Press Enter to ${
@@ -731,10 +734,10 @@ export default function DashboardPage() {
       )}
       {/* Filter */}
       <div className={DASHBOARD_FILTER_BAR}>
-        <label htmlFor="status-filter" className="sr-only">
+        <label htmlFor="status-filter" className={SR_ONLY}>
           {DASHBOARD_PAGE_CONTENT.FILTER.LABEL}
         </label>
-        <div className="relative">
+        <div className={RELATIVE}>
           <Tooltip
             content={DASHBOARD_LABELS.FILTER_TOOLTIP}
             shortcut={DASHBOARD_LABELS.FILTER_SHORTCUT}

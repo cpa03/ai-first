@@ -546,6 +546,42 @@ export const POINTER_EVENTS_NONE = 'pointer-events-none';
 export const MX_SMALL = 'mx-1.5';
 
 /**
+ * Margin top utility class
+ * Used in: Dashboard page error state, various components
+ */
+export const MARGIN_TOP_4 = 'mt-4';
+
+/**
+ * Margin bottom utility class
+ * Used in: Results page, various components
+ */
+export const MARGIN_BOTTOM_4 = 'mb-4';
+
+/**
+ * Justify center utility class
+ * Used in: Login, Signup pages, various components
+ */
+export const JUSTIFY_CENTER = 'justify-center';
+
+/**
+ * Grid column span responsive pattern
+ * Used in: Layout page footer
+ */
+export const GRID_COL_SPAN = 'col-span-2 md:col-span-1';
+
+/**
+ * Skip link styles
+ * Used in: Layout page accessibility
+ */
+export const SKIP_LINK = 'skip-link';
+
+/**
+ * Peer sr-only pattern for form inputs
+ * Used in: Login page form inputs
+ */
+export const PEER_SR_ONLY = 'peer sr-only';
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -612,4 +648,10 @@ export const REMAINING_PATTERNS = {
   HIDDEN_SM,
   POINTER_EVENTS_NONE,
   MX_SMALL,
+  MARGIN_TOP_4,
+  MARGIN_BOTTOM_4,
+  JUSTIFY_CENTER,
+  GRID_COL_SPAN,
+  SKIP_LINK,
+  PEER_SR_ONLY,
 } as const;
