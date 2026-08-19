@@ -361,7 +361,6 @@ const ProgressStepperComponent = function ProgressStepper({
       {onStepClick && steps.length > 1 && (
         <div
           className={`${PROGRESS_STEPPER_STYLES.KEYBOARD_HINT} ${TEXT_COLOR_CLASSES.MUTED}`}
-          aria-label={PROGRESS_STEPPER_LABELS.KEYBOARD_NAV_ARIA_LABEL}
         >
           <span className={FLEX_PATTERNS.GAP_SM}>
             <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>

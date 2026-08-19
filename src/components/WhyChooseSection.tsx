@@ -136,7 +136,6 @@ function WhyChooseSectionComponent() {
       </ul>
       <div
         className={`hidden sm:flex items-center justify-center gap-2 mt-6 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
-        aria-label={WHY_CHOOSE_SECTION_LABELS.KEYBOARD_NAV_ARIA_LABEL}
       >
         <span className={FLEX_PATTERNS.GAP_SM}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
