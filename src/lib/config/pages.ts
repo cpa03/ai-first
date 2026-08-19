@@ -335,6 +335,12 @@ export const SIGNUP_PAGE_CONTENT = {
   BUTTONS: {
     GO_BACK: 'Go Back',
   },
+  PROGRESS_INDICATOR: {
+    ARIA_LABEL: 'Form completion progress',
+    PROGRESS_TEXT: (completed: number, total: number) =>
+      `${completed} of ${total} fields completed`,
+    ALL_COMPLETE: 'All fields completed',
+  },
 } as const;
 
 /**

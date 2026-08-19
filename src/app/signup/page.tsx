@@ -61,6 +61,7 @@ import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
 import { useScrollToError } from '@/hooks/useScrollToError';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+import FormProgressIndicator from '@/components/FormProgressIndicator';
 
 type PasswordStrength = 'empty' | 'weak' | 'medium' | 'strong';
 type PasswordMatch = 'empty' | 'match' | 'mismatch';
@@ -451,6 +452,25 @@ export default function SignupPage() {
     );
   }, [email, password, confirmPassword]);
 
+  const completedFields = useMemo(() => {
+    let count = 0;
+    if (
+      email.trim() &&
+      VALIDATION_CONFIG.COMMON_REGEX.EMAIL.test(email.trim())
+    ) {
+      count++;
+    }
+    if (password.length >= PASSWORD_VALIDATION_CONFIG.MIN_LENGTH) {
+      count++;
+    }
+    if (confirmPassword && password === confirmPassword) {
+      count++;
+    }
+    return count;
+  }, [email, password, confirmPassword]);
+
+  const totalFields = 3;
+
   useEffect(() => {
     if (emailError) {
       emailInputRef.current?.focus();
@@ -699,6 +719,11 @@ export default function SignupPage() {
               {error}
             </Alert>
           )}
+
+          <FormProgressIndicator
+            completedFields={completedFields}
+            totalFields={totalFields}
+          />
 
           <div className={SPACE_Y_PATTERNS.LG}>
             <InputWithValidation
