@@ -16,6 +16,8 @@
  * ```
  */
 
+import { SHADOW_COLOR_PRESETS } from './theme/shadow-colors';
+
 export const ANIMATION_VALUES = {
   // Duration values (in milliseconds)
   DURATION: {
@@ -289,16 +291,14 @@ export const ANIMATION_VALUES = {
   // Shadow values
   SHADOW: {
     NONE: 'none',
-    SMALL: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-    NORMAL: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)',
-    LARGE:
-      '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)',
-    LARGER:
-      '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
-    HUGE: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
-    MASSIVE: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    GIGANTIC: '0 35px 60px -15px rgba(0, 0, 0, 0.3)',
-    INNER: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.05)',
+    SMALL: `0 1px 2px 0 ${SHADOW_COLOR_PRESETS.GENERAL.LIGHT}`,
+    NORMAL: `0 1px 3px 0 ${SHADOW_COLOR_PRESETS.GENERAL.NORMAL}, 0 1px 2px -1px ${SHADOW_COLOR_PRESETS.GENERAL.NORMAL}`,
+    LARGE: `0 4px 6px -1px ${SHADOW_COLOR_PRESETS.GENERAL.NORMAL}, 0 2px 4px -2px ${SHADOW_COLOR_PRESETS.GENERAL.NORMAL}`,
+    LARGER: `0 10px 15px -3px ${SHADOW_COLOR_PRESETS.GENERAL.NORMAL}, 0 4px 6px -4px ${SHADOW_COLOR_PRESETS.GENERAL.NORMAL}`,
+    HUGE: `0 20px 25px -5px ${SHADOW_COLOR_PRESETS.GENERAL.NORMAL}, 0 8px 10px -6px ${SHADOW_COLOR_PRESETS.GENERAL.NORMAL}`,
+    MASSIVE: `0 25px 50px -12px ${SHADOW_COLOR_PRESETS.GENERAL.MEDIUM}`,
+    GIGANTIC: `0 35px 60px -15px ${SHADOW_COLOR_PRESETS.GENERAL.HEAVY}`,
+    INNER: `inset 0 2px 4px 0 ${SHADOW_COLOR_PRESETS.GENERAL.LIGHT}`,
   },
 
   // Shadow classes (Tailwind-compatible)

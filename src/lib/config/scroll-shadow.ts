@@ -4,16 +4,17 @@
  * Follows the "Flexy" principle: eliminate hardcoded values and make modular systems
  */
 
+import { SHADOW_COLOR_PRESETS } from './theme/shadow-colors';
+
 /**
  * Box shadow values for the header when scrolled
  * Replaces hardcoded rgb() shadow values in ScrollShadow.tsx
  */
 export const SCROLL_SHADOW_BOX_SHADOWS = {
   /** Subtle shadow for users with prefers-reduced-motion enabled */
-  REDUCED_MOTION:
-    '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+  REDUCED_MOTION: `0 1px 3px 0 ${SHADOW_COLOR_PRESETS.GENERAL_RGB.NORMAL}, 0 1px 2px -1px ${SHADOW_COLOR_PRESETS.GENERAL_RGB.NORMAL}`,
   /** Full shadow for users without motion preferences */
-  DEFAULT: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+  DEFAULT: `0 4px 6px -1px ${SHADOW_COLOR_PRESETS.GENERAL_RGB.NORMAL}, 0 2px 4px -2px ${SHADOW_COLOR_PRESETS.GENERAL_RGB.NORMAL}`,
 } as const;
 
 /**
