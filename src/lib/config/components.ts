@@ -101,6 +101,30 @@ export const COMPONENT_CONFIG = {
     },
   } as const,
 
+  FORGOT_PASSWORD: {
+    /** Cooldown period (seconds) before resend button becomes active - Env: COMPONENT_FORGOT_PASSWORD_RESEND_COOLDOWN_SECONDS (default: 60) */
+    RESEND_COOLDOWN_SECONDS: EnvLoader.number(
+      'COMPONENT_FORGOT_PASSWORD_RESEND_COOLDOWN_SECONDS',
+      60,
+      10,
+      300
+    ),
+    /** Auto-clear success message duration (ms) - Env: COMPONENT_FORGOT_PASSWORD_SUCCESS_MESSAGE_DURATION_MS (default: 3000) */
+    SUCCESS_MESSAGE_DURATION_MS: EnvLoader.number(
+      'COMPONENT_FORGOT_PASSWORD_SUCCESS_MESSAGE_DURATION_MS',
+      3000,
+      1000,
+      10000
+    ),
+    /** Cooldown timer interval (ms) - Env: COMPONENT_FORGOT_PASSWORD_COOLDOWN_INTERVAL_MS (default: 1000) */
+    COOLDOWN_INTERVAL_MS: EnvLoader.number(
+      'COMPONENT_FORGOT_PASSWORD_COOLDOWN_INTERVAL_MS',
+      1000,
+      500,
+      5000
+    ),
+  } as const,
+
   INPUT: {
     /** Env: COMPONENT_INPUT_VALIDATION_DEBOUNCE_MS (default: 300) */
     VALIDATION_DEBOUNCE_MS: EnvLoader.number(
