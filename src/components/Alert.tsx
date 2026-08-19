@@ -30,6 +30,7 @@ import {
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { FADE_IN } from '@/lib/config/animation-classes';
 
 interface AlertProps {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -100,12 +101,14 @@ const AlertComponent = function Alert({
   // Helps users discover shortcuts (d=dismiss, s=snooze) without cluttering UI
   const [showShortcutHint, setShowShortcutHint] = useState(false);
   const shortcutHintTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const alertRef = useRef<HTMLDivElement>(null);
   const styles = ALERT_STYLES[type];
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<NodeJS.Timeout | null>(null);
   const progressValueRef = useRef(COMPONENT_DEFAULTS.PROGRESS.COMPLETE);
   const currentStepRef = useRef(0);
   const prefersReducedMotion = usePrefersReducedMotion();
+  const [isEntering, setIsEntering] = useState(!prefersReducedMotion);
 
   const shouldAutoDismiss =
     autoDismiss && (type === 'success' || type === 'info') && onClose;
@@ -134,6 +137,29 @@ const AlertComponent = function Alert({
   useEffect(() => {
     return cleanupTimers;
   }, [cleanupTimers]);
+
+  // Micro-UX: Fade-in animation when Alert first appears
+  // Provides a smooth visual transition instead of abrupt appearance
+  // Respects prefers-reduced-motion for accessibility
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      setIsEntering(false);
+      return;
+    }
+
+    const handleAnimationEnd = () => {
+      setIsEntering(false);
+    };
+
+    const element = alertRef.current;
+    if (element) {
+      element.addEventListener('animationend', handleAnimationEnd, {
+        once: true,
+      });
+      return () =>
+        element.removeEventListener('animationend', handleAnimationEnd);
+    }
+  }, [prefersReducedMotion]);
 
   useEffect(() => {
     if (!shouldAutoDismiss || isPaused) return;
@@ -218,9 +244,11 @@ const AlertComponent = function Alert({
 
   if (!isVisible) return null;
 
-  const visibilityClass = isExiting
-    ? ALERT_BASE_STYLES.exiting
-    : ALERT_BASE_STYLES.visible;
+  const visibilityClass = isEntering
+    ? FADE_IN
+    : isExiting
+      ? ALERT_BASE_STYLES.exiting
+      : ALERT_BASE_STYLES.visible;
 
   const handleMouseEnter = () => {
     if (shouldAutoDismiss) {
@@ -266,6 +294,7 @@ const AlertComponent = function Alert({
 
   return (
     <div
+      ref={alertRef}
       role="alert"
       tabIndex={0}
       aria-live={type === 'error' ? 'assertive' : 'polite'}
