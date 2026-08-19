@@ -15,8 +15,8 @@ export const SHARE_BUTTON_LABELS = {
   DEFAULT_LABEL: 'Share',
   /** Success state label after sharing */
   SUCCESS_LABEL: 'Shared!',
-  /** ARIA label for the share button */
-  ARIA_LABEL: 'Share this page',
+  /** ARIA label for the share button - matches visible text for accessibility */
+  ARIA_LABEL: 'Share',
   /** Default toast message on clipboard copy */
   CLIPBOARD_TOAST: 'Link copied to clipboard!',
   /** Success message after Web Share API */
@@ -34,8 +34,8 @@ export const COPY_BUTTON_LABELS = {
   DEFAULT_LABEL: 'Copy',
   /** Success state label after copying */
   SUCCESS_LABEL: 'Copied!',
-  /** ARIA label for the copy button */
-  ARIA_LABEL: 'Copy to clipboard',
+  /** ARIA label for the copy button - matches visible text for accessibility */
+  ARIA_LABEL: 'Copy',
   /** Default toast message on successful copy */
   CLIPBOARD_TOAST: 'Copied to clipboard!',
   /** Error message on clipboard failure */
@@ -523,9 +523,9 @@ export const CLARIFICATION_FLOW_LABELS = {
   BACK_TO_EDIT_TOOLTIP: 'Go back to edit your original idea',
   PASTE_BUTTON: 'Paste',
   PASTE_SUCCESS: 'Pasted!',
-  PASTE_ARIA_LABEL: 'Paste answer from clipboard',
+  PASTE_ARIA_LABEL: 'Paste',
   CLEAR_BUTTON: 'Clear',
-  CLEAR_ARIA_LABEL: 'Clear answer',
+  CLEAR_ARIA_LABEL: 'Clear',
   CLEAR_TOOLTIP: 'Clear your answer (Esc)',
   STEP_JUMP_ARIA_LABEL: (index: number, question: string, isCurrent: boolean) =>
     `Jump to question ${index + 1}: ${question}${isCurrent ? ' (current)' : ''}`,
@@ -601,8 +601,8 @@ export const EMAIL_BUTTON_LABELS = {
   DEFAULT_LABEL: 'Email to Self',
   /** Success state label after email client opens */
   SUCCESS_LABEL: 'Email Opened!',
-  /** ARIA label for the email button */
-  ARIA_LABEL: 'Email blueprint to yourself',
+  /** ARIA label for the email button - matches visible text for accessibility */
+  ARIA_LABEL: 'Email to Self',
   /** Default tooltip label */
   TOOLTIP_LABEL: 'Send blueprint to your email',
   /** Keyboard shortcut keys for tooltip - Shift+E to avoid conflict with export markdown (⌘E) */
