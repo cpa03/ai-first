@@ -977,7 +977,7 @@ function ClarificationFlow({
             {currentQuestion.type === 'select' && currentQuestion.options && (
               <div className={SPACE_Y_PATTERNS.SM}>
                 <label
-                  htmlFor="answer-select"
+                  htmlFor={CLARIFICATION_ELEMENT_IDS.ANSWER_SELECT}
                   className={CLARIFICATION_FLOW_INPUT_LABEL}
                 >
                   {currentQuestion.question}
