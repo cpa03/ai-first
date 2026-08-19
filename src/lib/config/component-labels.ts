@@ -361,8 +361,8 @@ export const IDEA_INPUT_LABELS = {
     `${isMac ? '⌘' : 'Ctrl'}+Shift+V to paste from clipboard`,
   /** Keyboard shortcut hint text */
   KEYBOARD_SHORTCUT_HINT: 'to submit',
-  /** Clear input button aria-label */
-  CLEAR_ARIA_LABEL: 'Clear input',
+  /** Clear input button aria-label - matches visible text for accessibility */
+  CLEAR_ARIA_LABEL: 'Clear',
   /** Clear input button text */
   CLEAR_BUTTON: 'Clear',
   /** Paste from clipboard button aria-label */
