@@ -81,6 +81,7 @@
     /dashboard/            ← Dashboard and analytics pages
     /login/                ← Login page
     /signup/               ← Signup page
+    /forgot-password/      ← Forgot password page
     /auth/callback/        ← OAuth callback handler
     /api/                  ← API routes
       /health/             ← Health check endpoints
@@ -204,7 +205,7 @@
     /api-handler/        ← API handler utilities
       /wrapper.ts        ← API request wrapper
       /response.ts       ← Response formatting
-    /config/             ← Configuration modules (69 files)
+    /config/             ← Configuration modules (94 files)
       /constants.ts      ← Centralized constants
       /environment.ts    ← Environment configuration
       /database-tables.ts ← Database table names
