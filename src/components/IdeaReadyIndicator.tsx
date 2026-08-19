@@ -50,23 +50,26 @@ function IdeaReadyIndicatorComponent({
 
   return (
     <div
-      className={`inline-flex items-center gap-1.5 ${TRANSITION_CLASSES.SLOW} ${
+      className={`inline-flex items-center gap-1.5 ${
+        prefersReducedMotion ? '' : TRANSITION_CLASSES.SLOW
+      } ${
         isReady ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
       } ${className}`}
       role="status"
       aria-live="polite"
+      aria-atomic="true"
     >
       <div
         className={`
           relative flex items-center justify-center ${ICON_SIZES.LG} rounded-full
-          ${TRANSITION_CLASSES.SLOW_EASE_OUT}
+          ${prefersReducedMotion ? '' : TRANSITION_CLASSES.SLOW_EASE_OUT}
           ${isReady ? COMPONENT_STATE_COLORS.IDEA_READY.READY : COMPONENT_STATE_COLORS.IDEA_READY.NOT_READY}
         `}
       >
         {/* Checkmark SVG with draw animation */}
         <svg
           className={`
-            ${ICON_SIZES.SM} ${TRANSITION_CLASSES.SLOW}
+            ${ICON_SIZES.SM} ${prefersReducedMotion ? '' : TRANSITION_CLASSES.SLOW}
             ${showCheckmark ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
           `}
           fill="none"
@@ -105,7 +108,7 @@ function IdeaReadyIndicatorComponent({
       </div>
       <span
         className={`
-          text-xs font-medium ${TRANSITION_CLASSES.COLOR_SLOW}
+          text-xs font-medium ${prefersReducedMotion ? '' : TRANSITION_CLASSES.COLOR_SLOW}
           ${isReady ? TEXT_COLORS.SUCCESS_DARK : TEXT_COLORS.MUTED}
         `}
       >
