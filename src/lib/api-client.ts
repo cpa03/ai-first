@@ -80,10 +80,14 @@ export async function fetchWithTimeout(
       clearTimeout(timeoutId);
       throw new DOMException('The user aborted a request.', 'AbortError');
     }
-    externalSignal.addEventListener('abort', () => {
-      controller.abort();
-      clearTimeout(timeoutId);
-    });
+    externalSignal.addEventListener(
+      'abort',
+      () => {
+        controller.abort();
+        clearTimeout(timeoutId);
+      },
+      { once: true }
+    );
   }
 
   try {
