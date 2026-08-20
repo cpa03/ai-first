@@ -281,7 +281,7 @@ function TaskManagementHeaderComponent({
               >
                 {label}
                 <span
-                  className={`ml-0.5 px-1.5 py-0.5 text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] rounded-full font-semibold ${
+                  className={`ml-0.5 px-1.5 py-0.5 text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] rounded-full ${TYPOGRAPHY_CLASSES.SEMIBOLD} ${
                     isActive
                       ? COMPONENT_PRIMARY_PATTERNS.BADGE_DARK
                       : `${GRAY_CLASSES.BG_200} ${GRAY_CLASSES.TEXT_500}`

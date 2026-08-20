@@ -12,6 +12,7 @@ import {
   BORDER_COLORS,
   REMAINING_PATTERNS,
   CSS_POSITIONING,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { LOADING_SPINNER_ELAPSED_TEXT } from '@/lib/config/remaining-hardcoded-patterns';
@@ -204,7 +205,7 @@ function LoadingSpinnerComponent({
       </svg>
       {label && (
         <span
-          className={`text-sm ${TEXT_COLOR_CLASSES.BODY} font-medium ${FADE_IN}`}
+          className={`${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${TYPOGRAPHY_CLASSES.MEDIUM} ${FADE_IN}`}
           aria-hidden={ariaLabel === label ? 'true' : undefined}
         >
           {label}

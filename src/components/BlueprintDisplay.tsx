@@ -532,7 +532,7 @@ function CopyCodeButton({ text }: { text: string }) {
           className={`
             absolute top-3 right-3 
             flex items-center gap-1.5 px-2.5 py-1.5 
-            text-xs font-medium rounded-md
+            ${TYPOGRAPHY_CLASSES.XS_MEDIUM} rounded-md
             ${TRANSITION_CLASSES.DEFAULT_EASE_OUT}
             ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT}
             ${prefersReducedMotion ? '' : 'motion-reduce:transition-none'}

@@ -797,11 +797,11 @@ const InputWithValidationComponent = forwardRef<
           )}
           {showCharCount && maxLength && charCount > 0 && (
             <div
-              className={`text-xs transition-all ${DURATION_TAILWIND[300]} ease-out ${
+              className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} transition-all ${DURATION_TAILWIND[300]} ease-out ${
                 maxLength - charCount <= maxLength * 0.1
-                  ? `${TEXT_COLORS.ERROR} font-medium`
+                  ? `${TEXT_COLORS.ERROR} ${TYPOGRAPHY_CLASSES.MEDIUM}`
                   : maxLength - charCount <= maxLength * 0.2
-                    ? `${TEXT_COLORS.WARNING} font-medium`
+                    ? `${TEXT_COLORS.WARNING} ${TYPOGRAPHY_CLASSES.MEDIUM}`
                     : TEXT_COLOR_CLASSES.MUTED
               }`}
               aria-live="polite"

@@ -304,7 +304,7 @@ function TooltipComponent({
           <div className={RELATIVE}>
             <div
               className={`
-                ${TOOLTIP_CONFIG.CONTENT_PADDING} ${BG_COLORS.DARKER} text-white text-xs font-medium rounded-md
+                ${TOOLTIP_CONFIG.CONTENT_PADDING} ${BG_COLORS.DARKER} text-white ${TYPOGRAPHY_CLASSES.XS_MEDIUM} rounded-md
                 shadow-lg border ${BORDER_COLOR_CLASSES.MUTED_DARK}/50 whitespace-normal
                 w-max ${CONTAINER_WIDTH_CLASSES.TOOLTIP} break-words
                 flex items-center ${TOOLTIP_CONFIG.CONTENT_GAP}

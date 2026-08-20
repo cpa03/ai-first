@@ -379,7 +379,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         {milestoneReached && (
           <div className={RELATIVE}>
             <div
-              className={`flex items-center gap-2 text-sm ${TEXT_COLORS.SUCCESS_DARK} font-medium ${FADE_IN}`}
+              className={`flex items-center gap-2 ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLORS.SUCCESS_DARK} ${TYPOGRAPHY_CLASSES.MEDIUM} ${FADE_IN}`}
               role="status"
               aria-live="polite"
             >
@@ -426,9 +426,9 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
         {!milestoneReached && charactersNeededData ? (
           <p
-            className={`text-sm ${FADE_IN} flex items-center gap-2 ${
+            className={`${TYPOGRAPHY_CLASSES.SMALL} ${FADE_IN} flex items-center gap-2 ${
               charactersNeededData.isNearMinimum
-                ? `${TEXT_COLOR_CLASSES.WARNING_LIGHT} font-medium`
+                ? `${TEXT_COLOR_CLASSES.WARNING_LIGHT} ${TYPOGRAPHY_CLASSES.MEDIUM}`
                 : TEXT_COLOR_CLASSES.BRAND
             }`}
             role="status"

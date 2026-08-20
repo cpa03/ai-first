@@ -51,6 +51,7 @@ import {
   PY_CLASSES,
   SPACE_Y_PATTERNS,
   RESPONSIVE_SPACING,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import {
   RESULTS_SUCCESS_CONTAINER,
@@ -604,7 +605,9 @@ function ResultsContent() {
       <SectionIndicator sections={sections} />
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <div className={`flex justify-between items-center ${MB_CLASSES.XXXL}`}>
-          <h1 className={`text-3xl font-bold ${GRAY_CLASSES.TEXT_900}`}>
+          <h1
+            className={`${TYPOGRAPHY_CLASSES.XXXL_BOLD} ${GRAY_CLASSES.TEXT_900}`}
+          >
             {RESULTS_PAGE_CONTENT.HEADING}
           </h1>
           <Button
@@ -628,7 +631,7 @@ function ResultsContent() {
         {/* Export Options */}
         <div id="exports-section" className={CARD_PATTERNS.WITH_MARGIN}>
           <h2
-            className={`text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.XXL}`}
+            className={`${TYPOGRAPHY_CLASSES.XXL_SEMIBOLD} ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.XXL}`}
           >
             {RESULTS_PAGE_CONTENT.EXPORT_HEADING}
           </h2>
@@ -1096,7 +1099,7 @@ function ResultsContent() {
         {/* Micro-UX: Staggered entrance animation matches Export section for visual consistency */}
         <div className={CARD_PATTERNS.WITH_MARGIN}>
           <h2
-            className={`text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.XXL}`}
+            className={`${TYPOGRAPHY_CLASSES.XXL_SEMIBOLD} ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.XXL}`}
           >
             {RESULTS_PAGE_CONTENT.SHARE_HEADING}
           </h2>
@@ -1137,7 +1140,7 @@ function ResultsContent() {
           <div className={PY_CLASSES.XL}>
             <h2
               id="start-new-idea-cta"
-              className={`text-xl sm:text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.MD}`}
+              className={`${TYPOGRAPHY_CLASSES.COMPONENT_HEADING} sm:${TYPOGRAPHY_CLASSES.XXL_SEMIBOLD} ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.MD}`}
             >
               {RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.TITLE}
             </h2>

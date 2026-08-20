@@ -270,7 +270,7 @@ function AutoSaveIndicatorComponent({
 
       {/* Text */}
       <span
-        className={`font-medium transition-colors ${DURATION_TAILWIND[200]} ${
+        className={`${TYPOGRAPHY_CLASSES.MEDIUM} transition-colors ${DURATION_TAILWIND[200]} ${
           saveState === 'typing'
             ? `${TEXT_COLORS.MUTED} motion-safe:animate-pulse`
             : saveState === 'saving'

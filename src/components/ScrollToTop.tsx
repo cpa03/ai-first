@@ -434,7 +434,7 @@ function ScrollToTopComponent({
             </svg>
           ) : showPercentage && !prefersReducedMotion ? (
             <span
-              className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} font-semibold ${scrollDepthColor.text} tabular-nums leading-none transition-colors ${DURATION_TAILWIND[300]} ease-out`}
+              className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} ${TYPOGRAPHY_CLASSES.SEMIBOLD} ${scrollDepthColor.text} tabular-nums leading-none transition-colors ${DURATION_TAILWIND[300]} ease-out`}
               aria-hidden="true"
             >
               {animatedPercentage}

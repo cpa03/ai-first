@@ -371,7 +371,7 @@ const HighlightedText = memo(function HighlightedText({
         regex.test(part) ? (
           <span
             key={index}
-            className={`${BG_COLORS.WARNING} ${TEXT_COLORS.WARNING} px-0.5 rounded-sm font-medium`}
+            className={`${BG_COLORS.WARNING} ${TEXT_COLORS.WARNING} px-0.5 rounded-sm ${TYPOGRAPHY_CLASSES.MEDIUM}`}
             aria-hidden="true"
           >
             {part}
@@ -435,7 +435,7 @@ const ShortcutRow = memo(function ShortcutRow({
       }`}
     >
       <span
-        className={`text-sm ${TRANSITION_CLASSES.COLOR} ${isSelected ? `${PRIMARY_TEXT._700} font-medium` : `${TEXT_COLORS.SECONDARY} group-hover:${TEXT_COLORS.PRIMARY}`}`}
+        className={`${TYPOGRAPHY_CLASSES.SMALL} ${TRANSITION_CLASSES.COLOR} ${isSelected ? `${PRIMARY_TEXT._700} ${TYPOGRAPHY_CLASSES.MEDIUM}` : `${TEXT_COLORS.SECONDARY} group-hover:${TEXT_COLORS.PRIMARY}`}`}
       >
         <HighlightedText text={shortcut.description} query={searchQuery} />
       </span>
@@ -841,7 +841,7 @@ function KeyboardShortcutsHelpComponent({
               setSelectedIndex(0);
               triggerHapticFeedback();
             }}
-            className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+            className={`px-3 py-1 ${TYPOGRAPHY_CLASSES.XS_MEDIUM} rounded-full transition-all ${DURATION_TAILWIND[150]} ${
               selectedContext === 'all'
                 ? `${BG_COLORS.BRAND} text-white`
                 : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
@@ -866,7 +866,7 @@ function KeyboardShortcutsHelpComponent({
                   setSelectedIndex(0);
                   triggerHapticFeedback();
                 }}
-                className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+                className={`px-3 py-1 ${TYPOGRAPHY_CLASSES.XS_MEDIUM} rounded-full transition-all ${DURATION_TAILWIND[150]} ${
                   selectedContext === context
                     ? `${BG_COLORS.BRAND} text-white`
                     : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`

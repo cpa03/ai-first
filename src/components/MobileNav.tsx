@@ -27,6 +27,7 @@ import {
   MT_CLASSES,
   GAP_CLASSES,
   TEXT_FORMAT_PATTERNS,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { FLEX_SPACE_X } from '@/lib/config/remaining-hardcoded-patterns';
 import { HINT_OVERLAY } from '@/lib/config/remaining-hardcoded-patterns';
@@ -217,7 +218,7 @@ function MobileNavComponent() {
                 <Link
                   href={link.href}
                   className={`
-                    px-4 py-3 text-sm sm:text-base font-medium
+                    px-4 py-3 ${TYPOGRAPHY_CLASSES.SMALL} sm:${TYPOGRAPHY_CLASSES.BODY} ${TYPOGRAPHY_CLASSES.MEDIUM}
                     ${TRANSITION_CLASSES.SLOW} ease-out
                     border-b-2                     ${active ? COMPONENT_PRIMARY_PATTERNS.NAV_ACTIVE_LINK : `border-transparent ${GRAY_CLASSES.TEXT_800} ${COMPONENT_PRIMARY_PATTERNS.NAV_HOVER}`}
                     ${FOCUS_RING_PATTERNS.DEFAULT} rounded-t-md ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} inline-flex items-center
@@ -338,7 +339,7 @@ function MobileNavComponent() {
                       }
                       onClick={closeMenu}
                       className={`
-                        w-full text-left px-6 py-4 text-lg font-semibold
+                        w-full text-left px-6 py-4 ${TYPOGRAPHY_CLASSES.SUBHEADING} ${TYPOGRAPHY_CLASSES.SEMIBOLD}
                         ${TRANSITION_CLASSES.SLOW} ease-out rounded-md
                         border-l-[${MOBILE_NAV_TAILWIND.ACTIVE_LINK_BORDER_W}] ${active ? PRIMARY_ACTIVE_LINK : `border-transparent ${GRAY_CLASSES.TEXT_800} hover:text-primary-600 ${GRAY_CLASSES.HOVER_BG_50}`}
                         ${FOCUS_RING_PATTERNS.DEFAULT} ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center justify-between

@@ -22,6 +22,7 @@ import {
   PROGRESS_PERCENTAGE,
   GENTLE_PULSE,
   STEP_CHECK_POP,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -270,7 +271,7 @@ const ProgressStepperComponent = function ProgressStepper({
                     className={`
                       flex items-center justify-center
                       ${ICON_SIZES.XXXL} rounded-full border-2
-                      font-medium text-sm ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE}
+                      ${TYPOGRAPHY_CLASSES.SM_MEDIUM} ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE}
                       ${TRANSITION_CLASSES.SLOW}
                       ${isClickable ? `group-hover:scale-110 group-focus-visible:scale-110 group-hover:shadow-md ${COMPONENT_PRIMARY_PATTERNS.PROGRESS_HOVER}` : ''}
                       ${

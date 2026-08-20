@@ -15,6 +15,7 @@ import {
   COMPONENT_STATE_COLORS,
   ICON_SIZES,
   ANIMATION_CONFIG,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 
 interface IdeaReadyIndicatorProps {
@@ -105,7 +106,7 @@ function IdeaReadyIndicatorComponent({
       </div>
       <span
         className={`
-          text-xs font-medium ${TRANSITION_CLASSES.COLOR_SLOW}
+          ${TYPOGRAPHY_CLASSES.XS_MEDIUM} ${TRANSITION_CLASSES.COLOR_SLOW}
           ${isReady ? TEXT_COLORS.SUCCESS_DARK : TEXT_COLORS.MUTED}
         `}
       >

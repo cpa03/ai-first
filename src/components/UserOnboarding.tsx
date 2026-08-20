@@ -581,7 +581,7 @@ export default function UserOnboarding() {
             >
               <button
                 onClick={handleNext}
-                className={`px-4 py-1.5 text-sm ${BG_COLORS.BRAND} text-white rounded-lg ${BG_COLORS.BRAND_HOVER} ${TRANSITION_CLASSES.COLOR} font-medium ${FOCUS_RING_PATTERNS.DEFAULT}`}
+                className={`px-4 py-1.5 ${TYPOGRAPHY_CLASSES.SMALL} ${BG_COLORS.BRAND} text-white rounded-lg ${BG_COLORS.BRAND_HOVER} ${TRANSITION_CLASSES.COLOR} ${TYPOGRAPHY_CLASSES.MEDIUM} ${FOCUS_RING_PATTERNS.DEFAULT}`}
               >
                 {isLastStep
                   ? USER_ONBOARDING_COMPLETION_LABELS.GET_STARTED_BUTTON
