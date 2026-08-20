@@ -73,6 +73,7 @@ Found 32 source files with TODO/FIXME comments. These are mostly in:
 4. ✅ Ran TypeScript type check
 5. ✅ Ran ESLint check
 6. ✅ Generated maintenance report
+7. ✅ Identified merged branches for cleanup
 
 ### No Changes Required
 
@@ -81,19 +82,37 @@ Found 32 source files with TODO/FIXME comments. These are mostly in:
 - No empty files to remove
 - No temporary files to clean up
 
+### Branch Cleanup Required
+
+**Merged branches ready for deletion:**
+
+| Branch                                                        | Last Commit | Status         |
+| ------------------------------------------------------------- | ----------- | -------------- |
+| `origin/flexy/eliminate-remaining-hardcoded-classes-20260817` | 2026-08-17  | Merged to main |
+
+**Action Required:** Delete the merged branch to reduce repository clutter.
+
+**Note:** The following branches are active and should be monitored:
+
+- 71 unmerged branches (all active, no stale branches >30 days)
+- Multiple agent branches in progress
+- Feature branches under development
+
 ## Recommendations
 
 ### Short-term
 
-1. **Monitor file sizes** - Keep an eye on files approaching 250 LOC
-2. **Address TODO items** - Schedule time to review and complete TODO/FIXME items
-3. **Update documentation** - Keep documentation current with code changes
+1. **Branch cleanup** - Delete the merged branch `origin/flexy/eliminate-remaining-hardcoded-classes-20260817`
+2. **Monitor file sizes** - Keep an eye on files approaching 250 LOC
+3. **Address TODO items** - Schedule time to review and complete TODO/FIXME items
+4. **Update documentation** - Keep documentation current with code changes
 
 ### Long-term
 
 1. **Refactor large files** - Consider breaking down files >1000 LOC
 2. **Automate maintenance** - Set up automated checks for file sizes and documentation
 3. **Regular audits** - Schedule monthly maintenance cycles
+4. **Branch management** - Implement automated stale branch detection and cleanup
 
 ## Conclusion
 
