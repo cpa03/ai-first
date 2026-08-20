@@ -100,6 +100,7 @@ const AlertComponent = function Alert({
   // Helps users discover shortcuts (d=dismiss, s=snooze) without cluttering UI
   const [showShortcutHint, setShowShortcutHint] = useState(false);
   const shortcutHintTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hasAutoShownHintRef = useRef(false);
   const styles = ALERT_STYLES[type];
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<NodeJS.Timeout | null>(null);
@@ -134,6 +135,22 @@ const AlertComponent = function Alert({
   useEffect(() => {
     return cleanupTimers;
   }, [cleanupTimers]);
+
+  // Micro-UX: Briefly auto-show keyboard shortcut hints when alert first appears
+  // Helps users discover shortcuts (d=dismiss, s=snooze) without requiring hover/focus
+  // Only auto-shows once per alert instance to avoid distraction on re-renders
+  useEffect(() => {
+    if (!onClose || hasAutoShownHintRef.current || prefersReducedMotion) return;
+
+    hasAutoShownHintRef.current = true;
+    setShowShortcutHint(true);
+
+    const timer = setTimeout(() => {
+      setShowShortcutHint(false);
+    }, COMPONENT_CONFIG.ALERT.SHORTCUT_HINT_DURATION_MS);
+
+    return () => clearTimeout(timer);
+  }, [onClose, prefersReducedMotion]);
 
   useEffect(() => {
     if (!shouldAutoDismiss || isPaused) return;

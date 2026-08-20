@@ -561,6 +561,13 @@ export const COMPONENT_CONFIG = {
       1000,
       30000
     ),
+    /** Duration to auto-show keyboard shortcut hints on alert mount (ms) - Env: COMPONENT_ALERT_SHORTCUT_HINT_DURATION_MS (default: 3000) */
+    SHORTCUT_HINT_DURATION_MS: EnvLoader.number(
+      'COMPONENT_ALERT_SHORTCUT_HINT_DURATION_MS',
+      3000,
+      1000,
+      10000
+    ),
   },
 
   DASHBOARD: {
