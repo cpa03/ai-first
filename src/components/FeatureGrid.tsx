@@ -64,7 +64,7 @@ function FeatureGridComponent() {
     getItemId: (feature) => feature.step.toString(),
     cardSelector: '[data-feature-card]',
     onAnnounce: setAnnouncement,
-    getAnnouncement: (feature, index, total) =>
+    getAnnouncement: (feature, _index, total) =>
       `Step ${feature.step} of ${total}: ${feature.title}`,
   });
 

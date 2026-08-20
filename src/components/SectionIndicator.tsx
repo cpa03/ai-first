@@ -193,7 +193,7 @@ function SectionIndicatorComponent({
           ${prefersReducedMotion ? '' : 'transition-all ' + DURATION_TAILWIND[300]}
         `}
       >
-        {sections.map((section, index) => {
+        {sections.map((section) => {
           const isActive = activeSection === section.id;
           return (
             <Tooltip
