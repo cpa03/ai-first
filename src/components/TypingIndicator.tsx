@@ -8,6 +8,7 @@ import {
   TYPING_INDICATOR_DOT_PATTERN,
   INLINE_FLEX_PATTERNS,
   TYPING_DOT,
+  ANIMATION_VALUES,
 } from '@/lib/config';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
@@ -98,7 +99,7 @@ function TypingIndicatorComponent({
             className={`
               ${TYPING_INDICATOR_DOT_PATTERN}
               ${TRANSITION_CLASSES.COLOR}
-              ${isAnimating && !prefersReducedMotion ? TYPING_DOT : 'opacity-40'}
+              ${isAnimating && !prefersReducedMotion ? TYPING_DOT : ANIMATION_VALUES.OPACITY_CLASSES.MODERATE}
             `}
             style={{
               animationDelay: `${index * ANIMATION_CONFIG.TYPING_INDICATOR.DOT_STAGGER}ms`,

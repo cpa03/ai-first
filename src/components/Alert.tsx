@@ -26,6 +26,7 @@ import {
   FLEX_GROW_PATTERNS,
   TOAST_DISMISS_BUTTON,
   TYPOGRAPHY_CLASSES,
+  ANIMATION_VALUES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -382,7 +383,7 @@ const AlertComponent = function Alert({
       )}
       {onClose && (
         <div
-          className={`${COORDINATE_POSITION_PATTERNS.BOTTOM_LEFT_SM} flex items-center gap-2 text-xs ${showShortcutHint ? 'opacity-60' : 'opacity-0'} focus-within:opacity-60 hover:opacity-60 transition-opacity`}
+          className={`${COORDINATE_POSITION_PATTERNS.BOTTOM_LEFT_SM} flex items-center gap-2 text-xs ${showShortcutHint ? ANIMATION_VALUES.OPACITY_CLASSES.MODERATE_STRONG : ANIMATION_VALUES.OPACITY_CLASSES.NONE} focus-within:${ANIMATION_VALUES.OPACITY_CLASSES.MODERATE_STRONG} hover:${ANIMATION_VALUES.OPACITY_CLASSES.MODERATE_STRONG} transition-opacity`}
           aria-hidden="true"
         >
           {shouldAutoDismiss && (

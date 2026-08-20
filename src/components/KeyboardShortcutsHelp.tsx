@@ -35,6 +35,7 @@ import {
   PRIMARY_LINK,
   BODY_OVERFLOW_CONFIG,
   ROUNDED_CLASSES,
+  ANIMATION_VALUES,
 } from '@/lib/config';
 import { MT_CLASSES, MB_CLASSES } from '@/lib/config/spacing';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -728,7 +729,7 @@ function KeyboardShortcutsHelpComponent({
       aria-labelledby={ARIA_HEADING_IDS.KEYBOARD_SHORTCUTS}
     >
       <div
-        className={`absolute inset-0 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm transition-opacity ${DURATION_TAILWIND[300]} ${isLeaving ? 'opacity-0' : 'opacity-50'}`}
+        className={`absolute inset-0 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm transition-opacity ${DURATION_TAILWIND[300]} ${isLeaving ? ANIMATION_VALUES.OPACITY_CLASSES.NONE : ANIMATION_VALUES.OPACITY_CLASSES.MODERATE_MIDDLE}`}
         aria-hidden="true"
       />
       <div
@@ -875,7 +876,9 @@ function KeyboardShortcutsHelpComponent({
                 {contextLabels[context]}{' '}
                 <span
                   className={
-                    selectedContext === context ? 'opacity-75' : 'opacity-50'
+                    selectedContext === context
+                      ? ANIMATION_VALUES.OPACITY_CLASSES.STRONG
+                      : ANIMATION_VALUES.OPACITY_CLASSES.MODERATE_MIDDLE
                   }
                 >
                   {count}

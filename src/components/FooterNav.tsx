@@ -15,6 +15,7 @@ import {
   BG_COLORS,
   TEXT_COLORS,
   UI_CONFIG,
+  ANIMATION_VALUES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -199,7 +200,7 @@ function FooterNavComponent({ columns }: FooterNavProps) {
       {/* Appears briefly when user focuses on footer links to teach arrow key navigation */}
       {showKeyboardHint && (
         <div
-          className={`col-span-2 md:col-span-4 ${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED} flex items-center gap-2 ${prefersReducedMotion ? '' : `transition-opacity ${TRANSITION_CLASSES.DEFAULT}`} ${showKeyboardHint ? 'opacity-60' : 'opacity-0'}`}
+          className={`col-span-2 md:col-span-4 ${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED} flex items-center gap-2 ${prefersReducedMotion ? '' : `transition-opacity ${TRANSITION_CLASSES.DEFAULT}`} ${showKeyboardHint ? ANIMATION_VALUES.OPACITY_CLASSES.MODERATE_STRONG : ANIMATION_VALUES.OPACITY_CLASSES.NONE}`}
           role="status"
           aria-live="polite"
         >

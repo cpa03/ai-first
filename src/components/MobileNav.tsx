@@ -27,6 +27,7 @@ import {
   MT_CLASSES,
   GAP_CLASSES,
   TEXT_FORMAT_PATTERNS,
+  ANIMATION_VALUES,
 } from '@/lib/config';
 import { FLEX_SPACE_X } from '@/lib/config/remaining-hardcoded-patterns';
 import { HINT_OVERLAY } from '@/lib/config/remaining-hardcoded-patterns';
@@ -357,7 +358,9 @@ function MobileNavComponent() {
                       </span>
                       <kbd
                         className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.PROGRESS_NEUTRAL} ${TEXT_COLORS.MUTED} rounded text-xs font-mono transition-opacity ${DURATION_TAILWIND[300]} ${
-                          hintsVisible ? 'opacity-60' : 'opacity-0'
+                          hintsVisible
+                            ? ANIMATION_VALUES.OPACITY_CLASSES.MODERATE_STRONG
+                            : ANIMATION_VALUES.OPACITY_CLASSES.NONE
                         }`}
                         aria-hidden="true"
                       >
