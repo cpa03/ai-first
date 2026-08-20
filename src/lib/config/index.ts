@@ -13,6 +13,15 @@
 // Application Configuration
 export { APP_CONFIG } from './app';
 
+export {
+  AGENT_MODELS,
+  AGENT_MODEL_MAP,
+  getModelForAgent,
+  isValidModel,
+  DEFAULT_AGENT_MODEL,
+  type AgentModel,
+} from './agent-models';
+
 // API Endpoint Configuration
 export { API_ENDPOINTS } from './api-endpoints';
 
