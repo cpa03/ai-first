@@ -174,6 +174,11 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
       severity: 2,
       description: 'Mixed encoding path traversal',
     },
+    {
+      pattern: /%00|%2500|\x00/,
+      severity: 3,
+      description: 'Null byte injection attempt',
+    },
   ],
 
   command_injection: [
