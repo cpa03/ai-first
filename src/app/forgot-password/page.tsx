@@ -35,6 +35,7 @@ import {
 import { SUCCESS_STATE_COLORS } from '@/lib/config/theme';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
+import SuccessCelebration from '@/components/SuccessCelebration';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 
@@ -47,6 +48,7 @@ export default function ForgotPasswordPage() {
   const [resendCooldown, setResendCooldown] = useState(0);
   const [isResending, setIsResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
   const emailInputRef = useRef<HTMLInputElement>(null);
   const cooldownTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { openHelp } = useKeyboardShortcuts();
@@ -145,6 +147,7 @@ export default function ForgotPasswordPage() {
         }
 
         setSuccess(true);
+        setShowCelebration(true);
       } catch (err) {
         const errorMessage =
           err instanceof Error
@@ -224,96 +227,104 @@ export default function ForgotPasswordPage() {
 
   if (success) {
     return (
-      <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
-        <div
-          className={`${CONTAINER_WIDTHS.XS} w-full ${SPACE_Y_PATTERNS.XL} relative`}
-        >
-          <div className={`${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE}`}>
-            <div
-              className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex ${ICON_SIZES.XXXXL} items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.NONE}`}
-            >
-              <svg
-                className={`${ICON_SIZES.XL} ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
+      <>
+        <SuccessCelebration
+          show={showCelebration}
+          onComplete={() => setShowCelebration(false)}
+        />
+        <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
+          <div
+            className={`${CONTAINER_WIDTHS.XS} w-full ${SPACE_Y_PATTERNS.XL} relative`}
+          >
+            <div className={`${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE}`}>
+              <div
+                className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex ${ICON_SIZES.XXXXL} items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.NONE}`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-            <h1
-              className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
-            >
-              Check your email
-            </h1>
-            <p
-              className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
-            >
-              We&apos;ve sent a password reset link to{' '}
-              <span className={FONT_MEDIUM}>{email}</span>
-            </p>
-            <p
-              className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
-            >
-              Didn&apos;t receive the email? Check your spam folder or resend
-              below.
-            </p>
-
-            {error && (
-              <div className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE}`}>
-                <Alert type="error" title="Error">
-                  {error}
-                </Alert>
+                <svg
+                  className={`${ICON_SIZES.XL} ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
               </div>
-            )}
-
-            {resendSuccess && (
+              <h1
+                className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
+              >
+                Check your email
+              </h1>
               <p
-                className={`${SPACING_CLASSES.TOP_SMALL} text-sm ${SUCCESS_STATE_COLORS.ICON_TEXT} ${HERO_ENTRANCE}`}
-                role="status"
-                aria-live="polite"
+                className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
               >
-                Reset email resent successfully!
+                We&apos;ve sent a password reset link to{' '}
+                <span className={FONT_MEDIUM}>{email}</span>
               </p>
-            )}
-
-            <div
-              className={`${SPACING_CLASSES.TOP} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
-            >
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={handleResend}
-                disabled={resendCooldown > 0 || isResending}
-                loading={isResending}
-                loadingText="Sending..."
-                className={RESPONSIVE_WIDTH}
-                size="md"
+              <p
+                className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
               >
-                {resendCooldown > 0
-                  ? `Resend in ${resendCooldown}s`
-                  : 'Resend email'}
-              </Button>
-            </div>
+                Didn&apos;t receive the email? Check your spam folder or resend
+                below.
+              </p>
 
-            <div
-              className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
-            >
-              <Link
-                href={ROUTES.LOGIN}
-                className={`${FORM_PATTERNS.AUTH_LINK} text-sm`}
+              {error && (
+                <div
+                  className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE}`}
+                >
+                  <Alert type="error" title="Error">
+                    {error}
+                  </Alert>
+                </div>
+              )}
+
+              {resendSuccess && (
+                <p
+                  className={`${SPACING_CLASSES.TOP_SMALL} text-sm ${SUCCESS_STATE_COLORS.ICON_TEXT} ${HERO_ENTRANCE}`}
+                  role="status"
+                  aria-live="polite"
+                >
+                  Reset email resent successfully!
+                </p>
+              )}
+
+              <div
+                className={`${SPACING_CLASSES.TOP} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
               >
-                Back to sign in
-              </Link>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handleResend}
+                  disabled={resendCooldown > 0 || isResending}
+                  loading={isResending}
+                  loadingText="Sending..."
+                  className={RESPONSIVE_WIDTH}
+                  size="md"
+                >
+                  {resendCooldown > 0
+                    ? `Resend in ${resendCooldown}s`
+                    : 'Resend email'}
+                </Button>
+              </div>
+
+              <div
+                className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
+              >
+                <Link
+                  href={ROUTES.LOGIN}
+                  className={`${FORM_PATTERNS.AUTH_LINK} text-sm`}
+                >
+                  Back to sign in
+                </Link>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
