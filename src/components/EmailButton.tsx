@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useState, useRef, useEffect } from 'react';
+import React, { useCallback, useState, useRef, useEffect, useMemo } from 'react';
 import Button from './Button';
 import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -20,7 +20,7 @@ import {
 } from '@/lib/config';
 import { EMAIL_BUTTON_LABELS } from '@/lib/config/component-labels';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { isFocusedOnInput } from '@/lib/dom-utils';
+import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 
@@ -141,16 +141,17 @@ const EmailButtonComponent = function EmailButton({
 
   const iconTransition = prefersReducedMotion ? '' : TRANSITION_CLASSES.DEFAULT;
 
+  const shortcutHint = useMemo(
+    () => EMAIL_BUTTON_LABELS.KEYBOARD_SHORTCUT(PLATFORM.isMac()),
+    []
+  );
+
   return (
     <>
       <StatusAnnouncer message={successLabel} triggered={state === 'success'} />
       <Tooltip
         content={state === 'success' ? successLabel : tooltipLabel}
-        shortcut={
-          state === 'success'
-            ? undefined
-            : [...EMAIL_BUTTON_LABELS.KEYBOARD_SHORTCUT]
-        }
+        shortcut={state === 'success' ? undefined : shortcutHint}
         disabled={false}
         position="top"
       >

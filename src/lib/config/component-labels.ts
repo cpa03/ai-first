@@ -605,8 +605,8 @@ export const EMAIL_BUTTON_LABELS = {
   ARIA_LABEL: 'Email to Self',
   /** Default tooltip label */
   TOOLTIP_LABEL: 'Send blueprint to your email',
-  /** Keyboard shortcut keys for tooltip - Shift+E to avoid conflict with export markdown (⌘E) */
-  KEYBOARD_SHORTCUT: ['⌘', '⇧', 'E'],
+  /** Keyboard shortcut keys for tooltip - platform-aware Shift+E */
+  KEYBOARD_SHORTCUT: (isMac: boolean) => [isMac ? '⌘' : 'Ctrl', '⇧', 'E'],
   /** Email subject prefix */
   SUBJECT_PREFIX: 'My',
   /** Email subject suffix */

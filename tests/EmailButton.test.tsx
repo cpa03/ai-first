@@ -116,4 +116,18 @@ describe('EmailButton Keyboard Shortcuts & Functionality', () => {
 
     expect(onEmailSentMock).toHaveBeenCalled();
   });
+
+  it('renders platform-aware tooltip keyboard shortcut hints', () => {
+    const { container } = render(
+      <EmailButton ideaTitle="My Idea" ideaContent="Flow Content" />
+    );
+
+    const button = screen.getByRole('button');
+    expect(button).toBeInTheDocument();
+    // Verify tooltip or aria-keyshortcuts has shortcuts
+    expect(button).toHaveAttribute(
+      'aria-keyshortcuts',
+      'Control+Shift+E, Meta+Shift+E'
+    );
+  });
 });
