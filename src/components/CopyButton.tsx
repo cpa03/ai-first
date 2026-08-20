@@ -137,7 +137,7 @@ const CopyButtonComponent = function CopyButton({
             onClick={handleCopy}
             onKeyDown={handleKeyDown}
             className={`${baseClasses} ${variantClasses[variant]} ${glowClass} ${className}`}
-            aria-label={ariaLabel}
+            aria-label={copied ? successLabel : ariaLabel}
             aria-keyshortcuts="Control+C, Meta+C"
             type="button"
           >

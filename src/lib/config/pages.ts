@@ -409,10 +409,10 @@ export const RESULTS_PAGE_CONTENT = {
     EXPORT_NOTION_SETUP: 'Export to Notion - requires API configuration',
     EXPORT_TRELLO: 'Export project to Trello',
     EXPORT_TRELLO_SETUP: 'Export to Trello - requires API configuration',
-    EXPORT_GOOGLE_TASKS: 'Export tasks to Google Tasks',
+    EXPORT_GOOGLE_TASKS: 'Export to Google Tasks',
     EXPORT_GOOGLE_TASKS_SETUP:
       'Export to Google Tasks - requires API configuration',
-    EXPORT_GITHUB_PROJECTS: 'Export tasks to GitHub Projects',
+    EXPORT_GITHUB_PROJECTS: 'Export to GitHub Projects',
     EXPORT_GITHUB_PROJECTS_SETUP:
       'Export to GitHub Projects - requires API configuration',
   },
