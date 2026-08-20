@@ -66,6 +66,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 - **Date**: 2026-08-16
 - **Details**: Connected platform-aware keyboard shortcut representations for `CopyButton` directly to `COPY_BUTTON_LABELS.KEYBOARD_SHORTCUT` in `src/lib/config/component-labels.ts`.
 
+### [STRENGTHEN] Strengthen AutoSaveIndicator Keyboard Accessibility and Timestamp Tooltip
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-20
+- **Details**: Strengthened `AutoSaveIndicator` timestamp accessibility with `tabIndex={0}`, focus rings (`FOCUS_RING_PATTERNS.SMALL`), and descriptive `aria-label` attributes so keyboard and screen reader users can discover detailed timestamp tooltips. Verified in `tests/AutoSaveIndicator.test.tsx`.
+
+### [CONNECT] Connect AutoSaveIndicator Relative Time Formatting to Component Labels Config
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-08-20
+- **Details**: Connected relative time formatting (`SECONDS_AGO`, `MINUTES_AGO`) in `AutoSaveIndicator` directly to `AUTO_SAVE_INDICATOR_LABELS` in `src/lib/config/component-labels.ts`, eliminating inline hardcoded time strings.
+
 ---
 
 ## Quick Stats

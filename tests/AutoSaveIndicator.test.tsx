@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import AutoSaveIndicator from '../src/components/AutoSaveIndicator';
+import { AUTO_SAVE_INDICATOR_LABELS } from '../src/lib/config';
 
 const flushMicrotasks = async () => {
   await act(async () => {
@@ -57,7 +58,33 @@ describe('AutoSaveIndicator Component', () => {
     await flushMicrotasks();
 
     expect(screen.getByText('Saved')).toBeInTheDocument();
-    expect(screen.getByText(/just now/i)).toBeInTheDocument();
+    const timestamp = screen.getByText(/just now/i);
+    expect(timestamp).toBeInTheDocument();
+    expect(timestamp).toHaveAttribute('tabindex', '0');
+    expect(timestamp).toHaveAttribute('role', 'status');
+    expect(timestamp).toHaveAttribute('aria-label');
+  });
+
+  it('includes accessible role and label when saved', async () => {
+    render(<AutoSaveIndicator value="My draft" delay={1000} />);
+    await flushMicrotasks();
+
+    // Advance to saved state
+    act(() => {
+      jest.advanceTimersByTime(1500);
+    });
+    await flushMicrotasks();
+
+    const timestamp = screen.getByText(/just now/i);
+    expect(timestamp).toBeInTheDocument();
+    expect(timestamp).toHaveAttribute('tabindex', '0');
+    expect(timestamp).toHaveAttribute('role', 'status');
+    expect(timestamp.getAttribute('aria-label')).toContain('Last saved: just now');
+  });
+
+  it('provides modular label builders for relative time formatting', () => {
+    expect(AUTO_SAVE_INDICATOR_LABELS.SECONDS_AGO(15)).toBe('15s ago');
+    expect(AUTO_SAVE_INDICATOR_LABELS.MINUTES_AGO(5)).toBe('5m ago');
   });
 
   it('resets progress and timers when value changes while typing', async () => {

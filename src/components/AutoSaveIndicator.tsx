@@ -21,6 +21,7 @@ import {
   ICON_SIZES,
   COMMON_SPACING_PATTERNS,
   COORDINATE_POSITION_PATTERNS,
+  FOCUS_RING_PATTERNS,
 } from '@/lib/config';
 import Tooltip from './Tooltip';
 
@@ -176,9 +177,10 @@ function AutoSaveIndicatorComponent({
     const seconds = Math.floor(diff / TIME_CONVERSIONS.MS_PER_SECOND);
 
     if (seconds < 10) return AUTO_SAVE_INDICATOR_LABELS.JUST_NOW;
-    if (seconds < TIME_CONVERSIONS.SECONDS_PER_MINUTE) return `${seconds}s ago`;
+    if (seconds < TIME_CONVERSIONS.SECONDS_PER_MINUTE)
+      return AUTO_SAVE_INDICATOR_LABELS.SECONDS_AGO(seconds);
     const minutes = Math.floor(seconds / TIME_CONVERSIONS.SECONDS_PER_MINUTE);
-    if (minutes < 60) return `${minutes}m ago`;
+    if (minutes < 60) return AUTO_SAVE_INDICATOR_LABELS.MINUTES_AGO(minutes);
     return timeFormatter.format(date);
   };
 
@@ -302,7 +304,10 @@ function AutoSaveIndicatorComponent({
                 position="top"
               >
                 <span
-                  className={`${TEXT_COLORS.MUTED} animate-in fade-in slide-in-from-left-1 ${DURATION_TAILWIND[300]} cursor-help border-b border-dotted ${BORDER_COLORS.MUTED} ${TEXT_COLORS.HOVER_SECONDARY} transition-colors ${DURATION_TAILWIND[200]} ${ANIMATION_DELAYS.TAILWIND[100]}`}
+                  tabIndex={0}
+                  role="status"
+                  aria-label={`${AUTO_SAVE_INDICATOR_LABELS.LAST_SAVED}: ${formatLastSaved(lastSaved)} (${formatExactTimestamp(lastSaved)})`}
+                  className={`${TEXT_COLORS.MUTED} animate-in fade-in slide-in-from-left-1 ${DURATION_TAILWIND[300]} cursor-help border-b border-dotted ${BORDER_COLORS.MUTED} ${TEXT_COLORS.HOVER_SECONDARY} transition-colors ${DURATION_TAILWIND[200]} ${ANIMATION_DELAYS.TAILWIND[100]} ${FOCUS_RING_PATTERNS.SMALL} rounded-sm`}
                 >
                   • {formatLastSaved(lastSaved)}
                 </span>
