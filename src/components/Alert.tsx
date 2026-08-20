@@ -28,6 +28,7 @@ import {
   TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { isFocusedOnInput } from '@/lib/dom-utils';
 import Tooltip from './Tooltip';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
@@ -200,6 +201,9 @@ const AlertComponent = function Alert({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      // Prevent keyboard shortcuts from firing while user is typing in an input field
+      if (isFocusedOnInput(e.target)) return;
+
       if (e.key === 'Escape' && onClose) {
         e.preventDefault();
         handleClose();
