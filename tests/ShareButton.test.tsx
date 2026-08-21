@@ -192,4 +192,52 @@ describe('ShareButton Micro-UX & Keyboard Shortcuts', () => {
     expect(mockOnShare).not.toHaveBeenCalled();
     document.body.removeChild(input);
   });
+
+  it('renders platform-aware keyboard shortcut in tooltip', async () => {
+    const originalPlatform = navigator.platform;
+
+    // Simulate Mac platform
+    Object.defineProperty(navigator, 'platform', {
+      value: 'MacIntel',
+      configurable: true,
+      writable: true,
+    });
+
+    const { unmount } = render(<ShareButton />);
+    const button = screen.getByRole('button');
+
+    await act(async () => {
+      fireEvent.focus(button);
+    });
+
+    expect(await screen.findByText('⌘')).toBeInTheDocument();
+    expect(screen.getByText('⇧')).toBeInTheDocument();
+    expect(screen.getByText('S')).toBeInTheDocument();
+
+    unmount();
+
+    // Simulate Windows platform
+    Object.defineProperty(navigator, 'platform', {
+      value: 'Win32',
+      configurable: true,
+      writable: true,
+    });
+
+    render(<ShareButton />);
+    const buttonWin = screen.getByRole('button');
+
+    await act(async () => {
+      fireEvent.focus(buttonWin);
+    });
+
+    expect(await screen.findByText('Ctrl')).toBeInTheDocument();
+    expect(screen.getByText('⇧')).toBeInTheDocument();
+    expect(screen.getByText('S')).toBeInTheDocument();
+
+    Object.defineProperty(navigator, 'platform', {
+      value: originalPlatform,
+      configurable: true,
+      writable: true,
+    });
+  });
 });

@@ -23,6 +23,8 @@ export const SHARE_BUTTON_LABELS = {
   SHARE_SUCCESS: 'Thanks for sharing!',
   /** Error message on clipboard failure */
   CLIPBOARD_ERROR: 'Failed to copy link. Please try again.',
+  /** Keyboard shortcut representation for tooltip hint */
+  KEYBOARD_SHORTCUT: (isMac: boolean) => [isMac ? '⌘' : 'Ctrl', '⇧', 'S'],
 } as const;
 
 /**
