@@ -21,6 +21,7 @@ import {
   FLEX_GROW_PATTERNS,
   TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
+import { ANIMATION_CONFIG } from '@/lib/config/constants';
 
 interface KeyboardShortcutHintProps {
   storageKey?: string;
@@ -108,7 +109,7 @@ function KeyboardShortcutHintComponent({
           ${BG_COLORS.DEFAULT} ${SHADOW_CLASSES.LARGE} rounded-xl
           border ${BORDER_COLORS.LIGHT}
           p-4 transition-opacity transition-transform will-change-transform
-          ${isExiting ? 'opacity-0 translate-y-2 scale-95' : 'opacity-100 translate-y-0 scale-100'}
+          ${isExiting ? `${ANIMATION_CONFIG.STATES.OPACITY.HIDDEN} ${ANIMATION_CONFIG.STATES.TRANSLATE.DOWN_SM} ${ANIMATION_CONFIG.STATES.SCALE.EXTRA_LARGE}` : `${ANIMATION_CONFIG.STATES.OPACITY.FULL} ${ANIMATION_CONFIG.STATES.TRANSLATE.NONE} ${ANIMATION_CONFIG.STATES.SCALE.NORMAL}`}
         `}
         style={{
           transitionDuration: prefersReducedMotion

@@ -51,7 +51,9 @@ function IdeaReadyIndicatorComponent({
   return (
     <div
       className={`inline-flex items-center gap-1.5 ${TRANSITION_CLASSES.SLOW} ${
-        isReady ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        isReady
+          ? `${ANIMATION_CONFIG.STATES.OPACITY.FULL} ${ANIMATION_CONFIG.STATES.SCALE.NORMAL}`
+          : `${ANIMATION_CONFIG.STATES.OPACITY.HIDDEN} ${ANIMATION_CONFIG.STATES.SCALE.EXTRA_LARGE}`
       } ${className}`}
       role="status"
       aria-live="polite"
@@ -67,7 +69,7 @@ function IdeaReadyIndicatorComponent({
         <svg
           className={`
             ${ICON_SIZES.SM} ${TRANSITION_CLASSES.SLOW}
-            ${showCheckmark ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
+            ${showCheckmark ? `${ANIMATION_CONFIG.STATES.OPACITY.FULL} ${ANIMATION_CONFIG.STATES.SCALE.NORMAL}` : `${ANIMATION_CONFIG.STATES.OPACITY.HIDDEN} ${ANIMATION_CONFIG.STATES.SCALE.SMALL}`}
           `}
           fill="none"
           viewBox={SVG_VIEWBOX.STANDARD}

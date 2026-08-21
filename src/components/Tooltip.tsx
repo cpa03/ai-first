@@ -297,7 +297,7 @@ function TooltipComponent({
             absolute pointer-events-none
             ${positionClasses[computedPosition]}
             ${prefersReducedMotion ? '' : `transition-all ${DURATION_TAILWIND[200]} ease-out`}
-            ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+            ${isVisible ? `${ANIMATION_CONFIG.STATES.OPACITY.FULL} ${ANIMATION_CONFIG.STATES.SCALE.NORMAL}` : `${ANIMATION_CONFIG.STATES.OPACITY.HIDDEN} ${ANIMATION_CONFIG.STATES.SCALE.EXTRA_LARGE}`}
           `}
           style={tooltipStyle}
         >

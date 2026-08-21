@@ -339,6 +339,118 @@ export const ANIMATION_CONFIG = {
     /** Env: UI_ANIMATION_SHADOW_BOX_BLUR (default: 8) */
     BOX: EnvLoader.number('UI_ANIMATION_SHADOW_BOX_BLUR', 8, 0, 20),
   },
+
+  /**
+   * Animation State Values
+   * Centralizes hardcoded opacity, scale, translate, and rotate values
+   * Eliminates magic numbers scattered across components
+   */
+  STATES: {
+    /**
+     * Opacity values for animation states
+     */
+    OPACITY: {
+      HIDDEN: 'opacity-0',
+      VERY_LOW: 'opacity-30',
+      LOW: 'opacity-40',
+      MEDIUM_LOW: 'opacity-50',
+      MEDIUM: 'opacity-60',
+      MEDIUM_HIGH: 'opacity-75',
+      HIGH: 'opacity-80',
+      VERY_HIGH: 'opacity-90',
+      FULL: 'opacity-100',
+    } as const,
+
+    /**
+     * Scale values for animation states
+     */
+    SCALE: {
+      SMALL: 'scale-50',
+      MEDIUM: 'scale-75',
+      LARGE: 'scale-90',
+      EXTRA_LARGE: 'scale-95',
+      NORMAL: 'scale-100',
+      UP_SMALL: 'scale-105',
+      UP_MEDIUM: 'scale-110',
+      UP_LARGE: 'scale-125',
+      UP_EXTRA_LARGE: 'scale-150',
+      UP_XXL: 'scale-175',
+      ZERO: 'scale-0',
+    } as const,
+
+    /**
+     * X-axis scale values
+     */
+    SCALE_X: {
+      ZERO: 'scale-x-0',
+      NORMAL: 'scale-x-100',
+    } as const,
+
+    /**
+     * Translate values for animation states
+     */
+    TRANSLATE: {
+      UP_XS: '-translate-y-0.5',
+      UP_SM: '-translate-y-1',
+      UP_MD: '-translate-y-2',
+      UP_LG: '-translate-y-4',
+      NONE: 'translate-y-0',
+      DOWN_XS: 'translate-y-0.5',
+      DOWN_SM: 'translate-y-1',
+      DOWN_MD: 'translate-y-2',
+      DOWN_LG: 'translate-y-4',
+      LEFT_MD: '-translate-x-2',
+      RIGHT_FULL: 'translate-x-full',
+      X_NONE: 'translate-x-0',
+    } as const,
+
+    /**
+     * Rotate values for animation states
+     */
+    ROTATE: {
+      MINUS_90: '-rotate-90',
+      MINUS_45: '-rotate-45',
+      NONE: 'rotate-0',
+      PLUS_45: 'rotate-45',
+      PLUS_90: 'rotate-90',
+      PLUS_180: 'rotate-180',
+    } as const,
+
+    /**
+     * Predefined animation state combinations
+     */
+    COMBINATIONS: {
+      HIDDEN: 'opacity-0',
+      VISIBLE: 'opacity-100',
+      FADE_IN: {
+        FROM: 'opacity-0',
+        TO: 'opacity-100',
+      },
+      SCALE_IN: {
+        FROM: 'scale-95',
+        TO: 'scale-100',
+      },
+      SCALE_OUT: {
+        FROM: 'scale-100',
+        TO: 'scale-95',
+      },
+      SLIDE_UP: {
+        FROM: 'translate-y-4',
+        TO: 'translate-y-0',
+      },
+      SLIDE_DOWN: {
+        FROM: 'translate-y-0',
+        TO: 'translate-y-4',
+      },
+      MODAL_ENTER: 'opacity-0 scale-95 translate-y-4',
+      MODAL_EXIT: 'opacity-100 scale-100 translate-y-0',
+      TOAST_ENTER: 'translate-x-full opacity-0',
+      TOAST_EXIT: 'translate-x-0 opacity-100',
+      CHECKMARK_HIDDEN: 'opacity-0 scale-75 -rotate-45',
+      CHECKMARK_VISIBLE: 'opacity-100 scale-100 rotate-0',
+      CHECKMARK_EXIT: 'opacity-0 scale-75 rotate-45',
+    } as const,
+  },
 } as const;
 
 export type AnimationConfig = typeof ANIMATION_CONFIG;

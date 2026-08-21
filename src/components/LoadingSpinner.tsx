@@ -14,6 +14,7 @@ import {
   CSS_POSITIONING,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
+import { ANIMATION_CONFIG } from '@/lib/config/constants';
 import { LOADING_SPINNER_ELAPSED_TEXT } from '@/lib/config/remaining-hardcoded-patterns';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -150,8 +151,8 @@ function LoadingSpinnerComponent({
     <div
       className={`flex justify-center items-center gap-2.5 ${className} ${
         !prefersReducedMotion && !hasAppeared
-          ? 'opacity-0 scale-90'
-          : `opacity-100 scale-100 ${TRANSITION_CLASSES.SLOW_EASE_OUT}`
+          ? `${ANIMATION_CONFIG.STATES.OPACITY.HIDDEN} ${ANIMATION_CONFIG.STATES.SCALE.LARGE}`
+          : `${ANIMATION_CONFIG.STATES.OPACITY.FULL} ${ANIMATION_CONFIG.STATES.SCALE.NORMAL} ${TRANSITION_CLASSES.SLOW_EASE_OUT}`
       }`}
       role={COMPONENT_CONFIG.ARIA.STATUS}
       aria-live={COMPONENT_CONFIG.ARIA.POLITE}

@@ -152,7 +152,7 @@ function StepCelebrationComponent({
           fixed inset-0 pointer-events-none z-[${Z_INDEX_LAYERS.OVERLAY}]
           flex items-center justify-center
           ${TRANSITION_CLASSES.COLOR_SLOW}
-          ${isExiting ? 'opacity-0' : 'opacity-100'}
+          ${isExiting ? ANIMATION_CONFIG.STATES.OPACITY.HIDDEN : ANIMATION_CONFIG.STATES.OPACITY.FULL}
         `}
         aria-hidden="true"
         role="presentation"
@@ -161,7 +161,7 @@ function StepCelebrationComponent({
           className={`
 absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRATION_TAILWIND.BACKDROP_BLUR}]
           ${TRANSITION_CLASSES.COLOR_SLOW}
-          ${isExiting ? 'opacity-0' : 'opacity-100'}
+          ${isExiting ? ANIMATION_CONFIG.STATES.OPACITY.HIDDEN : ANIMATION_CONFIG.STATES.OPACITY.FULL}
         `}
         />
 
@@ -169,7 +169,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
           className={`
           relative flex flex-col items-center justify-center
           transform ${TRANSITION_CLASSES.ULTRA_SLOW}
-          ${isExiting ? 'scale-90 opacity-0' : 'scale-100 opacity-100'}
+          ${isExiting ? `${ANIMATION_CONFIG.STATES.SCALE.LARGE} ${ANIMATION_CONFIG.STATES.OPACITY.HIDDEN}` : `${ANIMATION_CONFIG.STATES.SCALE.NORMAL} ${ANIMATION_CONFIG.STATES.OPACITY.FULL}`}
         `}
           style={{
             transitionTimingFunction: UI_CONFIG.ANIMATION.EASING.SPRING,
