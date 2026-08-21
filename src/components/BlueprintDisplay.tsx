@@ -89,6 +89,15 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   // Micro-UX: Detect platform for keyboard shortcut display
   const [isMac, setIsMac] = useState(false);
 
+  // Average reading speed is ~200 words per minute for technical content
+  const WORDS_PER_MINUTE = 200;
+  const readingTimeMinutes = useMemo(() => {
+    if (!blueprint) return 0;
+    const wordCount = blueprint.split(/\s+/).filter(Boolean).length;
+    const minutes = Math.ceil(wordCount / WORDS_PER_MINUTE);
+    return minutes;
+  }, [blueprint]);
+
   useEffect(() => {
     setIsMac(PLATFORM.isMac());
   }, []);
@@ -282,6 +291,11 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
         >
           {idea}
         </p>
+        {readingTimeMinutes > 0 && (
+          <p className={`text-xs ${TEXT_COLOR_CLASSES.MUTED}`}>
+            Estimated reading time: {readingTimeMinutes} min
+          </p>
+        )}
         <hr className={BLUEPRINT_DISPLAY_STYLES.PRINT_DIVIDER} />
       </div>
       <section
@@ -292,15 +306,25 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           className={`border-b ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_HEADER}`}
         >
           <div className={COMMON_FLEX_BETWEEN_RESPONSIVE}>
-            <h2
-              id={BLUEPRINT_ELEMENT_IDS.BLUEPRINT_HEADING}
-              ref={headingRef}
-              className={`text-xl sm:text-2xl ${TYPOGRAPHY_CLASSES.XL_SEMIBOLD} ${TEXT_COLOR_CLASSES.HEADING}`}
-              tabIndex={-1}
-              aria-live="polite"
-            >
-              {MESSAGES.BLUEPRINT.PAGE_TITLE}
-            </h2>
+            <div>
+              <h2
+                id={BLUEPRINT_ELEMENT_IDS.BLUEPRINT_HEADING}
+                ref={headingRef}
+                className={`text-xl sm:text-2xl ${TYPOGRAPHY_CLASSES.XL_SEMIBOLD} ${TEXT_COLOR_CLASSES.HEADING}`}
+                tabIndex={-1}
+                aria-live="polite"
+              >
+                {MESSAGES.BLUEPRINT.PAGE_TITLE}
+              </h2>
+              {readingTimeMinutes > 0 && (
+                <p
+                  className={`text-xs ${TEXT_COLOR_CLASSES.MUTED} mt-0.5`}
+                  aria-label={`Estimated reading time: ${readingTimeMinutes} minute${readingTimeMinutes === 1 ? '' : 's'}`}
+                >
+                  {readingTimeMinutes} min read
+                </p>
+              )}
+            </div>
             <div className={RESPONSIVE_FLEX_PATTERNS.RESPONSIVE_COL}>
               <Tooltip
                 content={
