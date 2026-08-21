@@ -54,4 +54,28 @@ describe('sanitizeHtml Comprehensive Security', () => {
       expect(sanitized).not.toContain('>');
     }
   });
+
+  it('should sanitize non-string values coerced to strings', () => {
+    const maliciousObject = {
+      toString() {
+        return '<script>alert("xss")</script>';
+      },
+    };
+
+    const sanitizedValue = sanitizeHtml(String(maliciousObject));
+    expect(sanitizedValue).not.toContain('<script>');
+    expect(sanitizedValue).not.toContain('</script>');
+    expect(sanitizedValue).not.toContain('<');
+    expect(sanitizedValue).not.toContain('>');
+  });
+
+  it('should sanitize numeric values safely', () => {
+    const sanitizedValue = sanitizeHtml(String(42));
+    expect(sanitizedValue).toBe('42');
+  });
+
+  it('should sanitize null/undefined safely', () => {
+    expect(sanitizeHtml(String(null))).toBe('null');
+    expect(sanitizeHtml(String(undefined))).toBe('undefined');
+  });
 });
