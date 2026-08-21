@@ -277,6 +277,7 @@ export default function LoginPage() {
       <a
         href="#login-form"
         className={`${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.BASE} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.BG} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.TEXT}`}
+        aria-label="Skip to login form"
       >
         Skip to login form
       </a>
@@ -424,6 +425,7 @@ export default function LoginPage() {
               <Link
                 href={ROUTES.FORGOT_PASSWORD}
                 className={FORM_PATTERNS.AUTH_LINK}
+                aria-label="Forgot your password? Reset it here"
               >
                 {LOGIN_PAGE_CONTENT.FORM.FORGOT_PASSWORD}
               </Link>
@@ -439,6 +441,9 @@ export default function LoginPage() {
               enableTransition
               attention={isFormValid && !isLoading}
               shortcut={isMac ? ['⌘', 'Enter'] : ['Ctrl', 'Enter']}
+              aria-label={
+                isLoading ? 'Signing in...' : 'Sign in to your account'
+              }
             >
               {isLoading
                 ? LOGIN_PAGE_CONTENT.FORM.SUBMIT_LOADING
@@ -492,6 +497,7 @@ export default function LoginPage() {
             loadingText={LOGIN_PAGE_CONTENT.OAUTH.GOOGLE_LOADING}
             enableTransition
             className={JUSTIFY_CENTER}
+            aria-label="Sign in with Google"
           >
             {oauthLoading !== 'google' && (
               <svg
@@ -528,6 +534,7 @@ export default function LoginPage() {
             loadingText={LOGIN_PAGE_CONTENT.OAUTH.GITHUB_LOADING}
             enableTransition
             className={JUSTIFY_CENTER}
+            aria-label="Sign in with GitHub"
           >
             {oauthLoading !== 'github' && (
               <svg
@@ -550,7 +557,11 @@ export default function LoginPage() {
           className={`${FORM_PATTERNS.AUTH_FOOTER_TEXT} ${HERO_ENTRANCE} ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
         >
           {LOGIN_PAGE_CONTENT.FOOTER.NO_ACCOUNT}{' '}
-          <Link href={ROUTES.SIGNUP} className={FORM_PATTERNS.AUTH_LINK}>
+          <Link
+            href={ROUTES.SIGNUP}
+            className={FORM_PATTERNS.AUTH_LINK}
+            aria-label="Create a new account"
+          >
             {LOGIN_PAGE_CONTENT.FOOTER.SIGN_UP}
           </Link>
         </p>
@@ -568,6 +579,7 @@ export default function LoginPage() {
             type="button"
             onClick={openHelp}
             className={DASHBOARD_PATTERNS.VIEW_SHORTCUTS_BTN}
+            aria-label="View all keyboard shortcuts"
           >
             View all
           </button>

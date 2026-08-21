@@ -653,6 +653,7 @@ export default function SignupPage() {
       <a
         href="#signup-form"
         className={`${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.BASE} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.BG} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.TEXT}`}
+        aria-label="Skip to signup form"
       >
         Skip to signup form
       </a>
@@ -784,6 +785,9 @@ export default function SignupPage() {
               enableTransition
               attention={isFormValid && !isLoading}
               shortcut={isMac ? ['⌘', 'Enter'] : ['Ctrl', 'Enter']}
+              aria-label={
+                isLoading ? 'Creating account...' : 'Create your account'
+              }
             >
               {isLoading
                 ? SIGNUP_PAGE_CONTENT.FORM.SUBMIT_LOADING
@@ -836,6 +840,7 @@ export default function SignupPage() {
             loading={oauthLoading === 'google'}
             loadingText={SIGNUP_PAGE_CONTENT.OAUTH.GOOGLE_LOADING}
             className={JUSTIFY_CENTER}
+            aria-label="Sign up with Google"
           >
             {oauthLoading !== 'google' && (
               <svg
@@ -871,6 +876,7 @@ export default function SignupPage() {
             loading={oauthLoading === 'github'}
             loadingText={SIGNUP_PAGE_CONTENT.OAUTH.GITHUB_LOADING}
             className={JUSTIFY_CENTER}
+            aria-label="Sign up with GitHub"
           >
             {oauthLoading !== 'github' && (
               <svg
@@ -893,7 +899,11 @@ export default function SignupPage() {
           className={`${FORM_PATTERNS.AUTH_FOOTER_TEXT} ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
         >
           {SIGNUP_PAGE_CONTENT.FOOTER.HAS_ACCOUNT}{' '}
-          <Link href={ROUTES.LOGIN} className={FORM_PATTERNS.AUTH_LINK}>
+          <Link
+            href={ROUTES.LOGIN}
+            className={FORM_PATTERNS.AUTH_LINK}
+            aria-label="Sign in to your existing account"
+          >
             {SIGNUP_PAGE_CONTENT.FOOTER.SIGN_IN}
           </Link>
         </p>
@@ -911,6 +921,7 @@ export default function SignupPage() {
             type="button"
             onClick={openHelp}
             className={DASHBOARD_PATTERNS.VIEW_SHORTCUTS_BTN}
+            aria-label="View all keyboard shortcuts"
           >
             View all
           </button>
