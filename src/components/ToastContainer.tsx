@@ -36,6 +36,7 @@ import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns'
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
+import Tooltip from './Tooltip';
 
 // PERFORMANCE (⚡ Bolt): Use an incrementing counter for unique, ephemeral toast IDs
 // to avoid the high CPU and OS-level secure entropy/crypto overhead of `generateId()`.
@@ -248,15 +249,30 @@ function ToastComponent({ toast, onClose }: ToastProps) {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && document.activeElement === toastRef.current) {
+      if (document.activeElement !== toastRef.current) return;
+
+      if (e.key === 'Escape') {
         handleClose();
+      }
+      // Micro-UX: 'p' key toggles pause/resume on toast timer
+      // Makes the hover-only pause feature discoverable for keyboard users
+      if (
+        e.key === 'p' &&
+        !e.metaKey &&
+        !e.ctrlKey &&
+        !e.altKey &&
+        !e.shiftKey &&
+        remainingSeconds > 0
+      ) {
+        e.preventDefault();
+        setIsPaused((prev) => !prev);
       }
     };
 
     const toastElement = toastRef.current;
     toastElement?.addEventListener('keydown', handleKeyDown);
     return () => toastElement?.removeEventListener('keydown', handleKeyDown);
-  }, [handleClose]);
+  }, [handleClose, remainingSeconds]);
 
   const toastRole = toast.type === 'error' ? 'alert' : 'status';
   const ariaLive = toast.type === 'error' ? 'assertive' : 'polite';
@@ -302,26 +318,32 @@ function ToastComponent({ toast, onClose }: ToastProps) {
           {toast.message}
         </p>
       </div>
-      <button
-        onClick={handleClose}
-        className={`flex-shrink-0 ${ML_CLASSES.MD} ${styles.textColor} hover:opacity-75 ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT.replace('focus-visible:', 'focus:')} rounded-md ${P_CLASSES.SM} ${MIN_SIZE_CLASSES.TOAST_BUTTON} transition-opacity`}
-        aria-label={TOAST_CONTAINER_LABELS.CLOSE_ARIA_LABEL}
+      <Tooltip
+        content={TOAST_CONTAINER_LABELS.CLOSE_ARIA_LABEL}
+        shortcut={['Esc']}
+        position="top"
       >
-        <svg
-          className={ICON_SIZES.MD}
-          fill="none"
-          viewBox={SVG_VIEWBOX.STANDARD}
-          stroke="currentColor"
-          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-          aria-hidden="true"
+        <button
+          onClick={handleClose}
+          className={`flex-shrink-0 ${ML_CLASSES.MD} ${styles.textColor} hover:opacity-75 ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT.replace('focus-visible:', 'focus:')} rounded-md ${P_CLASSES.SM} ${MIN_SIZE_CLASSES.TOAST_BUTTON} transition-opacity`}
+          aria-label={TOAST_CONTAINER_LABELS.CLOSE_ARIA_LABEL}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
+          <svg
+            className={ICON_SIZES.MD}
+            fill="none"
+            viewBox={SVG_VIEWBOX.STANDARD}
+            stroke="currentColor"
+            strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </Tooltip>
       <span className={SR_ONLY}>
         {TOAST_CONTAINER_LABELS.DISMISS_INSTRUCTION}
       </span>
@@ -338,27 +360,33 @@ function ToastComponent({ toast, onClose }: ToastProps) {
         </div>
       )}
       {remainingSeconds > 0 && !prefersReducedMotion && (
-        <div className={TOAST_DISMISS_BUTTON} aria-hidden="true">
-          {isPaused ? (
-            <span className={`flex items-center ${GAP_CLASSES.SM}`}>
-              <svg
-                className={ICON_SIZES.SM}
-                fill="currentColor"
-                viewBox={SVG_VIEWBOX.SMALL}
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              {TOAST_CONTAINER_LABELS.PAUSED_LABEL}
-            </span>
-          ) : (
-            `${remainingSeconds}s`
-          )}
-        </div>
+        <Tooltip
+          content={isPaused ? 'Resume timer' : 'Pause timer'}
+          shortcut={['p']}
+          position="top"
+        >
+          <div className={TOAST_DISMISS_BUTTON} aria-hidden="true">
+            {isPaused ? (
+              <span className={`flex items-center ${GAP_CLASSES.SM}`}>
+                <svg
+                  className={ICON_SIZES.SM}
+                  fill="currentColor"
+                  viewBox={SVG_VIEWBOX.SMALL}
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                {TOAST_CONTAINER_LABELS.PAUSED_LABEL}
+              </span>
+            ) : (
+              `${remainingSeconds}s`
+            )}
+          </div>
+        </Tooltip>
       )}
       {isSwiping &&
         swipeOffset > UI_CONSTANTS.TOAST_SWIPE_PROGRESS_THRESHOLD && (
