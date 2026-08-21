@@ -442,7 +442,7 @@ const ShortcutRow = memo(function ShortcutRow({
       <button
         type="button"
         onClick={handleCopyShortcut}
-        className={`flex items-center gap-1.5 flex-shrink-0 ml-4 p-1 -m-1 rounded-md ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.ALL} hover:scale-105 active:scale-95 ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
+        className={`flex items-center gap-1.5 flex-shrink-0 ml-4 p-1 -m-1 rounded-md ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.FAST} hover:scale-105 active:scale-95 ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
         aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.COPY_SHORTCUT_ARIA_LABEL(
           displayKeys
         )}
