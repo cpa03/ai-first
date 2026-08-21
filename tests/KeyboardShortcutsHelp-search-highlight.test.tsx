@@ -87,4 +87,15 @@ describe('KeyboardShortcutsHelp - Search Term Highlighting', () => {
       expect(document.querySelectorAll('span.bg-amber-600').length).toBe(0);
     });
   });
+
+  describe('shortcut row copy button interactions', () => {
+    it('renders copy buttons with accessible ARIA labels and interactive transition classes', () => {
+      render(<KeyboardShortcutsHelp {...defaultProps} />);
+      const copyButtons = screen.getAllByRole('button', { name: /copy shortcut/i });
+      expect(copyButtons.length).toBeGreaterThan(0);
+      expect(copyButtons[0]).toHaveClass('active:scale-95');
+      expect(copyButtons[0]).toHaveClass('hover:scale-105');
+      expect(copyButtons[0]).toHaveClass('focus-visible:ring-2');
+    });
+  });
 });
