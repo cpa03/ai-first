@@ -258,6 +258,23 @@ export type { TimelineConfig, TaskConfig, IdeaConfig } from './timeline';
 export type { UiConfig, ToastConfig, MessagesConfig } from './ui';
 export type { AnimationConfig } from './animation';
 
+// Motion Reduce Configuration
+export {
+  MOTION_REDUCE_PATTERNS,
+  MOTION_REDUCE_COMBINED,
+  TRANSITION_NONE,
+  HOVER_TRANSFORM_NONE,
+  HOVER_SCALE_NONE,
+  ACTIVE_SCALE_NONE,
+  TRANSITION_AND_TRANSFORM,
+  TRANSITION_SCALE,
+  FULL_REDUCTION,
+  TRANSITION_TRANSLATE,
+  FULL_REDUCTION_WITH_TRANSLATE,
+  GROUP_HOVER_SCALE,
+  TRANSITION_GROUP_HOVER,
+} from './motion-reduce';
+
 export type { SeoConfig, FontConfig } from './seo';
 export type { ComponentDefaults } from './ui';
 export type {

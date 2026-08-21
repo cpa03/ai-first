@@ -26,6 +26,7 @@ import {
   CHECKBOX_PULSE,
   TASK_COMPLETE,
   TASK_UPDATING_PULSE,
+  TRANSITION_AND_TRANSFORM,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -144,7 +145,7 @@ function TaskItemComponent({
         : '';
     const celebrationClass = showCelebration ? TASK_COMPLETE : '';
     const reducedMotionClass = prefersReducedMotion
-      ? 'motion-reduce:transition-none motion-reduce:hover:transform-none'
+      ? TRANSITION_AND_TRANSFORM
       : '';
     const focusClass = focused ? FOCUS_RING_OFFSET_PATTERNS.TASK_FOCUSED : '';
     const updatingClass =

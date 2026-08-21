@@ -27,6 +27,7 @@ import {
   MT_CLASSES,
   GAP_CLASSES,
   TEXT_FORMAT_PATTERNS,
+  TRANSITION_NONE,
 } from '@/lib/config';
 import { FLEX_SPACE_X } from '@/lib/config/remaining-hardcoded-patterns';
 import { HINT_OVERLAY } from '@/lib/config/remaining-hardcoded-patterns';
@@ -254,13 +255,13 @@ function MobileNavComponent() {
           aria-hidden="true"
         >
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${isOpen ? 'rotate-45 translate-y-1' : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out ${TRANSITION_NONE} ${isOpen ? 'rotate-45 translate-y-1' : ''}`}
           />
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${MT_CLASSES.MD_SM} ${isOpen ? 'opacity-0 scale-0' : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out ${TRANSITION_NONE} ${MT_CLASSES.MD_SM} ${isOpen ? 'opacity-0 scale-0' : ''}`}
           />
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${MT_CLASSES.MD_SM} ${isOpen ? '-rotate-45 -translate-y-1' : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out ${TRANSITION_NONE} ${MT_CLASSES.MD_SM} ${isOpen ? '-rotate-45 -translate-y-1' : ''}`}
           />
         </div>
       </button>

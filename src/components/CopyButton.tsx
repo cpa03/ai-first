@@ -14,6 +14,7 @@ import {
   COMPONENT_STATE_COLORS,
   CONFETTI_DOT,
   COPY_SUCCESS_GLOW,
+  FULL_REDUCTION,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import Tooltip from './Tooltip';
@@ -99,7 +100,7 @@ const CopyButtonComponent = function CopyButton({
     font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out transform
     ${FOCUS_RING_PATTERNS.DEFAULT}
     ${COMPONENT_CONFIG.COPY_FEEDBACK.FOCUS_RING_CLASS} focus-visible:ring-offset-gray-100
-    motion-reduce:transition-none motion-reduce:hover:transform-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100
+    ${FULL_REDUCTION}
   `;
 
   const variantClasses = {

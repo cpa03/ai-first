@@ -51,6 +51,7 @@ import {
   COMING_SOON_BADGE,
   ANIMATION_CLASSES,
   COMMON_FLEX_BETWEEN_RESPONSIVE,
+  TRANSITION_NONE,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -535,7 +536,7 @@ function CopyCodeButton({ text }: { text: string }) {
             text-xs font-medium rounded-md
             ${TRANSITION_CLASSES.DEFAULT_EASE_OUT}
             ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT}
-            ${prefersReducedMotion ? '' : 'motion-reduce:transition-none'}
+            ${prefersReducedMotion ? '' : TRANSITION_NONE}
             ${
               copied
                 ? COMPONENT_STATE_COLORS.BLUEPRINT.COPIED

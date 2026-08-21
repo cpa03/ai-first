@@ -14,6 +14,8 @@ import {
   CSS_CONTAINMENT,
   BADGE_ENTRANCE_GLOW,
   CONNECTOR_REVEAL,
+  TRANSITION_NONE,
+  TRANSITION_GROUP_HOVER,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { MT_CLASSES, GAP_CLASSES } from '@/lib/config/spacing';
@@ -106,7 +108,7 @@ function FeatureGridComponent() {
               ${FOCUS_RING_OFFSET_PATTERNS.LARGE}
               focus-visible:scale-[1.03] focus-visible:shadow-xl focus-visible:shadow-primary-200/60
               transition-transform transition-shadow ${DURATION_TAILWIND[200]} ease-out
-              motion-reduce:transition-none
+              ${TRANSITION_NONE}
               ${isVisible ? animationClasses[index] : 'opacity-0'}
               ${focusedIndex === index ? FOCUS_RING_OFFSET_PATTERNS.NAVIGATION_FOCUSED : ''}
             `}
@@ -123,7 +125,7 @@ function FeatureGridComponent() {
               transition-all ${DURATION_TAILWIND[300]} group-hover:scale-110
               group-hover:${BG_COLORS.BRAND_200}
               group-focus-visible:scale-110 group-focus-visible:${BG_COLORS.BRAND_200} group-focus-visible:shadow-lg group-focus-visible:shadow-primary-200/50 group-focus-visible:ring-2 group-focus-visible:ring-primary-300/50
-              motion-reduce:transition-none motion-reduce:group-hover:scale-100
+              ${TRANSITION_GROUP_HOVER}
             `}
               aria-hidden="true"
             >

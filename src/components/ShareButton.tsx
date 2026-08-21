@@ -16,6 +16,7 @@ import {
   BG_COLORS,
   CONFETTI_DOT,
   SHARE_SUCCESS_GLOW,
+  FULL_REDUCTION,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -202,7 +203,7 @@ const ShareButtonComponent = function ShareButton({
     inline-flex items-center justify-center gap-2
     font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out transform
     ${FOCUS_RING_OFFSET_PATTERNS.ON_DARK}
-    motion-reduce:transition-none motion-reduce:hover:transform-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100
+    ${FULL_REDUCTION}
   `;
 
   const variantClasses = {
