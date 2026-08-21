@@ -27,6 +27,7 @@ import {
   CENTER_INLINE_FLEX,
   RESPONSIVE_WIDTH,
   FLEX_1,
+  KBD_HINT_LIGHT,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -395,11 +396,7 @@ export default function AuthCallbackPage() {
                 COMPONENT_CONFIG.AUTH_CALLBACK.STYLES.KEYBOARD_HINT_ITEM
               }
             >
-              <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
-              >
-                Esc
-              </kbd>
+              <kbd className={KBD_HINT_LIGHT}>Esc</kbd>
               <span>
                 {COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.KEYBOARD_HINT_CANCEL}
               </span>
@@ -410,11 +407,7 @@ export default function AuthCallbackPage() {
                   COMPONENT_CONFIG.AUTH_CALLBACK.STYLES.KEYBOARD_HINT_ITEM
                 }
               >
-                <kbd
-                  className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
-                >
-                  Enter
-                </kbd>
+                <kbd className={KBD_HINT_LIGHT}>Enter</kbd>
                 <span>
                   {COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.KEYBOARD_HINT_RETRY}
                 </span>

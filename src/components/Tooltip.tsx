@@ -25,6 +25,7 @@ import {
   DURATION_TAILWIND,
   TOOLTIP_CONFIG,
 } from '@/lib/config';
+import { TOOLTIP_POSITIONS } from '@/lib/config/remaining-hardcoded-patterns';
 
 const VIEWPORT_PADDING = TOOLTIP_CONFIG.VIEWPORT_PADDING;
 const TRIGGER_SPACING = TOOLTIP_CONFIG.TRIGGER_SPACING;
@@ -247,10 +248,10 @@ function TooltipComponent({
   }, [isVisible, hideTooltip]);
 
   const positionClasses = {
-    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
-    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
-    left: 'right-full top-1/2 -translate-y-1/2 mr-2',
-    right: 'left-full top-1/2 -translate-y-1/2 ml-2',
+    top: TOOLTIP_POSITIONS.TOP,
+    bottom: TOOLTIP_POSITIONS.BOTTOM,
+    left: TOOLTIP_POSITIONS.LEFT,
+    right: TOOLTIP_POSITIONS.RIGHT,
   };
 
   const arrowClasses = {

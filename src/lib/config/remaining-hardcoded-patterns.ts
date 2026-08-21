@@ -17,6 +17,10 @@
  * ```
  */
 
+import { GRAY_CLASSES } from './remaining-styles';
+import { BORDER_COLORS, BG_COLORS } from './theme/colors';
+import { TRANSITION_CLASSES } from './theme/animations';
+
 /**
  * Table body styles
  * Used in: Dashboard page table body
@@ -582,6 +586,101 @@ export const SKIP_LINK = 'skip-link';
 export const PEER_SR_ONLY = 'peer sr-only';
 
 /**
+ * Keyboard shortcut kbd element (light background, no border)
+ * Used in: forgot-password, auth/callback, login pages for keyboard hint display
+ */
+export const KBD_HINT_LIGHT = `px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`;
+
+/**
+ * Keyboard shortcut kbd element (inline, compact)
+ * Used in: auth/callback page inline keyboard hints
+ */
+export const KBD_INLINE_HINT = `px-1.5 py-0.5 font-mono text-xs ${GRAY_CLASSES.TEXT_600}`;
+
+/**
+ * Modal search input container with border-bottom
+ * Used in: KeyboardShortcutsHelp modal search section
+ */
+export const MODAL_SEARCH_CONTAINER = `px-6 py-3 border-b ${BORDER_COLORS.DEFAULT} ${BG_COLORS.LIGHT}`;
+
+/**
+ * Modal header with flex between and border-bottom
+ * Used in: KeyboardShortcutsHelp modal header
+ */
+export const MODAL_HEADER_FLEX_BETWEEN = `flex items-center justify-between px-6 py-4 border-b ${BORDER_COLORS.DEFAULT} ${BG_COLORS.LIGHT}`;
+
+/**
+ * Modal body section padding
+ * Used in: KeyboardShortcutsHelp modal body
+ */
+export const MODAL_BODY_PADDING = `p-6`;
+
+/**
+ * Modal context heading with flex between and padding
+ * Used in: KeyboardShortcutsHelp context sections
+ */
+export const MODAL_CONTEXT_HEADING = `flex items-center justify-between py-3 px-2 -mx-2 rounded-lg ${TRANSITION_CLASSES.DEFAULT} border-b ${BORDER_COLORS.LIGHT} last:border-b-0 group`;
+
+/**
+ * Shortcut row pattern with hover and selected states
+ * Used in: KeyboardShortcutsHelp shortcut rows
+ */
+export const SHORTCUT_ROW_PATTERN = `flex items-center justify-between py-3 px-2 -mx-2 rounded-lg ${TRANSITION_CLASSES.DEFAULT} border-b ${BORDER_COLORS.LIGHT} last:border-b-0 group`;
+
+/**
+ * Tooltip positioning classes for different positions
+ * Used in: Tooltip component positioning
+ */
+export const TOOLTIP_POSITIONS = {
+  TOP: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
+  BOTTOM: 'top-full left-1/2 -translate-x-1/2 mt-2',
+  LEFT: 'right-full top-1/2 -translate-y-1/2 mr-2',
+  RIGHT: 'left-full top-1/2 -translate-y-1/2 ml-2',
+} as const;
+
+/**
+ * Tooltip arrow positioning classes
+ * Used in: Tooltip component arrow positioning
+ */
+export const TOOLTIP_ARROWS = {
+  TOP: (color: string) =>
+    `top-full left-1/2 -translate-x-1/2 -mt-1 border-t-${color}`,
+  BOTTOM: (color: string) =>
+    `bottom-full left-1/2 -translate-x-1/2 -mb-1 border-b-${color}`,
+  LEFT: (color: string) =>
+    `left-full top-1/2 -translate-y-1/2 -ml-1 border-l-${color}`,
+  RIGHT: (color: string) =>
+    `right-full top-1/2 -translate-y-1/2 -mr-1 border-r-${color}`,
+} as const;
+
+/**
+ * Error details container with max height
+ * Used in: ErrorBoundary error stack trace display
+ */
+export const ERROR_DETAILS_CONTAINER =
+  'mt-3 text-xs text-gray-600 font-mono whitespace-pre-wrap overflow-auto max-h-48';
+
+/**
+ * Dashboard filter select input with right padding for custom dropdown arrow
+ * Used in: Dashboard page filter select
+ */
+export const DASHBOARD_FILTER_SELECT =
+  'block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg cursor-pointer';
+
+/**
+ * Success state icon container (rounded circle with background)
+ * Used in: Signup page success animation
+ */
+export const SUCCESS_ICON_CONTAINER =
+  'h-12 w-12 rounded-full flex items-center justify-center';
+
+/**
+ * Success state icon animation
+ * Used in: Signup page success pop animation
+ */
+export const SUCCESS_ICON_ANIMATION = 'animate-success-pop';
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -654,4 +753,17 @@ export const REMAINING_PATTERNS = {
   GRID_COL_SPAN,
   SKIP_LINK,
   PEER_SR_ONLY,
+  KBD_HINT_LIGHT,
+  KBD_INLINE_HINT,
+  MODAL_SEARCH_CONTAINER,
+  MODAL_HEADER_FLEX_BETWEEN,
+  MODAL_BODY_PADDING,
+  MODAL_CONTEXT_HEADING,
+  SHORTCUT_ROW_PATTERN,
+  TOOLTIP_POSITIONS,
+  TOOLTIP_ARROWS,
+  ERROR_DETAILS_CONTAINER,
+  DASHBOARD_FILTER_SELECT,
+  SUCCESS_ICON_CONTAINER,
+  SUCCESS_ICON_ANIMATION,
 } as const;
