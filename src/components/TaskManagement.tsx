@@ -32,6 +32,7 @@ import {
   KEYBOARD_HINT_INLINE,
   MT_CLASSES,
   MB_CLASSES,
+  FADE_IN,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { ABSOLUTE_CENTER_OVERLAY } from '@/lib/config/remaining-hardcoded-patterns';
@@ -379,7 +380,9 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
           />
         ))}
         {filteredDeliverables.length === 0 && statusFilter !== 'all' && (
-          <div className={TASK_MANAGEMENT_EMPTY_STYLES.CONTAINER}>
+          <div
+            className={`${TASK_MANAGEMENT_EMPTY_STYLES.CONTAINER} ${FADE_IN}`}
+          >
             {/* Micro-UX: Enhanced filtered empty state with animated icon */}
             {/* Matches the visual pattern of other empty states in the app */}
             <div
