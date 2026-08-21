@@ -99,7 +99,12 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     inputRef.current?.focus();
   }, []);
 
-  const { paste, hasPasted: pasteSuccess } = useClipboard({
+  const {
+    paste,
+    hasPasted: pasteSuccess,
+    copy,
+    hasCopied: copySuccess,
+  } = useClipboard({
     onPaste: handleOnPaste,
     duration: COMPONENT_CONFIG.IDEA_INPUT.PASTE_SUCCESS_DURATION_MS,
   });
@@ -288,9 +293,14 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     await paste();
   }, [paste]);
 
+  const handleCopyIdea = useCallback(async () => {
+    if (idea.trim()) {
+      await copy(idea.trim());
+    }
+  }, [idea, copy]);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      // Submit on Cmd/Ctrl + Enter
       if (
         (e.metaKey || e.ctrlKey) &&
         e.key === 'Enter' &&
@@ -301,14 +311,10 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         e.preventDefault();
         handleSubmit(e as unknown as React.FormEvent);
       }
-      // Clear input on Escape - common pattern in modern forms
-      // Only if input has content and not currently submitting
       if (e.key === 'Escape' && idea.trim() && !isSubmitting) {
         e.preventDefault();
         handleClear();
       }
-      // Micro-UX: Paste from clipboard on Ctrl/Cmd + Shift + V when input is empty
-      // Provides quick keyboard access to paste functionality
       if (
         (e.metaKey || e.ctrlKey) &&
         e.shiftKey &&
@@ -319,6 +325,16 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         e.preventDefault();
         handlePasteFromClipboard();
       }
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.shiftKey &&
+        e.key === 'C' &&
+        idea.trim() &&
+        !isSubmitting
+      ) {
+        e.preventDefault();
+        handleCopyIdea();
+      }
     },
     [
       isSubmitting,
@@ -327,6 +343,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
       handleSubmit,
       handleClear,
       handlePasteFromClipboard,
+      handleCopyIdea,
     ]
   );
 
@@ -569,6 +586,61 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                   {pasteSuccess
                     ? IDEA_INPUT_LABELS.PASTE_SUCCESS
                     : IDEA_INPUT_LABELS.PASTE_BUTTON}
+                </Button>
+              </Tooltip>
+            )}
+            {idea.trim() && !isSubmitting && (
+              <Tooltip
+                content={IDEA_INPUT_LABELS.COPY_ARIA_LABEL}
+                shortcut={IDEA_INPUT_LABELS.COPY_SHORTCUT(isMac)}
+                position="top"
+              >
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCopyIdea}
+                  aria-label={IDEA_INPUT_LABELS.COPY_ARIA_LABEL}
+                  className={`${TRANSITION_CLASSES.DEFAULT} ${
+                    copySuccess
+                      ? `${TEXT_COLORS.SUCCESS_MEDIUM} ${BG_COLORS.SUCCESS_VERY_LIGHT} hover:${BG_COLORS.SUCCESS_LIGHT}`
+                      : `${TEXT_COLOR_CLASSES.MUTED} ${GRAY_TEXT_COMBOS.SUBTLE}`
+                  }`}
+                >
+                  {copySuccess ? (
+                    <svg
+                      className={`${ICON_SIZES.MD} mr-1 ${TEXT_COLORS.SUCCESS_MEDIUM}`}
+                      fill="none"
+                      viewBox={SVG_VIEWBOX.STANDARD}
+                      stroke="currentColor"
+                      strokeWidth={SVG_STROKE_WIDTHS.THICK}
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className={`${ICON_SIZES.MD} mr-1`}
+                      fill="none"
+                      viewBox={SVG_VIEWBOX.STANDARD}
+                      stroke="currentColor"
+                      strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                  )}
+                  {copySuccess
+                    ? IDEA_INPUT_LABELS.COPY_SUCCESS
+                    : IDEA_INPUT_LABELS.COPY_BUTTON}
                 </Button>
               </Tooltip>
             )}
