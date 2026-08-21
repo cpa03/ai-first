@@ -1,15 +1,52 @@
 #!/usr/bin/env node
-/**
- * BroCula Performance Analysis Script
- * Uses Firefox to analyze performance optimization opportunities
- */
-
 const { firefox } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-const PAGES = ['/', '/login', '/signup'];
+const getEnvNumber = (key, defaultValue, min, max) => {
+  const value = process.env[key];
+  if (value === undefined) return defaultValue;
+  const parsed = parseInt(value, 10);
+  if (isNaN(parsed)) return defaultValue;
+  if (min !== undefined && parsed < min) return min;
+  if (max !== undefined && parsed > max) return max;
+  return parsed;
+};
+
+const getEnvString = (key, defaultValue) => {
+  return process.env[key] || defaultValue;
+};
+
+const getEnvArray = (key, defaultValue) => {
+  const value = process.env[key];
+  if (!value) return defaultValue;
+  return value.split(',').map((item) => item.trim());
+};
+
+const CONFIG = {
+  BASE_URL: getEnvString('BASE_URL', 'http://localhost:3000'),
+  PAGES: getEnvArray('PERF_PAGES', ['/', '/login', '/signup']),
+  TIMEOUT_MS: getEnvNumber('PERF_TIMEOUT_MS', 30000, 5000, 120000),
+  STABILIZATION_DELAY_MS: getEnvNumber(
+    'PERF_STABILIZATION_DELAY_MS',
+    2000,
+    500,
+    10000
+  ),
+  LARGE_IMAGE_WIDTH: getEnvNumber('PERF_LARGE_IMAGE_WIDTH', 1920, 640, 3840),
+  LARGE_IMAGE_HEIGHT: getEnvNumber('PERF_LARGE_IMAGE_HEIGHT', 1080, 240, 2160),
+  MAX_DOM_SIZE: getEnvNumber('PERF_MAX_DOM_SIZE', 1500, 500, 5000),
+  MAX_SCRIPT_COUNT: getEnvNumber('PERF_MAX_SCRIPT_COUNT', 20, 5, 100),
+  MAX_IMAGES_WITHOUT_LAZY: getEnvNumber(
+    'PERF_MAX_IMAGES_WITHOUT_LAZY',
+    3,
+    1,
+    20
+  ),
+  MAX_PRECONNECT_COUNT: getEnvNumber('PERF_MAX_PRECONNECT_COUNT', 3, 1, 10),
+};
+
+const { BASE_URL, PAGES } = CONFIG;
 
 async function analyzePage(page, url) {
   const results = {
@@ -21,11 +58,10 @@ async function analyzePage(page, url) {
   try {
     await page.goto(`${BASE_URL}${url}`, {
       waitUntil: 'domcontentloaded',
-      timeout: 30000,
+      timeout: CONFIG.TIMEOUT_MS,
     });
 
-    // Wait for page to stabilize
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(CONFIG.STABILIZATION_DELAY_MS);
 
     // Analyze DOM structure
     const domAnalysis = await page.evaluate(() => {
@@ -48,9 +84,11 @@ async function analyzePage(page, url) {
         'link[rel="dns-prefetch"]'
       );
 
-      // Check for large images
       const largeImages = Array.from(images).filter((img) => {
-        return img.naturalWidth > 1920 || img.naturalHeight > 1080;
+        return (
+          img.naturalWidth > CONFIG.LARGE_IMAGE_WIDTH ||
+          img.naturalHeight > CONFIG.LARGE_IMAGE_HEIGHT
+        );
       });
 
       // Check for render-blocking resources
@@ -85,32 +123,31 @@ async function analyzePage(page, url) {
 
     results.metrics = domAnalysis;
 
-    // Identify optimization opportunities
-    if (domAnalysis.totalElements > 1500) {
+    if (domAnalysis.totalElements > CONFIG.MAX_DOM_SIZE) {
       results.optimizations.push({
         type: 'DOM Size',
         value: domAnalysis.totalElements,
-        threshold: 1500,
+        threshold: CONFIG.MAX_DOM_SIZE,
         recommendation:
           'Consider lazy loading or virtualization for large lists',
       });
     }
 
-    if (domAnalysis.scriptCount > 20) {
+    if (domAnalysis.scriptCount > CONFIG.MAX_SCRIPT_COUNT) {
       results.optimizations.push({
         type: 'Script Count',
         value: domAnalysis.scriptCount,
-        threshold: 20,
+        threshold: CONFIG.MAX_SCRIPT_COUNT,
         recommendation:
           'Consider code splitting or lazy loading non-critical scripts',
       });
     }
 
-    if (domAnalysis.imagesWithoutLazy > 3) {
+    if (domAnalysis.imagesWithoutLazy > CONFIG.MAX_IMAGES_WITHOUT_LAZY) {
       results.optimizations.push({
         type: 'Image Lazy Loading',
         value: domAnalysis.imagesWithoutLazy,
-        threshold: 3,
+        threshold: CONFIG.MAX_IMAGES_WITHOUT_LAZY,
         recommendation: 'Add loading="lazy" to below-the-fold images',
       });
     }
@@ -140,7 +177,7 @@ async function analyzePage(page, url) {
       });
     }
 
-    if (domAnalysis.preconnectCount < 3) {
+    if (domAnalysis.preconnectCount < CONFIG.MAX_PRECONNECT_COUNT) {
       results.optimizations.push({
         type: 'Missing Preconnect Links',
         value: domAnalysis.preconnectCount,

@@ -86,3 +86,15 @@ export {
   SCROLL_DEPTH_THRESHOLDS,
   SCROLL_STEP_CONFIG,
 } from './modular-constants';
+
+// Workflow and CI/CD configuration
+export {
+  WORKFLOW_CONFIG,
+  WORKFLOW_AGENT_CONFIG,
+  PIPELINE_CONFIG,
+  SCHEDULE_CONFIG,
+  GIT_CONFIG,
+  type WorkflowConfig,
+  type WorkflowAgentConfig,
+  type PipelineConfig,
+} from './workflow-config';
