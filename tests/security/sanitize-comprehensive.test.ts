@@ -54,4 +54,18 @@ describe('sanitizeHtml Comprehensive Security', () => {
       expect(sanitized).not.toContain('>');
     }
   });
+
+  it('should sanitize non-string values or coerced strings in user responses', () => {
+    const maliciousObject = {
+      toString() {
+        return '<script>alert("xss")</script>';
+      },
+    };
+
+    const sanitizedValue = sanitizeHtml(String(maliciousObject));
+    expect(sanitizedValue).not.toContain('<script>');
+    expect(sanitizedValue).not.toContain('</script>');
+    expect(sanitizedValue).not.toContain('<');
+    expect(sanitizedValue).not.toContain('>');
+  });
 });
