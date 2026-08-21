@@ -1,5 +1,5 @@
 import { clarifierAgent } from '@/lib/agents/clarifier';
-import { validateIdea, validateIdeaId } from '@/lib/validation';
+import { validateIdea, validateIdeaId, sanitizeHtml } from '@/lib/validation';
 import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
 import {
   withApiHandler,
@@ -42,9 +42,11 @@ async function handlePost(context: ApiContext) {
 
   await clarifierAgent.initialize();
 
+  const sanitizedIdeaText = sanitizeHtml(ideaText.trim());
+
   const session = await clarifierAgent.startClarification(
     ideaId.trim(),
-    ideaText.trim()
+    sanitizedIdeaText
   );
 
   return standardSuccessResponse(
