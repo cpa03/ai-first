@@ -123,6 +123,10 @@ const EmailButton = dynamic(() => import('@/components/EmailButton'), {
   ),
 });
 
+const CopyButton = dynamic(() => import('@/components/CopyButton'), {
+  ssr: false,
+});
+
 interface Idea {
   id: string;
   user_id: string;
@@ -422,16 +426,30 @@ function ResultsContent() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [error, idea, loading, router]);
 
-  // Micro-UX: ? key opens keyboard shortcuts help panel
-  // Provides discoverability for users who want to see all available shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isFocusedOnInput(e.target)) return;
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
 
-      if (e.key === '?' && idea && !loading) {
+      if (
+        e.key === '?' &&
+        !e.metaKey &&
+        !e.ctrlKey &&
+        !e.altKey &&
+        idea &&
+        !loading
+      ) {
         e.preventDefault();
         openHelp();
+      }
+
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.shiftKey &&
+        e.key.toLowerCase() === 'l'
+      ) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        navigator.clipboard.writeText(window.location.href).catch(() => {});
       }
     };
 
@@ -1118,12 +1136,20 @@ function ResultsContent() {
               successLabel={RESULTS_PAGE_CONTENT.SHARE_BUTTON_SUCCESS_LABEL}
               ariaLabel="Share your project blueprint"
               onShare={() => {
-                // Growth: Track social share event
                 trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE, {
                   share_platform: 'web_share',
                   idea_id: idea.id,
                 });
               }}
+            />
+            <CopyButton
+              textToCopy={
+                typeof window !== 'undefined' ? window.location.href : ''
+              }
+              label="Copy link"
+              successLabel="Link copied!"
+              ariaLabel="Copy results page link to clipboard"
+              variant="subtle"
             />
           </div>
         </div>
@@ -1202,6 +1228,14 @@ function ResultsContent() {
               <kbd className={KBD_HINT_STYLE}>?</kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 Shortcuts
+              </span>
+            </span>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+              <kbd className={KBD_HINT_STYLE}>{isMac ? '⌘' : 'Ctrl'}</kbd>
+              <kbd className={KBD_HINT_STYLE}>Shift</kbd>
+              <kbd className={KBD_HINT_STYLE}>L</kbd>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                Copy link
               </span>
             </span>
           </div>
