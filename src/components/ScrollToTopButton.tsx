@@ -138,9 +138,9 @@ function ScrollToTopButtonComponent() {
         group
         ${hasAppeared && !prefersReducedMotion ? SCROLL_TO_TOP_APPEAR : ''}
       `}
-      aria-label={SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}
+      aria-label={SCROLL_TO_TOP_BUTTON_LABELS.ARIA_LABEL}
     >
-      <span>{SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}</span>
+      <span aria-hidden="true">{SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}</span>
       {/* Micro-UX: Persistent keyboard shortcut hint for discoverability */}
       {/* Only visible on desktop (sm+) to avoid cluttering mobile footer */}
       {/* Subtle opacity ensures it doesn't distract from the main button text */}
