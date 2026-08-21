@@ -371,6 +371,14 @@ export const IDEA_INPUT_LABELS = {
   PASTE_BUTTON: 'Paste',
   /** Paste success confirmation text */
   PASTE_SUCCESS: 'Pasted!',
+  /** Copy idea button aria-label */
+  COPY_ARIA_LABEL: 'Copy idea to clipboard',
+  /** Copy idea button text */
+  COPY_BUTTON: 'Copy',
+  /** Copy idea success confirmation text */
+  COPY_SUCCESS: 'Copied!',
+  /** Copy idea tooltip keyboard shortcut */
+  COPY_SHORTCUT: (isMac: boolean) => [isMac ? '⌘' : 'Ctrl', 'Shift', 'C'],
   /** Submit button tooltip text */
   SUBMIT_TOOLTIP: 'Submit your idea',
   /** Submit button tooltip keyboard shortcut */
