@@ -135,16 +135,30 @@ class EventBus {
     // Add to history
     this.addToHistory(event);
 
-    // Get subscribers for this event type
-    const typeSubs = this.subscriptions.get(event.type) || [];
-    // Get wildcard subscribers
-    const wildcardSubs = this.subscriptions.get('*') || [];
+    // PERFORMANCE: Fast path subscriber lookup to avoid unneeded array allocations and Promise execution
+    const typeSubs = this.subscriptions.get(event.type);
+    const wildcardSubs = this.subscriptions.get('*');
 
-    // Combine and deduplicate
-    const allSubs = [...typeSubs];
-    for (const sub of wildcardSubs) {
-      if (!allSubs.find((s) => s.id === sub.id)) {
-        allSubs.push(sub);
+    const hasType = typeSubs && typeSubs.length > 0;
+    const hasWildcard = wildcardSubs && wildcardSubs.length > 0;
+
+    if (!hasType && !hasWildcard) {
+      _logger.debug(`Emitted event: ${event.type}, subscribers: 0`);
+      return;
+    }
+
+    let allSubs: Subscription[];
+    if (hasType && !hasWildcard) {
+      allSubs = typeSubs!;
+    } else if (!hasType && hasWildcard) {
+      allSubs = wildcardSubs!;
+    } else {
+      allSubs = [...typeSubs!];
+      for (let i = 0; i < wildcardSubs!.length; i++) {
+        const sub = wildcardSubs![i];
+        if (!allSubs.some((s) => s.id === sub.id)) {
+          allSubs.push(sub);
+        }
       }
     }
 
@@ -185,6 +199,7 @@ class EventBus {
    */
   getEventsForIdea(ideaId: string): AgentEvent[] {
     return this.eventHistory.filter((event) => {
+      if (!event.payload || typeof event.payload !== 'object') return false;
       const payload = event.payload as Record<string, unknown>;
       return payload.ideaId === ideaId;
     });
@@ -210,10 +225,12 @@ class EventBus {
   }
 
   private addToHistory(event: AgentEvent): void {
-    this.eventHistory.push(event);
-    if (this.eventHistory.length > this.maxHistorySize) {
-      this.eventHistory = this.eventHistory.slice(-this.maxHistorySize);
+    // PERFORMANCE: In-place shift removes the oldest element without allocating a new array,
+    // achieving significant speedup for history maintenance on hot emit paths.
+    if (this.eventHistory.length >= this.maxHistorySize) {
+      this.eventHistory.shift();
     }
+    this.eventHistory.push(event);
   }
 
   private async logEvent(event: AgentEvent): Promise<void> {
