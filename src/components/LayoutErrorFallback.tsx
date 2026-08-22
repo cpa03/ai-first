@@ -18,6 +18,7 @@ import {
   MT_CLASSES,
   COMMON_SPACING_PATTERNS,
 } from '@/lib/config';
+import { FONT_MEDIUM } from '@/lib/config/remaining-hardcoded-patterns';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 
 interface LayoutErrorFallbackProps {
@@ -75,7 +76,7 @@ function LayoutErrorFallbackComponent({
                 aria-hidden="true"
               >
                 <kbd
-                  className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
+                  className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans ${FONT_MEDIUM} ${TEXT_COLORS.SECONDARY}`}
                 >
                   Enter
                 </kbd>
@@ -91,7 +92,7 @@ function LayoutErrorFallbackComponent({
                 aria-hidden="true"
               >
                 <kbd
-                  className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
+                  className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans ${FONT_MEDIUM} ${TEXT_COLORS.SECONDARY}`}
                 >
                   Esc
                 </kbd>

@@ -25,6 +25,7 @@ import {
   USER_ONBOARDING_LABELS,
   USER_ONBOARDING_COMPLETION_LABELS,
 } from '@/lib/config/component-labels';
+import { FONT_MEDIUM } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   ONBOARDING_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -581,7 +582,7 @@ export default function UserOnboarding() {
             >
               <button
                 onClick={handleNext}
-                className={`px-4 py-1.5 text-sm ${BG_COLORS.BRAND} text-white rounded-lg ${BG_COLORS.BRAND_HOVER} ${TRANSITION_CLASSES.COLOR} font-medium ${FOCUS_RING_PATTERNS.DEFAULT}`}
+                className={`px-4 py-1.5 text-sm ${BG_COLORS.BRAND} text-white rounded-lg ${BG_COLORS.BRAND_HOVER} ${TRANSITION_CLASSES.COLOR} ${FONT_MEDIUM} ${FOCUS_RING_PATTERNS.DEFAULT}`}
               >
                 {isLastStep
                   ? USER_ONBOARDING_COMPLETION_LABELS.GET_STARTED_BUTTON

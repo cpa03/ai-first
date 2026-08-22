@@ -242,6 +242,7 @@ export const MISC_ANIMATIONS = {
   DISCOVER_PULSE: 'animate-discover-pulse',
   ENABLE_FEEDBACK: 'animate-enable-feedback',
   PULSE_ONCE: 'animate-pulse-once',
+  PING_ONCE: 'animate-ping-once',
 } as const;
 
 /**
@@ -373,3 +374,4 @@ export const COUNTER_PULSE = MISC_ANIMATIONS.COUNTER_PULSE;
 export const DISCOVER_PULSE = MISC_ANIMATIONS.DISCOVER_PULSE;
 export const ENABLE_FEEDBACK = MISC_ANIMATIONS.ENABLE_FEEDBACK;
 export const PULSE_ONCE = MISC_ANIMATIONS.PULSE_ONCE;
+export const PING_ONCE = MISC_ANIMATIONS.PING_ONCE;

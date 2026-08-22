@@ -55,6 +55,7 @@ import {
 import {
   SIGNUP_TIP_ITEM,
   JUSTIFY_CENTER,
+  FONT_MEDIUM,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { PRIMARY_COMBINATIONS } from '@/lib/config/primary-colors';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
@@ -110,7 +111,7 @@ function PasswordMatchIndicator({
           />
         </svg>
         <span
-          className={`${REMAINING_PATTERNS.FORM_TEXT_SIZES.XS} font-medium`}
+          className={`${REMAINING_PATTERNS.FORM_TEXT_SIZES.XS} ${FONT_MEDIUM}`}
         >
           {SIGNUP_PAGE_CONTENT.PASSWORD_MATCH.HINT}
         </span>
@@ -159,7 +160,9 @@ function PasswordMatchIndicator({
           />
         </svg>
       )}
-      <span className={`${REMAINING_PATTERNS.FORM_TEXT_SIZES.XS} font-medium`}>
+      <span
+        className={`${REMAINING_PATTERNS.FORM_TEXT_SIZES.XS} ${FONT_MEDIUM}`}
+      >
         {matchStatus === 'match'
           ? SIGNUP_PAGE_CONTENT.PASSWORD_MATCH.MATCH
           : SIGNUP_PAGE_CONTENT.PASSWORD_MATCH.MISMATCH}
@@ -325,7 +328,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
           />
         </div>
         <span
-          className={`text-xs font-medium tabular-nums ${config.textColor} transition-colors ${DURATION_TAILWIND[200]}`}
+          className={`text-xs ${FONT_MEDIUM} tabular-nums ${config.textColor} transition-colors ${DURATION_TAILWIND[200]}`}
           aria-live="polite"
           aria-atomic="true"
         >
@@ -368,7 +371,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
       )}
       {strength === 'strong' && (
         <div
-          className={`flex items-center gap-1.5 text-xs ${TEXT_COLORS.SUCCESS_DARK} font-medium ${FADE_IN}`}
+          className={`flex items-center gap-1.5 text-xs ${TEXT_COLORS.SUCCESS_DARK} ${FONT_MEDIUM} ${FADE_IN}`}
           role="status"
           aria-live="polite"
         >
@@ -638,7 +641,7 @@ export default function SignupPage() {
           </p>
           <Link
             href={ROUTES.LOGIN}
-            className={`inline-block font-medium ${PRIMARY_COMBINATIONS.LINK_HOVER_LIGHT} ${PRIMARY_FOCUS_RING} rounded ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+            className={`inline-block ${FONT_MEDIUM} ${PRIMARY_COMBINATIONS.LINK_HOVER_LIGHT} ${PRIMARY_FOCUS_RING} rounded ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           >
             {SIGNUP_PAGE_CONTENT.SUCCESS.RETURN_LINK}
           </Link>

@@ -13,8 +13,11 @@ import {
   REMAINING_PATTERNS,
   CSS_POSITIONING,
 } from '@/lib/config';
-import { FADE_IN } from '@/lib/config/animation-classes';
-import { LOADING_SPINNER_ELAPSED_TEXT } from '@/lib/config/remaining-hardcoded-patterns';
+import { FADE_IN, SPIN } from '@/lib/config/animation-classes';
+import {
+  LOADING_SPINNER_ELAPSED_TEXT,
+  FONT_MEDIUM,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
@@ -177,7 +180,7 @@ function LoadingSpinnerComponent({
       <svg
         className={`
           ${REMAINING_PATTERNS.SPINNER_SVG_CONTAINER}
-          ${prefersReducedMotion ? `border-2 ${BORDER_COLORS.DEFAULT}` : `animate-spin border-2 ${BORDER_COLORS.LIGHT} border-t-primary-600`}
+          ${prefersReducedMotion ? `border-2 ${BORDER_COLORS.DEFAULT}` : `${SPIN} border-2 ${BORDER_COLORS.LIGHT} border-t-primary-600`}
         `}
         style={svgStyle}
         fill="none"
@@ -204,7 +207,7 @@ function LoadingSpinnerComponent({
       </svg>
       {label && (
         <span
-          className={`text-sm ${TEXT_COLOR_CLASSES.BODY} font-medium ${FADE_IN}`}
+          className={`text-sm ${TEXT_COLOR_CLASSES.BODY} ${FONT_MEDIUM} ${FADE_IN}`}
           aria-hidden={ariaLabel === label ? 'true' : undefined}
         >
           {label}

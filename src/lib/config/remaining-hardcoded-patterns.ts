@@ -582,6 +582,19 @@ export const SKIP_LINK = 'skip-link';
 export const PEER_SR_ONLY = 'peer sr-only';
 
 /**
+ * Table divider pattern
+ * Used in: Dashboard page, DashboardSkeleton
+ */
+export const TABLE_DIVIDER = 'divide-y divide-gray-200';
+
+/**
+ * Focus ring for clickable elements (focus instead of focus-visible)
+ * Used in: Not found page popular links
+ */
+export const FOCUS_RING_CLICKABLE =
+  'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2';
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -654,4 +667,6 @@ export const REMAINING_PATTERNS = {
   GRID_COL_SPAN,
   SKIP_LINK,
   PEER_SR_ONLY,
+  TABLE_DIVIDER,
+  FOCUS_RING_CLICKABLE,
 } as const;

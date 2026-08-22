@@ -33,6 +33,7 @@ import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import {
   CLARIFY_PARAGRAPH_MARGIN,
   CLARIFY_EMPTY_STATE,
+  FONT_MEDIUM,
 } from '@/lib/config/remaining-hardcoded-patterns';
 
 const Button = dynamic(() => import('@/components/Button'), {
@@ -138,7 +139,7 @@ function ClarifySuccessState({
           <div className={CARD_PATTERNS.CONTENT}>
             {Object.entries(answers).map(([key, value]) => (
               <div key={key} className={REMAINING_PATTERNS.FORM_TEXT_SIZES.SM}>
-                <span className={`${GRAY_CLASSES.TEXT_700} font-medium`}>
+                <span className={`${GRAY_CLASSES.TEXT_700} ${FONT_MEDIUM}`}>
                   {key.replace(/_/g, ' ')}:
                 </span>{' '}
                 <span className={GRAY_CLASSES.TEXT_600}>{value}</span>

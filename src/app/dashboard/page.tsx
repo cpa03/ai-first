@@ -1113,7 +1113,7 @@ export default function DashboardPage() {
         <div className={CARD_PATTERNS.OVERFLOW_HIDDEN}>
           <div className={OVERFLOW_PATTERNS.X_AUTO}>
             <table
-              className={`${TABLE_PATTERNS.container} divide-y divide-gray-200`}
+              className={`${TABLE_PATTERNS.container} ${REMAINING_PATTERNS.TABLE_DIVIDER}`}
               role="table"
               aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.IDEAS_LIST}
             >

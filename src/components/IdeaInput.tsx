@@ -63,7 +63,10 @@ import IdeaReadyIndicator from './IdeaReadyIndicator';
 import Tooltip from './Tooltip';
 import TypingIndicator from './TypingIndicator';
 import { useConfetti } from '@/hooks/useConfetti';
-import { RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  RELATIVE,
+  FONT_MEDIUM,
+} from '@/lib/config/remaining-hardcoded-patterns';
 
 interface IdeaInputProps {
   onSubmit: (_idea: string, _ideaId: string) => void;
@@ -379,7 +382,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         {milestoneReached && (
           <div className={RELATIVE}>
             <div
-              className={`flex items-center gap-2 text-sm ${TEXT_COLORS.SUCCESS_DARK} font-medium ${FADE_IN}`}
+              className={`flex items-center gap-2 text-sm ${TEXT_COLORS.SUCCESS_DARK} ${FONT_MEDIUM} ${FADE_IN}`}
               role="status"
               aria-live="polite"
             >
@@ -428,7 +431,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           <p
             className={`text-sm ${FADE_IN} flex items-center gap-2 ${
               charactersNeededData.isNearMinimum
-                ? `${TEXT_COLOR_CLASSES.WARNING_LIGHT} font-medium`
+                ? `${TEXT_COLOR_CLASSES.WARNING_LIGHT} ${FONT_MEDIUM}`
                 : TEXT_COLOR_CLASSES.BRAND
             }`}
             role="status"
