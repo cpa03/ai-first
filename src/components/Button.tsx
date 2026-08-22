@@ -51,6 +51,13 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
    * @default 0
    */
   showDelay?: number;
+  /**
+   * Micro-UX: Delay before hiding the loading spinner after loading completes (in ms).
+   * Prevents visual flickering when loading completes very quickly (< 200ms).
+   * If a new loading state starts before this delay, the spinner remains visible.
+   * @default 0
+   */
+  hideDelay?: number;
   /** Optional tooltip text to display when button is disabled, explaining why it's disabled */
   disabledTooltip?: string;
   /** Optional keyboard shortcut keys to display in tooltip (e.g. ['⌘', 'S']) */
@@ -76,6 +83,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
       enableTransition = false,
       loadingText,
       showDelay = 0,
+      hideDelay = 0,
       disabledTooltip,
       shortcut,
       disabled,
@@ -91,8 +99,10 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
     const [justEnabled, setJustEnabled] = useState(false);
     const [isMac, setIsMac] = useState(false);
     const [shouldShowSpinner, setShouldShowSpinner] = useState(showDelay === 0);
+    const [isSpinnerVisible, setIsSpinnerVisible] = useState(loading);
     const timeoutRefs = useRef<ReturnType<typeof setTimeout>[]>([]);
     const wasDisabledRef = useRef(disabled || loading);
+    const wasLoadingRef = useRef(loading);
     const prefersReducedMotion = usePrefersReducedMotion();
 
     useEffect(() => {
@@ -133,6 +143,23 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
 
       return () => clearTimeout(timer);
     }, [loading, showDelay]);
+
+    // Micro-UX: Handle hideDelay to prevent visual flickering when loading completes quickly
+    // When loading transitions from true to false, delay hiding the spinner by hideDelay ms
+    // If a new loading state starts before the delay expires, keep the spinner visible
+    useEffect(() => {
+      const justFinishedLoading = wasLoadingRef.current && !loading;
+      wasLoadingRef.current = loading;
+
+      if (justFinishedLoading && hideDelay > 0) {
+        const timer = setTimeout(() => {
+          setIsSpinnerVisible(false);
+        }, hideDelay);
+        return () => clearTimeout(timer);
+      }
+
+      setIsSpinnerVisible(loading);
+    }, [loading, hideDelay]);
 
     const createRipple = useCallback(
       (
@@ -234,7 +261,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading}
         {...restProps}
       >
-        {loading && shouldShowSpinner && (
+        {loading && isSpinnerVisible && shouldShowSpinner && (
           <svg
             className={`${prefersReducedMotion ? '' : SPIN} -ml-1 mr-2 ${ICON_SIZES.MD} inline-block`}
             xmlns={SVG_NAMESPACE.SVG}
@@ -257,7 +284,9 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
             ></path>
           </svg>
         )}
-        {loading && shouldShowSpinner && loadingText ? loadingText : children}
+        {loading && isSpinnerVisible && shouldShowSpinner && loadingText
+          ? loadingText
+          : children}
         {ripples.map((ripple) => (
           <span
             key={ripple.id}
