@@ -12,10 +12,10 @@ import {
   FOOTER_NAV_STYLES,
   TRANSITION_CLASSES,
   TEXT_SIZE_CLASSES,
-  BG_COLORS,
   TEXT_COLORS,
   UI_CONFIG,
 } from '@/lib/config';
+import { KBD_HINT_LIGHT } from '@/lib/config/remaining-hardcoded-patterns';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -204,16 +204,8 @@ function FooterNavComponent({ columns }: FooterNavProps) {
           aria-live="polite"
         >
           <span>Use</span>
-          <kbd
-            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
-          >
-            ←
-          </kbd>
-          <kbd
-            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
-          >
-            →
-          </kbd>
+          <kbd className={KBD_HINT_LIGHT}>←</kbd>
+          <kbd className={KBD_HINT_LIGHT}>→</kbd>
           <span>to navigate</span>
         </div>
       )}

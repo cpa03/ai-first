@@ -27,7 +27,6 @@ import {
   CONFETTI_DOT,
   SPACE_Y_PATTERNS,
   FLEX_PATTERNS,
-  TEXT_FORMAT_PATTERNS,
   MB_CLASSES,
 } from '@/lib/config';
 import { ERROR_BOUNDARY_ACTION_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
@@ -35,6 +34,7 @@ import {
   RESPONSIVE_WIDTH,
   RESPONSIVE_WIDTH_WITH_MARGIN,
   INLINE_FLEX_RELATIVE,
+  ERROR_DETAILS_CONTAINER,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
@@ -276,9 +276,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                   >
                     {MESSAGES.ERROR_BOUNDARY.DETAILS_BUTTON}
                   </summary>
-                  <div
-                    className={`mt-3 text-xs ${TEXT_COLORS.SECONDARY} ${TEXT_FORMAT_PATTERNS.FONT_MONO} ${TEXT_FORMAT_PATTERNS.WHITESPACE_PRE_WRAP} overflow-auto max-h-48`}
-                  >
+                  <div className={ERROR_DETAILS_CONTAINER}>
                     <strong>Error:</strong> {this.state.error.toString()}
                     {this.state.errorInfo && (
                       <>

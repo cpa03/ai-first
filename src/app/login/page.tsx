@@ -31,7 +31,6 @@ import {
   FORM_ARIA_LABELS,
   DRAW_CHECK,
   FORM_PATTERNS,
-  GRAY_CLASSES,
   ICON_SIZES,
   DASHBOARD_PATTERNS,
   KBD_HINT_STYLE,
@@ -46,6 +45,7 @@ import {
   RELATIVE,
   PEER_SR_ONLY,
   JUSTIFY_CENTER,
+  KBD_HINT_LIGHT,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useScrollToError } from '@/hooks/useScrollToError';
@@ -448,18 +448,9 @@ export default function LoginPage() {
               className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
               aria-hidden="true"
             >
-              Press{' '}
-              <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
-              >
-                {isMac ? '⌘' : 'Ctrl'}
-              </kbd>
+              Press <kbd className={KBD_HINT_LIGHT}>{isMac ? '⌘' : 'Ctrl'}</kbd>
               {' + '}
-              <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
-              >
-                Enter
-              </kbd>
+              <kbd className={KBD_HINT_LIGHT}>Enter</kbd>
               {' to submit'}
             </p>
           </div>

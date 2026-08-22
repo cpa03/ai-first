@@ -68,6 +68,7 @@ import {
   MARGIN_TOP_4,
   SR_ONLY,
   RELATIVE,
+  DASHBOARD_FILTER_SELECT,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   PRIMARY_RING,
@@ -750,7 +751,7 @@ export default function DashboardPage() {
                 triggerHapticFeedback();
                 setFilter(e.target.value);
               }}
-              className={`block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg focus:ring-2 ${PRIMARY_RING.FOCUS_500} focus:border-primary-500 cursor-pointer ${FOCUS_RING} transition-all ${DURATION_TAILWIND[200]} ${
+              className={`${DASHBOARD_FILTER_SELECT} focus:ring-2 ${PRIMARY_RING.FOCUS_500} focus:border-primary-500 ${FOCUS_RING} transition-all ${DURATION_TAILWIND[200]} ${
                 filter !== 'all'
                   ? DASHBOARD_PATTERNS.FILTER_ACTIVE
                   : DASHBOARD_PATTERNS.FILTER_INACTIVE

@@ -8,8 +8,6 @@ import {
   ANIMATION_DELAYS,
   COMPONENT_CONFIG,
   DASHBOARD_LABELS,
-  BG_COLORS,
-  BORDER_COLORS,
   FLEX_PATTERNS,
   SPACE_Y_PATTERNS,
   SKELETON_SIZE_PATTERNS,
@@ -19,7 +17,7 @@ import {
   OVERFLOW_PATTERNS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
-import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import { SR_ONLY, TABLE_BODY } from '@/lib/config/remaining-hardcoded-patterns';
 
 function DashboardSkeletonComponent() {
   return (
@@ -58,7 +56,7 @@ function DashboardSkeletonComponent() {
       <div className={CARD_PATTERNS.OVERFLOW_HIDDEN}>
         <div className={OVERFLOW_PATTERNS.X_AUTO}>
           <table
-            className={`${TABLE_PATTERNS.container} divide-y divide-gray-200`}
+            className={`${TABLE_PATTERNS.container} ${TABLE_BODY}`}
             aria-hidden="true"
           >
             <thead className={TABLE_PATTERNS.header.container}>
@@ -83,9 +81,7 @@ function DashboardSkeletonComponent() {
                 </th>
               </tr>
             </thead>
-            <tbody
-              className={`${BG_COLORS.DEFAULT} divide-y ${BORDER_COLORS.LIGHT}`}
-            >
+            <tbody className={TABLE_BODY}>
               {Array.from({
                 length: COMPONENT_CONFIG.DASHBOARD.SKELETON_ROW_COUNT,
               }).map((_, index) => (

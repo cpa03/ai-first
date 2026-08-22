@@ -47,7 +47,16 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useFocusManagement } from '@/hooks/useAnnouncement';
-import { RELATIVE, MX_SMALL } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  RELATIVE,
+  MX_SMALL,
+  MODAL_SEARCH_CONTAINER,
+  MODAL_HEADER_FLEX_BETWEEN,
+  SHORTCUT_ROW_PATTERN,
+  HIGHLIGHT_TEXT,
+  SHORTCUT_COPY_BUTTON,
+  SHORTCUT_KEY_SEPARATOR,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import {
   PRIMARY_TEXT,
   PRIMARY_RING,
@@ -369,11 +378,7 @@ const HighlightedText = memo(function HighlightedText({
     <>
       {parts.map((part, index) =>
         regex.test(part) ? (
-          <span
-            key={index}
-            className={`${BG_COLORS.WARNING} ${TEXT_COLORS.WARNING} px-0.5 rounded-sm font-medium`}
-            aria-hidden="true"
-          >
+          <span key={index} className={HIGHLIGHT_TEXT} aria-hidden="true">
             {part}
           </span>
         ) : (
@@ -430,7 +435,7 @@ const ShortcutRow = memo(function ShortcutRow({
 
   return (
     <div
-      className={`flex items-center justify-between py-3 px-2 -mx-2 rounded-lg ${TRANSITION_CLASSES.DEFAULT} border-b ${BORDER_COLORS.LIGHT} last:border-b-0 group ${
+      className={`${SHORTCUT_ROW_PATTERN} ${
         isSelected ? BG_COLORS.BRAND_LIGHT : `${GRAY_CLASSES.HOVER_BG_50}`
       }`}
     >
@@ -442,7 +447,7 @@ const ShortcutRow = memo(function ShortcutRow({
       <button
         type="button"
         onClick={handleCopyShortcut}
-        className={`flex items-center gap-1.5 flex-shrink-0 ml-4 p-1 -m-1 rounded-md ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.FAST} ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
+        className={`${SHORTCUT_COPY_BUTTON} ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.FAST} ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
         aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.COPY_SHORTCUT_ARIA_LABEL(
           displayKeys
         )}
@@ -451,7 +456,11 @@ const ShortcutRow = memo(function ShortcutRow({
           <React.Fragment key={index}>
             <KeyboardKey>{key}</KeyboardKey>
             {index < displayKeys.length - 1 && (
-              <span className={`${TEXT_COLORS.SECONDARY} text-xs`}>+</span>
+              <span
+                className={`${TEXT_COLORS.SECONDARY} ${SHORTCUT_KEY_SEPARATOR}`}
+              >
+                +
+              </span>
             )}
           </React.Fragment>
         ))}
@@ -736,9 +745,7 @@ function KeyboardShortcutsHelpComponent({
         className={`relative ${BG_COLORS.DEFAULT} ${ROUNDED_CLASSES.EXTRA_LARGE} ${SHADOW_CLASSES.EXTRA_LARGE} max-w-lg w-full ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} overflow-hidden transform ${TRANSITION_CLASSES.DEFAULT} ${isLeaving ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}
       >
         {/* Search */}
-        <div
-          className={`px-6 py-3 border-b ${BORDER_COLORS.DEFAULT} ${BG_COLORS.LIGHT}`}
-        >
+        <div className={MODAL_SEARCH_CONTAINER}>
           <div className={RELATIVE}>
             <svg
               className={`absolute left-3 top-1/2 -translate-y-1/2 ${ICON_SIZES.MD} ${TEXT_COLORS.SECONDARY}`}
@@ -886,9 +893,7 @@ function KeyboardShortcutsHelpComponent({
         </div>
 
         {/* Header */}
-        <div
-          className={`flex items-center justify-between px-6 py-4 border-b ${BORDER_COLORS.DEFAULT} ${BG_COLORS.LIGHT}`}
-        >
+        <div className={MODAL_HEADER_FLEX_BETWEEN}>
           <div className={FLEX_PATTERNS.GAP_LG}>
             <div className={KEYBOARD_SHORTCUT_CATEGORY_ICON}>
               <svg

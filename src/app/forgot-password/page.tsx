@@ -21,13 +21,13 @@ import {
   FORM_OVERLAY_STYLES,
   FORM_ARIA_LABELS,
   UI_CONFIG,
-  GRAY_CLASSES,
   FORGOT_PASSWORD_PAGE_CONFIG,
   DASHBOARD_PATTERNS,
   KBD_HINT_STYLE,
   ICON_SIZES,
   COMPONENT_CONFIG,
 } from '@/lib/config';
+import { KBD_HINT_LIGHT } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   RESPONSIVE_WIDTH,
   FONT_MEDIUM,
@@ -399,18 +399,9 @@ export default function ForgotPasswordPage() {
               className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
               aria-hidden="true"
             >
-              Press{' '}
-              <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
-              >
-                {isMac ? '⌘' : 'Ctrl'}
-              </kbd>
+              Press <kbd className={KBD_HINT_LIGHT}>{isMac ? '⌘' : 'Ctrl'}</kbd>
               {' + '}
-              <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
-              >
-                Enter
-              </kbd>
+              <kbd className={KBD_HINT_LIGHT}>Enter</kbd>
               {' to submit'}
             </p>
           </div>
