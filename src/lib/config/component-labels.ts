@@ -203,6 +203,10 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
     `Copy shortcut: ${keys.join(' plus ')}`,
   /** Separator between keyboard shortcut key combinations */
   SEPARATOR: '·',
+  /** ARIA label for the category filter section */
+  FILTER_ARIA_LABEL: 'Filter shortcuts by category',
+  /** Label for the "All" filter button */
+  FILTER_ALL_LABEL: 'All',
   /** Keyboard shortcut context labels */
   CONTEXT_LABELS: {
     global: 'Global',
