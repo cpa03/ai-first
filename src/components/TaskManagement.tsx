@@ -8,6 +8,8 @@ import StatusAnnouncer from '@/components/StatusAnnouncer';
 import { TaskManagementHeader, DeliverableCard } from './task-management';
 import { useTaskManagement } from '@/hooks/useTaskManagement';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { useClipboard } from '@/hooks/useClipboard';
+import { useToast } from '@/hooks/useAnnouncement';
 import {
   MESSAGES,
   BUTTON_LABELS,
@@ -65,6 +67,9 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
     'all' | 'in_progress' | 'completed'
   >('all');
   const taskRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+
+  const { copy } = useClipboard();
+  const { showToast: showToastFn } = useToast();
 
   const allTasks = useMemo(() => {
     if (!data || data.deliverables.length === 0) return [];
@@ -130,6 +135,31 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
     () => allTasks.some((t) => t.status !== 'completed'),
     [allTasks]
   );
+
+  const summaryText = useMemo(() => {
+    if (!data) return '';
+    const { summary } = data;
+    return [
+      TASK_MANAGEMENT_LABELS.PROGRESS_SUMMARY_TITLE,
+      '',
+      `Progress: ${summary.overallProgress}%`,
+      `Tasks: ${summary.completedTasks}/${summary.totalTasks} completed`,
+      `Hours: ${summary.completedHours}/${summary.totalHours} logged`,
+      `Deliverables: ${summary.totalDeliverables}`,
+    ].join('\n');
+  }, [data]);
+
+  const handleCopySummary = useCallback(async () => {
+    if (!summaryText) return;
+    triggerHapticFeedback();
+    const success = await copy(summaryText);
+    if (success) {
+      showToastFn({
+        type: 'success',
+        message: TASK_MANAGEMENT_LABELS.COPY_SUMMARY_SUCCESS,
+      });
+    }
+  }, [summaryText, copy, showToastFn]);
 
   const scrollToNextIncomplete = useCallback(() => {
     const nextIncomplete = allTasks.find((t) => t.status !== 'completed');
@@ -233,6 +263,9 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
         e.preventDefault();
         triggerHapticFeedback();
         scrollToNextIncomplete();
+      } else if (e.key === 'c') {
+        e.preventDefault();
+        handleCopySummary();
       }
     };
 
@@ -247,6 +280,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
     handleToggleTaskStatus,
     handleFilterChange,
     scrollToNextIncomplete,
+    handleCopySummary,
   ]);
 
   // PERFORMANCE: Memoize reload handler to prevent function recreation on each render
@@ -479,6 +513,12 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
             n
           </kbd>
           next task
+        </span>
+        <span className={KEYBOARD_HINT_INLINE}>
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+            c
+          </kbd>
+          copy summary
         </span>
         <span className={KEYBOARD_HINT_INLINE}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
