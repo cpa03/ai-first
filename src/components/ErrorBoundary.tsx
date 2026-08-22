@@ -35,6 +35,7 @@ import {
   RESPONSIVE_WIDTH,
   RESPONSIVE_WIDTH_WITH_MARGIN,
   INLINE_FLEX_RELATIVE,
+  FONT_MEDIUM,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
@@ -238,7 +239,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                       aria-hidden="true"
                     >
                       <kbd
-                        className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
+                        className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans ${FONT_MEDIUM} ${TEXT_COLORS.SECONDARY}`}
                       >
                         Enter
                       </kbd>
@@ -259,7 +260,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                       aria-hidden="true"
                     >
                       <kbd
-                        className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
+                        className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans ${FONT_MEDIUM} ${TEXT_COLORS.SECONDARY}`}
                       >
                         Esc
                       </kbd>

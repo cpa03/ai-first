@@ -22,6 +22,7 @@ import {
   COMMON_SPACING_PATTERNS,
   COORDINATE_POSITION_PATTERNS,
 } from '@/lib/config';
+import { SPIN } from '@/lib/config/animation-classes';
 import Tooltip from './Tooltip';
 
 interface AutoSaveIndicatorProps {
@@ -233,7 +234,7 @@ function AutoSaveIndicatorComponent({
           {saveState === 'typing' && <span className={PULSE_DOT} />}
           {saveState === 'saving' && (
             <svg
-              className={`${ICON_SIZES.SM_XS} ${TEXT_COLORS.BRAND_LIGHT} animate-spin`}
+              className={`${ICON_SIZES.SM_XS} ${TEXT_COLORS.BRAND_LIGHT} ${SPIN}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               aria-hidden="true"

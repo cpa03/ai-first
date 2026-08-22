@@ -59,6 +59,7 @@ import { PLATFORM } from '@/lib/dom-utils';
 import {
   PASSWORD_VISIBLE_TINT,
   VALID_CHECKMARK_COLOR,
+  FONT_MEDIUM,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   SR_ONLY,
@@ -799,9 +800,9 @@ const InputWithValidationComponent = forwardRef<
             <div
               className={`text-xs transition-all ${DURATION_TAILWIND[300]} ease-out ${
                 maxLength - charCount <= maxLength * 0.1
-                  ? `${TEXT_COLORS.ERROR} font-medium`
+                  ? `${TEXT_COLORS.ERROR} ${FONT_MEDIUM}`
                   : maxLength - charCount <= maxLength * 0.2
-                    ? `${TEXT_COLORS.WARNING} font-medium`
+                    ? `${TEXT_COLORS.WARNING} ${FONT_MEDIUM}`
                     : TEXT_COLOR_CLASSES.MUTED
               }`}
               aria-live="polite"

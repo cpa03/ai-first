@@ -42,6 +42,8 @@ import {
   COPY_URL_HINT,
   NOT_FOUND_COPY_SECTION,
   TEXT_LEFT,
+  FONT_MEDIUM,
+  REMAINING_PATTERNS,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import type { ComponentConfig } from '@/lib/config/components';
 import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
@@ -329,7 +331,7 @@ export default function NotFound() {
             <span className={KEYBOARD_HINT_INLINE}>
               {hasCopied ? (
                 <span
-                  className={`${TEXT_COLORS.SUCCESS_MEDIUM_DARK} font-medium animate-fade-in`}
+                  className={`${TEXT_COLORS.SUCCESS_MEDIUM_DARK} ${FONT_MEDIUM} animate-fade-in`}
                 >
                   {NOT_FOUND_LABELS.COPY_URL_SUCCESS}
                 </span>
@@ -362,7 +364,7 @@ export default function NotFound() {
           >
             <h2
               id="popular-pages-heading"
-              className={`text-sm font-medium ${GRAY_CLASSES.TEXT_700} mb-4 text-center`}
+              className={`text-sm ${FONT_MEDIUM} ${GRAY_CLASSES.TEXT_700} mb-4 text-center`}
             >
               Popular pages
             </h2>
@@ -409,7 +411,7 @@ export default function NotFound() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className={`${POPULAR_PAGES_ITEM} ${BORDER_COLORS.LIGHT} ${BG_COLORS.DEFAULT} hover:${BORDER_COLORS.PRIMARY_LIGHT} hover:${BG_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2`}
+                      className={`${POPULAR_PAGES_ITEM} ${BORDER_COLORS.LIGHT} ${BG_COLORS.DEFAULT} hover:${BORDER_COLORS.PRIMARY_LIGHT} hover:${BG_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT} ${REMAINING_PATTERNS.FOCUS_RING_CLICKABLE}`}
                     >
                       <span
                         className={`${POPULAR_PAGES_ICON} ${BG_COLORS.LIGHT} group-hover:${BG_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
@@ -427,7 +429,7 @@ export default function NotFound() {
                       </span>
                       <span className={TEXT_LEFT}>
                         <span
-                          className={`block text-sm font-medium ${GRAY_CLASSES.TEXT_900} group-hover:${TEXT_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
+                          className={`block text-sm ${FONT_MEDIUM} ${GRAY_CLASSES.TEXT_900} group-hover:${TEXT_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
                         >
                           {item.label}
                         </span>

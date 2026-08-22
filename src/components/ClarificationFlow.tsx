@@ -63,7 +63,11 @@ import {
 } from '@/lib/config';
 import { SELECT_ICON_POSITION } from '@/lib/config/remaining-hardcoded-patterns';
 import { INLINE_FLEX_ITEMS_CENTER } from '@/lib/config/remaining-hardcoded-patterns';
-import { SR_ONLY, RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  SR_ONLY,
+  RELATIVE,
+  FONT_MEDIUM,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import {
   CLARIFICATION_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -1000,7 +1004,7 @@ function ClarificationFlow({
                     onKeyDown={handleKeyDown}
                     className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} ${INPUT_HEIGHT_CLASSES.SELECT} cursor-pointer appearance-none ${BG_COLORS.DEFAULT} pr-10 ${TRANSITION_CLASSES.DEFAULT} ${BORDER_COLOR_CLASSES.HOVER_DEFAULT} ${
                       currentAnswer
-                        ? `${TEXT_COLOR_CLASSES.HEADING} font-medium`
+                        ? `${TEXT_COLOR_CLASSES.HEADING} ${FONT_MEDIUM}`
                         : `${TEXT_COLOR_CLASSES.MUTED}`
                     }`}
                     aria-required="true"

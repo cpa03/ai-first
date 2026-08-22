@@ -47,7 +47,11 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useFocusManagement } from '@/hooks/useAnnouncement';
-import { RELATIVE, MX_SMALL } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  RELATIVE,
+  MX_SMALL,
+  FONT_MEDIUM,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import {
   PRIMARY_TEXT,
   PRIMARY_RING,
@@ -371,7 +375,7 @@ const HighlightedText = memo(function HighlightedText({
         regex.test(part) ? (
           <span
             key={index}
-            className={`${BG_COLORS.WARNING} ${TEXT_COLORS.WARNING} px-0.5 rounded-sm font-medium`}
+            className={`${BG_COLORS.WARNING} ${TEXT_COLORS.WARNING} px-0.5 rounded-sm ${FONT_MEDIUM}`}
             aria-hidden="true"
           >
             {part}
@@ -435,7 +439,7 @@ const ShortcutRow = memo(function ShortcutRow({
       }`}
     >
       <span
-        className={`text-sm ${TRANSITION_CLASSES.COLOR} ${isSelected ? `${PRIMARY_TEXT._700} font-medium` : `${TEXT_COLORS.SECONDARY} group-hover:${TEXT_COLORS.PRIMARY}`}`}
+        className={`text-sm ${TRANSITION_CLASSES.COLOR} ${isSelected ? `${PRIMARY_TEXT._700} ${FONT_MEDIUM}` : `${TEXT_COLORS.SECONDARY} group-hover:${TEXT_COLORS.PRIMARY}`}`}
       >
         <HighlightedText text={shortcut.description} query={searchQuery} />
       </span>
@@ -841,7 +845,7 @@ function KeyboardShortcutsHelpComponent({
               setSelectedIndex(0);
               triggerHapticFeedback();
             }}
-            className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+            className={`px-3 py-1 text-xs ${FONT_MEDIUM} rounded-full transition-all ${DURATION_TAILWIND[150]} ${
               selectedContext === 'all'
                 ? `${BG_COLORS.BRAND} text-white`
                 : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
@@ -866,7 +870,7 @@ function KeyboardShortcutsHelpComponent({
                   setSelectedIndex(0);
                   triggerHapticFeedback();
                 }}
-                className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+                className={`px-3 py-1 text-xs ${FONT_MEDIUM} rounded-full transition-all ${DURATION_TAILWIND[150]} ${
                   selectedContext === context
                     ? `${BG_COLORS.BRAND} text-white`
                     : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`

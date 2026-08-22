@@ -16,6 +16,8 @@ import {
   ICON_SIZES,
   ANIMATION_CONFIG,
 } from '@/lib/config';
+import { PING_ONCE } from '@/lib/config/animation-classes';
+import { FONT_MEDIUM } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface IdeaReadyIndicatorProps {
   isReady: boolean;
@@ -98,14 +100,14 @@ function IdeaReadyIndicatorComponent({
         {/* Subtle pulse ring on ready */}
         {isReady && !prefersReducedMotion && (
           <div
-            className={`absolute inset-0 rounded-full ${BG_COLORS.SUCCESS_LIGHTER} animate-ping-once opacity-30`}
+            className={`absolute inset-0 rounded-full ${BG_COLORS.SUCCESS_LIGHTER} ${PING_ONCE} opacity-30`}
             aria-hidden="true"
           />
         )}
       </div>
       <span
         className={`
-          text-xs font-medium ${TRANSITION_CLASSES.COLOR_SLOW}
+          text-xs ${FONT_MEDIUM} ${TRANSITION_CLASSES.COLOR_SLOW}
           ${isReady ? TEXT_COLORS.SUCCESS_DARK : TEXT_COLORS.MUTED}
         `}
       >

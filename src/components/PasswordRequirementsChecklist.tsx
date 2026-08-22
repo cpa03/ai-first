@@ -28,7 +28,10 @@ import {
 import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { FLEX_PATTERNS } from '@/lib/config/remaining-styles';
-import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  SR_ONLY,
+  FONT_MEDIUM,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 interface PasswordRequirement {
@@ -285,7 +288,7 @@ function PasswordRequirementsChecklistComponent({
             key={req.id}
             className={`flex items-center gap-2 text-xs ${TRANSITION_CLASSES.DEFAULT} ${
               req.met
-                ? `${TEXT_COLORS.SUCCESS_DARK} font-medium`
+                ? `${TEXT_COLORS.SUCCESS_DARK} ${FONT_MEDIUM}`
                 : TEXT_COLORS.MUTED
             } ${hasAppeared && !prefersReducedMotion ? `${CHECKLIST_ITEM} ${CHECKLIST_ITEM}-${index + 1}` : ''} ${newlyMetIds.has(req.id) && !prefersReducedMotion ? REQUIREMENT_MET : ''}`}
             aria-label={PASSWORD_REQUIREMENTS_LABELS.REQUIREMENT_ARIA_LABEL(
@@ -339,7 +342,7 @@ function PasswordRequirementsChecklistComponent({
       </ul>
       {allMet && (
         <p
-          className={`relative text-xs ${TEXT_COLORS.SUCCESS_DARK} font-medium flex items-center gap-1.5 mt-2 ${showCompleteCelebration && !prefersReducedMotion ? FADE_IN : ''}`}
+          className={`relative text-xs ${TEXT_COLORS.SUCCESS_DARK} ${FONT_MEDIUM} flex items-center gap-1.5 mt-2 ${showCompleteCelebration && !prefersReducedMotion ? FADE_IN : ''}`}
           role="status"
           aria-live="polite"
         >

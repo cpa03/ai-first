@@ -1098,6 +1098,8 @@ export {
   COPY_URL_HINT,
   NOT_FOUND_COPY_SECTION,
   NOT_FOUND_ACTIONS,
+  TABLE_DIVIDER,
+  FOCUS_RING_CLICKABLE,
 } from './remaining-hardcoded-patterns';
 
 // CSS Containment Configuration
