@@ -183,7 +183,11 @@ function ScrollToTopButtonComponent() {
   const shortcut = isMac ? ['⌘', '↑'] : ['Ctrl', 'Home'];
 
   return (
-    <Tooltip content="Scroll to top" shortcut={shortcut} position="top">
+    <Tooltip
+      content={SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}
+      shortcut={shortcut}
+      position="top"
+    >
       {buttonElement}
     </Tooltip>
   );
