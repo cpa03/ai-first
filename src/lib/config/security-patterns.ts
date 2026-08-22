@@ -236,9 +236,9 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
   ssrf: [
     {
       // SECURITY: Upgraded pattern to detect any loopback IP in the class A range 127.0.0.0/8
-      // with boundary safety, including shorthands (e.g. 127.1, 127.0.1, 127.12.34.56) and zero IP ([::])
+      // with boundary safety, including octal prefixes (e.g. 0177.0.0.1), shorthands (e.g. 127.1, 0177.1), and zero IP ([::])
       pattern:
-        /(localhost|\b127\.(?:[0-9]{1,3}\.){1,3}[0-9]{1,3}\b|\b127\.1\b|\b0\.0\.0\.0\b|::1|\[::\])/i,
+        /(localhost|\b(?:127|0177)\.(?:[0-9]{1,4}\.){1,3}[0-9]{1,4}\b|\b(?:127|0177)\.1\b|\b0\.0\.0\.0\b|::1|\[::\])/i,
       severity: 2,
       description: 'Localhost SSRF attempt',
     },

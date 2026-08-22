@@ -83,3 +83,9 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** The `safeJsonLd` utility in `src/lib/security/json-ld.ts` passed inputs directly to `JSON.stringify(obj)` without error wrapping. When passed unstringifiable or throwing values (such as circular references, `BigInt` values, or `undefined`), `JSON.stringify` throws a `TypeError` or returns `undefined`, causing server-side rendering (SSR) crashes during HTML generation in `src/app/layout.tsx`.
 **Learning:** Utilities that sanitize or prepare dynamic data for HTML insertion (`dangerouslySetInnerHTML`) must be completely crash-resilient. Uncaught exceptions during stringification in SSR layouts lead to application-wide Denial of Service or broken rendering pipelines.
 **Prevention:** Always wrap `JSON.stringify` calls in security and HTML rendering utilities with `try...catch` blocks and explicitly validate that the output string is defined, falling back gracefully to a safe empty structure (`'{}'`).
+
+## 2026-08-22 - SSRF Bypass via Dotted Octal Loopback IP Encodings
+
+**Vulnerability:** SSRF detection patterns in `src/lib/config/security-patterns.ts` only matched decimal IPv4 loopback notation (`127.x.x.x`). Attackers could bypass localhost filters by specifying octal-encoded loopback addresses (e.g. `0177.0.0.1`, `0177.0000.0000.0001`, `0177.1`), which operating systems and network clients resolve to `127.0.0.1`.
+**Learning:** Network stacks interpret numbers with leading zeros in IP octets as octal (e.g., `0177` = `127` in decimal). Regex patterns matching strictly `127` miss these equivalent octal representations.
+**Prevention:** Design IPv4 loopback detection regexes to support both decimal `127` and octal `0177` prefixes across full and shorthand IP octets.
