@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import FooterNav from '@/components/FooterNav';
 
@@ -54,5 +54,24 @@ describe('FooterNav Component', () => {
 
     const homeLink = screen.getByRole('link', { name: 'Go to Home page' });
     expect(homeLink).toHaveClass('motion-reduce:hover:transform-none');
+  });
+
+  it('shows keyboard navigation hint with directional arrows on first focus', () => {
+    mockUsePathname.mockReturnValue('/about');
+    render(<FooterNav columns={testColumns} />);
+
+    const homeLink = screen.getByRole('link', { name: 'Go to Home page' });
+    act(() => {
+      fireEvent.focus(homeLink);
+    });
+
+    const statusRegion = screen.getByRole('status');
+    expect(statusRegion).toBeInTheDocument();
+    expect(statusRegion).toHaveTextContent('Use');
+    expect(statusRegion).toHaveTextContent('↑');
+    expect(statusRegion).toHaveTextContent('↓');
+    expect(statusRegion).toHaveTextContent('←');
+    expect(statusRegion).toHaveTextContent('→');
+    expect(statusRegion).toHaveTextContent('to navigate');
   });
 });
