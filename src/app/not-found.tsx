@@ -65,6 +65,16 @@ export default function NotFound() {
       .CLIPBOARD_DURATION_MS,
   });
 
+  // Micro-UX: Set document title for screen readers and browser tab context
+  // Shows "Page not found - IdeaFlow" instead of generic site title
+  useEffect(() => {
+    const previousTitle = document.title;
+    document.title = 'Page not found - IdeaFlow';
+    return () => {
+      document.title = previousTitle;
+    };
+  }, []);
+
   // Micro-UX: Focus management - focus heading on mount for screen readers
   useEffect(() => {
     headingRef.current?.focus();
