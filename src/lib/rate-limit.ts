@@ -16,6 +16,7 @@ import {
   TIME_CONVERSIONS,
   PROGRESS_PERCENTAGE,
 } from './config/modular-constants';
+import { TIME_UNITS } from './config/time';
 import { API_ERROR_MESSAGES } from './config/error-messages';
 
 export interface RateLimitInfo {
@@ -297,7 +298,7 @@ function generateRequestFingerprint(request: Request): string {
 
   // SECURITY: Include timestamp component to make fingerprints time-bound
   // This limits the window for header rotation attacks
-  const timeBucket = Math.floor(Date.now() / (60 * 60 * 1000)); // 1-hour buckets
+  const timeBucket = Math.floor(Date.now() / TIME_UNITS.HOUR);
   const combined = `${urlPath}:${userAgent}:${acceptLang}:${acceptEncoding}:${serverSecret}:${timeBucket}`;
 
   return `fp:${simpleHash(combined)}`;

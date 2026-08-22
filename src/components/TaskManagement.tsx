@@ -32,6 +32,7 @@ import {
   KEYBOARD_HINT_INLINE,
   MT_CLASSES,
   MB_CLASSES,
+  TIME_CONVERSIONS,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { ABSOLUTE_CENTER_OVERLAY } from '@/lib/config/remaining-hardcoded-patterns';
@@ -287,7 +288,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
             <div
               className={PRIMARY_PULSE_CONTAINER}
               style={{
-                animationDuration: `${ANIMATION_CONFIG.ERROR_RELOAD_DELAY / 1000}s`,
+                animationDuration: `${ANIMATION_CONFIG.ERROR_RELOAD_DELAY / TIME_CONVERSIONS.MS_PER_SECOND}s`,
               }}
             />
             <div className={PRIMARY_PULSE_INNER} />
@@ -389,7 +390,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
               <div
                 className={PRIMARY_PULSE_CONTAINER}
                 style={{
-                  animationDuration: `${ANIMATION_CONFIG.ERROR_RELOAD_DELAY / 1000}s`,
+                  animationDuration: `${ANIMATION_CONFIG.ERROR_RELOAD_DELAY / TIME_CONVERSIONS.MS_PER_SECOND}s`,
                 }}
               />
               <div className={PRIMARY_PULSE_INNER} />
