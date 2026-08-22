@@ -48,6 +48,7 @@ function FooterNavComponent({ columns }: FooterNavProps) {
   const [showKeyboardHint, setShowKeyboardHint] = useState(false);
   const linkRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
   const hintTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hasShownHintRef = useRef(false);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   // Cleanup timeout on unmount
@@ -125,14 +126,15 @@ function FooterNavComponent({ columns }: FooterNavProps) {
       setFocusedIndex(index);
       // Micro-UX: Show keyboard navigation hint on first focus
       // Helps users discover arrow key navigation without cluttering UI
-      if (!showKeyboardHint && !prefersReducedMotion) {
+      if (!hasShownHintRef.current && !prefersReducedMotion) {
+        hasShownHintRef.current = true;
         setShowKeyboardHint(true);
         hintTimeoutRef.current = setTimeout(() => {
           setShowKeyboardHint(false);
         }, UI_CONFIG.FOOTER_KEYBOARD_HINT_DURATION);
       }
     },
-    [showKeyboardHint, prefersReducedMotion]
+    [prefersReducedMotion]
   );
 
   const handleBlur = useCallback(() => {
@@ -204,6 +206,16 @@ function FooterNavComponent({ columns }: FooterNavProps) {
           aria-live="polite"
         >
           <span>Use</span>
+          <kbd
+            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+          >
+            ↑
+          </kbd>
+          <kbd
+            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+          >
+            ↓
+          </kbd>
           <kbd
             className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
           >
