@@ -15,6 +15,7 @@ import {
   INTERSECTION_OBSERVER_CONFIG,
   TEXT_COLORS,
   ICON_SIZES,
+  SECTION_INDICATOR_ANIMATION,
 } from '@/lib/config';
 import { SECTION_INDICATOR_LABELS } from '@/lib/config/component-labels';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -176,11 +177,11 @@ function SectionIndicatorComponent({
         opacity: isVisible ? 1 : 0,
         transform: isVisible
           ? 'translateY(-50%) translateX(0)'
-          : 'translateY(-50%) translateX(-8px)',
+          : `translateY(-50%) translateX(${SECTION_INDICATOR_ANIMATION.HIDDEN_OFFSET_PX}px)`,
         pointerEvents: isVisible ? 'auto' : 'none',
         transition: prefersReducedMotion
-          ? 'opacity 0.15s ease, transform 0.15s ease'
-          : 'opacity 0.3s ease, transform 0.3s ease',
+          ? `opacity ${SECTION_INDICATOR_ANIMATION.REDUCED_MOTION_DURATION}s ease, transform ${SECTION_INDICATOR_ANIMATION.REDUCED_MOTION_DURATION}s ease`
+          : `opacity ${SECTION_INDICATOR_ANIMATION.NORMAL_DURATION}s ease, transform ${SECTION_INDICATOR_ANIMATION.NORMAL_DURATION}s ease`,
       }}
     >
       <div

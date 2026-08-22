@@ -1124,7 +1124,9 @@ export {
 // Centralizes hardcoded rootMargin and threshold values for IntersectionObserver
 export {
   INTERSECTION_OBSERVER_CONFIG,
+  SECTION_INDICATOR_ANIMATION,
   type IntersectionObserverConfig,
+  type SectionIndicatorAnimation,
 } from './intersection-observer';
 
 // Primary Color Patterns Configuration
