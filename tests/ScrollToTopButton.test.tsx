@@ -21,6 +21,11 @@ describe('ScrollToTopButton Component', () => {
     expect(screen.getByText('Scroll to top')).toBeInTheDocument();
   });
 
+  it('uses centralized SCROLL_TO_TOP_BUTTON_LABELS configuration', () => {
+    const { SCROLL_TO_TOP_BUTTON_LABELS } = require('@/lib/config/component-labels');
+    expect(SCROLL_TO_TOP_BUTTON_LABELS.TOOLTIP_LABEL).toBe('Scroll to top');
+  });
+
   it('scrolls to top when clicked', () => {
     render(<ScrollToTopButton />);
     const button = screen.getByRole('button', { name: /Scroll to top/ });

@@ -66,6 +66,12 @@ This file contains only **active tasks** that are currently in progress or pendi
 - **Date**: 2026-08-16
 - **Details**: Connected platform-aware keyboard shortcut representations for `CopyButton` directly to `COPY_BUTTON_LABELS.KEYBOARD_SHORTCUT` in `src/lib/config/component-labels.ts`.
 
+### [CONNECT] Connect ScrollToTopButton Tooltip Label to Central Configs
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-08-22
+- **Details**: Connected `ScrollToTopButton` tooltip string directly to `SCROLL_TO_TOP_BUTTON_LABELS.TOOLTIP_LABEL` in `src/lib/config/component-labels.ts`, eliminating inline hardcoded text.
+
 ---
 
 ## Quick Stats

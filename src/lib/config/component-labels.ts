@@ -712,6 +712,8 @@ export const SCROLL_TO_TOP_BUTTON_LABELS = {
   ARIA_LABEL: 'Scroll to top (⌘↑ or Ctrl+Home)',
   /** Button text */
   BUTTON_TEXT: 'Scroll to top',
+  /** Tooltip label */
+  TOOLTIP_LABEL: 'Scroll to top',
 } as const;
 
 /**
