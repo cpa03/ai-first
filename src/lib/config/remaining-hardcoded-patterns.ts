@@ -586,6 +586,7 @@ export const SKIP_LINK = 'skip-link';
 export const PEER_SR_ONLY = 'peer sr-only';
 
 /**
+<<<<<<< Updated upstream
  * Keyboard shortcut kbd element (light background, no border)
  * Used in: forgot-password, auth/callback, login pages for keyboard hint display
  */
@@ -681,6 +682,45 @@ export const SUCCESS_ICON_CONTAINER =
 export const SUCCESS_ICON_ANIMATION = 'animate-success-pop';
 
 /**
+ * Keyboard shortcuts help - highlight text styles
+ * Used in: KeyboardShortcutsHelp.tsx HighlightedText component
+ */
+export const HIGHLIGHT_TEXT =
+  'bg-yellow-100 text-yellow-800 px-0.5 rounded-sm font-medium';
+
+/**
+ * Keyboard shortcuts help - shortcut row container
+ * Used in: KeyboardShortcutsHelp.tsx ShortcutRow component
+ */
+export const SHORTCUT_ROW =
+  'flex items-center justify-between py-3 px-2 -mx-2 rounded-lg border-b last:border-b-0';
+
+/**
+ * Keyboard shortcuts help - copy button container
+ * Used in: KeyboardShortcutsHelp.tsx ShortcutRow component
+ */
+export const SHORTCUT_COPY_BUTTON =
+  'flex items-center gap-1.5 flex-shrink-0 ml-4 p-1 -m-1 rounded-md';
+
+/**
+ * Keyboard shortcuts help - separator between keys
+ * Used in: KeyboardShortcutsHelp.tsx ShortcutRow component
+ */
+export const SHORTCUT_KEY_SEPARATOR = 'text-xs';
+
+/**
+ * Dashboard skeleton - fade in animation
+ * Used in: DashboardSkeleton.tsx table rows
+ */
+export const SKELETON_FADE_IN = 'animate-fade-in';
+
+/**
+ * Dashboard skeleton - table body with divide
+ * Used in: DashboardSkeleton.tsx table body
+ */
+export const SKELETON_TABLE_BODY = 'bg-white divide-y';
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -766,4 +806,9 @@ export const REMAINING_PATTERNS = {
   DASHBOARD_FILTER_SELECT,
   SUCCESS_ICON_CONTAINER,
   SUCCESS_ICON_ANIMATION,
+  HIGHLIGHT_TEXT,
+  SHORTCUT_COPY_BUTTON,
+  SHORTCUT_KEY_SEPARATOR,
+  SKELETON_FADE_IN,
+  SKELETON_TABLE_BODY,
 } as const;

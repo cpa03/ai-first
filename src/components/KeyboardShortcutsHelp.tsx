@@ -53,6 +53,9 @@ import {
   MODAL_SEARCH_CONTAINER,
   MODAL_HEADER_FLEX_BETWEEN,
   SHORTCUT_ROW_PATTERN,
+  HIGHLIGHT_TEXT,
+  SHORTCUT_COPY_BUTTON,
+  SHORTCUT_KEY_SEPARATOR,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   PRIMARY_TEXT,
@@ -375,11 +378,7 @@ const HighlightedText = memo(function HighlightedText({
     <>
       {parts.map((part, index) =>
         regex.test(part) ? (
-          <span
-            key={index}
-            className={`${BG_COLORS.WARNING} ${TEXT_COLORS.WARNING} px-0.5 rounded-sm font-medium`}
-            aria-hidden="true"
-          >
+          <span key={index} className={HIGHLIGHT_TEXT} aria-hidden="true">
             {part}
           </span>
         ) : (
@@ -448,7 +447,7 @@ const ShortcutRow = memo(function ShortcutRow({
       <button
         type="button"
         onClick={handleCopyShortcut}
-        className={`flex items-center gap-1.5 flex-shrink-0 ml-4 p-1 -m-1 rounded-md ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.FAST} ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
+        className={`${SHORTCUT_COPY_BUTTON} ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.FAST} ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
         aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.COPY_SHORTCUT_ARIA_LABEL(
           displayKeys
         )}
@@ -457,7 +456,11 @@ const ShortcutRow = memo(function ShortcutRow({
           <React.Fragment key={index}>
             <KeyboardKey>{key}</KeyboardKey>
             {index < displayKeys.length - 1 && (
-              <span className={`${TEXT_COLORS.SECONDARY} text-xs`}>+</span>
+              <span
+                className={`${TEXT_COLORS.SECONDARY} ${SHORTCUT_KEY_SEPARATOR}`}
+              >
+                +
+              </span>
             )}
           </React.Fragment>
         ))}
