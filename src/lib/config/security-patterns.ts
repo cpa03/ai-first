@@ -133,6 +133,11 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
 
   path_traversal: [
     {
+      pattern: /(?:%00|%2500|\x00)/i,
+      severity: 3,
+      description: 'Null byte path traversal injection',
+    },
+    {
       pattern: /(\.\.\/|\.\.\\){2,}/,
       severity: 3,
       description: 'Multiple path traversal sequences',

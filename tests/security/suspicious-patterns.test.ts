@@ -158,6 +158,21 @@ describe('Suspicious Pattern Detection Improvements', () => {
       }
     });
 
+    it('should detect null byte path traversal injection', () => {
+      const payloads = ['file.txt%00.png', 'file.txt%2500.png', 'file.txt\x00.png'];
+      for (const payload of payloads) {
+        const request = createMockRequest(
+          `https://example.com/api/test?file=${payload}`
+        );
+        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        expect(result.detected).toBe(true);
+        expect(result.maxSeverity).toBe(3);
+        expect(
+          result.patterns.some((p) => p.category === 'path_traversal')
+        ).toBe(true);
+      }
+    });
+
     it('should detect Windows sensitive paths', () => {
       const paths = [
         'C:\\Windows\\System32',

@@ -83,3 +83,9 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** The `safeJsonLd` utility in `src/lib/security/json-ld.ts` passed inputs directly to `JSON.stringify(obj)` without error wrapping. When passed unstringifiable or throwing values (such as circular references, `BigInt` values, or `undefined`), `JSON.stringify` throws a `TypeError` or returns `undefined`, causing server-side rendering (SSR) crashes during HTML generation in `src/app/layout.tsx`.
 **Learning:** Utilities that sanitize or prepare dynamic data for HTML insertion (`dangerouslySetInnerHTML`) must be completely crash-resilient. Uncaught exceptions during stringification in SSR layouts lead to application-wide Denial of Service or broken rendering pipelines.
 **Prevention:** Always wrap `JSON.stringify` calls in security and HTML rendering utilities with `try...catch` blocks and explicitly validate that the output string is defined, falling back gracefully to a safe empty structure (`'{}'`).
+
+## 2026-08-23 - Null Byte Path Traversal Injection Gaps
+
+**Vulnerability:** The `path_traversal` pattern definitions in `src/lib/config/security-patterns.ts` did not detect single-encoded (`%00`), double-encoded (`%2500`), or raw null byte (`\x00`) injection attempts used in path traversal attacks to bypass file extension checks or break string operations.
+**Learning:** Path traversal detection rules that only inspect directory traversal sequences (`../`, `..\`) or sensitive file names (`/etc/passwd`) leave applications vulnerable to null byte truncation attacks when inputs interact with downstream file systems or legacy APIs.
+**Prevention:** Include explicit null byte regex patterns (`/(?:%00|%2500|\x00)/i`) in path traversal pattern matching to detect null byte injection across raw, single, and double-encoded payloads.
