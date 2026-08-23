@@ -56,11 +56,10 @@ async function handlePost(context: ApiContext) {
 
   if (userResponses && typeof userResponses === 'object') {
     for (const [key, value] of Object.entries(userResponses)) {
-      if (typeof value === 'string') {
-        sanitizedUserResponses[key] = sanitizeHtml(value);
-      } else {
-        sanitizedUserResponses[key] = String(value);
-      }
+      // SECURITY: Sanitize all values regardless of type (e.g. coerced non-strings)
+      sanitizedUserResponses[key] = sanitizeHtml(
+        typeof value === 'string' ? value : String(value ?? '')
+      );
     }
   }
 
