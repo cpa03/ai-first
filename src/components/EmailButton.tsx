@@ -7,6 +7,7 @@ import StatusAnnouncer from './StatusAnnouncer';
 import { createLogger } from '@/lib/logger';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useConfetti } from '@/hooks/useConfetti';
+import { useToast } from '@/hooks/useAnnouncement';
 import {
   APP_CONFIG,
   UI_CONFIG,
@@ -33,6 +34,8 @@ export interface EmailButtonProps {
   ariaLabel?: string;
   tooltipLabel?: string;
   className?: string;
+  showToast?: boolean;
+  toastMessage?: string;
   onEmailSent?: () => void;
 }
 
@@ -61,10 +64,13 @@ const EmailButtonComponent = function EmailButton({
   ariaLabel = EMAIL_BUTTON_LABELS.ARIA_LABEL,
   tooltipLabel = EMAIL_BUTTON_LABELS.TOOLTIP_LABEL,
   className = '',
+  showToast = true,
+  toastMessage = EMAIL_BUTTON_LABELS.TOAST_MESSAGE,
   onEmailSent,
 }: EmailButtonProps) {
   const [state, setState] = useState<'idle' | 'loading' | 'success'>('idle');
   const { particles, fire } = useConfetti();
+  const { showToast: showToastFn } = useToast();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -104,6 +110,13 @@ const EmailButtonComponent = function EmailButton({
       setState('success');
       fire();
 
+      if (showToast) {
+        showToastFn({
+          type: 'success',
+          message: toastMessage,
+        });
+      }
+
       timeoutRef.current = setTimeout(() => {
         setState('idle');
       }, UI_CONFIG.FEEDBACK.COPY_FEEDBACK_DURATION_MS);
@@ -116,7 +129,17 @@ const EmailButtonComponent = function EmailButton({
       logger.error('Failed to open email client', error);
       setState('idle');
     }
-  }, [ideaTitle, ideaContent, sessionAnswers, onEmailSent, state, fire]);
+  }, [
+    ideaTitle,
+    ideaContent,
+    sessionAnswers,
+    onEmailSent,
+    state,
+    fire,
+    showToast,
+    toastMessage,
+    showToastFn,
+  ]);
 
   // Micro-UX: Keyboard shortcut Ctrl/Cmd+Shift+E for email
   // Uses Shift to avoid conflict with Ctrl+E (export markdown) on results page

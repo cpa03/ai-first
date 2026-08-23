@@ -623,6 +623,8 @@ export const EMAIL_BUTTON_LABELS = {
   BODY_DETAILS_LABEL: 'Details:',
   /** Email body footer */
   BODY_FOOTER: 'Created with',
+  /** Toast message shown after email client opens successfully */
+  TOAST_MESSAGE: 'Email client opened!',
 } as const;
 
 /**
