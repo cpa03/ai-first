@@ -321,7 +321,10 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
             aria-valuenow={score}
             aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
             aria-valuemax={NORMALIZATION.MAX_SCORE}
-            aria-label={`Password strength: ${percentage}% ${config.label}`}
+            aria-label={SIGNUP_PAGE_CONTENT.PASSWORD_STRENGTH.ARIA_LABEL(
+              percentage,
+              config.label
+            )}
           />
         </div>
         <span

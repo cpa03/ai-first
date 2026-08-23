@@ -830,7 +830,7 @@ function KeyboardShortcutsHelpComponent({
         <div
           className={`px-6 py-3 border-b ${BORDER_COLORS.DEFAULT} flex flex-wrap gap-2`}
           role="tablist"
-          aria-label="Filter shortcuts by category"
+          aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CATEGORY_FILTER_ARIA_LABEL}
         >
           <button
             type="button"

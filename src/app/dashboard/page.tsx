@@ -68,6 +68,7 @@ import {
   MARGIN_TOP_4,
   SR_ONLY,
   RELATIVE,
+  TABLE_CONTAINER,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   PRIMARY_RING,
@@ -1113,7 +1114,7 @@ export default function DashboardPage() {
         <div className={CARD_PATTERNS.OVERFLOW_HIDDEN}>
           <div className={OVERFLOW_PATTERNS.X_AUTO}>
             <table
-              className={`${TABLE_PATTERNS.container} divide-y divide-gray-200`}
+              className={TABLE_CONTAINER}
               role="table"
               aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.IDEAS_LIST}
             >
@@ -1218,7 +1219,9 @@ export default function DashboardPage() {
                           onClick={() => openDeleteModal(idea)}
                           disabled={deletingId === idea.id}
                           className={`${ACTION_COLORS.DELETE.text} ${ACTION_COLORS.DELETE.hoverText} ${TABLE_PATTERNS.actions.buttonBase} ${ACTION_COLORS.DELETE.hoverBg} transition-colors disabled:opacity-50 inline-flex items-center gap-1`}
-                          aria-label={`Delete ${idea.title}`}
+                          aria-label={DASHBOARD_LABELS.DELETE_IDEA_ARIA_LABEL(
+                            idea.title
+                          )}
                         >
                           {deletingId === idea.id && (
                             <svg

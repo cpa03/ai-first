@@ -321,6 +321,8 @@ export const SIGNUP_PAGE_CONTENT = {
   },
   PASSWORD_STRENGTH: {
     GREAT_PASSWORD: 'Great password!',
+    ARIA_LABEL: (percentage: number, label: string) =>
+      `Password strength: ${percentage}% ${label}`,
   },
   ERRORS: {
     TITLE: 'Sign Up Error',

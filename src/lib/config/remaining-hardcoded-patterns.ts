@@ -23,6 +23,8 @@
  */
 export const TABLE_BODY = 'bg-white divide-y divide-gray-200';
 
+export const TABLE_CONTAINER = 'w-full divide-y divide-gray-200';
+
 /**
  * Table row selected ring styles
  * Used in: Dashboard page selected row
@@ -587,6 +589,7 @@ export const PEER_SR_ONLY = 'peer sr-only';
  */
 export const REMAINING_PATTERNS = {
   TABLE_BODY,
+  TABLE_CONTAINER,
   TABLE_ROW_SELECTED_RING,
   COPY_BUTTON_HOVER_OPACITY,
   SPINNER_SMALL,

@@ -204,7 +204,15 @@ const ProgressStepperComponent = function ProgressStepper({
                       }
                     `}
                     aria-current={step.current ? 'step' : undefined}
-                    aria-label={`Question ${index + 1}: ${step.current ? PROGRESS_STEPPER_LABELS.STEP_CURRENT : step.completed ? PROGRESS_STEPPER_LABELS.STEP_COMPLETED : PROGRESS_STEPPER_LABELS.STEP_UPCOMING}${isClickable ? ' - Click to jump' : ''}`}
+                    aria-label={PROGRESS_STEPPER_LABELS.QUESTION_ARIA_LABEL(
+                      index,
+                      step.current
+                        ? PROGRESS_STEPPER_LABELS.STEP_CURRENT
+                        : step.completed
+                          ? PROGRESS_STEPPER_LABELS.STEP_COMPLETED
+                          : PROGRESS_STEPPER_LABELS.STEP_UPCOMING,
+                      isClickable
+                    )}
                   />
                 </li>
               );

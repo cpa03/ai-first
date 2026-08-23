@@ -19,7 +19,10 @@ import {
   OVERFLOW_PATTERNS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
-import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  SR_ONLY,
+  TABLE_CONTAINER,
+} from '@/lib/config/remaining-hardcoded-patterns';
 
 function DashboardSkeletonComponent() {
   return (
@@ -57,10 +60,7 @@ function DashboardSkeletonComponent() {
 
       <div className={CARD_PATTERNS.OVERFLOW_HIDDEN}>
         <div className={OVERFLOW_PATTERNS.X_AUTO}>
-          <table
-            className={`${TABLE_PATTERNS.container} divide-y divide-gray-200`}
-            aria-hidden="true"
-          >
+          <table className={TABLE_CONTAINER} aria-hidden="true">
             <thead className={TABLE_PATTERNS.header.container}>
               <tr>
                 <th scope="col" className={TABLE_PATTERNS.header.cell}>

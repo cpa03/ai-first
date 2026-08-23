@@ -74,6 +74,7 @@ export const INPUT_VALIDATION_LABELS = {
   /** Character limit warning message when approaching max */
   CHAR_LIMIT_WARNING: (charsRemaining: number) =>
     `${charsRemaining} character${charsRemaining !== 1 ? 's' : ''} remaining`,
+  CLEAR_ARIA: (label: string) => `Clear ${label}`,
 } as const;
 
 /**
@@ -201,6 +202,7 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
   CLOSE_ARIA_LABEL: 'Close command palette',
   COPY_SHORTCUT_ARIA_LABEL: (keys: string[]) =>
     `Copy shortcut: ${keys.join(' plus ')}`,
+  CATEGORY_FILTER_ARIA_LABEL: 'Filter shortcuts by category',
   /** Separator between keyboard shortcut key combinations */
   SEPARATOR: '·',
   /** Keyboard shortcut context labels */
@@ -275,6 +277,8 @@ export const PROGRESS_STEPPER_LABELS = {
   KEYBOARD_NAV_HINT: 'navigate steps',
   KEYBOARD_NAV_ARIA_LABEL:
     'Keyboard shortcuts: Left and Right arrow keys to navigate between steps',
+  QUESTION_ARIA_LABEL: (index: number, status: string, isClickable?: boolean) =>
+    `Question ${index + 1}: ${status}${isClickable ? ' - Click to jump' : ''}`,
 } as const;
 
 /**
@@ -590,6 +594,7 @@ export const DASHBOARD_LABELS = {
     HELP_KEY: '?',
     HELP_LABEL: 'shortcuts',
   },
+  DELETE_IDEA_ARIA_LABEL: (title: string) => `Delete ${title}`,
 };
 
 /**

@@ -543,7 +543,7 @@ const InputWithValidationComponent = forwardRef<
                   type="button"
                   onClick={handleClear}
                   className={`${INPUT_BUTTON_SIZES.CLEAR_BUTTON} flex items-center justify-center ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} rounded-full ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
-                  aria-label={`Clear ${label}`}
+                  aria-label={INPUT_VALIDATION_LABELS.CLEAR_ARIA(label)}
                 >
                   <svg
                     className={SVG_SIZES.SMD}
