@@ -63,6 +63,16 @@ export const BORDER_COLORS = {
 } as const;
 
 /**
+ * Divide color utilities for table row separators
+ * Replaces hardcoded divide-gray-* classes throughout components
+ */
+export const DIVIDE_COLORS = {
+  LIGHT: 'divide-gray-200',
+  DEFAULT: 'divide-gray-300',
+  MUTED: 'divide-gray-400',
+} as const;
+
+/**
  * Ring color utilities for focus states
  */
 export const RING_COLORS = {

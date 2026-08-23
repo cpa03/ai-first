@@ -10,6 +10,7 @@ import {
   DASHBOARD_LABELS,
   BG_COLORS,
   BORDER_COLORS,
+  DIVIDE_COLORS,
   FLEX_PATTERNS,
   SPACE_Y_PATTERNS,
   SKELETON_SIZE_PATTERNS,
@@ -58,7 +59,7 @@ function DashboardSkeletonComponent() {
       <div className={CARD_PATTERNS.OVERFLOW_HIDDEN}>
         <div className={OVERFLOW_PATTERNS.X_AUTO}>
           <table
-            className={`${TABLE_PATTERNS.container} divide-y divide-gray-200`}
+            className={`${TABLE_PATTERNS.container} divide-y ${DIVIDE_COLORS.LIGHT}`}
             aria-hidden="true"
           >
             <thead className={TABLE_PATTERNS.header.container}>

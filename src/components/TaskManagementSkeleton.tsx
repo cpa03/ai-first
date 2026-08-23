@@ -11,6 +11,7 @@ import {
   TASK_MANAGEMENT_LABELS,
   SKELETON_PROGRESS,
   GRAY_CLASSES,
+  BORDER_COLORS,
   ICON_SIZES,
   FLEX_PATTERNS,
   SPACE_Y_PATTERNS,
@@ -113,7 +114,7 @@ function TaskManagementSkeletonComponent() {
             }}
           >
             <div
-              className={`${CARD_PATTERNS.BASE} border-l-4 border-l-gray-200`}
+              className={`${CARD_PATTERNS.BASE} border-l-4 ${BORDER_COLORS.LIGHT}`}
             >
               {/* Deliverable header */}
               <div className={FLEX_PATTERNS.BETWEEN}>
