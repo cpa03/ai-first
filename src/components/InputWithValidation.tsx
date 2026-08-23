@@ -542,7 +542,7 @@ const InputWithValidationComponent = forwardRef<
                 <button
                   type="button"
                   onClick={handleClear}
-                  className={`${INPUT_BUTTON_SIZES.CLEAR_BUTTON} flex items-center justify-center ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} rounded-full ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
+                    className={`${INPUT_BUTTON_SIZES.CLEAR_BUTTON} flex items-center justify-center ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} rounded-full ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT} active:scale-95 disabled:opacity-0`}
                   aria-label={`Clear ${label}`}
                 >
                   <svg
@@ -585,7 +585,7 @@ const InputWithValidationComponent = forwardRef<
                         triggerHapticFeedback();
                         copyPassword(currentValue);
                       }}
-                      className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
+                      className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT} active:scale-95`}
                       aria-label={INPUT_VALIDATION_LABELS.COPY_PASSWORD_ARIA}
                     >
                       <span
@@ -651,7 +651,7 @@ const InputWithValidationComponent = forwardRef<
                       triggerHapticFeedback();
                       setPasswordVisible(!passwordVisible);
                     }}
-                    className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
+                    className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT} active:scale-95`}
                     aria-label={
                       passwordVisible
                         ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA

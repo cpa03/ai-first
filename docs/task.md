@@ -12,6 +12,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ## StorX Feature Analysis & Integration Tasks
 
+### [STRENGTHEN] Strengthen InputWithValidation Active Feedback Parity and Tactile Scale Transitions
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-23
+- **Details**: Strengthened clear input button and password toggle controls in `InputWithValidation.tsx` by adding `active:scale-95` tactile scale classes and ensuring button interaction handlers trigger haptic feedback. Verified in `tests/IdeaInput.test.tsx`.
+
+### [CONNECT] Connect InputWithValidation Micro-UX States to Central Component Configs
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-08-23
+- **Details**: Connected clear button, password toggle, and tooltip shortcut labels directly to central component labels in `src/lib/config/component-labels.ts`.
+
 ### [STRENGTHEN] Strengthen LoadingSpinner Accessibility and Non-Redundant Screen Reader Announcements
 - **Priority**: MEDIUM
 - **Status**: COMPLETE
