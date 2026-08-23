@@ -53,7 +53,7 @@ CMZ automatically delegates based on task type:
 
 ## Skills Library
 
-28 specialized skills available in `.opencode/skills/`:
+29 specialized skills available in `.opencode/skills/`:
 
 ### Process Skills
 
@@ -109,6 +109,10 @@ CMZ automatically delegates based on task type:
 
 - `adk-moai-tool` - OpenCode ADK tool reference
 - `ai-agents-git-commit` - AI-powered git commit automation
+
+### Repository Maintenance
+
+- `structured-flow` - Repository maintenance and cleanup workflows
 
 ## Usage
 
