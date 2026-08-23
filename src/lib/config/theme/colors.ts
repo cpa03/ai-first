@@ -73,6 +73,19 @@ export const RING_COLORS = {
 } as const;
 
 /**
+ * Ring offset color utilities for focus states
+ * Replaces hardcoded ring-offset-gray-* classes throughout components
+ */
+export const RING_OFFSET_COLORS = {
+  /** ring-offset-gray-100 - subtle offset for light backgrounds */
+  LIGHT: 'focus-visible:ring-offset-gray-100',
+  /** ring-offset-white - white offset for dark backgrounds */
+  WHITE: 'focus-visible:ring-offset-white',
+  /** ring-offset-gray-200 - slightly darker offset */
+  MEDIUM: 'focus-visible:ring-offset-gray-200',
+} as const;
+
+/**
  * Text color utilities
  */
 export const TEXT_COLORS = {
