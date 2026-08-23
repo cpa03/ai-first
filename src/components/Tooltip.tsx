@@ -254,10 +254,10 @@ function TooltipComponent({
   };
 
   const arrowClasses = {
-    top: `top-full left-1/2 -translate-x-1/2 -mt-1 border-t-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
-    bottom: `bottom-full left-1/2 -translate-x-1/2 -mb-1 border-b-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
-    left: `left-full top-1/2 -translate-y-1/2 -ml-1 border-l-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
-    right: `right-full top-1/2 -translate-y-1/2 -mr-1 border-r-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
+    top: 'top-full left-1/2 -translate-x-1/2 -mt-1 border-t-gray-800',
+    bottom: 'bottom-full left-1/2 -translate-x-1/2 -mb-1 border-b-gray-800',
+    left: 'left-full top-1/2 -translate-y-1/2 -ml-1 border-l-gray-800',
+    right: 'right-full top-1/2 -translate-y-1/2 -mr-1 border-r-gray-800',
   };
 
   const arrowBorderClasses = {
