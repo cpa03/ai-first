@@ -213,6 +213,28 @@ export const FORGOT_PASSWORD_PAGE_CONFIG = {
     STEP_3: 'delay-200',
     STEP_4: 'delay-250',
   } as const,
+  ERROR_TITLE: 'Error',
+  ERROR_LAYOUT_TITLE: 'Something went wrong',
+  ERROR_LAYOUT_MESSAGE:
+    'We encountered an error loading this page. Please try again.',
+  SENDING_TEXT: 'Sending...',
+  SEND_RESET_LINK_TEXT: 'Send reset link',
+  SENDING_RESET_LINK_TEXT: 'Sending reset link...',
+  RESEND_IN_TEXT: (seconds: number) => `Resend in ${seconds}s`,
+  RESEND_EMAIL_TEXT: 'Resend email',
+  RESEND_SUCCESS_TEXT: 'Reset email resent successfully!',
+  CHECK_SPAM_TEXT:
+    "Didn't receive the email? Check your spam folder or resend below.",
+  ENTER_EMAIL_TEXT:
+    "Enter your email address and we'll send you a link to reset your password.",
+  BACK_TO_LOGIN_TEXT: 'Back to login',
+  CHECK_EMAIL_TITLE: 'Check your email',
+  CHECK_EMAIL_MESSAGE: (email: string) =>
+    `We've sent a password reset link to ${email}`,
+  FORGOT_PASSWORD_TITLE: 'Forgot your password?',
+  REMEMBER_PASSWORD_TEXT: 'Remember your password?',
+  SIGN_IN_TEXT: 'Sign in',
+  SKIP_LINK_TEXT: 'Skip to forgot password form',
 } as const;
 
 /**
