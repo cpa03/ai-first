@@ -216,6 +216,43 @@ export const FORGOT_PASSWORD_PAGE_CONFIG = {
 } as const;
 
 /**
+ * Forgot password page content configuration
+ * Eliminates hardcoded UI strings in forgot-password page
+ */
+export const FORGOT_PASSWORD_PAGE_CONTENT = {
+  HEADING: 'Check your email',
+  MESSAGE_PREFIX: "We've sent a password reset link to",
+  MESSAGE_SUFFIX:
+    "Didn't receive the email? Check your spam folder or resend below.",
+  SUCCESS: {
+    HEADING: 'Check your email',
+    MESSAGE_PREFIX: "We've sent a password reset link to",
+    MESSAGE_SUFFIX:
+      "Didn't receive the email? Check your spam folder or resend below.",
+    RESEND_SUCCESS: 'Reset email resent successfully!',
+  },
+  FORM: {
+    EMAIL_LABEL: 'Email address',
+    EMAIL_PLACEHOLDER: 'Enter your email',
+    SUBMIT_BUTTON: 'Send reset link',
+    SUBMIT_LOADING: 'Sending reset link...',
+    RESEND_BUTTON: 'Resend email',
+    RESEND_COOLDOWN_PREFIX: 'Resend in',
+    RESEND_LOADING: 'Sending...',
+  },
+  ERRORS: {
+    TITLE: 'Error',
+    INVALID_EMAIL: 'Please enter a valid email address',
+    SERVICE_UNAVAILABLE: 'Authentication service is unavailable',
+    SEND_FAILED: 'Failed to send reset email. Please try again.',
+    RESEND_FAILED: 'Failed to resend email. Please try again.',
+  },
+  BUTTONS: {
+    GO_BACK: 'Go back to sign in',
+  },
+} as const;
+
+/**
  * Auth callback page metadata configuration
  */
 export const AUTH_CALLBACK_PAGE_CONFIG = {
@@ -612,6 +649,7 @@ export const PAGE_CONFIG = {
   LOGIN: LOGIN_PAGE_CONFIG,
   SIGNUP: SIGNUP_PAGE_CONFIG,
   FORGOT_PASSWORD: FORGOT_PASSWORD_PAGE_CONFIG,
+  FORGOT_PASSWORD_CONTENT: FORGOT_PASSWORD_PAGE_CONTENT,
   AUTH_CALLBACK: AUTH_CALLBACK_PAGE_CONFIG,
   NOT_FOUND: NOT_FOUND_PAGE_CONFIG,
 } as const;
@@ -623,6 +661,7 @@ export type DashboardPageConfig = typeof DASHBOARD_PAGE_CONFIG;
 export type HomePageConfig = typeof HOME_PAGE_CONFIG;
 export type LoginPageConfig = typeof LOGIN_PAGE_CONFIG;
 export type SignupPageConfig = typeof SIGNUP_PAGE_CONFIG;
+export type ForgotPasswordPageContent = typeof FORGOT_PASSWORD_PAGE_CONTENT;
 export type AuthCallbackPageConfig = typeof AUTH_CALLBACK_PAGE_CONFIG;
 export type LayoutErrorFallback = typeof LAYOUT_ERROR_FALLBACKS;
 export type LoginErrorFallback = typeof LOGIN_ERROR_FALLBACK;
