@@ -19,6 +19,7 @@ import { PLATFORM } from '@/lib/dom-utils';
 import { SCROLL_TO_TOP_BUTTON_LABELS } from '@/lib/config/component-labels';
 import Tooltip from './Tooltip';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
+import { SCROLL_TO_TOP_STRINGS } from '@/lib/config/remaining-hardcoded-patterns';
 
 /**
  * ScrollToTopButton - Footer scroll-to-top link
@@ -183,7 +184,11 @@ function ScrollToTopButtonComponent() {
   const shortcut = isMac ? ['⌘', '↑'] : ['Ctrl', 'Home'];
 
   return (
-    <Tooltip content="Scroll to top" shortcut={shortcut} position="top">
+    <Tooltip
+      content={SCROLL_TO_TOP_STRINGS.TOOLTIP}
+      shortcut={shortcut}
+      position="top"
+    >
       {buttonElement}
     </Tooltip>
   );

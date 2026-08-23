@@ -582,6 +582,87 @@ export const SKIP_LINK = 'skip-link';
 export const PEER_SR_ONLY = 'peer sr-only';
 
 /**
+ * Forgot Password page specific patterns
+ * Used in: Forgot password layout and page
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const FORGOT_PASSWORD_PAGE_STRINGS = {
+  /** Page metadata */
+  METADATA: {
+    TITLE: 'Forgot Password - IdeaFlow',
+    DESCRIPTION: 'Reset your IdeaFlow password',
+    ROBOTS: 'index, follow',
+  },
+  /** Error boundary fallback strings */
+  ERROR_BOUNDARY: {
+    TITLE: 'Something went wrong',
+    MESSAGE: 'We encountered an error loading this page. Please try again.',
+  },
+  /** Page heading and description */
+  HEADING: 'Forgot your password?',
+  DESCRIPTION:
+    "Enter your email address and we'll send you a link to reset your password.",
+  /** Form labels */
+  FORM: {
+    EMAIL_LABEL: 'Email address',
+    SUBMIT_BUTTON: 'Send reset link',
+    SUBMIT_LOADING: 'Sending...',
+  },
+  /** Success state strings */
+  SUCCESS: {
+    HEADING: 'Email sent!',
+    DESCRIPTION:
+      'Check your inbox for a password reset link. It may take a minute to arrive.',
+    RESEND_PROMPT:
+      "Didn't receive the email? Check your spam folder or resend below.",
+    RESEND_SUCCESS: 'Reset email resent successfully!',
+    RESEND_BUTTON: 'Resend email',
+    RESEND_COOLDOWN: (seconds: number) => `Resend in ${seconds}s`,
+    BACK_LINK: 'Back to sign in',
+  },
+  /** Error alert title */
+  ERROR_ALERT_TITLE: 'Error',
+  /** Loading overlay text */
+  LOADING_TEXT: 'Sending reset link...',
+  /** Footer text */
+  FOOTER: {
+    REMEMBER_PASSWORD: 'Remember your password?',
+    SIGN_IN: 'Sign in',
+  },
+  /** Keyboard hints */
+  KEYBOARD_HINTS: {
+    SHORTCUTS: 'Shortcuts',
+    VIEW_ALL: 'View all',
+    SKIP_LINK: 'Skip to forgot password form',
+    SUBMIT_HINT: (isMac: boolean) => ({
+      modifier: isMac ? '\u2318' : 'Ctrl',
+    }),
+  },
+} as const;
+
+/**
+ * Keyboard shortcuts help page patterns
+ * Used in: KeyboardShortcutsHelp component
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const KEYBOARD_SHORTCUTS_HELP_STRINGS = {
+  /** Aria labels */
+  ARIA: {
+    FILTER_BY_CATEGORY: 'Filter shortcuts by category',
+  },
+} as const;
+
+/**
+ * Scroll to top button patterns
+ * Used in: ScrollToTopButton component
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const SCROLL_TO_TOP_STRINGS = {
+  /** Tooltip content */
+  TOOLTIP: 'Scroll to top',
+} as const;
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -654,4 +735,7 @@ export const REMAINING_PATTERNS = {
   GRID_COL_SPAN,
   SKIP_LINK,
   PEER_SR_ONLY,
+  FORGOT_PASSWORD_PAGE_STRINGS,
+  KEYBOARD_SHORTCUTS_HELP_STRINGS,
+  SCROLL_TO_TOP_STRINGS,
 } as const;

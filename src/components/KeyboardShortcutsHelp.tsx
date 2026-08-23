@@ -47,7 +47,11 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useFocusManagement } from '@/hooks/useAnnouncement';
-import { RELATIVE, MX_SMALL } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  RELATIVE,
+  MX_SMALL,
+  KEYBOARD_SHORTCUTS_HELP_STRINGS,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import {
   PRIMARY_TEXT,
   PRIMARY_RING,
@@ -830,7 +834,7 @@ function KeyboardShortcutsHelpComponent({
         <div
           className={`px-6 py-3 border-b ${BORDER_COLORS.DEFAULT} flex flex-wrap gap-2`}
           role="tablist"
-          aria-label="Filter shortcuts by category"
+          aria-label={KEYBOARD_SHORTCUTS_HELP_STRINGS.ARIA.FILTER_BY_CATEGORY}
         >
           <button
             type="button"
