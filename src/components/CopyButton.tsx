@@ -24,6 +24,7 @@ import { useToast } from '@/hooks/useAnnouncement';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { PLATFORM } from '@/lib/dom-utils';
 import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
+import { COPY_BUTTON_PATTERNS } from '@/lib/config/final-hardcoded-patterns';
 
 export interface CopyButtonProps {
   textToCopy: string;
@@ -95,7 +96,7 @@ const CopyButtonComponent = function CopyButton({
   );
 
   const baseClasses = `
-    inline-flex items-center justify-center gap-2
+    ${COPY_BUTTON_PATTERNS.BUTTON_CONTAINER}
     font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out transform
     ${FOCUS_RING_PATTERNS.DEFAULT}
     ${COMPONENT_CONFIG.COPY_FEEDBACK.FOCUS_RING_CLASS} focus-visible:ring-offset-gray-100

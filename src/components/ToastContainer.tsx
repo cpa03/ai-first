@@ -34,6 +34,7 @@ import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { SWIPE_PROGRESS_BAR } from '@/lib/config/remaining-hardcoded-patterns';
 import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import { TOAST_CONTAINER_PATTERNS } from '@/lib/config/final-hardcoded-patterns';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 
@@ -273,8 +274,8 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       className={`
-        ${styles.container} border rounded-lg shadow-lg p-4
-        flex items-start gap-3 max-w-md relative overflow-hidden
+        ${styles.container} ${TOAST_CONTAINER_PATTERNS.TOAST_ITEM}
+        ${TOAST_CONTAINER_PATTERNS.TOAST_CONTENT}
         transform ${TRANSITION_CLASSES.SLOW_EASE_IN_OUT}
         ${isLeaving ? 'translate-x-full opacity-0' : 'translate-x-0 opacity-100'}
         ${prefersReducedMotion ? '' : 'touch-pan-y'}
@@ -491,7 +492,7 @@ function ToastContainerComponent() {
 
   return (
     <div
-      className={`fixed top-4 right-4 z-[${Z_INDEX_LAYERS.TOAST}] flex flex-col gap-2 max-h-screen overflow-y-auto`}
+      className={`${TOAST_CONTAINER_PATTERNS.TOAST_LIST} z-[${Z_INDEX_LAYERS.TOAST}]`}
       role="region"
       aria-label={TOAST_CONTAINER_LABELS.REGION_ARIA_LABEL}
     >

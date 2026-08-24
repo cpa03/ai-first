@@ -53,6 +53,10 @@ import {
   PRIMARY_RING,
   COMPONENT_PRIMARY_PATTERNS,
 } from '@/lib/config/primary-colors';
+import {
+  KEYBOARD_SHORTCUTS_HELP_PATTERNS,
+  KEYBOARD_SHORTCUTS_HELP_ARIA_LABELS,
+} from '@/lib/config/final-hardcoded-patterns';
 
 const { CONTEXT_LABELS, CONTEXT_ORDER, SHORTCUT_DESCRIPTIONS } =
   KEYBOARD_SHORTCUTS_HELP_LABELS;
@@ -828,9 +832,11 @@ function KeyboardShortcutsHelpComponent({
 
         {/* Category filter chips */}
         <div
-          className={`px-6 py-3 border-b ${BORDER_COLORS.DEFAULT} flex flex-wrap gap-2`}
+          className={`${KEYBOARD_SHORTCUTS_HELP_PATTERNS.CATEGORY_FILTER_CONTAINER} ${BORDER_COLORS.DEFAULT}`}
           role="tablist"
-          aria-label="Filter shortcuts by category"
+          aria-label={
+            KEYBOARD_SHORTCUTS_HELP_ARIA_LABELS.CATEGORY_FILTER_ARIA_LABEL
+          }
         >
           <button
             type="button"
@@ -841,13 +847,13 @@ function KeyboardShortcutsHelpComponent({
               setSelectedIndex(0);
               triggerHapticFeedback();
             }}
-            className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+            className={`${KEYBOARD_SHORTCUTS_HELP_PATTERNS.CATEGORY_FILTER_BUTTON} ${DURATION_TAILWIND[150]} ${
               selectedContext === 'all'
                 ? `${BG_COLORS.BRAND} text-white`
                 : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
             } ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
           >
-            All
+            {KEYBOARD_SHORTCUTS_HELP_ARIA_LABELS.CATEGORY_ALL}
           </button>
           {contextOrder.map((context) => {
             const count = keyboardShortcuts.filter(
@@ -866,7 +872,7 @@ function KeyboardShortcutsHelpComponent({
                   setSelectedIndex(0);
                   triggerHapticFeedback();
                 }}
-                className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+                className={`${KEYBOARD_SHORTCUTS_HELP_PATTERNS.CATEGORY_FILTER_BUTTON} ${DURATION_TAILWIND[150]} ${
                   selectedContext === context
                     ? `${BG_COLORS.BRAND} text-white`
                     : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
@@ -947,7 +953,7 @@ function KeyboardShortcutsHelpComponent({
 
         {/* Shortcuts List */}
         <div
-          className={`overflow-y-auto ${SIZES.COMPONENT.SCROLLABLE_MAX_HEIGHT} p-6`}
+          className={`${KEYBOARD_SHORTCUTS_HELP_PATTERNS.SCROLLABLE_CONTENT} ${SIZES.COMPONENT.SCROLLABLE_MAX_HEIGHT}`}
         >
           {flatShortcuts.length === 0 && searchQuery ? (
             <div

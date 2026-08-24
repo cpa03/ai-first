@@ -63,6 +63,7 @@ import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { PLATFORM } from '@/lib/dom-utils';
 import { KEYBOARD_HINT_INLINE } from '@/lib/config/remaining-hardcoded-patterns';
 import { RELATIVE_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
+import { BLUEPRINT_DISPLAY_PATTERNS } from '@/lib/config/final-hardcoded-patterns';
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -530,8 +531,8 @@ function CopyCodeButton({ text }: { text: string }) {
         <button
           onClick={handleCopy}
           className={`
-            absolute top-3 right-3 
-            flex items-center gap-1.5 px-2.5 py-1.5 
+            ${BLUEPRINT_DISPLAY_PATTERNS.KEYBOARD_HINT_OVERLAY}
+            ${BLUEPRINT_DISPLAY_PATTERNS.KEYBOARD_HINT_INLINE}
             text-xs font-medium rounded-md
             ${TRANSITION_CLASSES.DEFAULT_EASE_OUT}
             ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT}

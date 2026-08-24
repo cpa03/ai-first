@@ -21,6 +21,7 @@ import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { SECTION_INDICATOR_COLORS } from '@/lib/config/theme';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import { SECTION_INDICATOR_PATTERNS } from '@/lib/config/final-hardcoded-patterns';
 
 interface Section {
   id: string;
@@ -185,11 +186,11 @@ function SectionIndicatorComponent({
     >
       <div
         className={`
-          flex flex-col gap-2
+          ${SECTION_INDICATOR_PATTERNS.DOTS_CONTAINER}
           ${BG_COLORS.DEFAULT} ${SHADOW_CLASSES.DEFAULT}
           rounded-full
           border ${BORDER_COLORS.LIGHT}
-          p-2
+          ${SECTION_INDICATOR_PATTERNS.DOT_BUTTON}
           ${prefersReducedMotion ? '' : 'transition-all ' + DURATION_TAILWIND[300]}
         `}
       >

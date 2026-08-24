@@ -29,6 +29,7 @@ import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { FLEX_PATTERNS } from '@/lib/config/remaining-styles';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import { PASSWORD_REQUIREMENTS_PATTERNS } from '@/lib/config/final-hardcoded-patterns';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 interface PasswordRequirement {
@@ -234,7 +235,7 @@ function PasswordRequirementsChecklistComponent({
 
   return (
     <div
-      className={`space-y-2 ${className}`}
+      className={`${PASSWORD_REQUIREMENTS_PATTERNS.CONTAINER} ${className}`}
       role="group"
       aria-label={PASSWORD_REQUIREMENTS_LABELS.GROUP_ARIA_LABEL(
         metCount,

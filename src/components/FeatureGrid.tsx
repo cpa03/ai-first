@@ -30,6 +30,7 @@ import {
 } from '@/lib/config/element-ids';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
+import { FEATURE_GRID_PATTERNS } from '@/lib/config/final-hardcoded-patterns';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
 function FeatureGridComponent() {
@@ -119,7 +120,7 @@ function FeatureGridComponent() {
             <div
               className={`
               ${BG_COLORS.BRAND_100} rounded-full ${ICON_SIZES.HUGE}
-              flex items-center justify-center mx-auto mb-4
+              ${FEATURE_GRID_PATTERNS.ICON_CONTAINER}
               transition-all ${DURATION_TAILWIND[300]} group-hover:scale-110
               group-hover:${BG_COLORS.BRAND_200}
               group-focus-visible:scale-110 group-focus-visible:${BG_COLORS.BRAND_200} group-focus-visible:shadow-lg group-focus-visible:shadow-primary-200/50 group-focus-visible:ring-2 group-focus-visible:ring-primary-300/50
@@ -160,7 +161,7 @@ function FeatureGridComponent() {
                 {/* Still enhances on hover/focus-visible for interactive feedback */}
                 <div
                   className={`
-                  hidden md:block absolute top-1/2 -right-4 
+                  ${FEATURE_GRID_PATTERNS.DECORATIVE_LINE_DESKTOP}
                   ${CONNECTOR_SIZES.HORIZONTAL} ${GRADIENT_CONFIG.CONNECTOR.HORIZONTAL}
                   transform -translate-y-1/2
                   ${isVisible ? CONNECTOR_REVEAL : 'opacity-0'}
@@ -176,7 +177,7 @@ function FeatureGridComponent() {
                 {/* Shows the complete flow at a glance, not just on hover */}
                 <div
                   className={`
-                  md:hidden absolute left-1/2 -bottom-4
+                  ${FEATURE_GRID_PATTERNS.DECORATIVE_LINE_MOBILE}
                   ${CONNECTOR_SIZES.VERTICAL} ${GRADIENT_CONFIG.CONNECTOR.VERTICAL}
                   transform -translate-x-1/2
                   ${isVisible ? CONNECTOR_REVEAL : 'opacity-0'}

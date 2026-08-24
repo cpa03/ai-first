@@ -29,6 +29,7 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { SR_ONLY, HIDDEN_SM } from '@/lib/config/remaining-hardcoded-patterns';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
+import { PROGRESS_STEPPER_PATTERNS } from '@/lib/config/final-hardcoded-patterns';
 
 interface Step {
   id: string;
@@ -333,7 +334,7 @@ const ProgressStepperComponent = function ProgressStepper({
               {!isLast && (
                 <div
                   className={`
-                    flex-1 ${HEIGHT_ONLY.XXS} mx-4
+                    ${PROGRESS_STEPPER_PATTERNS.CONNECTOR_MARGIN} ${HEIGHT_ONLY.XXS}
                     ${step.completed ? BG_COLORS.BRAND : BG_COLORS.PROGRESS_NEUTRAL}
                     ${TRANSITION_CLASSES.COLOR_SLOW}
                   `}

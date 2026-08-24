@@ -26,6 +26,7 @@ import { useConfetti } from '@/hooks/useConfetti';
 import { useToast } from '@/hooks/useAnnouncement';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
+import { SHARE_BUTTON_PATTERNS } from '@/lib/config/final-hardcoded-patterns';
 import { PRIMARY_COMBINATIONS } from '@/lib/config/primary-colors';
 
 export interface ShareButtonProps {
@@ -199,7 +200,7 @@ const ShareButtonComponent = function ShareButton({
   }, [handleShare]);
 
   const baseClasses = `
-    inline-flex items-center justify-center gap-2
+    ${SHARE_BUTTON_PATTERNS.BUTTON_CONTAINER}
     font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out transform
     ${FOCUS_RING_OFFSET_PATTERNS.ON_DARK}
     motion-reduce:transition-none motion-reduce:hover:transform-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100
@@ -207,14 +208,14 @@ const ShareButtonComponent = function ShareButton({
 
   const variantClasses = {
     default: `
-      px-3 py-1.5 text-sm
+      ${SHARE_BUTTON_PATTERNS.DROPDOWN_ITEM}
       ${BG_COLORS.BRAND} text-white ${BG_COLORS.BRAND_HOVER}
       ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.DEFAULT_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-md
       ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.DEFAULT}
     `,
     'icon-only': `
-      p-1.5
+      ${SHARE_BUTTON_PATTERNS.DROPDOWN_ICON}
       ${TEXT_COLORS.MUTED} ${PRIMARY_COMBINATIONS.INTERACTIVE_HOVER}
       ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.ICON_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-full

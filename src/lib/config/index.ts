@@ -1145,3 +1145,23 @@ export {
   type PrimaryCombinations,
   type ComponentPrimaryPatterns,
 } from './primary-colors';
+
+// Final Remaining Hardcoded Patterns Configuration
+// Centralizes the last remaining hardcoded Tailwind classes in components
+export {
+  KEYBOARD_SHORTCUTS_HELP_PATTERNS,
+  KEYBOARD_SHORTCUTS_HELP_ARIA_LABELS,
+  LOADING_SPINNER_PATTERNS,
+  PASSWORD_REQUIREMENTS_PATTERNS,
+  BLUEPRINT_DISPLAY_PATTERNS,
+  FEATURE_GRID_PATTERNS,
+  TOAST_CONTAINER_PATTERNS,
+  SCROLL_TO_TOP_BUTTON_PATTERNS,
+  TOOLTIP_POSITIONING,
+  SECTION_INDICATOR_PATTERNS,
+  PROGRESS_STEPPER_PATTERNS,
+  MOBILE_NAV_PATTERNS,
+  KEYBOARD_SHORTCUT_HINT_PATTERNS,
+  SHARE_BUTTON_PATTERNS,
+  COPY_BUTTON_PATTERNS,
+} from './final-hardcoded-patterns';

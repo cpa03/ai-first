@@ -16,6 +16,7 @@ import {
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { LOADING_SPINNER_ELAPSED_TEXT } from '@/lib/config/remaining-hardcoded-patterns';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import { LOADING_SPINNER_PATTERNS } from '@/lib/config/final-hardcoded-patterns';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface LoadingSpinnerProps {
@@ -148,10 +149,10 @@ function LoadingSpinnerComponent({
 
   return (
     <div
-      className={`flex justify-center items-center gap-2.5 ${className} ${
+      className={`${LOADING_SPINNER_PATTERNS.CONTAINER} ${className} ${
         !prefersReducedMotion && !hasAppeared
-          ? 'opacity-0 scale-90'
-          : `opacity-100 scale-100 ${TRANSITION_CLASSES.SLOW_EASE_OUT}`
+          ? LOADING_SPINNER_PATTERNS.HIDDEN
+          : `${LOADING_SPINNER_PATTERNS.VISIBLE} ${TRANSITION_CLASSES.SLOW_EASE_OUT}`
       }`}
       role={COMPONENT_CONFIG.ARIA.STATUS}
       aria-live={COMPONENT_CONFIG.ARIA.POLITE}
