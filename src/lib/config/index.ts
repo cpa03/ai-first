@@ -1145,3 +1145,18 @@ export {
   type PrimaryCombinations,
   type ComponentPrimaryPatterns,
 } from './primary-colors';
+
+// Skeleton Loading Patterns Configuration
+// Centralizes all hardcoded skeleton loading patterns used throughout components
+export {
+  SKELETON_LOADING_PATTERNS,
+  RESULTS_SKELETON,
+  SUCCESS_SKELETON,
+  DASHBOARD_SKELETON,
+  COMMON_SKELETON,
+  type SkeletonLoadingPatterns,
+  type ResultsSkeleton,
+  type SuccessSkeleton,
+  type DashboardSkeleton,
+  type CommonSkeleton,
+} from './skeleton-loading-patterns';

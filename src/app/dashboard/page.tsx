@@ -69,6 +69,7 @@ import {
   SR_ONLY,
   RELATIVE,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { DASHBOARD_SKELETON } from '@/lib/config/skeleton-loading-patterns';
 import {
   PRIMARY_RING,
   COMPONENT_PRIMARY_PATTERNS,
@@ -822,7 +823,7 @@ export default function DashboardPage() {
           {ideas.length > 0 && (
             <div className={DASHBOARD_FILTER_BADGE_POSITION}>
               <span
-                className={`flex items-center justify-center min-w-[${DASHBOARD_TAILWIND.STATUS_BADGE_MIN_W}] h-5 px-1.5 text-xs font-semibold rounded-full transition-all ${DURATION_TAILWIND[300]} ${
+                className={`flex items-center justify-center min-w-[${DASHBOARD_TAILWIND.STATUS_BADGE_MIN_W}] ${DASHBOARD_SKELETON.STATUS_BADGE_HEIGHT} ${DASHBOARD_SKELETON.STATUS_BADGE_PADDING} text-xs font-semibold rounded-full transition-all ${DURATION_TAILWIND[300]} ${
                   filter !== IDEA_STATUS_CONFIG.FILTERS.ALL
                     ? DASHBOARD_FILTER_BADGE_ACTIVE
                     : DASHBOARD_FILTER_BADGE_INACTIVE

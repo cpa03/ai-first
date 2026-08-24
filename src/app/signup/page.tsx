@@ -56,6 +56,7 @@ import {
   SIGNUP_TIP_ITEM,
   JUSTIFY_CENTER,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { SUCCESS_SKELETON } from '@/lib/config/skeleton-loading-patterns';
 import { PRIMARY_COMBINATIONS } from '@/lib/config/primary-colors';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
@@ -608,10 +609,10 @@ export default function SignupPage() {
           {/* Micro-UX: Staggered entrance animation for signup success creates a */}
           {/* delightful celebration moment when account creation succeeds */}
           <div
-            className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${SUCCESS_POP}`}
+            className={`mx-auto flex items-center justify-center ${SUCCESS_SKELETON.ICON_CONTAINER} ${BG_COLORS.SUCCESS_LIGHT} ${SUCCESS_POP}`}
           >
             <svg
-              className={`h-6 w-6 ${TEXT_COLORS.SUCCESS_DARK}`}
+              className={`${SUCCESS_SKELETON.ICON} ${TEXT_COLORS.SUCCESS_DARK}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"

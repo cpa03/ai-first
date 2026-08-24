@@ -58,6 +58,7 @@ import {
   FLEX_CENTER,
   MARGIN_BOTTOM_4,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { RESULTS_SKELETON } from '@/lib/config/skeleton-loading-patterns';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
   ssr: false,
@@ -164,13 +165,11 @@ const TaskManagement = dynamic(
     ssr: false,
     loading: () => (
       <div className={CARD_PATTERNS.SKELETON}>
-        <div
-          className={`h-6 ${GRAY_CLASSES.BG_200} rounded w-1/3 ${MB_CLASSES.XL}`}
-        ></div>
+        <div className={RESULTS_SKELETON.HEADER}></div>
         <div className={SPACE_Y_PATTERNS.MD}>
-          <div className={`h-4 ${GRAY_CLASSES.BG_200} rounded`}></div>
-          <div className={`h-4 ${GRAY_CLASSES.BG_200} rounded w-5/6`}></div>
-          <div className={`h-4 ${GRAY_CLASSES.BG_200} rounded w-4/6`}></div>
+          <div className={RESULTS_SKELETON.TEXT_LINE}></div>
+          <div className={RESULTS_SKELETON.TEXT_LINE_WIDE}></div>
+          <div className={RESULTS_SKELETON.TEXT_LINE_MEDIUM}></div>
         </div>
       </div>
     ),
