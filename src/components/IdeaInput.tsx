@@ -520,7 +520,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
             {!idea.trim() && !isSubmitting && (
               <Tooltip
                 content={IDEA_INPUT_LABELS.PASTE_ARIA_LABEL}
-                shortcut={isMac ? ['⌘', '⇧', 'V'] : ['Ctrl', 'Shift', 'V']}
+                shortcut={IDEA_INPUT_LABELS.PASTE_SHORTCUT(isMac)}
                 position="top"
               >
                 <Button
@@ -529,7 +529,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                   size="sm"
                   onClick={handlePasteFromClipboard}
                   aria-label={IDEA_INPUT_LABELS.PASTE_ARIA_LABEL}
-                  className={`${TRANSITION_CLASSES.DEFAULT} ${
+                  className={`${TRANSITION_CLASSES.DEFAULT} hover:scale-105 active:scale-95 ${
                     pasteSuccess
                       ? `${TEXT_COLORS.SUCCESS_MEDIUM} ${BG_COLORS.SUCCESS_VERY_LIGHT} hover:${BG_COLORS.SUCCESS_LIGHT}`
                       : `${TEXT_COLOR_CLASSES.MUTED} ${GRAY_TEXT_COMBOS.SUBTLE}`
@@ -579,7 +579,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 size="sm"
                 onClick={handleClear}
                 aria-label={IDEA_INPUT_LABELS.CLEAR_ARIA_LABEL}
-                className={`${TEXT_COLOR_CLASSES.MUTED} ${GRAY_TEXT_COMBOS.SUBTLE}`}
+                className={`${TEXT_COLOR_CLASSES.MUTED} ${GRAY_TEXT_COMBOS.SUBTLE} hover:scale-105 active:scale-95 ${TRANSITION_CLASSES.DEFAULT}`}
               >
                 {IDEA_INPUT_LABELS.CLEAR_BUTTON}
               </Button>
@@ -589,7 +589,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
               shortcut={
                 isSubmitting
                   ? undefined
-                  : [...IDEA_INPUT_LABELS.SUBMIT_SHORTCUT]
+                  : IDEA_INPUT_LABELS.SUBMIT_SHORTCUT(isMac)
               }
               position="top"
             >

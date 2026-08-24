@@ -12,6 +12,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ## StorX Feature Analysis & Integration Tasks
 
+### [STRENGTHEN] Strengthen IdeaInput Submit and Paste Tooltips with Platform-Aware Keyboard Shortcuts
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-24
+- **Details**: Converted `IDEA_INPUT_LABELS.SUBMIT_SHORTCUT` and `PASTE_SHORTCUT` to platform-aware functions in `src/lib/config/component-labels.ts`, and updated `IdeaInput` component to render OS-appropriate shortcut hints (`⌘+Enter` vs `Ctrl+Enter`).
+
+### [CONNECT] Connect IdeaInput Tooltip Shortcuts to Central Component Configurations
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-08-24
+- **Details**: Connected `IdeaInput` submit and paste button tooltips directly to centralized modular configurations in `src/lib/config/component-labels.ts`.
+
 ### [STRENGTHEN] Strengthen LoadingSpinner Accessibility and Non-Redundant Screen Reader Announcements
 - **Priority**: MEDIUM
 - **Status**: COMPLETE

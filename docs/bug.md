@@ -4,7 +4,20 @@ This document tracks all bugs and errors found during BugLover phase.
 
 ## Active Bugs
 
-_None - all bugs fixed!_
+### [x] Bug 6: Static submit/paste keyboard shortcut symbols in IdeaInput component labels
+
+**File:** `src/components/IdeaInput.tsx:377,406` & `src/lib/config/component-labels.ts:257`
+**Severity:** LOW
+**Status:** ✅ FIXED
+
+**Description:**
+`IDEA_INPUT_LABELS.SUBMIT_SHORTCUT` was statically defined as `['⌘', 'Enter']`, and `IdeaInput.tsx` hardcoded paste shortcut inline array `['⌘', '⇧', 'V']`. This caused Windows/Linux users to see `⌘` symbols in tooltips instead of platform-appropriate `Ctrl` key hints.
+
+**Root Cause:**
+Static string array export in `component-labels.ts` instead of platform-aware function matching `SHARE_BUTTON_LABELS.KEYBOARD_SHORTCUT` and `EMAIL_BUTTON_LABELS.KEYBOARD_SHORTCUT`.
+
+**Fix:**
+Refactored `IDEA_INPUT_LABELS.SUBMIT_SHORTCUT` to `(isMac: boolean) => [isMac ? '⌘' : 'Ctrl', 'Enter']` and added `PASTE_SHORTCUT: (isMac: boolean) => [isMac ? '⌘' : 'Ctrl', '⇧', 'V']`. Passed `isMac` state from `IdeaInput` component into label helpers.
 
 ---
 

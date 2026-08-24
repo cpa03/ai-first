@@ -373,8 +373,10 @@ export const IDEA_INPUT_LABELS = {
   PASTE_SUCCESS: 'Pasted!',
   /** Submit button tooltip text */
   SUBMIT_TOOLTIP: 'Submit your idea',
-  /** Submit button tooltip keyboard shortcut */
-  SUBMIT_SHORTCUT: ['⌘', 'Enter'],
+  /** Submit button tooltip keyboard shortcut - platform aware */
+  SUBMIT_SHORTCUT: (isMac: boolean) => [isMac ? '⌘' : 'Ctrl', 'Enter'],
+  /** Paste button tooltip keyboard shortcut - platform aware */
+  PASTE_SHORTCUT: (isMac: boolean) => [isMac ? '⌘' : 'Ctrl', '⇧', 'V'],
 } as const;
 
 /**

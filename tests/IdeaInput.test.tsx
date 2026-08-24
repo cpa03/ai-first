@@ -138,4 +138,14 @@ describe('IdeaInput', () => {
       screen.getByRole('button', { name: /start clarifying/i })
     ).toBeInTheDocument();
   });
+
+  it('renders paste and clear buttons with tactile transition classes', () => {
+    const mockOnSubmit = jest.fn();
+    render(<IdeaInput onSubmit={mockOnSubmit} />);
+
+    const pasteButton = screen.getByRole('button', { name: /paste/i });
+    expect(pasteButton).toBeInTheDocument();
+    expect(pasteButton).toHaveClass('hover:scale-105');
+    expect(pasteButton).toHaveClass('active:scale-95');
+  });
 });
