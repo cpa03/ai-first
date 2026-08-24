@@ -308,7 +308,7 @@ function ScrollToTopComponent({
         className={`${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED_LIGHT} opacity-80`}
       >
         {hasReachedEnd ? (
-          <span>Press to scroll back to top</span>
+          <span>{SCROLL_TO_TOP_LABELS.PRESS_TO_SCROLL_BACK}</span>
         ) : (
           <>
             <kbd

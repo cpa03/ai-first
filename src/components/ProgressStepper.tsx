@@ -204,7 +204,7 @@ const ProgressStepperComponent = function ProgressStepper({
                       }
                     `}
                     aria-current={step.current ? 'step' : undefined}
-                    aria-label={`Question ${index + 1}: ${step.current ? PROGRESS_STEPPER_LABELS.STEP_CURRENT : step.completed ? PROGRESS_STEPPER_LABELS.STEP_COMPLETED : PROGRESS_STEPPER_LABELS.STEP_UPCOMING}${isClickable ? ' - Click to jump' : ''}`}
+                    aria-label={`Question ${index + 1}: ${step.current ? PROGRESS_STEPPER_LABELS.STEP_CURRENT : step.completed ? PROGRESS_STEPPER_LABELS.STEP_COMPLETED : PROGRESS_STEPPER_LABELS.STEP_UPCOMING}${isClickable ? PROGRESS_STEPPER_LABELS.CLICK_TO_JUMP_SUFFIX : ''}`}
                   />
                 </li>
               );
@@ -256,7 +256,7 @@ const ProgressStepperComponent = function ProgressStepper({
               key={step.id}
               className={`flex-1 ${!isLast ? 'flex items-center' : ''}`}
               aria-current={step.current ? 'step' : undefined}
-              aria-label={`${step.label}: ${step.current ? PROGRESS_STEPPER_LABELS.STEP_CURRENT : step.completed ? PROGRESS_STEPPER_LABELS.STEP_COMPLETED : PROGRESS_STEPPER_LABELS.STEP_UPCOMING}${isClickable ? ' - Click to jump' : ''}`}
+              aria-label={`${step.label}: ${step.current ? PROGRESS_STEPPER_LABELS.STEP_CURRENT : step.completed ? PROGRESS_STEPPER_LABELS.STEP_COMPLETED : PROGRESS_STEPPER_LABELS.STEP_UPCOMING}${isClickable ? PROGRESS_STEPPER_LABELS.CLICK_TO_JUMP_SUFFIX : ''}`}
             >
               <button
                 type="button"

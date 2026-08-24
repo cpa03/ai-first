@@ -137,6 +137,8 @@ export const SCROLL_TO_TOP_LABELS = {
   /** ARIA label for reached-end state */
   ARIA_LABEL_REACHED_END:
     'You have reached the end of the page. Press to scroll back to top.',
+  /** Text shown when user has reached the end of the page */
+  PRESS_TO_SCROLL_BACK: 'Press to scroll back to top',
   /** Tooltip title for reached-end state */
   TITLE_REACHED_END: 'Reached the end',
   /** Screen reader text for reached-end state */
@@ -203,6 +205,12 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
     `Copy shortcut: ${keys.join(' plus ')}`,
   /** Separator between keyboard shortcut key combinations */
   SEPARATOR: '·',
+  /** ARIA label for category filter chips */
+  FILTER_CATEGORY_ARIA_LABEL: 'Filter shortcuts by category',
+  /** Category filter label for "All" */
+  ALL_CATEGORY_LABEL: 'All',
+  /** Instruction text for opening the dialog */
+  PRESS_TO_OPEN_INSTRUCTION: 'Press ? to open',
   /** Keyboard shortcut context labels */
   CONTEXT_LABELS: {
     global: 'Global',
@@ -275,6 +283,8 @@ export const PROGRESS_STEPPER_LABELS = {
   KEYBOARD_NAV_HINT: 'navigate steps',
   KEYBOARD_NAV_ARIA_LABEL:
     'Keyboard shortcuts: Left and Right arrow keys to navigate between steps',
+  /** Suffix added to aria-label when step is clickable */
+  CLICK_TO_JUMP_SUFFIX: ' - Click to jump',
 } as const;
 
 /**
@@ -319,6 +329,14 @@ export const ALERT_LABELS = {
   SNOOZE_SHORTCUT_HINT: 'Press s to snooze',
   /** Keyboard shortcut hint for dismiss */
   DISMISS_SHORTCUT_HINT: 'Press d to dismiss',
+  /** Default title for error alerts */
+  ERROR_TITLE: 'Error',
+  /** Default title for warning alerts */
+  WARNING_TITLE: 'Warning',
+  /** Default title for success alerts */
+  SUCCESS_TITLE: 'Success',
+  /** Default title for info alerts */
+  INFO_TITLE: 'Info',
 } as const;
 
 /**

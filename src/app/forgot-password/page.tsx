@@ -28,6 +28,7 @@ import {
   ICON_SIZES,
   COMPONENT_CONFIG,
 } from '@/lib/config';
+import { ALERT_LABELS } from '@/lib/config/component-labels';
 import {
   RESPONSIVE_WIDTH,
   FONT_MEDIUM,
@@ -266,7 +267,7 @@ export default function ForgotPasswordPage() {
 
             {error && (
               <div className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE}`}>
-                <Alert type="error" title="Error">
+                <Alert type="error" title={ALERT_LABELS.ERROR_TITLE}>
                   {error}
                 </Alert>
               </div>
@@ -363,7 +364,7 @@ export default function ForgotPasswordPage() {
           onSubmit={handleSubmit}
         >
           {error && (
-            <Alert type="error" title="Error">
+            <Alert type="error" title={ALERT_LABELS.ERROR_TITLE}>
               {error}
             </Alert>
           )}

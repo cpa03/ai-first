@@ -830,7 +830,7 @@ function KeyboardShortcutsHelpComponent({
         <div
           className={`px-6 py-3 border-b ${BORDER_COLORS.DEFAULT} flex flex-wrap gap-2`}
           role="tablist"
-          aria-label="Filter shortcuts by category"
+          aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.FILTER_CATEGORY_ARIA_LABEL}
         >
           <button
             type="button"
@@ -847,7 +847,7 @@ function KeyboardShortcutsHelpComponent({
                 : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
             } ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
           >
-            All
+            {KEYBOARD_SHORTCUTS_HELP_LABELS.ALL_CATEGORY_LABEL}
           </button>
           {contextOrder.map((context) => {
             const count = keyboardShortcuts.filter(
@@ -919,7 +919,7 @@ function KeyboardShortcutsHelpComponent({
                 <span className={MX_SMALL}>
                   {KEYBOARD_SHORTCUTS_HELP_LABELS.SEPARATOR}
                 </span>
-                Press <KeyboardKey>?</KeyboardKey> to open
+                {KEYBOARD_SHORTCUTS_HELP_LABELS.PRESS_TO_OPEN_INSTRUCTION}
               </p>
             </div>
           </div>
