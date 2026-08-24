@@ -8,6 +8,7 @@ import ToastContainer from '@/components/ToastContainer';
 import ScrollToTop from '@/components/ScrollToTop';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
 import ScrollShadow from '@/components/ScrollShadow';
+import OfflineIndicator from '@/components/OfflineIndicator';
 import Link from 'next/link';
 import { Inter } from 'next/font/google';
 import { SEO_CONFIG } from '@/lib/config/seo';
@@ -169,6 +170,7 @@ export default async function RootLayout({
         <ErrorBoundary>
           <GlobalErrorHandler />
           <ScrollShadow />
+          <OfflineIndicator />
           <KeyboardShortcutsProvider>
             <a href="#main-content" className={SKIP_LINK}>
               <span className={`flex items-center ${GAP_CLASSES.MD}`}>
