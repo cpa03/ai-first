@@ -17,8 +17,6 @@ import {
   MB_CLASSES,
   GAP_CLASSES,
   ICON_SIZES,
-  GRAY_CLASSES,
-  TEXT_SIZE_CLASSES,
   FOCUS_RING_OFFSET_PATTERNS,
   COORDINATE_POSITION_PATTERNS,
   COMMON_SPACING_PATTERNS,
@@ -27,6 +25,10 @@ import {
   TOAST_DISMISS_BUTTON,
   TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
+import {
+  ALERT_SHORTCUT_HINT,
+  ALERT_SHORTCUT_KBD,
+} from '@/lib/config/alert-interactive-patterns';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -382,25 +384,17 @@ const AlertComponent = function Alert({
       )}
       {onClose && (
         <div
-          className={`${COORDINATE_POSITION_PATTERNS.BOTTOM_LEFT_SM} flex items-center gap-2 text-xs ${showShortcutHint ? 'opacity-60' : 'opacity-0'} focus-within:opacity-60 hover:opacity-60 transition-opacity`}
+          className={`${COORDINATE_POSITION_PATTERNS.BOTTOM_LEFT_SM} ${ALERT_SHORTCUT_HINT.BASE} ${showShortcutHint ? ALERT_SHORTCUT_HINT.VISIBLE : ALERT_SHORTCUT_HINT.HIDDEN}`}
           aria-hidden="true"
         >
           {shouldAutoDismiss && (
             <span className={COMMON_SPACING_PATTERNS.FLEX_CENTER_SM}>
-              <kbd
-                className={`px-1 py-0.5 ${GRAY_CLASSES.BG_200_50} rounded ${TEXT_SIZE_CLASSES.XS} font-mono`}
-              >
-                s
-              </kbd>
+              <kbd className={`${ALERT_SHORTCUT_KBD.BASE}`}>s</kbd>
               <span>snooze</span>
             </span>
           )}
           <span className={COMMON_SPACING_PATTERNS.FLEX_CENTER_XS}>
-            <kbd
-              className={`px-1 py-0.5 ${GRAY_CLASSES.BG_200_50} rounded ${TEXT_SIZE_CLASSES.XS} font-mono`}
-            >
-              d
-            </kbd>
+            <kbd className={`${ALERT_SHORTCUT_KBD.BASE}`}>d</kbd>
             <span>dismiss</span>
           </span>
         </div>

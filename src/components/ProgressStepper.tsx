@@ -29,6 +29,7 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { SR_ONLY, HIDDEN_SM } from '@/lib/config/remaining-hardcoded-patterns';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
+import { PROGRESS_STEPPER_PATTERNS } from '@/lib/config/progress-stepper-patterns';
 
 interface Step {
   id: string;
@@ -254,7 +255,7 @@ const ProgressStepperComponent = function ProgressStepper({
           return (
             <li
               key={step.id}
-              className={`flex-1 ${!isLast ? 'flex items-center' : ''}`}
+              className={`${PROGRESS_STEPPER_PATTERNS.CONNECTOR.FLEX_GROW} ${!isLast ? PROGRESS_STEPPER_PATTERNS.CONNECTOR.FLEX_CENTER : ''}`}
               aria-current={step.current ? 'step' : undefined}
               aria-label={`${step.label}: ${step.current ? PROGRESS_STEPPER_LABELS.STEP_CURRENT : step.completed ? PROGRESS_STEPPER_LABELS.STEP_COMPLETED : PROGRESS_STEPPER_LABELS.STEP_UPCOMING}${isClickable ? ' - Click to jump' : ''}`}
             >
@@ -263,7 +264,7 @@ const ProgressStepperComponent = function ProgressStepper({
                 onClick={() => handleStepClick(index)}
                 onKeyDown={(e) => handleStepKeyDown(e, index)}
                 disabled={!isClickable}
-                className={`flex items-center w-full rounded-full transition-all duration-200 ${isClickable ? `cursor-pointer group ${FOCUS_RING_PATTERNS.DEFAULT}` : 'cursor-default'}`}
+                className={`${PROGRESS_STEPPER_PATTERNS.STEP.BASE} ${isClickable ? `${PROGRESS_STEPPER_PATTERNS.CURSORS.CLICKABLE} ${FOCUS_RING_PATTERNS.DEFAULT}` : PROGRESS_STEPPER_PATTERNS.CURSORS.DEFAULT}`}
               >
                 <div className={FLEX_PATTERNS.BETWEEN} aria-hidden="true">
                   <div

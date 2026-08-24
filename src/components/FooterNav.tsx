@@ -20,6 +20,7 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
+import { FOOTER_GRID_PATTERNS } from '@/lib/config/footer-grid-patterns';
 
 interface FooterNavColumn {
   readonly title: string;
@@ -199,7 +200,7 @@ function FooterNavComponent({ columns }: FooterNavProps) {
       {/* Appears briefly when user focuses on footer links to teach arrow key navigation */}
       {showKeyboardHint && (
         <div
-          className={`col-span-2 md:col-span-4 ${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED} flex items-center gap-2 ${prefersReducedMotion ? '' : `transition-opacity ${TRANSITION_CLASSES.DEFAULT}`} ${showKeyboardHint ? 'opacity-60' : 'opacity-0'}`}
+          className={`${FOOTER_GRID_PATTERNS.KEYBOARD_HINTS.BASE} ${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED} ${prefersReducedMotion ? '' : `${FOOTER_GRID_PATTERNS.HINTS_VISIBILITY.TRANSITION} ${TRANSITION_CLASSES.DEFAULT}`} ${showKeyboardHint ? FOOTER_GRID_PATTERNS.HINTS_VISIBILITY.VISIBLE : FOOTER_GRID_PATTERNS.HINTS_VISIBILITY.HIDDEN}`}
           role="status"
           aria-live="polite"
         >

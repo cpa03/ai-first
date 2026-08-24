@@ -73,6 +73,7 @@ import {
   PRIMARY_RING,
   COMPONENT_PRIMARY_PATTERNS,
 } from '@/lib/config/primary-colors';
+import { DASHBOARD_ANIMATION_PATTERNS } from '@/lib/config/dashboard-animation-patterns';
 import type { ComponentConfig } from '@/lib/config/components';
 import {
   DASHBOARD_ELEMENT_IDS,
@@ -972,7 +973,7 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }}
                 >
                   <div
-                    className={`${DASHBOARD_PATTERNS.STEP_ICON} ${BG_COLORS.WARNING_LIGHTER} ${BORDER_COLORS.WARNING_LIGHT} ${prefersReducedMotion ? '' : 'animate-float'}`}
+                    className={`${DASHBOARD_PATTERNS.STEP_ICON} ${BG_COLORS.WARNING_LIGHTER} ${BORDER_COLORS.WARNING_LIGHT} ${DASHBOARD_ANIMATION_PATTERNS.FLOAT.get(prefersReducedMotion)}`}
                   >
                     <svg
                       className={`${DASHBOARD_PATTERNS.STEP_ICON_SIZE} ${TEXT_COLORS.WARNING_MEDIUM}`}

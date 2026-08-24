@@ -65,6 +65,7 @@ import {
   RELATIVE,
   POINTER_EVENTS_NONE,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { INPUT_POSITION_PATTERNS } from '@/lib/config/input-position-patterns';
 import { useClipboard } from '@/hooks/useClipboard';
 import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -470,7 +471,7 @@ const InputWithValidationComponent = forwardRef<
 
           {isValid && charCount > 0 && (
             <div
-              className={`absolute ${RIGHT_CLASSES.LG} ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
+              className={`${INPUT_POSITION_PATTERNS.ABSOLUTE.BASE} ${RIGHT_CLASSES.LG} ${multiline ? TOP_CLASSES.LG : INPUT_POSITION_PATTERNS.VERTICAL_CENTER.TRANSFORM} ${INPUT_POSITION_PATTERNS.ABSOLUTE.NO_POINTER}`}
             >
               <Tooltip
                 content={`${label} is valid`}
@@ -503,7 +504,7 @@ const InputWithValidationComponent = forwardRef<
 
           {isInvalid && (
             <div
-              className={`absolute ${RIGHT_CLASSES.LG} ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
+              className={`${INPUT_POSITION_PATTERNS.ABSOLUTE.BASE} ${RIGHT_CLASSES.LG} ${multiline ? TOP_CLASSES.LG : INPUT_POSITION_PATTERNS.VERTICAL_CENTER.TRANSFORM} ${INPUT_POSITION_PATTERNS.ABSOLUTE.NO_POINTER}`}
             >
               <Tooltip
                 content={INPUT_VALIDATION_LABELS.FIX_ERROR_TOOLTIP}

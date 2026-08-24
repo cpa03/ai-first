@@ -35,6 +35,7 @@ import Button from '@/components/Button';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 import StatusAnnouncer from '@/components/StatusAnnouncer';
 import Tooltip from '@/components/Tooltip';
+import { AUTH_ANIMATION_PATTERNS } from '@/lib/config/auth-animation-patterns';
 
 /**
  * AuthCallbackPage - Micro-UX enhanced OAuth callback handler
@@ -240,7 +241,7 @@ export default function AuthCallbackPage() {
           {/* Micro-UX: Animated spinner with progress feedback */}
           <div className={CENTER_INLINE_FLEX}>
             <div
-              className={`animate-spin rounded-full ${SPINNER_PATTERNS.default.size.lg} ${SPINNER_PATTERNS.default.border} ${COMPONENT_PRIMARY_PATTERNS.AUTH_SPINNER_BORDER} ${prefersReducedMotion ? '' : 'motion-reduce:animate-none'}`}
+              className={`${AUTH_ANIMATION_PATTERNS.SPINNER.SPIN} ${SPINNER_PATTERNS.default.size.lg} ${SPINNER_PATTERNS.default.border} ${COMPONENT_PRIMARY_PATTERNS.AUTH_SPINNER_BORDER} ${AUTH_ANIMATION_PATTERNS.REDUCED_MOTION.get(prefersReducedMotion)}`}
             />
             {/* Micro-UX: Subtle pulse ring around spinner for visual feedback */}
             {!prefersReducedMotion && (

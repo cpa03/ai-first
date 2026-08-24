@@ -34,6 +34,7 @@ import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { SWIPE_PROGRESS_BAR } from '@/lib/config/remaining-hardcoded-patterns';
 import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import { TOAST_DISMISS_PATTERN } from '@/lib/config/toast-interaction-patterns';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 
@@ -304,7 +305,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       </div>
       <button
         onClick={handleClose}
-        className={`flex-shrink-0 ${ML_CLASSES.MD} ${styles.textColor} hover:opacity-75 ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT.replace('focus-visible:', 'focus:')} rounded-md ${P_CLASSES.SM} ${MIN_SIZE_CLASSES.TOAST_BUTTON} transition-opacity`}
+        className={`${TOAST_DISMISS_PATTERN.BASE} ${ML_CLASSES.MD} ${styles.textColor} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT.replace('focus-visible:', 'focus:')} ${P_CLASSES.SM} ${MIN_SIZE_CLASSES.TOAST_BUTTON}`}
         aria-label={TOAST_CONTAINER_LABELS.CLOSE_ARIA_LABEL}
       >
         <svg

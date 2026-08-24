@@ -35,6 +35,7 @@ import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { HAMBURGER_SIZES } from '@/lib/config/icon-sizes';
 import { MOBILE_NAV_LABELS } from '@/lib/config/component-labels';
+import { HAMBURGER_PATTERNS } from '@/lib/config/hamburger-patterns';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -250,17 +251,17 @@ function MobileNavComponent() {
         {/* Micro-UX: Animated hamburger icon that morphs between menu and close states */}
         {/* Uses CSS transforms for smooth 60fps animation instead of swapping SVG elements */}
         <div
-          className={`${HAMBURGER_MENU_CONFIG.CONTAINER.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.CONTAINER.HEIGHT_CLASS} flex flex-col justify-center items-center ${isOpen ? 'hamburger-open' : ''}`}
+          className={`${HAMBURGER_MENU_CONFIG.CONTAINER.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.CONTAINER.HEIGHT_CLASS} ${HAMBURGER_PATTERNS.CONTAINER.BASE} ${isOpen ? 'hamburger-open' : ''}`}
           aria-hidden="true"
         >
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${isOpen ? 'rotate-45 translate-y-1' : ''}`}
+            className={`${HAMBURGER_PATTERNS.LINE.BASE} ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} ${TRANSITION_CLASSES.SLOW} ${isOpen ? HAMBURGER_PATTERNS.LINE.OPEN_TRANSFORM : ''}`}
           />
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${MT_CLASSES.MD_SM} ${isOpen ? 'opacity-0 scale-0' : ''}`}
+            className={`${HAMBURGER_PATTERNS.LINE.BASE} ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} ${TRANSITION_CLASSES.SLOW} ${MT_CLASSES.MD_SM} ${isOpen ? HAMBURGER_PATTERNS.LINE.HIDDEN : ''}`}
           />
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${MT_CLASSES.MD_SM} ${isOpen ? '-rotate-45 -translate-y-1' : ''}`}
+            className={`${HAMBURGER_PATTERNS.LINE.BASE} ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} ${TRANSITION_CLASSES.SLOW} ${MT_CLASSES.MD_SM} ${isOpen ? '-rotate-45 -translate-y-1' : ''}`}
           />
         </div>
       </button>

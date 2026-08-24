@@ -58,6 +58,7 @@ import {
   FLEX_CENTER,
   MARGIN_BOTTOM_4,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { PAGE_ANIMATION_PATTERNS } from '@/lib/config/page-animation-patterns';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
   ssr: false,
@@ -641,7 +642,7 @@ function ResultsContent() {
           >
             {/* Markdown Export */}
             <div
-              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              className={`${PAGE_ANIMATION_PATTERNS.FADE_IN.get(prefersReducedMotion)}`}
               style={
                 !prefersReducedMotion
                   ? { animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }
@@ -670,7 +671,7 @@ function ResultsContent() {
 
             {/* JSON Export */}
             <div
-              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              className={`${PAGE_ANIMATION_PATTERNS.FADE_IN.get(prefersReducedMotion)}`}
               style={
                 !prefersReducedMotion
                   ? { animationDelay: ANIMATION_DELAYS.INLINE.SHORT }

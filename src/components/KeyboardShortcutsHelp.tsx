@@ -48,6 +48,7 @@ import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useFocusManagement } from '@/hooks/useAnnouncement';
 import { RELATIVE, MX_SMALL } from '@/lib/config/remaining-hardcoded-patterns';
+import { KEYBOARD_HELP_PATTERNS } from '@/lib/config/keyboard-help-patterns';
 import {
   PRIMARY_TEXT,
   PRIMARY_RING,
@@ -728,12 +729,12 @@ function KeyboardShortcutsHelpComponent({
       aria-labelledby={ARIA_HEADING_IDS.KEYBOARD_SHORTCUTS}
     >
       <div
-        className={`absolute inset-0 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm transition-opacity ${DURATION_TAILWIND[300]} ${isLeaving ? 'opacity-0' : 'opacity-50'}`}
+        className={`${KEYBOARD_HELP_PATTERNS.BACKDROP.BASE} ${DURATION_TAILWIND[300]} ${isLeaving ? KEYBOARD_HELP_PATTERNS.BACKDROP.HIDDEN : KEYBOARD_HELP_PATTERNS.BACKDROP.VISIBLE}`}
         aria-hidden="true"
       />
       <div
         ref={modalRef}
-        className={`relative ${BG_COLORS.DEFAULT} ${ROUNDED_CLASSES.EXTRA_LARGE} ${SHADOW_CLASSES.EXTRA_LARGE} max-w-lg w-full ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} overflow-hidden transform ${TRANSITION_CLASSES.DEFAULT} ${isLeaving ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}
+        className={`${KEYBOARD_HELP_PATTERNS.MODAL.BASE} ${BG_COLORS.DEFAULT} ${ROUNDED_CLASSES.EXTRA_LARGE} ${SHADOW_CLASSES.EXTRA_LARGE} ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} ${KEYBOARD_HELP_PATTERNS.TRANSITIONS.ALL} ${isLeaving ? KEYBOARD_HELP_PATTERNS.MODAL.LEAVING : KEYBOARD_HELP_PATTERNS.MODAL.ENTERING}`}
       >
         {/* Search */}
         <div

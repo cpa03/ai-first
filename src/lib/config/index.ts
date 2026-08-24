@@ -1145,3 +1145,100 @@ export {
   type PrimaryCombinations,
   type ComponentPrimaryPatterns,
 } from './primary-colors';
+
+// Alert Interactive Patterns Configuration
+// Centralizes hardcoded Tailwind classes for alert interactive elements
+export {
+  ALERT_SHORTCUT_HINT,
+  ALERT_SHORTCUT_KBD,
+  ALERT_SNOOZE_BUTTON,
+  ALERT_PROGRESS_BAR,
+  ALERT_INTERACTIVE_PATTERNS,
+} from './alert-interactive-patterns';
+
+// Button Interaction Patterns Configuration
+// Centralizes hardcoded Tailwind classes for button interactive states
+export {
+  BUTTON_HOVER_OPACITY,
+  BUTTON_TRANSITIONS,
+  BUTTON_ROUNDED,
+  BUTTON_CURSORS,
+  BUTTON_INTERACTION_PATTERNS,
+} from './button-interaction-patterns';
+
+// Toast Interaction Patterns Configuration
+// Centralizes hardcoded Tailwind classes for toast interactive elements
+export {
+  TOAST_DISMISS_PATTERN,
+  TOAST_CONTAINER_PATTERNS,
+  TOAST_INTERACTION_PATTERNS,
+} from './toast-interaction-patterns';
+
+// Progress Stepper Patterns Configuration
+// Centralizes hardcoded Tailwind classes for progress stepper components
+export {
+  PROGRESS_STEPPER_CONNECTOR,
+  PROGRESS_STEPPER_CURSORS,
+  PROGRESS_STEPPER_STEP,
+  PROGRESS_STEPPER_PATTERNS,
+} from './progress-stepper-patterns';
+
+// Hamburger Patterns Configuration
+// Centralizes hardcoded Tailwind classes for mobile navigation hamburger menu
+export {
+  HAMBURGER_CONTAINER,
+  HAMBURGER_LINE,
+  HAMBURGER_TRANSITIONS,
+  HAMBURGER_PATTERNS,
+} from './hamburger-patterns';
+
+// Input Position Patterns Configuration
+// Centralizes hardcoded Tailwind classes for input positioning
+export {
+  INPUT_VERTICAL_CENTER,
+  INPUT_ABSOLUTE,
+  INPUT_POSITION_PATTERNS,
+} from './input-position-patterns';
+
+// Keyboard Help Patterns Configuration
+// Centralizes hardcoded Tailwind classes for keyboard shortcuts help modal
+export {
+  KEYBOARD_HELP_BACKDROP,
+  KEYBOARD_HELP_MODAL,
+  KEYBOARD_HELP_TRANSITIONS,
+  KEYBOARD_HELP_PATTERNS,
+} from './keyboard-help-patterns';
+
+// Page Animation Patterns Configuration
+// Centralizes hardcoded Tailwind classes for page animations
+export {
+  PAGE_FADE_IN,
+  PAGE_HOVER_EFFECTS,
+  PAGE_LAYOUT_PATTERNS,
+  PAGE_ANIMATION_PATTERNS,
+} from './page-animation-patterns';
+
+// Auth Animation Patterns Configuration
+// Centralizes hardcoded Tailwind classes for auth-related animations
+export {
+  AUTH_REDUCED_MOTION,
+  AUTH_SPINNER,
+  AUTH_STRENGTH_ANIMATION,
+  AUTH_ANIMATION_PATTERNS,
+} from './auth-animation-patterns';
+
+// Dashboard Animation Patterns Configuration
+// Centralizes hardcoded Tailwind classes for dashboard animations
+export {
+  DASHBOARD_FLOAT,
+  DASHBOARD_ANIMATIONS,
+  DASHBOARD_ANIMATION_PATTERNS,
+} from './dashboard-animation-patterns';
+
+// Footer Grid Patterns Configuration
+// Centralizes hardcoded Tailwind classes for footer grid layouts
+export {
+  FOOTER_KEYBOARD_HINTS,
+  FOOTER_HINTS_VISIBILITY,
+  FOOTER_GRID_PATTERNS,
+} from './footer-grid-patterns';
