@@ -599,6 +599,24 @@ function ClarificationFlow({
               />
             </svg>
             {CLARIFICATION_FLOW_LABELS.BACK_TO_EDIT_BUTTON}
+            {/* Micro-UX: Inline keyboard shortcut hint for discoverability */}
+            {/* Matches the pattern from ScrollToTopButton and reference toggle */}
+            {/* Only visible on desktop (sm+) to avoid cluttering mobile UI */}
+            <span
+              className={`hidden sm:inline-flex items-center gap-1 ${TRANSITION_CLASSES.DEFAULT}`}
+              aria-hidden="true"
+            >
+              <kbd
+                className={`px-1 py-0.5 ${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}`}
+              >
+                Alt
+              </kbd>
+              <kbd
+                className={`px-1 py-0.5 ${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}`}
+              >
+                B
+              </kbd>
+            </span>
           </Button>
         </Tooltip>
       </div>
