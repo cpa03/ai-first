@@ -51,6 +51,7 @@ import {
   COMING_SOON_BADGE,
   ANIMATION_CLASSES,
   COMMON_FLEX_BETWEEN_RESPONSIVE,
+  TAILWIND_TEXT_SIZES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -532,7 +533,7 @@ function CopyCodeButton({ text }: { text: string }) {
           className={`
             absolute top-3 right-3 
             flex items-center gap-1.5 px-2.5 py-1.5 
-            text-xs font-medium rounded-md
+            ${TAILWIND_TEXT_SIZES.XS} font-medium rounded-md
             ${TRANSITION_CLASSES.DEFAULT_EASE_OUT}
             ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT}
             ${prefersReducedMotion ? '' : 'motion-reduce:transition-none'}

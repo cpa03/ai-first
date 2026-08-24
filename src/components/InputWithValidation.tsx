@@ -45,6 +45,7 @@ import {
   FADE_IN,
   COUNTER_PULSE,
   COUNTER_GLOW,
+  TAILWIND_TEXT_SIZES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { UI_CONFIG } from '@/lib/config/constants';
@@ -797,7 +798,7 @@ const InputWithValidationComponent = forwardRef<
           )}
           {showCharCount && maxLength && charCount > 0 && (
             <div
-              className={`text-xs transition-all ${DURATION_TAILWIND[300]} ease-out ${
+              className={`${TAILWIND_TEXT_SIZES.XS} transition-all ${DURATION_TAILWIND[300]} ease-out ${
                 maxLength - charCount <= maxLength * 0.1
                   ? `${TEXT_COLORS.ERROR} font-medium`
                   : maxLength - charCount <= maxLength * 0.2

@@ -1145,3 +1145,14 @@ export {
   type PrimaryCombinations,
   type ComponentPrimaryPatterns,
 } from './primary-colors';
+
+// Tailwind Text Sizes Configuration
+// Centralizes all standard Tailwind text size classes used throughout components
+export {
+  TAILWIND_TEXT_SIZES,
+  RESPONSIVE_TEXT_SIZES,
+  TAILWIND_TEXT_SIZE_PRESETS,
+  type TailwindTextSizes,
+  type ResponsiveTextSizes,
+  type TextSizePresets,
+} from './tailwind-text-sizes';

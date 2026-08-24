@@ -35,6 +35,7 @@ import {
   PRIMARY_LINK,
   BODY_OVERFLOW_CONFIG,
   ROUNDED_CLASSES,
+  TAILWIND_TEXT_SIZES,
 } from '@/lib/config';
 import { MT_CLASSES, MB_CLASSES } from '@/lib/config/spacing';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -841,7 +842,7 @@ function KeyboardShortcutsHelpComponent({
               setSelectedIndex(0);
               triggerHapticFeedback();
             }}
-            className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+            className={`px-3 py-1 ${TAILWIND_TEXT_SIZES.XS} font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
               selectedContext === 'all'
                 ? `${BG_COLORS.BRAND} text-white`
                 : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
@@ -866,7 +867,7 @@ function KeyboardShortcutsHelpComponent({
                   setSelectedIndex(0);
                   triggerHapticFeedback();
                 }}
-                className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+                className={`px-3 py-1 ${TAILWIND_TEXT_SIZES.XS} font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
                   selectedContext === context
                     ? `${BG_COLORS.BRAND} text-white`
                     : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`

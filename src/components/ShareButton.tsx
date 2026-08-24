@@ -16,6 +16,7 @@ import {
   BG_COLORS,
   CONFETTI_DOT,
   SHARE_SUCCESS_GLOW,
+  TAILWIND_TEXT_SIZES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -207,7 +208,7 @@ const ShareButtonComponent = function ShareButton({
 
   const variantClasses = {
     default: `
-      px-3 py-1.5 text-sm
+      px-3 py-1.5 ${TAILWIND_TEXT_SIZES.SM}
       ${BG_COLORS.BRAND} text-white ${BG_COLORS.BRAND_HOVER}
       ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.DEFAULT_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-md

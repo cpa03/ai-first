@@ -36,6 +36,7 @@ import {
   SHAKE,
   FADE_IN,
   SUCCESS_POP,
+  TAILWIND_TEXT_SIZES,
 } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
@@ -426,7 +427,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
         {!milestoneReached && charactersNeededData ? (
           <p
-            className={`text-sm ${FADE_IN} flex items-center gap-2 ${
+            className={`${TAILWIND_TEXT_SIZES.SM} ${FADE_IN} flex items-center gap-2 ${
               charactersNeededData.isNearMinimum
                 ? `${TEXT_COLOR_CLASSES.WARNING_LIGHT} font-medium`
                 : TEXT_COLOR_CLASSES.BRAND
@@ -435,7 +436,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
             aria-live="polite"
           >
             <span
-              className={`inline-flex items-center justify-center ${ICON_SIZES.LG} rounded-full ${BG_COLORS.BRAND_100} ${TEXT_COLORS.BRAND} text-xs ${TYPOGRAPHY_CLASSES.BOLD}`}
+              className={`inline-flex items-center justify-center ${ICON_SIZES.LG} rounded-full ${BG_COLORS.BRAND_100} ${TEXT_COLORS.BRAND} ${TAILWIND_TEXT_SIZES.XS} ${TYPOGRAPHY_CLASSES.BOLD}`}
             >
               {charactersNeededData.charsNeeded}
             </span>
