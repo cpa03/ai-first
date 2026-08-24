@@ -497,6 +497,7 @@ export default function LoginPage() {
               <svg
                 className={`${ICON_SIZES.LG} mr-2`}
                 viewBox={SVG_VIEWBOX.STANDARD}
+                aria-hidden="true"
               >
                 <path
                   fill={OAUTH_PROVIDER_COLORS.GOOGLE.BLUE}
@@ -534,6 +535,7 @@ export default function LoginPage() {
                 className={`${ICON_SIZES.LG} mr-2`}
                 fill="currentColor"
                 viewBox={SVG_VIEWBOX.SMALL}
+                aria-hidden="true"
               >
                 <path
                   fillRule="evenodd"
