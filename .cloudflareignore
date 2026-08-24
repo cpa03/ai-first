@@ -57,10 +57,6 @@ node_modules/
 # Build tools
 .next/cache/
 .open-next/cache/
-*.lock
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
 
 # CI/CD
 .github/
@@ -69,21 +65,12 @@ pnpm-lock.yaml
 .gitlab-ci.yml
 Jenkinsfile
 
-# Scripts (not needed at runtime)
-scripts/
-
 # Configuration files (not needed at runtime)
 .editorconfig
 .eslintrc*
 .prettierrc*
-tsconfig.json
 jest.config.*
 babel.config.*
-postcss.config.*
-tailwind.config.*
-next.config.js
-wrangler.toml
-open-next.config.ts
 
 # Agent/AI configuration (not needed at runtime)
 .opencode/
