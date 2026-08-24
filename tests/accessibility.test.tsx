@@ -205,6 +205,26 @@ describe('Accessibility Tests - WCAG 2.1 Compliance', () => {
       fireEvent.blur(input);
       expect(handleBlur).toHaveBeenCalled();
     });
+
+    it('should render password toggle button with accessible aria-label', () => {
+      render(
+        <InputWithValidation
+          label="Password"
+          name="password"
+          type="password"
+          value="secret"
+          onChange={jest.fn()}
+          showPasswordToggle
+        />
+      );
+
+      const toggleButton = screen.getByRole('button', { name: /show/i });
+      expect(toggleButton).toBeInTheDocument();
+      expect(toggleButton).toHaveAttribute('aria-label', 'Show');
+
+      fireEvent.click(toggleButton);
+      expect(toggleButton).toHaveAttribute('aria-label', 'Hide');
+    });
   });
 
   describe('ProgressStepper Component', () => {

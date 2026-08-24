@@ -640,9 +640,9 @@ const InputWithValidationComponent = forwardRef<
                       ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA
                       : INPUT_VALIDATION_LABELS.SHOW_PASSWORD_ARIA
                   }
-                  shortcut={
-                    isMac ? ['⌘', 'Shift', 'P'] : ['Ctrl', 'Shift', 'P']
-                  }
+                  shortcut={INPUT_VALIDATION_LABELS.TOGGLE_PASSWORD_SHORTCUT(
+                    isMac
+                  )}
                   position="top"
                 >
                   <button
