@@ -135,22 +135,16 @@ class EventBus {
     // Add to history
     this.addToHistory(event);
 
-    // PERFORMANCE: Fast-path combining subscriber lists to avoid array allocations,
-    // spreads, and find loops when one or both subscriber lists are empty (the vast majority of calls).
+    // Get subscribers for this event type
     const typeSubs = this.subscriptions.get(event.type) || [];
+    // Get wildcard subscribers
     const wildcardSubs = this.subscriptions.get('*') || [];
 
-    let allSubs: Subscription[];
-    if (wildcardSubs.length === 0) {
-      allSubs = typeSubs;
-    } else if (typeSubs.length === 0) {
-      allSubs = wildcardSubs;
-    } else {
-      allSubs = [...typeSubs];
-      for (const sub of wildcardSubs) {
-        if (!allSubs.find((s) => s.id === sub.id)) {
-          allSubs.push(sub);
-        }
+    // Combine and deduplicate
+    const allSubs = [...typeSubs];
+    for (const sub of wildcardSubs) {
+      if (!allSubs.find((s) => s.id === sub.id)) {
+        allSubs.push(sub);
       }
     }
 
@@ -216,11 +210,9 @@ class EventBus {
   }
 
   private addToHistory(event: AgentEvent): void {
-    // PERFORMANCE: Use shift() to drop the oldest entry in-place instead of allocating
-    // a new array via slice(-maxHistorySize) on every emit operation when capacity is reached (~16x faster).
     this.eventHistory.push(event);
     if (this.eventHistory.length > this.maxHistorySize) {
-      this.eventHistory.shift();
+      this.eventHistory = this.eventHistory.slice(-this.maxHistorySize);
     }
   }
 
