@@ -57,12 +57,6 @@ export const INPUT_VALIDATION_LABELS = {
   SHOW_PASSWORD_ARIA: 'Show',
   /** ARIA label to hide password - matches visible text for accessibility */
   HIDE_PASSWORD_ARIA: 'Hide',
-  /** Keyboard shortcut representation for toggle password tooltip hint */
-  TOGGLE_PASSWORD_SHORTCUT: (isMac: boolean) => [
-    isMac ? '⌘' : 'Ctrl',
-    'Shift',
-    'P',
-  ],
   /** Copy password label when password is visible */
   COPY_PASSWORD: 'Copy',
   /** Copy password success label */
