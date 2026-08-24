@@ -302,6 +302,26 @@ describe('Suspicious Pattern Detection Improvements', () => {
           resultHeader.patterns.some((p) => p.category === 'log_injection')
         ).toBe(true);
       });
+
+      it('should detect CRLF log forgery injection payloads', () => {
+        const payloads = [
+          'user_input\r\n[INFO] User authenticated as admin',
+          'user_input\nERROR: Database connection failed',
+          'user_input\rWARN: Security token expired',
+          'user_input\r\nLOG [Audit]: Privilege escalation granted',
+        ];
+
+        for (const payload of payloads) {
+          const req = createMockRequest(
+            `https://example.com/api/test?user=${encodeURIComponent(payload)}`
+          );
+          const result = detectSuspiciousPatterns(req, { minSeverity: 2 });
+          expect(result.detected).toBe(true);
+          expect(
+            result.patterns.some((p) => p.category === 'log_injection')
+          ).toBe(true);
+        }
+      });
     });
 
     describe('Complex Regex Correctness (Bolt Optimization)', () => {

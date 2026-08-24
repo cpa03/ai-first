@@ -443,9 +443,9 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
       description: 'Format string pattern',
     },
     {
-      pattern: /\n\s*(ERROR|WARN|INFO|DEBUG|FATAL)\s*[:\[]/i,
+      pattern: /(?:\r?\n|\r)\s*(?:\[|(ERROR|WARN|INFO|DEBUG|FATAL|TRACE|LOG)\b\s*[:\[])/i,
       severity: 2,
-      description: 'Log level injection',
+      description: 'CRLF log level or forged entry injection',
     },
     {
       pattern: /\x1b\[[0-9;]*[a-zA-Z]/,
