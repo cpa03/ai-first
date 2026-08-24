@@ -25,6 +25,7 @@ import {
   DELIVERABLE_COMPLETE,
   SUCCESS_POP,
   EXPAND_CONTENT,
+  COLLAPSE_CONTENT,
 } from '@/lib/config';
 import {
   TASK_CARD_VERTICAL_MARGIN,
@@ -73,9 +74,11 @@ function DeliverableCardComponent({
   const [animatedProgress, setAnimatedProgress] = useState(0);
   const [showCompletionCelebration, setShowCompletionCelebration] =
     useState(false);
+  const [isCollapsing, setIsCollapsing] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const prevExpandedRef = useRef(isExpanded);
   const prevProgressRef = useRef(deliverable.progress);
+  const collapseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { particles, fire } = useConfetti();
 
   // Micro-UX: Fire confetti celebration when deliverable reaches 100% completion
@@ -123,7 +126,6 @@ function DeliverableCardComponent({
   // Matches the pattern established in ClarificationFlow for step changes
   useEffect(() => {
     if (isExpanded && !prevExpandedRef.current && contentRef.current) {
-      // Brief delay ensures the content has rendered after expand
       const timer = setTimeout(() => {
         contentRef.current?.scrollIntoView({
           behavior: prefersReducedMotion ? 'auto' : 'smooth',
@@ -132,8 +134,30 @@ function DeliverableCardComponent({
       }, COMPONENT_CONFIG.DELIVERABLE_CARD.EXPAND_SCROLL_DELAY_MS);
       return () => clearTimeout(timer);
     }
+  }, [isExpanded, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (prevExpandedRef.current && !isExpanded && !prefersReducedMotion) {
+      setIsCollapsing(true);
+      collapseTimerRef.current = setTimeout(() => {
+        setIsCollapsing(false);
+      }, 300);
+      prevExpandedRef.current = isExpanded;
+      return () => {
+        if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current);
+      };
+    }
+    if (isExpanded) {
+      setIsCollapsing(false);
+    }
     prevExpandedRef.current = isExpanded;
   }, [isExpanded, prefersReducedMotion]);
+
+  useEffect(() => {
+    return () => {
+      if (collapseTimerRef.current) clearTimeout(collapseTimerRef.current);
+    };
+  }, []);
 
   const handleToggleExpand = useCallback(() => {
     triggerHapticFeedback();
@@ -265,11 +289,11 @@ function DeliverableCardComponent({
         </div>
       </button>
 
-      {isExpanded && (
+      {(isExpanded || isCollapsing) && (
         <div
           ref={contentRef}
           id={`deliverable-tasks-${deliverable.id}`}
-          className={`${DELIVERABLE_CARD_STYLES.CONTENT.CONTAINER} ${prefersReducedMotion ? '' : EXPAND_CONTENT}`}
+          className={`${DELIVERABLE_CARD_STYLES.CONTENT.CONTAINER} ${prefersReducedMotion ? '' : isCollapsing ? COLLAPSE_CONTENT : EXPAND_CONTENT}`}
         >
           <div className={TASK_CARD_VERTICAL_MARGIN}>
             <div

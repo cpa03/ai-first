@@ -1884,6 +1884,39 @@ button[aria-disabled='true'].btn-glow-hover {
   }
 }
 
+/* Deliverable Card Collapse Animation - Micro-UX symmetry for task management */
+/* Creates a smooth slide-up + fade-out effect when deliverable content is hidden */
+/* Mirrors the expand animation for a consistent, polished expand/collapse experience */
+@keyframes collapseContent {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 1000px;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(var(--transform-slide-up-lg));
+    max-height: 0;
+  }
+}
+
+.animate-collapse-content {
+  animation: collapseContent var(--duration-normal) var(--ease-out-expo)
+    forwards;
+  overflow: hidden;
+}
+
+/* Reduced motion support for deliverable collapse animation */
+@media (prefers-reduced-motion: reduce) {
+  .animate-collapse-content {
+    animation: none;
+    opacity: 0;
+    transform: none;
+    max-height: 0;
+    overflow: hidden;
+  }
+}
+
 /* Dashboard Table Row Lift - Micro-UX delight for table interactions */
 /* Creates a subtle lift effect when hovering over table rows, making the table feel more interactive */
 /* Provides tactile visual feedback that helps users identify which row they're about to click */
