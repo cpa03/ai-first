@@ -186,6 +186,49 @@ export const SIGNUP_PAGE_CONFIG = {
 } as const;
 
 /**
+ * Forgot password page content configuration
+ * Eliminates hardcoded UI strings in forgot-password pages
+ */
+export const FORGOT_PASSWORD_PAGE_CONTENT = {
+  HEADING: 'Forgot your password?',
+  SUBHEADING:
+    "Enter your email address and we'll send you a link to reset your password.",
+  FORM: {
+    EMAIL_LABEL: 'Email address',
+    SUBMIT_BUTTON: 'Send reset link',
+    SUBMIT_LOADING: 'Sending...',
+  },
+  SUCCESS: {
+    HEADING: 'Check your email',
+    SUBHEADING_PREFIX: "We've sent a password reset link to",
+    INSTRUCTION:
+      "Didn't receive the email? Check your spam folder or resend below.",
+    RESEND_LOADING: 'Sending...',
+    RESEND_DEFAULT: 'Resend email',
+    RESEND_COOLDOWN_PREFIX: 'Resend in',
+    RESEND_COOLDOWN_SUFFIX: 's',
+    RESEND_SUCCESS: 'Reset email resent successfully!',
+    BACK_LINK: 'Back to sign in',
+  },
+  ERRORS: {
+    TITLE: 'Error',
+    RESEND_FAILED: 'Failed to resend email. Please try again.',
+  },
+  KEYBOARD_HINTS: {
+    SHORTCUTS: 'Shortcuts',
+    VIEW_ALL: 'View all',
+    PRESS: 'Press',
+    TO_SUBMIT: 'to submit',
+  },
+  SKIP_LINK: 'Skip to forgot password form',
+  LOADING_OVERLAY: 'Sending reset link...',
+  FOOTER: {
+    REMEMBER_PASSWORD: 'Remember your password?',
+    SIGN_IN: 'Sign in',
+  },
+} as const;
+
+/**
  * Forgot password page metadata configuration
  */
 export const FORGOT_PASSWORD_PAGE_CONFIG = {
@@ -570,6 +613,11 @@ export const AUTH_CALLBACK_ERROR_FALLBACK = {
     'We encountered an issue while processing your authentication. Please try again.',
 } as const;
 
+export const FORGOT_PASSWORD_ERROR_FALLBACK = {
+  TITLE: 'Something went wrong',
+  MESSAGE: 'We encountered an error loading this page. Please try again.',
+} as const;
+
 /**
  * All layout error fallbacks exported as a single object
  */
@@ -580,6 +628,7 @@ export const LAYOUT_ERROR_FALLBACKS = {
   CLARIFY: CLARIFY_ERROR_FALLBACK,
   RESULTS: RESULTS_ERROR_FALLBACK,
   AUTH_CALLBACK: AUTH_CALLBACK_ERROR_FALLBACK,
+  FORGOT_PASSWORD: FORGOT_PASSWORD_ERROR_FALLBACK,
 } as const;
 
 export const NOT_FOUND_PAGE_CONFIG = {
