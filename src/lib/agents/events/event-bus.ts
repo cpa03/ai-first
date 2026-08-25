@@ -135,16 +135,29 @@ class EventBus {
     // Add to history
     this.addToHistory(event);
 
-    // Get subscribers for this event type
-    const typeSubs = this.subscriptions.get(event.type) || [];
-    // Get wildcard subscribers
-    const wildcardSubs = this.subscriptions.get('*') || [];
+    // PERFORMANCE OPTIMIZATION (⚡ Bolt):
+    // Fast-path subscriber evaluation to avoid unnecessary array copies, closures, and async mapping.
+    const typeSubs = this.subscriptions.get(event.type);
+    const wildcardSubs = this.subscriptions.get('*');
 
-    // Combine and deduplicate
-    const allSubs = [...typeSubs];
-    for (const sub of wildcardSubs) {
-      if (!allSubs.find((s) => s.id === sub.id)) {
-        allSubs.push(sub);
+    const hasTypeSubs = typeSubs && typeSubs.length > 0;
+    const hasWildcardSubs = wildcardSubs && wildcardSubs.length > 0;
+
+    let allSubs: Subscription[];
+    if (!hasTypeSubs && !hasWildcardSubs) {
+      _logger.debug(`Emitted event: ${event.type}, subscribers: 0`);
+      return;
+    } else if (hasTypeSubs && !hasWildcardSubs) {
+      allSubs = typeSubs;
+    } else if (!hasTypeSubs && hasWildcardSubs) {
+      allSubs = wildcardSubs;
+    } else {
+      // Combine and deduplicate when both type and wildcard subscribers exist
+      allSubs = [...typeSubs!];
+      for (const sub of wildcardSubs!) {
+        if (!allSubs.find((s) => s.id === sub.id)) {
+          allSubs.push(sub);
+        }
       }
     }
 
@@ -211,8 +224,11 @@ class EventBus {
 
   private addToHistory(event: AgentEvent): void {
     this.eventHistory.push(event);
+    // PERFORMANCE OPTIMIZATION (⚡ Bolt):
+    // Shift the oldest item in-place when max size is reached.
+    // Replaces `.slice(-maxHistorySize)` which allocated a new 500-element array on every emit.
     if (this.eventHistory.length > this.maxHistorySize) {
-      this.eventHistory = this.eventHistory.slice(-this.maxHistorySize);
+      this.eventHistory.shift();
     }
   }
 
