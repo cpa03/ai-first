@@ -556,11 +556,19 @@ export default function SignupPage() {
           submitForm();
         }
       }
+
+      // Micro-UX: ? key opens keyboard shortcuts help panel
+      // The footer bar displays a ? hint — this wires it up to actually work
+      if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        openHelp();
+      }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [submitForm]);
+  }, [submitForm, openHelp]);
 
   const handleOAuthSignUp = useCallback(
     async (provider: 'google' | 'github') => {

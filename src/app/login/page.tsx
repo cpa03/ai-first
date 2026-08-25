@@ -265,11 +265,20 @@ export default function LoginPage() {
           submitForm();
         }
       }
+
+      // Micro-UX: ? key opens keyboard shortcuts help panel
+      // Matches the dashboard's ? shortcut for consistency across the app
+      // The footer bar displays a ? hint — this wires it up to actually work
+      if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        openHelp();
+      }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [submitForm]);
+  }, [submitForm, openHelp]);
 
   return (
     <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
