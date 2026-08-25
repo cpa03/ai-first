@@ -48,6 +48,7 @@ interface TaskManagementHeaderProps {
   statusFilter: 'all' | 'in_progress' | 'completed';
   onFilterChange: (_filter: 'all' | 'in_progress' | 'completed') => void;
   filterCounts: { all: number; in_progress: number; completed: number };
+  markdownText: string;
 }
 
 function TaskManagementHeaderComponent({
@@ -64,6 +65,7 @@ function TaskManagementHeaderComponent({
   statusFilter,
   onFilterChange,
   filterCounts,
+  markdownText,
 }: TaskManagementHeaderProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const { particles, fire } = useConfetti();
@@ -339,6 +341,14 @@ function TaskManagementHeaderComponent({
             textToCopy={summaryText}
             label={TASK_MANAGEMENT_LABELS.COPY_SUMMARY_BUTTON}
             successLabel={TASK_MANAGEMENT_LABELS.COPY_SUMMARY_SUCCESS}
+            variant="subtle"
+            showToast={true}
+          />
+          <CopyButton
+            textToCopy={markdownText}
+            label={TASK_MANAGEMENT_LABELS.COPY_MARKDOWN_BUTTON}
+            successLabel={TASK_MANAGEMENT_LABELS.COPY_MARKDOWN_SUCCESS}
+            ariaLabel={TASK_MANAGEMENT_LABELS.COPY_MARKDOWN_ARIA}
             variant="subtle"
             showToast={true}
           />

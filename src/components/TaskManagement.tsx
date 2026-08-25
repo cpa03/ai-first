@@ -32,6 +32,7 @@ import {
   KEYBOARD_HINT_INLINE,
   MT_CLASSES,
   MB_CLASSES,
+  IDEA_STATUS_CONFIG,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { ABSOLUTE_CENTER_OVERLAY } from '@/lib/config/remaining-hardcoded-patterns';
@@ -254,6 +255,25 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
     window.location.reload();
   }, []);
 
+  const markdownText = useMemo(() => {
+    if (!data || data.deliverables.length === 0) return '';
+    const lines: string[] = ['## Task Progress', ''];
+    for (const deliverable of data.deliverables) {
+      lines.push(`### ${deliverable.title}`);
+      lines.push('');
+      for (const task of deliverable.tasks) {
+        const checkbox =
+          task.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED
+            ? '- [x]'
+            : '- [ ]';
+        const estimate = task.estimate > 0 ? ` (${task.estimate}h)` : '';
+        lines.push(`${checkbox} ${task.title}${estimate}`);
+      }
+      lines.push('');
+    }
+    return lines.join('\n');
+  }, [data]);
+
   if (loading) {
     return <TaskManagementSkeleton />;
   }
@@ -364,6 +384,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
         statusFilter={statusFilter}
         onFilterChange={handleFilterChange}
         filterCounts={filterCounts}
+        markdownText={markdownText}
       />
 
       <div className={SPACE_Y_PATTERNS.LG}>

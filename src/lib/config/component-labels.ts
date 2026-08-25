@@ -460,6 +460,10 @@ export const TASK_MANAGEMENT_LABELS = {
   NEXT_INCOMPLETE_HINT: 'next task',
   NEXT_INCOMPLETE_ANNOUNCEMENT: (title: string) => `Scrolled to task: ${title}`,
   NEXT_INCOMPLETE_ALL_DONE_ANNOUNCEMENT: 'All tasks are complete!',
+  // Copy as Markdown
+  COPY_MARKDOWN_BUTTON: 'Copy as Markdown',
+  COPY_MARKDOWN_SUCCESS: 'Copied!',
+  COPY_MARKDOWN_ARIA: 'Copy all tasks as Markdown checklist to clipboard',
 } as const;
 
 /**

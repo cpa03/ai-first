@@ -17,6 +17,7 @@ describe('TaskManagementHeader', () => {
     statusFilter: 'all' as const,
     onFilterChange: jest.fn(),
     filterCounts: { all: 10, in_progress: 6, completed: 4 },
+    markdownText: '## Task Progress\n\n- [ ] Task 1\n- [x] Task 2\n',
   };
 
   beforeEach(() => {
