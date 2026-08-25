@@ -287,7 +287,7 @@ export default function HomePageClient() {
               textToCopy={ideaId}
               label={HOME_PAGE_CONFIG.CONFIRMATION.COPY_ID_BUTTON}
               successLabel={HOME_PAGE_CONFIG.CONFIRMATION.COPY_ID_SUCCESS}
-              ariaLabel="Copy idea ID to clipboard"
+              ariaLabel={HOME_PAGE_CONFIG.CONFIRMATION.COPY_ID_ARIA_LABEL}
               variant="default"
               toastMessage={HOME_PAGE_CONFIG.CONFIRMATION.COPY_ID_TOAST}
               onCopy={() =>

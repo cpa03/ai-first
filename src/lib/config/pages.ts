@@ -109,6 +109,7 @@ export const HOME_PAGE_CONFIG = {
     COPY_ID_BUTTON: 'Copy ID',
     COPY_ID_SUCCESS: 'Copied!',
     COPY_ID_TOAST: 'Idea ID copied to clipboard!',
+    COPY_ID_ARIA_LABEL: 'Copy ID',
   },
   HERO_ANIMATION_DELAYS: {
     TITLE: '0ms',
