@@ -49,6 +49,19 @@
     --shadow-primary-feedback: rgb(37 99 235 / 0.3);
     --shadow-primary-feedback-pulse: rgb(37 99 235 / 0.2);
 
+    /* Gray color tokens for scrollbar and UI elements */
+    --color-gray-100: 243 244 246; /* #f3f4f6 */
+    --color-gray-300: 209 213 219; /* #d1d5db */
+    --color-gray-400: 156 163 175; /* #9ca3af */
+    --color-gray-500: 107 114 128; /* #6b7280 */
+    --color-gray-300-raw: #d1d5db; /* For print styles where rgb() format isn't suitable */
+
+    /* Green color tokens */
+    --color-green-100: 220 252 231; /* #dcfce7 */
+
+    /* Primary color tokens for focus rings and interactive states */
+    --color-primary-900: 30 58 138; /* #1e3a8a */
+
     /* Ring color tokens for focus ring animations */
     --ring-primary-600: rgb(var(--color-primary-600) / 0.6);
     --ring-primary-400: rgb(var(--color-primary-500) / 0.4);
@@ -119,40 +132,40 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: rgb(243 244 246); /* gray-100 */
+    background: rgb(var(--color-gray-100));
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: rgb(209 213 219); /* gray-300 */
+    background: rgb(var(--color-gray-300));
     border-radius: 4px;
     transition: background 0.2s ease;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgb(156 163 175); /* gray-400 */
+    background: rgb(var(--color-gray-400));
   }
 
   ::-webkit-scrollbar-thumb:active {
-    background: rgb(107 114 128); /* gray-500 */
+    background: rgb(var(--color-gray-500));
   }
 
   /* Firefox */
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgb(209 213 219) rgb(243 244 246); /* gray-300 on gray-100 */
+    scrollbar-color: rgb(var(--color-gray-300)) rgb(var(--color-gray-100));
   }
 
   /* Micro-UX: Custom text selection styling - provides branded visual feedback */
   /* Makes text selection feel intentional and part of the design system */
   ::selection {
-    background-color: rgb(59 130 246 / 0.2); /* primary-500 with 20% opacity */
-    color: rgb(30 58 138); /* primary-900 for contrast */
+    background-color: rgb(var(--color-primary-500) / 0.2);
+    color: rgb(var(--color-primary-900));
   }
 
   ::-moz-selection {
-    background-color: rgb(59 130 246 / 0.2);
-    color: rgb(30 58 138);
+    background-color: rgb(var(--color-primary-500) / 0.2);
+    color: rgb(var(--color-primary-900));
   }
 
   /* Micro-UX improvement: Add subtle cursor change for clickable elements */
@@ -1958,22 +1971,22 @@ button[aria-disabled='true'].btn-glow-hover {
 /* Pulses twice on first render, then stops - enough to catch attention without being annoying */
 @keyframes discoverPulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    box-shadow: 0 0 0 0 var(--shadow-primary-600-light);
   }
   20% {
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 0 4px var(--shadow-primary-600-medium);
   }
   40% {
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+    box-shadow: 0 0 0 2px var(--shadow-primary-600-light);
   }
   60% {
-    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.25);
+    box-shadow: 0 0 0 6px var(--shadow-primary-medium);
   }
   80% {
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 3px var(--shadow-primary-light);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    box-shadow: 0 0 0 0 var(--shadow-primary-600-light);
   }
 }
 
@@ -2103,7 +2116,7 @@ button[aria-disabled='true'].btn-glow-hover {
   }
   30% {
     transform: scale(1.05);
-    background-color: rgb(220 252 231); /* green-100 */
+    background-color: rgb(var(--color-green-100));
   }
   100% {
     transform: scale(1);
@@ -2152,12 +2165,12 @@ button[aria-disabled='true'].btn-glow-hover {
 @keyframes focusRingGlow {
   0%,
   100% {
-    box-shadow: 0 0 0 2px rgb(59 130 246 / 0.4);
+    box-shadow: 0 0 0 2px var(--ring-primary-400);
   }
   50% {
     box-shadow:
-      0 0 0 4px rgb(59 130 246 / 0.2),
-      0 0 12px -2px rgb(59 130 246 / 0.3);
+      0 0 0 4px var(--ring-primary-600),
+      0 0 12px -2px var(--ring-primary-400);
   }
 }
 
@@ -2169,7 +2182,7 @@ button[aria-disabled='true'].btn-glow-hover {
 @media (prefers-reduced-motion: reduce) {
   .animate-focus-ring-glow {
     animation: none;
-    box-shadow: 0 0 0 2px rgb(59 130 246 / 0.4);
+    box-shadow: 0 0 0 2px var(--ring-primary-400);
   }
 }
 
@@ -2235,7 +2248,7 @@ button[aria-disabled='true'].btn-glow-hover {
     white-space: pre-wrap !important;
     word-wrap: break-word !important;
     font-size: 10pt !important;
-    border: 1px solid #ccc !important;
+    border: 1px solid var(--color-gray-300-raw) !important;
     padding: 1rem !important;
   }
 
