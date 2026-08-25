@@ -168,6 +168,7 @@
     /useClarificationSession.ts ← Clarification session hook
     /useConfetti.ts          ← Confetti animation hook
     /useCountUp.ts          ← Count up animation hook
+    /useKeyboardNavigation.ts ← Keyboard navigation hook
     /usePrefersReducedMotion.ts ← Reduced motion preference hook
     /useScrollToError.ts    ← Scroll to error hook
     /useSessionDuration.ts  ← Session duration tracking hook
@@ -204,7 +205,7 @@
     /api-handler/        ← API handler utilities
       /wrapper.ts        ← API request wrapper
       /response.ts       ← Response formatting
-    /config/             ← Configuration modules (69 files)
+    /config/             ← Configuration modules (93 files)
       /constants.ts      ← Centralized constants
       /environment.ts    ← Environment configuration
       /database-tables.ts ← Database table names
@@ -426,7 +427,7 @@ All automated work follows this pattern:
 
 ### Architecture Decision Records
 
-- [ADR Index](./docs/adr/) - All 15 architecture decisions (ADR-000 through ADR-014)
+- [ADR Index](./docs/adr/) - All 16 architecture decisions (ADR-000 through ADR-014)
 
 ### User Stories & Templates
 
