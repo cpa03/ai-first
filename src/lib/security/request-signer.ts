@@ -55,24 +55,8 @@ export interface InternalApiSignatureHeader {
 /**
  * Default timestamp tolerance in milliseconds (5 minutes)
  * Requests with timestamps outside this window are rejected
- * @deprecated Use SECURITY_CONFIG.TIMESTAMP_TOLERANCE_MS instead
+ * @deprecated Use SECURITY_CONFIG.TIMESTAMP_TOLERANCE_MS directly
  */
-export const DEFAULT_TIMESTAMP_TOLERANCE_MS =
-  SECURITY_CONFIG.TIMESTAMP_TOLERANCE_MS;
-
-/**
- * Minimum timestamp tolerance (1 minute)
- * @deprecated Use SECURITY_CONFIG.MIN_TIMESTAMP_TOLERANCE_MS instead
- */
-export const MIN_TIMESTAMP_TOLERANCE_MS =
-  SECURITY_CONFIG.MIN_TIMESTAMP_TOLERANCE_MS;
-
-/**
- * Maximum timestamp tolerance (24 hours)
- * @deprecated Use SECURITY_CONFIG.MAX_TIMESTAMP_TOLERANCE_MS instead
- */
-export const MAX_TIMESTAMP_TOLERANCE_MS =
-  SECURITY_CONFIG.MAX_TIMESTAMP_TOLERANCE_MS;
 
 /**
  * Get the internal API secret from environment
@@ -123,7 +107,7 @@ export function createTimestamp(): number {
  */
 export function isTimestampValid(
   timestamp: number,
-  toleranceMs: number = DEFAULT_TIMESTAMP_TOLERANCE_MS
+  toleranceMs: number = SECURITY_CONFIG.TIMESTAMP_TOLERANCE_MS
 ): boolean {
   const now = Date.now();
   const age = Math.abs(now - timestamp);
@@ -196,7 +180,8 @@ export function verifySignature(
   } = {}
 ): VerificationResult {
   // Check timestamp validity first
-  const tolerance = options.toleranceMs ?? DEFAULT_TIMESTAMP_TOLERANCE_MS;
+  const tolerance =
+    options.toleranceMs ?? SECURITY_CONFIG.TIMESTAMP_TOLERANCE_MS;
 
   if (!isTimestampValid(timestamp, tolerance)) {
     return {
@@ -438,7 +423,7 @@ export async function verifyInternalRequest(
  */
 export function createSignedUrl(
   url: string,
-  expiresInMs: number = DEFAULT_TIMESTAMP_TOLERANCE_MS
+  expiresInMs: number = SECURITY_CONFIG.TIMESTAMP_TOLERANCE_MS
 ): string {
   const timestamp = Date.now() + expiresInMs;
   const path = new URL(url).pathname;

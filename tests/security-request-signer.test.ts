@@ -9,10 +9,8 @@ import {
   createSignedUrl,
   verifySignedUrl,
   verifyInternalRequest,
-  DEFAULT_TIMESTAMP_TOLERANCE_MS,
-  MIN_TIMESTAMP_TOLERANCE_MS,
-  MAX_TIMESTAMP_TOLERANCE_MS,
 } from '@/lib/security/request-signer';
+import { SECURITY_CONFIG } from '@/lib/config/modular-constants';
 import { setProcessEnv } from './utils/_testHelpers';
 
 // Mock the environment for testing
@@ -61,12 +59,14 @@ describe('Request Signer', () => {
     });
 
     it('should return true for timestamp within tolerance', () => {
-      const within = Date.now() - DEFAULT_TIMESTAMP_TOLERANCE_MS + 60000; // 1 minute ago
+      const within =
+        Date.now() - SECURITY_CONFIG.TIMESTAMP_TOLERANCE_MS + 60000; // 1 minute ago
       expect(isTimestampValid(within)).toBe(true);
     });
 
     it('should return false for expired timestamp', () => {
-      const expired = Date.now() - DEFAULT_TIMESTAMP_TOLERANCE_MS - 1000; // 5 min + 1 sec ago
+      const expired =
+        Date.now() - SECURITY_CONFIG.TIMESTAMP_TOLERANCE_MS - 1000; // 5 min + 1 sec ago
       expect(isTimestampValid(expired)).toBe(false);
     });
 
@@ -147,7 +147,7 @@ describe('Request Signer', () => {
 
     it('should reject expired timestamps', () => {
       const expiredTimestamp =
-        Date.now() - DEFAULT_TIMESTAMP_TOLERANCE_MS - 1000;
+        Date.now() - SECURITY_CONFIG.TIMESTAMP_TOLERANCE_MS - 1000;
       const { signature, nonce } = signRequest(payload, expiredTimestamp);
 
       const result = verifySignature(payload, expiredTimestamp, signature, {
@@ -355,7 +355,7 @@ describe('Request Signer', () => {
 
     it('should reject expired request', async () => {
       const expiredTimestamp =
-        Date.now() - DEFAULT_TIMESTAMP_TOLERANCE_MS - 1000;
+        Date.now() - SECURITY_CONFIG.TIMESTAMP_TOLERANCE_MS - 1000;
       const body = '{"test":"data"}';
       const { signature, nonce } = signRequest(body, expiredTimestamp);
 
@@ -403,9 +403,11 @@ describe('Request Signer', () => {
 
   describe('constants', () => {
     it('should have valid timestamp tolerance values', () => {
-      expect(DEFAULT_TIMESTAMP_TOLERANCE_MS).toBe(5 * 60 * 1000); // 5 minutes
-      expect(MIN_TIMESTAMP_TOLERANCE_MS).toBe(60 * 1000); // 1 minute
-      expect(MAX_TIMESTAMP_TOLERANCE_MS).toBe(24 * 60 * 60 * 1000); // 24 hours
+      expect(SECURITY_CONFIG.TIMESTAMP_TOLERANCE_MS).toBe(5 * 60 * 1000); // 5 minutes
+      expect(SECURITY_CONFIG.MIN_TIMESTAMP_TOLERANCE_MS).toBe(60 * 1000); // 1 minute
+      expect(SECURITY_CONFIG.MAX_TIMESTAMP_TOLERANCE_MS).toBe(
+        24 * 60 * 60 * 1000
+      ); // 24 hours
     });
   });
 });
