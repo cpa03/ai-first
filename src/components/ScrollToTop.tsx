@@ -373,10 +373,8 @@ function ScrollToTopComponent({
             hasReachedEnd
               ? SCROLL_TO_TOP_LABELS.ARIA_LABEL_REACHED_END
               : isNearTop
-                ? SCROLL_TO_TOP_LABELS.ARIA_LABEL_BOTTOM(
-                    Math.round(scrollProgress)
-                  )
-                : SCROLL_TO_TOP_LABELS.ARIA_LABEL(Math.round(scrollProgress))
+                ? SCROLL_TO_TOP_LABELS.ARIA_LABEL_BOTTOM
+                : SCROLL_TO_TOP_LABELS.ARIA_LABEL
           }
           aria-live="polite"
           type="button"

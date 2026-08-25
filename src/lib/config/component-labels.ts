@@ -128,12 +128,10 @@ export const SCROLL_TO_TOP_LABELS = {
   },
   /** Separator between keyboard shortcuts */
   SEPARATOR: '·',
-  /** ARIA label template for scroll-to-top button */
-  ARIA_LABEL: (progress: number) =>
-    `Scroll to top (${progress}% scrolled). Use arrow keys to scroll by 25%, Home or End to go to top or bottom.`,
-  /** ARIA label template for scroll-to-bottom button */
-  ARIA_LABEL_BOTTOM: (progress: number) =>
-    `Scroll to bottom (${progress}% scrolled). Use arrow keys to scroll by 25%, Home or End to go to top or bottom.`,
+  /** ARIA label for scroll-to-top button - matches visible text for accessibility */
+  ARIA_LABEL: 'Scroll to top',
+  /** ARIA label for scroll-to-bottom button - matches visible text for accessibility */
+  ARIA_LABEL_BOTTOM: 'Scroll to bottom',
   /** ARIA label for reached-end state */
   ARIA_LABEL_REACHED_END:
     'You have reached the end of the page. Press to scroll back to top.',
@@ -708,8 +706,8 @@ export const SECTION_INDICATOR_LABELS = {
  * Eliminates hardcoded aria-labels in ScrollToTopButton component
  */
 export const SCROLL_TO_TOP_BUTTON_LABELS = {
-  /** ARIA label for the scroll to top button */
-  ARIA_LABEL: 'Scroll to top (⌘↑ or Ctrl+Home)',
+  /** ARIA label for the scroll to top button - matches visible text for accessibility */
+  ARIA_LABEL: 'Scroll to top',
   /** Button text */
   BUTTON_TEXT: 'Scroll to top',
 } as const;
