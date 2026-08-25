@@ -21,8 +21,8 @@
 # ============================================================
 
 name = "ai-first"
-compatibility_date = "2026-02-19"
-compatibility_flags = ["nodejs_compat", "nodejs_als", "global_fetch_strictly_public"]
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
 
 # Source maps for production debugging
 # Uploads source maps to enable readable stack traces in logs
