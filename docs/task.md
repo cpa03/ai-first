@@ -66,6 +66,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 - **Date**: 2026-08-16
 - **Details**: Connected platform-aware keyboard shortcut representations for `CopyButton` directly to `COPY_BUTTON_LABELS.KEYBOARD_SHORTCUT` in `src/lib/config/component-labels.ts`.
 
+### [STRENGTHEN] Strengthen DeliverableCard Keyboard Focus Ring and Visual Interaction Parity
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-25
+- **Details**: Enhanced `DeliverableCard` header button focus ring and added tactile active scale feedback (`active:scale-[0.99]`) in `DELIVERABLE_CARD_STYLES.HEADER.BASE` (`src/lib/config/task-management.ts`). Verified with unit tests in `tests/DeliverableCard.test.tsx`.
+
+### [CONNECT] Connect DeliverableCard Styling to Central Task Management Config
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-08-25
+- **Details**: Connected `DeliverableCard` focus and interaction state classes directly to centralized configurations in `DELIVERABLE_CARD_STYLES` (`src/lib/config/task-management.ts`), maintaining zero hardcoded values.
+
 ---
 
 ## Quick Stats

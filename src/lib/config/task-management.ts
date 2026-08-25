@@ -154,7 +154,7 @@ export const DELIVERABLE_CARD_STYLES = {
   CONTAINER: (bgColor: string, borderColor: string) =>
     `rounded-lg shadow-md border-2 transition-all duration-200 ${bgColor} ${borderColor}`,
   HEADER: {
-    BASE: 'w-full px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-left hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500 rounded-lg',
+    BASE: 'w-full px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-left hover:opacity-90 active:scale-[0.99] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500 rounded-lg',
     TITLE: 'text-lg font-semibold text-gray-900',
     DESCRIPTION: 'text-sm text-gray-600 mt-1',
     PROGRESS: {
