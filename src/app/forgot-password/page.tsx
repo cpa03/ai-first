@@ -27,6 +27,7 @@ import {
   KBD_HINT_STYLE,
   ICON_SIZES,
   COMPONENT_CONFIG,
+  CONFETTI_DOT,
 } from '@/lib/config';
 import {
   RESPONSIVE_WIDTH,
@@ -37,6 +38,8 @@ import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+import { useConfetti } from '@/hooks/useConfetti';
+import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -50,6 +53,7 @@ export default function ForgotPasswordPage() {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const cooldownTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { openHelp } = useKeyboardShortcuts();
+  const { particles, fire } = useConfetti();
 
   const isFormValid = useMemo(() => {
     const trimmedEmail = email.trim();
@@ -112,6 +116,14 @@ export default function ForgotPasswordPage() {
       }
     };
   }, [resendCooldown]);
+
+  // Micro-UX: Fire confetti when password reset email is sent successfully
+  // Provides delightful positive feedback matching the pattern in CopyButton, ShareButton, and TaskItem
+  useEffect(() => {
+    if (success) {
+      fire();
+    }
+  }, [success, fire]);
 
   const validateEmail = useCallback((value: string): boolean => {
     return VALIDATION_CONFIG.COMMON_REGEX.EMAIL.test(value);
@@ -229,22 +241,42 @@ export default function ForgotPasswordPage() {
           className={`${CONTAINER_WIDTHS.XS} w-full ${SPACE_Y_PATTERNS.XL} relative`}
         >
           <div className={`${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE}`}>
-            <div
-              className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex ${ICON_SIZES.XXXXL} items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.NONE}`}
-            >
-              <svg
-                className={`${ICON_SIZES.XL} ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
+            <div className="relative">
+              <div
+                className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex ${ICON_SIZES.XXXXL} items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.NONE}`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 13l4 4L19 7"
+                <svg
+                  className={`${ICON_SIZES.XL} ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              {particles.map((particle) => (
+                <span
+                  key={particle.id}
+                  className={CONFETTI_DOT}
+                  style={
+                    {
+                      ...CSS_POSITIONING.CENTER_ANIMATED,
+                      width: `${particle.size}px`,
+                      height: `${particle.size}px`,
+                      backgroundColor: particle.color,
+                      '--confetti-x': `${particle.x}px`,
+                      '--confetti-y': `${particle.y}px`,
+                      animationDelay: `${particle.delay}ms`,
+                    } as React.CSSProperties
+                  }
+                  aria-hidden="true"
                 />
-              </svg>
+              ))}
             </div>
             <h1
               className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
