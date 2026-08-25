@@ -247,6 +247,9 @@ export const HOMEPAGE_HERO_ACTIONS = 'mt-6 flex justify-center gap-6';
 export const KEYBOARD_HINT_INLINE =
   'hidden sm:inline-flex items-center gap-1.5';
 
+export const KEYBOARD_HINT_MOBILE =
+  'sm:hidden inline-flex items-center gap-1.5 text-xs';
+
 export const NOT_FOUND_SHORTCUTS_SECTION =
   'mt-6 flex items-center justify-center gap-4 text-xs';
 

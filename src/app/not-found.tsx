@@ -35,6 +35,7 @@ import {
   NOT_FOUND_BUTTON_INLINE_FULL,
   NOT_FOUND_SHORTCUTS_SECTION,
   KEYBOARD_HINT_INLINE,
+  KEYBOARD_HINT_MOBILE,
   POPULAR_PAGES_SECTION,
   POPULAR_PAGES_GRID,
   POPULAR_PAGES_ITEM,
@@ -353,6 +354,18 @@ export default function NotFound() {
                 </>
               )}
             </span>
+          </div>
+
+          {/* Micro-UX: Compact mobile keyboard hint */}
+          {/* Shows a simplified "Press ? for shortcuts" on mobile instead of empty shortcuts section */}
+          <div
+            className={`${KEYBOARD_HINT_MOBILE} ${GRAY_CLASSES.TEXT_500} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5} rounded-lg px-4 py-2`}
+            aria-hidden="true"
+          >
+            <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+              ?
+            </kbd>
+            <span>for keyboard shortcuts</span>
           </div>
 
           {/* Micro-UX: Popular pages suggestions to help users find what they're looking for */}
