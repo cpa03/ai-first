@@ -492,6 +492,15 @@ export const STEP_CELEBRATION_LABELS = {
 } as const;
 
 /**
+ * SuccessCelebration Labels
+ * Eliminates hardcoded strings in SuccessCelebration component
+ */
+export const SUCCESS_CELEBRATION_LABELS = {
+  /** Screen reader announcement message when action/milestone is completed successfully */
+  ANNOUNCEMENT: 'Action completed successfully!',
+} as const;
+
+/**
  * UserOnboarding Completion Labels
  * Eliminates hardcoded strings in UserOnboarding completion dialog
  */
@@ -782,6 +791,7 @@ export const COMPONENT_LABELS = {
   TASK_MANAGEMENT: TASK_MANAGEMENT_LABELS,
   IDEA_READY_INDICATOR: IDEA_READY_INDICATOR_LABELS,
   STEP_CELEBRATION: STEP_CELEBRATION_LABELS,
+  SUCCESS_CELEBRATION: SUCCESS_CELEBRATION_LABELS,
   USER_ONBOARDING_COMPLETION: USER_ONBOARDING_COMPLETION_LABELS,
   CLARIFICATION_FLOW: CLARIFICATION_FLOW_LABELS,
   FEATURE_GRID: FEATURE_GRID_LABELS,
@@ -813,6 +823,7 @@ export type TaskManagementLabels = typeof TASK_MANAGEMENT_LABELS;
 export type DeliverableCardLabels = typeof DELIVERABLE_CARD_LABELS;
 export type IdeaReadyIndicatorLabels = typeof IDEA_READY_INDICATOR_LABELS;
 export type StepCelebrationLabels = typeof STEP_CELEBRATION_LABELS;
+export type SuccessCelebrationLabels = typeof SUCCESS_CELEBRATION_LABELS;
 export type UserOnboardingCompletionLabels =
   typeof USER_ONBOARDING_COMPLETION_LABELS;
 export type ClarificationFlowLabels = typeof CLARIFICATION_FLOW_LABELS;

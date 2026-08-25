@@ -20,6 +20,8 @@ import {
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
+import { SUCCESS_CELEBRATION_LABELS } from '@/lib/config/component-labels';
+import StatusAnnouncer from './StatusAnnouncer';
 
 // PERFORMANCE: Flatten particle interface to reduce object allocations per frame
 // velocity.x -> vx, velocity.y -> vy
@@ -148,11 +150,17 @@ function SuccessCelebrationComponent({
   if (!isVisible) return null;
 
   return (
-    <div
-      className={`fixed inset-0 pointer-events-none z-[${Z_INDEX_LAYERS.CELEBRATION}] flex items-center justify-center`}
-      aria-hidden="true"
-      role="presentation"
-    >
+    <>
+      <StatusAnnouncer
+        message={SUCCESS_CELEBRATION_LABELS.ANNOUNCEMENT}
+        triggered={isVisible}
+        politeness="polite"
+      />
+      <div
+        className={`fixed inset-0 pointer-events-none z-[${Z_INDEX_LAYERS.CELEBRATION}] flex items-center justify-center`}
+        aria-hidden="true"
+        role="presentation"
+      >
       <div className={RELATIVE}>
         <div
           className={`${ICON_SIZES.MASSIVE} rounded-full ${COMPONENT_STATE_COLORS.CELEBRATION.CIRCLE_BG} flex items-center justify-center shadow-lg ${
@@ -215,7 +223,8 @@ function SuccessCelebrationComponent({
             }}
           />
         ))}
-    </div>
+      </div>
+    </>
   );
 }
 
