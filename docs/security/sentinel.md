@@ -83,3 +83,9 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** The `safeJsonLd` utility in `src/lib/security/json-ld.ts` passed inputs directly to `JSON.stringify(obj)` without error wrapping. When passed unstringifiable or throwing values (such as circular references, `BigInt` values, or `undefined`), `JSON.stringify` throws a `TypeError` or returns `undefined`, causing server-side rendering (SSR) crashes during HTML generation in `src/app/layout.tsx`.
 **Learning:** Utilities that sanitize or prepare dynamic data for HTML insertion (`dangerouslySetInnerHTML`) must be completely crash-resilient. Uncaught exceptions during stringification in SSR layouts lead to application-wide Denial of Service or broken rendering pipelines.
 **Prevention:** Always wrap `JSON.stringify` calls in security and HTML rendering utilities with `try...catch` blocks and explicitly validate that the output string is defined, falling back gracefully to a safe empty structure (`'{}'`).
+
+## 2026-08-25 - Command Injection Bypass via Newline Command Separators
+
+**Vulnerability:** Command injection detection regexes in `src/lib/config/security-patterns.ts` only checked for traditional command separators (`;`, `&`, `|`, `` ` ``) before command names. Attackers could bypass these checks by using carriage returns (`\r`) or line feeds (`\n`) as command separators (e.g. `\nwhoami`, `\r\ncat /etc/passwd`, `\nwget ...`).
+**Learning:** In Unix and Windows shells, newlines act as valid command terminators/separators. Security pattern checks that only match standard punctuation separators leave a bypass vector open for newline-delimited command injection payloads.
+**Prevention:** Include carriage return (`\r`) and line feed (`\n`) characters in command separator character classes (e.g. `[;&|\r\n`]` or `(?:[;&|\r\n`]\s*|\b)`) when filtering or detecting command injection attempts.
