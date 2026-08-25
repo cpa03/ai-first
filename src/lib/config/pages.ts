@@ -213,6 +213,19 @@ export const FORGOT_PASSWORD_PAGE_CONFIG = {
     STEP_3: 'delay-200',
     STEP_4: 'delay-250',
   } as const,
+  CONTENT: {
+    ERROR_TITLE: 'Error',
+    RESEND_BUTTON: 'Resend email',
+    RESEND_SENDING: 'Sending...',
+    RESEND_COOLDOWN: (seconds: number) => `Resend in ${seconds}s`,
+    EMAIL_LABEL: 'Email address',
+    SUCCESS_MESSAGE: 'Reset email resent successfully!',
+    SPAM_NOTICE:
+      "Didn't receive the email? Check your spam folder or resend below.",
+    LAYOUT_ERROR_TITLE: 'Something went wrong',
+    LAYOUT_ERROR_MESSAGE:
+      'We encountered an error loading this page. Please try again.',
+  } as const,
 } as const;
 
 /**
@@ -385,6 +398,13 @@ export const RESULTS_PAGE_CONTENT = {
     'Love your project blueprint? Share it with your network to inspire others!',
   SHARE_BUTTON_LABEL: 'Share Blueprint',
   SHARE_BUTTON_SUCCESS_LABEL: 'Shared!',
+  EXPORT_SUCCESS_SHARE: {
+    TITLE: 'Check out my project blueprint on IdeaFlow!',
+    TEXT: "I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!",
+    LABEL: 'Share your blueprint',
+    SUCCESS_LABEL: 'Shared!',
+    ARIA_LABEL: 'Share your project blueprint',
+  },
   SETUP_REQUIRED_LABEL: 'Setup Required',
   BUTTONS: {
     GO_BACK: '← Back',

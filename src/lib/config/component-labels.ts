@@ -213,6 +213,8 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
   } as const,
   /** Keyboard shortcut context display order */
   CONTEXT_ORDER: ['global', 'command', 'navigation', 'form', 'modal'] as const,
+  /** Filter category aria-label */
+  FILTER_ARIA_LABEL: 'Filter shortcuts by category',
   /** Keyboard shortcut descriptions - eliminates hardcoded strings */
   SHORTCUT_DESCRIPTIONS: {
     OPEN_COMMAND_PALETTE: 'Open command palette',

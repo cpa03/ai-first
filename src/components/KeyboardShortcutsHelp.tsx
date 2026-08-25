@@ -54,8 +54,12 @@ import {
   COMPONENT_PRIMARY_PATTERNS,
 } from '@/lib/config/primary-colors';
 
-const { CONTEXT_LABELS, CONTEXT_ORDER, SHORTCUT_DESCRIPTIONS } =
-  KEYBOARD_SHORTCUTS_HELP_LABELS;
+const {
+  CONTEXT_LABELS,
+  CONTEXT_ORDER,
+  SHORTCUT_DESCRIPTIONS,
+  FILTER_ARIA_LABEL,
+} = KEYBOARD_SHORTCUTS_HELP_LABELS;
 
 export interface KeyboardShortcut {
   keys: string[];
@@ -830,7 +834,7 @@ function KeyboardShortcutsHelpComponent({
         <div
           className={`px-6 py-3 border-b ${BORDER_COLORS.DEFAULT} flex flex-wrap gap-2`}
           role="tablist"
-          aria-label="Filter shortcuts by category"
+          aria-label={FILTER_ARIA_LABEL}
         >
           <button
             type="button"

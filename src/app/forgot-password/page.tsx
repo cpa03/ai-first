@@ -266,7 +266,10 @@ export default function ForgotPasswordPage() {
 
             {error && (
               <div className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE}`}>
-                <Alert type="error" title="Error">
+                <Alert
+                  type="error"
+                  title={FORGOT_PASSWORD_PAGE_CONFIG.CONTENT.ERROR_TITLE}
+                >
                   {error}
                 </Alert>
               </div>
@@ -278,7 +281,7 @@ export default function ForgotPasswordPage() {
                 role="status"
                 aria-live="polite"
               >
-                Reset email resent successfully!
+                {FORGOT_PASSWORD_PAGE_CONFIG.CONTENT.SUCCESS_MESSAGE}
               </p>
             )}
 
@@ -291,13 +294,15 @@ export default function ForgotPasswordPage() {
                 onClick={handleResend}
                 disabled={resendCooldown > 0 || isResending}
                 loading={isResending}
-                loadingText="Sending..."
+                loadingText={FORGOT_PASSWORD_PAGE_CONFIG.CONTENT.RESEND_SENDING}
                 className={RESPONSIVE_WIDTH}
                 size="md"
               >
                 {resendCooldown > 0
-                  ? `Resend in ${resendCooldown}s`
-                  : 'Resend email'}
+                  ? FORGOT_PASSWORD_PAGE_CONFIG.CONTENT.RESEND_COOLDOWN(
+                      resendCooldown
+                    )
+                  : FORGOT_PASSWORD_PAGE_CONFIG.CONTENT.RESEND_BUTTON}
               </Button>
             </div>
 
@@ -363,7 +368,10 @@ export default function ForgotPasswordPage() {
           onSubmit={handleSubmit}
         >
           {error && (
-            <Alert type="error" title="Error">
+            <Alert
+              type="error"
+              title={FORGOT_PASSWORD_PAGE_CONFIG.CONTENT.ERROR_TITLE}
+            >
               {error}
             </Alert>
           )}
@@ -373,7 +381,7 @@ export default function ForgotPasswordPage() {
             id="email"
             name="email"
             type="email"
-            label="Email address"
+            label={FORGOT_PASSWORD_PAGE_CONFIG.CONTENT.EMAIL_LABEL}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isLoading}
@@ -393,7 +401,9 @@ export default function ForgotPasswordPage() {
               attention={isFormValid && !isLoading}
               shortcut={isMac ? ['⌘', 'Enter'] : ['Ctrl', 'Enter']}
             >
-              {isLoading ? 'Sending...' : 'Send reset link'}
+              {isLoading
+                ? FORGOT_PASSWORD_PAGE_CONFIG.CONTENT.RESEND_SENDING
+                : 'Send reset link'}
             </Button>
             <p
               className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}

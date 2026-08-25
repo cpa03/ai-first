@@ -1053,11 +1053,15 @@ function ResultsContent() {
                 {RESULTS_PAGE_CONTENT.SUCCESS_MESSAGE}
                 <span className={RESULTS_SHARE_BUTTON_CONTAINER}>
                   <ShareButton
-                    shareTitle="Check out my project blueprint on IdeaFlow!"
-                    shareText="I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!"
-                    label="Share your blueprint"
-                    successLabel="Shared!"
-                    ariaLabel="Share your project blueprint"
+                    shareTitle={RESULTS_PAGE_CONTENT.EXPORT_SUCCESS_SHARE.TITLE}
+                    shareText={RESULTS_PAGE_CONTENT.EXPORT_SUCCESS_SHARE.TEXT}
+                    label={RESULTS_PAGE_CONTENT.EXPORT_SUCCESS_SHARE.LABEL}
+                    successLabel={
+                      RESULTS_PAGE_CONTENT.EXPORT_SUCCESS_SHARE.SUCCESS_LABEL
+                    }
+                    ariaLabel={
+                      RESULTS_PAGE_CONTENT.EXPORT_SUCCESS_SHARE.ARIA_LABEL
+                    }
                     onShare={() => {
                       trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE, {
                         share_platform: 'web_share',
