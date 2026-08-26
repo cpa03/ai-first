@@ -49,6 +49,7 @@ export default function ForgotPasswordPage() {
   const [resendSuccess, setResendSuccess] = useState(false);
   const emailInputRef = useRef<HTMLInputElement>(null);
   const cooldownTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const successHeadingRef = useRef<HTMLHeadingElement>(null);
   const { openHelp } = useKeyboardShortcuts();
 
   const isFormValid = useMemo(() => {
@@ -58,6 +59,17 @@ export default function ForgotPasswordPage() {
       VALIDATION_CONFIG.COMMON_REGEX.EMAIL.test(trimmedEmail)
     );
   }, [email]);
+
+  // Micro-UX: Focus management for success state - screen readers announce new content
+  // Follows the pattern of not-found page for consistency
+  useEffect(() => {
+    if (success) {
+      // Small delay to ensure DOM has updated with success state
+      requestAnimationFrame(() => {
+        successHeadingRef.current?.focus();
+      });
+    }
+  }, [success]);
 
   useEffect(() => {
     setIsMac(PLATFORM.isMac());
@@ -247,7 +259,9 @@ export default function ForgotPasswordPage() {
               </svg>
             </div>
             <h1
-              className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
+              ref={successHeadingRef}
+              tabIndex={-1}
+              className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1} focus:outline-none`}
             >
               Check your email
             </h1>
