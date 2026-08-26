@@ -40,10 +40,15 @@ export function useAnnouncement(
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let microtaskAborted = false;
 
     if (shouldAnnounce && !announcedRef.current) {
       if (useMicrotask) {
-        queueMicrotask(() => setAnnounced(true));
+        queueMicrotask(() => {
+          if (!microtaskAborted) {
+            setAnnounced(true);
+          }
+        });
       } else if (delay > 0) {
         timeoutId = setTimeout(() => setAnnounced(true), delay);
       } else {
@@ -51,7 +56,11 @@ export function useAnnouncement(
       }
     } else if (!shouldAnnounce && announcedRef.current) {
       if (useMicrotask) {
-        queueMicrotask(() => setAnnounced(false));
+        queueMicrotask(() => {
+          if (!microtaskAborted) {
+            setAnnounced(false);
+          }
+        });
       } else if (delay > 0) {
         timeoutId = setTimeout(() => setAnnounced(false), delay);
       } else {
@@ -60,6 +69,7 @@ export function useAnnouncement(
     }
 
     return () => {
+      microtaskAborted = true;
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
