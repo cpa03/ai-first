@@ -32,10 +32,11 @@ describe('TypingIndicator', () => {
     // Screen reader text should be present
     expect(screen.getByText('Typing...')).toBeInTheDocument();
 
-    // Must have a "status" role with "polite" live region for accessibility
+    // Must have a "status" role with "polite" live region and atomic updates for accessibility
     const container = screen.getByRole('status');
     expect(container).toBeInTheDocument();
     expect(container).toHaveAttribute('aria-live', 'polite');
+    expect(container).toHaveAttribute('aria-atomic', 'true');
 
     // Dot elements should be rendered inside an aria-hidden container
     const dotsContainer = container.querySelector('[aria-hidden="true"]');
