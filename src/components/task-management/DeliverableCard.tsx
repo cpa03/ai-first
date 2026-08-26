@@ -162,8 +162,16 @@ function DeliverableCardComponent({
   const inlineProgressFillClasses = useMemo(() => {
     if (deliverable.progress === PROGRESS_PERCENTAGE.COMPLETE)
       return PROGRESS_BAR_COLORS.COMPLETE;
-    if (deliverable.progress >= 75) return PROGRESS_BAR_COLORS.HIGH;
-    if (deliverable.progress >= 50) return PROGRESS_BAR_COLORS.MEDIUM;
+    if (
+      deliverable.progress >=
+      COMPONENT_CONFIG.DELIVERABLE_CARD.PROGRESS_THRESHOLDS.HIGH
+    )
+      return PROGRESS_BAR_COLORS.HIGH;
+    if (
+      deliverable.progress >=
+      COMPONENT_CONFIG.DELIVERABLE_CARD.PROGRESS_THRESHOLDS.MEDIUM
+    )
+      return PROGRESS_BAR_COLORS.MEDIUM;
     if (deliverable.progress > 0) return PROGRESS_BAR_COLORS.LOW;
     return PROGRESS_BAR_COLORS.EMPTY;
   }, [deliverable.progress]);

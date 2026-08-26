@@ -654,6 +654,23 @@ export const COMPONENT_CONFIG = {
       500,
       5000
     ),
+    /** Progress bar color thresholds - eliminates hardcoded 75, 50 values */
+    PROGRESS_THRESHOLDS: {
+      /** Threshold for HIGH color (default: 75) - Env: COMPONENT_DELIVERABLE_PROGRESS_HIGH_THRESHOLD (default: 75) */
+      HIGH: EnvLoader.number(
+        'COMPONENT_DELIVERABLE_PROGRESS_HIGH_THRESHOLD',
+        75,
+        50,
+        95
+      ),
+      /** Threshold for MEDIUM color (default: 50) - Env: COMPONENT_DELIVERABLE_PROGRESS_MEDIUM_THRESHOLD (default: 50) */
+      MEDIUM: EnvLoader.number(
+        'COMPONENT_DELIVERABLE_PROGRESS_MEDIUM_THRESHOLD',
+        50,
+        25,
+        75
+      ),
+    } as const,
   } as const,
 
   /**
