@@ -2,10 +2,12 @@
 
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
+import Tooltip from '@/components/Tooltip';
 import { ROUTES } from '@/lib/config';
 import {
   PAGE_LAYOUT_CLASSES,
@@ -39,6 +41,7 @@ import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 
 export default function ForgotPasswordPage() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -112,6 +115,44 @@ export default function ForgotPasswordPage() {
       }
     };
   }, [resendCooldown]);
+
+  // Micro-UX: Keyboard shortcuts for quick navigation after email sent
+  // Enter/Cmd+Enter = Go to sign in, Escape = Go back, l = Go to login
+  // Consistent with not-found page keyboard shortcut pattern
+  useEffect(() => {
+    if (!success) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isFocusedOnInput(e.target)) return;
+
+      // Enter or Cmd/Ctrl+Enter = Go to sign in (consistent with login/signup pages)
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        triggerHapticFeedback();
+        router.push(ROUTES.LOGIN);
+      }
+
+      // Escape = Go back (consistent with not-found page)
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        if (window.history.length > 1) {
+          router.back();
+        } else {
+          window.location.href = ROUTES.LOGIN;
+        }
+      }
+
+      // Micro-UX: 'l' key navigates to login (consistent with not-found page 'd' for dashboard)
+      if (e.key === 'l' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        router.push(ROUTES.LOGIN);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [success, router]);
 
   const validateEmail = useCallback((value: string): boolean => {
     return VALIDATION_CONFIG.COMMON_REGEX.EMAIL.test(value);
@@ -304,13 +345,37 @@ export default function ForgotPasswordPage() {
             <div
               className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
             >
-              <Link
-                href={ROUTES.LOGIN}
-                className={`${FORM_PATTERNS.AUTH_LINK} text-sm`}
+              <Tooltip
+                content="Go to sign in"
+                shortcut={isMac ? ['⌘', 'Enter'] : ['Ctrl', 'Enter']}
+                position="bottom"
               >
-                Back to sign in
-              </Link>
+                <Link
+                  href={ROUTES.LOGIN}
+                  className={`${FORM_PATTERNS.AUTH_LINK} text-sm`}
+                >
+                  Back to sign in
+                </Link>
+              </Tooltip>
             </div>
+            <p
+              className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
+              aria-hidden="true"
+            >
+              Press{' '}
+              <kbd
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+              >
+                {isMac ? '⌘' : 'Ctrl'}
+              </kbd>
+              {' + '}
+              <kbd
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+              >
+                Enter
+              </kbd>
+              {' to sign in'}
+            </p>
           </div>
         </div>
       </div>
