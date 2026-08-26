@@ -45,6 +45,8 @@ import {
   FADE_IN,
   COUNTER_PULSE,
   COUNTER_GLOW,
+  VERTICAL_CENTER,
+  INPUT_ACTION_BUTTON,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { UI_CONFIG } from '@/lib/config/constants';
@@ -470,7 +472,7 @@ const InputWithValidationComponent = forwardRef<
 
           {isValid && charCount > 0 && (
             <div
-              className={`absolute ${RIGHT_CLASSES.LG} ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
+              className={`absolute ${RIGHT_CLASSES.LG} ${multiline ? TOP_CLASSES.LG : VERTICAL_CENTER} pointer-events-none`}
             >
               <Tooltip
                 content={`${label} is valid`}
@@ -503,7 +505,7 @@ const InputWithValidationComponent = forwardRef<
 
           {isInvalid && (
             <div
-              className={`absolute ${RIGHT_CLASSES.LG} ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
+              className={`absolute ${RIGHT_CLASSES.LG} ${multiline ? TOP_CLASSES.LG : VERTICAL_CENTER} pointer-events-none`}
             >
               <Tooltip
                 content={INPUT_VALIDATION_LABELS.FIX_ERROR_TOOLTIP}
@@ -532,7 +534,7 @@ const InputWithValidationComponent = forwardRef<
 
           {showClearButton && (
             <div
-              className={`absolute ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} ${hasIcon || showPasswordToggle ? RIGHT_CLASSES.XXXXL : RIGHT_CLASSES.LG}`}
+              className={`absolute ${multiline ? TOP_CLASSES.LG : VERTICAL_CENTER} ${hasIcon || showPasswordToggle ? RIGHT_CLASSES.XXXXL : RIGHT_CLASSES.LG}`}
             >
               <Tooltip
                 content={`Clear ${label}`}
@@ -572,7 +574,7 @@ const InputWithValidationComponent = forwardRef<
               />
               {passwordVisible && currentValue && (
                 <div
-                  className={`absolute ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} ${hasIcon || showClearButton ? RIGHT_CLASSES.XXXXXL_XL : RIGHT_CLASSES.XXXXXL_LG}`}
+                  className={`absolute ${multiline ? TOP_CLASSES.LG : VERTICAL_CENTER} ${hasIcon || showClearButton ? RIGHT_CLASSES.XXXXXL_XL : RIGHT_CLASSES.XXXXXL_LG}`}
                 >
                   <Tooltip
                     content={INPUT_VALIDATION_LABELS.COPY_PASSWORD_TOOLTIP}
@@ -585,7 +587,7 @@ const InputWithValidationComponent = forwardRef<
                         triggerHapticFeedback();
                         copyPassword(currentValue);
                       }}
-                      className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
+                      className={INPUT_ACTION_BUTTON}
                       aria-label={INPUT_VALIDATION_LABELS.COPY_PASSWORD_ARIA}
                     >
                       <span
@@ -632,7 +634,7 @@ const InputWithValidationComponent = forwardRef<
                 </div>
               )}
               <div
-                className={`absolute ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} ${hasIcon || showClearButton ? RIGHT_CLASSES.XXXXXL_MD : RIGHT_CLASSES.XXXXL_SM}`}
+                className={`absolute ${multiline ? TOP_CLASSES.LG : VERTICAL_CENTER} ${hasIcon || showClearButton ? RIGHT_CLASSES.XXXXXL_MD : RIGHT_CLASSES.XXXXL_SM}`}
               >
                 <Tooltip
                   content={
@@ -651,7 +653,7 @@ const InputWithValidationComponent = forwardRef<
                       triggerHapticFeedback();
                       setPasswordVisible(!passwordVisible);
                     }}
-                    className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
+                    className={INPUT_ACTION_BUTTON}
                     aria-label={
                       passwordVisible
                         ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA

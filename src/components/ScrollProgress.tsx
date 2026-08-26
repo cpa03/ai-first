@@ -22,6 +22,7 @@ import {
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { VERTICAL_CENTER } from '@/lib/config/positioning';
 
 /**
  * ScrollProgress - Visual scroll position indicator
@@ -304,7 +305,7 @@ function ScrollProgressComponent() {
       />
       {showPercentage && (
         <div
-          className={`absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 ${FADE_IN} ${
+          className={`absolute right-2 ${VERTICAL_CENTER} flex items-center gap-1 ${FADE_IN} ${
             isHovered || isDragging ? 'opacity-100' : 'opacity-0'
           } ${prefersReducedMotion ? '' : `transition-opacity ${DURATION_TAILWIND[150]}`}`}
           aria-hidden="true"

@@ -21,6 +21,7 @@ import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { SECTION_INDICATOR_COLORS } from '@/lib/config/theme';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import { VERTICAL_CENTER } from '@/lib/config/positioning';
 
 interface Section {
   id: string;
@@ -169,7 +170,7 @@ function SectionIndicatorComponent({
 
   return (
     <nav
-      className={`fixed left-4 top-1/2 -translate-y-1/2 z-${Z_INDEX_LAYERS.TOAST} ${className}`}
+      className={`fixed left-4 ${VERTICAL_CENTER} z-${Z_INDEX_LAYERS.TOAST} ${className}`}
       aria-label={SECTION_INDICATOR_LABELS.NAV_ARIA_LABEL}
       aria-hidden={!isVisible}
       style={{

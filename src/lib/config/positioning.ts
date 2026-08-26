@@ -141,6 +141,13 @@ export const LEFT_CLASSES = {
 } as const;
 
 /**
+ * Vertical centering pattern
+ * Replaces repeated 'top-1/2 -translate-y-1/2' inline classes
+ * Used in: InputWithValidation, KeyboardShortcutsHelp, SectionIndicator, ScrollProgress, Tooltip
+ */
+export const VERTICAL_CENTER = 'top-1/2 -translate-y-1/2';
+
+/**
  * Combined positioning patterns for common use cases
  */
 export const COORDINATE_POSITION_PATTERNS = {

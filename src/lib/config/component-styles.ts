@@ -22,10 +22,15 @@ import {
   TEXT_COLORS,
   BORDER_COLORS,
   DURATION_TAILWIND,
+  TEXT_COLOR_CLASSES,
+  BG_COLOR_CLASSES,
+  TRANSITION_CLASSES,
 } from './theme';
 import { UI_CONFIG } from './ui';
 import { TEXT_SIZE_CLASSES } from './ui-text-sizes';
 import { GRAY_CLASSES } from './remaining-styles';
+import { FOCUS_RING_OFFSET_PATTERNS } from './focus-ring-offsets';
+import { FADE_IN } from './animation-classes';
 
 /**
  * Pulse dot indicator styles
@@ -561,6 +566,22 @@ export const TASK_MANAGEMENT_EMPTY_STYLES = {
   /** Empty state container */
   CONTAINER: 'text-center py-8 animate-fade-in',
 } as const;
+
+/**
+ * Category filter chip styles for KeyboardShortcutsHelp
+ * Used in: KeyboardShortcutsHelp.tsx category filter tabs
+ * Follows the "Flexy" principle: eliminate duplicated filter chip patterns
+ */
+export const CATEGORY_FILTER_CHIP = `px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]}`;
+export const CATEGORY_FILTER_CHIP_ACTIVE = `${BG_COLORS.BRAND} text-white`;
+export const CATEGORY_FILTER_CHIP_INACTIVE = `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`;
+
+/**
+ * Input action button styles (copy password, toggle password visibility)
+ * Used in: InputWithValidation.tsx action buttons
+ * Follows the "Flexy" principle: eliminate duplicated button patterns
+ */
+export const INPUT_ACTION_BUTTON = `flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT}`;
 
 /**
  * All component styles grouped by component

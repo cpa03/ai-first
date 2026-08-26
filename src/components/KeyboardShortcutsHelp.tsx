@@ -35,6 +35,9 @@ import {
   PRIMARY_LINK,
   BODY_OVERFLOW_CONFIG,
   ROUNDED_CLASSES,
+  CATEGORY_FILTER_CHIP,
+  CATEGORY_FILTER_CHIP_ACTIVE,
+  CATEGORY_FILTER_CHIP_INACTIVE,
 } from '@/lib/config';
 import { MT_CLASSES, MB_CLASSES } from '@/lib/config/spacing';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -53,6 +56,7 @@ import {
   PRIMARY_RING,
   COMPONENT_PRIMARY_PATTERNS,
 } from '@/lib/config/primary-colors';
+import { VERTICAL_CENTER } from '@/lib/config/positioning';
 
 const { CONTEXT_LABELS, CONTEXT_ORDER, SHORTCUT_DESCRIPTIONS } =
   KEYBOARD_SHORTCUTS_HELP_LABELS;
@@ -741,7 +745,7 @@ function KeyboardShortcutsHelpComponent({
         >
           <div className={RELATIVE}>
             <svg
-              className={`absolute left-3 top-1/2 -translate-y-1/2 ${ICON_SIZES.MD} ${TEXT_COLORS.SECONDARY}`}
+              className={`absolute left-3 ${VERTICAL_CENTER} ${ICON_SIZES.MD} ${TEXT_COLORS.SECONDARY}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -773,7 +777,7 @@ function KeyboardShortcutsHelpComponent({
                   setSelectedIndex(0);
                   searchInputRef.current?.focus();
                 }}
-                className={`absolute right-3 top-1/2 -translate-y-1/2 p-0.5 ${TEXT_COLORS.SECONDARY} ${GRAY_CLASSES.HOVER_TEXT_700} rounded-full ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.COLOR} focus:outline-none focus:ring-2 focus:ring-primary-500 ${FOCUS_RING_OFFSET_PATTERNS.COMPACT.split(' ').pop()}`}
+                className={`absolute right-3 ${VERTICAL_CENTER} p-0.5 ${TEXT_COLORS.SECONDARY} ${GRAY_CLASSES.HOVER_TEXT_700} rounded-full ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.COLOR} focus:outline-none focus:ring-2 focus:ring-primary-500 ${FOCUS_RING_OFFSET_PATTERNS.COMPACT.split(' ').pop()}`}
                 aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CLEAR_SEARCH_LABEL}
               >
                 <svg
@@ -841,10 +845,10 @@ function KeyboardShortcutsHelpComponent({
               setSelectedIndex(0);
               triggerHapticFeedback();
             }}
-            className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+            className={`${CATEGORY_FILTER_CHIP} ${
               selectedContext === 'all'
-                ? `${BG_COLORS.BRAND} text-white`
-                : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
+                ? CATEGORY_FILTER_CHIP_ACTIVE
+                : CATEGORY_FILTER_CHIP_INACTIVE
             } ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
           >
             All
@@ -866,10 +870,10 @@ function KeyboardShortcutsHelpComponent({
                   setSelectedIndex(0);
                   triggerHapticFeedback();
                 }}
-                className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+                className={`${CATEGORY_FILTER_CHIP} ${
                   selectedContext === context
-                    ? `${BG_COLORS.BRAND} text-white`
-                    : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
+                    ? CATEGORY_FILTER_CHIP_ACTIVE
+                    : CATEGORY_FILTER_CHIP_INACTIVE
                 } ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
               >
                 {contextLabels[context]}{' '}
