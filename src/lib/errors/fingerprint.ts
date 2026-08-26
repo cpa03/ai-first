@@ -16,12 +16,24 @@ export function generateErrorFingerprint(
   message: string,
   stackFirstLine?: string
 ): string {
-  const normalizedMessage = message
-    .replace(UUID_PATTERN, 'UUID')
-    .replace(IP_ADDRESS_PATTERN, 'IP')
-    .replace(LONG_NUMBER_PATTERN, 'N')
-    .toLowerCase()
-    .trim();
+  // PERFORMANCE: Fast path for normalization.
+  // Bypasses 3 sequential regex replacements when message does not contain
+  // hyphens (UUIDs), dots (IP addresses), or digit sequences (numbers >= 4 digits).
+  let normalizedMessage = message;
+
+  if (normalizedMessage) {
+    if (normalizedMessage.includes('-')) {
+      normalizedMessage = normalizedMessage.replace(UUID_PATTERN, 'UUID');
+    }
+    if (normalizedMessage.includes('.')) {
+      normalizedMessage = normalizedMessage.replace(IP_ADDRESS_PATTERN, 'IP');
+    }
+    if (LONG_NUMBER_PATTERN.test(normalizedMessage)) {
+      normalizedMessage = normalizedMessage.replace(LONG_NUMBER_PATTERN, 'N');
+    }
+  }
+
+  normalizedMessage = normalizedMessage.toLowerCase().trim();
 
   const fingerprintInput = stackFirstLine
     ? `${code}:${normalizedMessage}:${stackFirstLine}`

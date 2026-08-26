@@ -904,6 +904,47 @@ describe('generateErrorFingerprint', () => {
 
     expect(fp).toMatch(/^fp_[a-f0-9]{8}$/);
   });
+
+  it('benchmarks generateErrorFingerprint performance with fast-path optimization', () => {
+    const cleanMsg = 'Invalid authorization token supplied';
+    const complexMsg =
+      'Request 12345678-1234-1234-1234-123456789abc failed at IP 192.168.1.1 after 5000ms';
+
+    const iterations = 50000;
+
+    // Verify correctness/equality of output
+    const cleanFp = generateErrorFingerprint(
+      ErrorCode.AUTHENTICATION_ERROR,
+      cleanMsg
+    );
+    expect(cleanFp).toMatch(/^fp_[a-f0-9]{8}$/);
+
+    const complexFp = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      complexMsg
+    );
+    expect(complexFp).toMatch(/^fp_[a-f0-9]{8}$/);
+
+    const startClean = performance.now();
+    for (let i = 0; i < iterations; i++) {
+      generateErrorFingerprint(ErrorCode.AUTHENTICATION_ERROR, cleanMsg);
+    }
+    const cleanDuration = performance.now() - startClean;
+
+    const startComplex = performance.now();
+    for (let i = 0; i < iterations; i++) {
+      generateErrorFingerprint(ErrorCode.INTERNAL_ERROR, complexMsg);
+    }
+    const complexDuration = performance.now() - startComplex;
+
+    console.log(
+      `[Benchmark] generateErrorFingerprint (${iterations} runs):\n` +
+        `  Clean message fast path: ${cleanDuration.toFixed(2)}ms (${(cleanDuration / iterations).toFixed(5)}ms/op)\n` +
+        `  Complex message path: ${complexDuration.toFixed(2)}ms (${(complexDuration / iterations).toFixed(5)}ms/op)`
+    );
+
+    expect(cleanDuration).toBeLessThan(1000);
+  });
 });
 
 describe('AppError fingerprint', () => {
