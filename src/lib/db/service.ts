@@ -24,6 +24,24 @@ import type {
   ConnectionHealth,
 } from './types';
 
+/**
+ * Internal Supabase client structure for cleanup operations
+ * Used to access auth state change listeners for proper cleanup
+ */
+interface SupabaseClientInternal {
+  auth?: {
+    onAuthStateChange?: (...args: unknown[]) => unknown;
+  };
+}
+
+/**
+ * Internal DatabaseService structure for testing purposes
+ * Used to reset singleton instance in tests
+ */
+interface DatabaseServiceInternal {
+  instance?: DatabaseService;
+}
+
 const logger = createLogger('DatabaseService');
 const { DATABASE } = AGENT_CONFIG;
 
@@ -329,8 +347,7 @@ export class DatabaseService implements ClientProvider {
     if (this._client) {
       try {
         // Remove auth state change listeners to prevent memory leaks
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client internal access for cleanup
-        const client = this._client as any;
+        const client = this._client as unknown as SupabaseClientInternal;
         if (
           client.auth &&
           typeof client.auth.onAuthStateChange === 'function'
@@ -348,8 +365,7 @@ export class DatabaseService implements ClientProvider {
     // Clean up admin connections
     if (this._admin) {
       try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase admin internal access for cleanup
-        const admin = this._admin as any;
+        const admin = this._admin as unknown as SupabaseClientInternal;
         if (admin.auth && typeof admin.auth.onAuthStateChange === 'function') {
           logger.debug('Cleaning up admin auth listeners');
         }
@@ -467,8 +483,9 @@ export class DatabaseService implements ClientProvider {
       DatabaseService.instance.dispose();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Resetting private static property for testing
-    (DatabaseService as any).instance = undefined;
+    // Reset the singleton instance for testing
+    (DatabaseService as unknown as DatabaseServiceInternal).instance =
+      undefined;
   }
 
   async checkConnection(): Promise<ConnectionHealth> {

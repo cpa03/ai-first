@@ -381,4 +381,43 @@ declare global {
   }
 }
 
+/**
+ * Cache API interface for Cloudflare Workers
+ * @see https://developers.cloudflare.com/workers/runtime-apis/cache/
+ */
+declare global {
+  interface CacheStorage {
+    open(cacheName: string): Promise<Cache>;
+    delete(cacheName: string): Promise<boolean>;
+    has(cacheName: string): Promise<boolean>;
+    keys(): Promise<string[]>;
+    match(
+      request: RequestInfo,
+      options?: CacheQueryOptions
+    ): Promise<Response | undefined>;
+    readonly default: Cache;
+  }
+
+  interface Cache {
+    match(
+      request: RequestInfo,
+      options?: CacheQueryOptions
+    ): Promise<Response | undefined>;
+    put(request: RequestInfo, response: Response): Promise<void>;
+    add(request: RequestInfo): Promise<void>;
+    addAll(requests: RequestInfo[]): Promise<void[]>;
+    delete(request: RequestInfo, options?: CacheQueryOptions): Promise<boolean>;
+    keys(
+      request?: RequestInfo,
+      options?: CacheQueryOptions
+    ): Promise<Request[]>;
+  }
+
+  interface CacheQueryOptions {
+    ignoreMethod?: boolean;
+  }
+
+  const caches: CacheStorage;
+}
+
 export {};

@@ -249,7 +249,6 @@ export function isCloudflareWorker(): boolean {
   ) {
     result = true;
   } else if (typeof globalThis !== 'undefined') {
-    // @ts-expect-error - Cloudflare Workers-specific global
     if (typeof globalThis.caches !== 'undefined' && globalThis.caches.default) {
       result = true;
     }
