@@ -741,6 +741,7 @@ function KeyboardShortcutsHelpComponent({
         >
           <div className={RELATIVE}>
             <svg
+              aria-hidden="true"
               className={`absolute left-3 top-1/2 -translate-y-1/2 ${ICON_SIZES.MD} ${TEXT_COLORS.SECONDARY}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
@@ -777,6 +778,7 @@ function KeyboardShortcutsHelpComponent({
                 aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CLEAR_SEARCH_LABEL}
               >
                 <svg
+                  aria-hidden="true"
                   className={ICON_SIZES.MD}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
@@ -892,6 +894,7 @@ function KeyboardShortcutsHelpComponent({
           <div className={FLEX_PATTERNS.GAP_LG}>
             <div className={KEYBOARD_SHORTCUT_CATEGORY_ICON}>
               <svg
+                aria-hidden="true"
                 className={`${ICON_SIZES.LG} ${COMPONENT_PRIMARY_PATTERNS.CATEGORY_ICON}`}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}
@@ -930,6 +933,7 @@ function KeyboardShortcutsHelpComponent({
             aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CLOSE_ARIA_LABEL}
           >
             <svg
+              aria-hidden="true"
               className={ICON_SIZES.LG}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}

@@ -629,6 +629,7 @@ function ClarificationFlow({
         >
           <div className={FLEX_PATTERNS.GAP_MD}>
             <svg
+              aria-hidden="true"
               className={`${ICON_SIZES.MD} ${TEXT_COLOR_CLASSES.MUTED}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
@@ -650,6 +651,7 @@ function ClarificationFlow({
             </kbd>
           </div>
           <svg
+            aria-hidden="true"
             className={`${ICON_SIZES.MD} ${TEXT_COLOR_CLASSES.PLACEHOLDER} ${TRANSITION_CLASSES.TRANSFORM} transform group-open:rotate-180`}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}

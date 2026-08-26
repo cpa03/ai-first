@@ -301,6 +301,7 @@ function PasswordRequirementsChecklistComponent({
             >
               {req.met ? (
                 <svg
+                  aria-hidden="true"
                   className={`${ICON_SIZES.SM} ${COMPONENT_STATE_COLORS.PASSWORD.MET_CHECKMARK} ${prefersReducedMotion ? '' : `animate-in zoom-in ${DURATION_TAILWIND[200]}`}`}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
@@ -315,6 +316,7 @@ function PasswordRequirementsChecklistComponent({
                 </svg>
               ) : (
                 <svg
+                  aria-hidden="true"
                   className={`${ICON_SIZES.SM} ${COMPONENT_STATE_COLORS.PASSWORD.UNMET_ICON}`}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}

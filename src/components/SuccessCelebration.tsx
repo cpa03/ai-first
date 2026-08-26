@@ -160,6 +160,7 @@ function SuccessCelebrationComponent({
           }`}
         >
           <svg
+            aria-hidden="true"
             className={`${ICON_SIZES.XXXXL} ${TEXT_COLORS.SUCCESS_DARK} ${
               shouldAnimate ? SUCCESS_CHECK : ''
             }`}

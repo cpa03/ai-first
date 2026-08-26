@@ -284,6 +284,7 @@ const ProgressStepperComponent = function ProgressStepper({
                   >
                     {step.completed ? (
                       <svg
+                        aria-hidden="true"
                         className={`${ICON_SIZES.XL} ${!prefersReducedMotion && animatingStep === index ? STEP_CHECK_POP : ''}`}
                         fill="none"
                         viewBox={SVG_VIEWBOX.STANDARD}

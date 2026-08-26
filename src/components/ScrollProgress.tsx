@@ -310,6 +310,7 @@ function ScrollProgressComponent() {
           aria-hidden="true"
         >
           <svg
+            aria-hidden="true"
             className={`${ICON_SIZES.SM} text-white ${TEXT_FORMAT_PATTERNS.DROP_SHADOW_SM}`}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}

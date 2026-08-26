@@ -371,6 +371,7 @@ export default function UserOnboarding() {
             }`}
           >
             <svg
+              aria-hidden="true"
               className={`${ICON_SIZES.XXXL} ${TEXT_COLORS.SUCCESS_DARK} ${prefersReducedMotion ? '' : SUCCESS_CHECK}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}

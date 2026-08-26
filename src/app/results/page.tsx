@@ -1032,6 +1032,7 @@ function ResultsContent() {
             >
               <span>View all shortcuts</span>
               <svg
+                aria-hidden="true"
                 className={SVG_SIZES.SM}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}

@@ -192,6 +192,7 @@ function TaskItemComponent({
           <div className={checkboxClasses} aria-hidden="true">
             {isCompleted && (
               <svg
+                aria-hidden="true"
                 key={`check-${task.id}`}
                 className={TASK_ITEM_STYLES.CHECKMARK.CONTAINER}
                 fill="none"
@@ -209,6 +210,7 @@ function TaskItemComponent({
             )}
             {isUpdating && (
               <svg
+                aria-hidden="true"
                 className={TASK_ITEM_STYLES.LOADING_SPINNER.CONTAINER}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}

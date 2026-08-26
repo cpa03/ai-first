@@ -193,6 +193,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
 
           <div className={RELATIVE}>
             <svg
+              aria-hidden="true"
               className={`${COMPONENT_CONFIG.STEP_CELEBRATION.CONTAINER_SIZE} -rotate-90`}
               viewBox={`0 0 ${COMPONENT_CONFIG.STEP_CELEBRATION.VIEWBOX_SIZE} ${COMPONENT_CONFIG.STEP_CELEBRATION.VIEWBOX_SIZE}`}
             >
@@ -241,6 +242,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
                 }}
               >
                 <svg
+                  aria-hidden="true"
                   className={STEP_CELEBRATION_CHECKMARK_ICON}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}

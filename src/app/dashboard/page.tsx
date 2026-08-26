@@ -1004,6 +1004,7 @@ export default function DashboardPage() {
                     className={`${DASHBOARD_PATTERNS.ARROW_LINE} ${GRADIENT_CONFIG.ARROW.STEP_1_TO_2}`}
                   />
                   <svg
+                    aria-hidden="true"
                     className={`${DASHBOARD_PATTERNS.ARROW_ICON} ${TEXT_COLORS.BRAND_LIGHT}`}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
@@ -1057,6 +1058,7 @@ export default function DashboardPage() {
                     className={`${DASHBOARD_PATTERNS.ARROW_LINE} ${GRADIENT_CONFIG.ARROW.STEP_2_TO_3}`}
                   />
                   <svg
+                    aria-hidden="true"
                     className={`${DASHBOARD_PATTERNS.ARROW_ICON} ${TEXT_COLORS.SUCCESS_LIGHT}`}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
@@ -1344,6 +1346,7 @@ export default function DashboardPage() {
           >
             <span>{DASHBOARD_PAGE_CONTENT.VIEW_ALL_SHORTCUTS}</span>
             <svg
+              aria-hidden="true"
               className={ICON_SIZES.SM}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}

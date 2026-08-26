@@ -114,6 +114,7 @@ function WhyChooseSectionComponent() {
               aria-hidden="true"
             >
               <svg
+                aria-hidden="true"
                 className={`${ARTICLE_STYLES.ICON_SVG} ${article.ICON_COLOR}`}
                 fill="currentColor"
                 viewBox={SVG_VIEWBOX.SMALL}

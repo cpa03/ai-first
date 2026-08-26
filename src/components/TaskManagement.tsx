@@ -293,6 +293,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
             <div className={PRIMARY_PULSE_INNER} />
             <div className={ABSOLUTE_CENTER_OVERLAY}>
               <svg
+                aria-hidden="true"
                 className={`${ICON_SIZES.XXXL} ${COMPONENT_PRIMARY_PATTERNS.TASK_ICON}`}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}
@@ -395,6 +396,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
               <div className={PRIMARY_PULSE_INNER} />
               <div className={ABSOLUTE_CENTER_OVERLAY}>
                 <svg
+                  aria-hidden="true"
                   className={`${ICON_SIZES.XXL} ${COMPONENT_PRIMARY_PATTERNS.TASK_ICON_LARGE}`}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}

@@ -233,6 +233,7 @@ export default function ForgotPasswordPage() {
               className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex ${ICON_SIZES.XXXXL} items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.NONE}`}
             >
               <svg
+                aria-hidden="true"
                 className={`${ICON_SIZES.XL} ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
                 fill="none"
                 viewBox="0 0 24 24"

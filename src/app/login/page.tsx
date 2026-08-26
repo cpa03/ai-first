@@ -396,6 +396,7 @@ export default function LoginPage() {
                   >
                     {rememberMe && (
                       <svg
+                        aria-hidden="true"
                         className={`${ICON_SIZES.MD_SM} text-white ${DRAW_CHECK}`}
                         fill="none"
                         viewBox={SVG_VIEWBOX.STANDARD}
@@ -495,6 +496,7 @@ export default function LoginPage() {
           >
             {oauthLoading !== 'google' && (
               <svg
+                aria-hidden="true"
                 className={`${ICON_SIZES.LG} mr-2`}
                 viewBox={SVG_VIEWBOX.STANDARD}
               >
@@ -531,6 +533,7 @@ export default function LoginPage() {
           >
             {oauthLoading !== 'github' && (
               <svg
+                aria-hidden="true"
                 className={`${ICON_SIZES.LG} mr-2`}
                 fill="currentColor"
                 viewBox={SVG_VIEWBOX.SMALL}

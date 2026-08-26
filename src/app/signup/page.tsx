@@ -611,6 +611,7 @@ export default function SignupPage() {
             className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${SUCCESS_POP}`}
           >
             <svg
+              aria-hidden="true"
               className={`h-6 w-6 ${TEXT_COLORS.SUCCESS_DARK}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
@@ -839,6 +840,7 @@ export default function SignupPage() {
           >
             {oauthLoading !== 'google' && (
               <svg
+                aria-hidden="true"
                 className={`${ICON_SIZES.LG} mr-2`}
                 viewBox={SVG_VIEWBOX.STANDARD}
               >
@@ -874,6 +876,7 @@ export default function SignupPage() {
           >
             {oauthLoading !== 'github' && (
               <svg
+                aria-hidden="true"
                 className={`${ICON_SIZES.LG} mr-2`}
                 fill="currentColor"
                 viewBox={SVG_VIEWBOX.SMALL}

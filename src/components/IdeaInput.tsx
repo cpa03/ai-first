@@ -387,6 +387,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 className={`inline-flex items-center justify-center ${ICON_SIZES.LG} rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${SUCCESS_POP}`}
               >
                 <svg
+                  aria-hidden="true"
                   className={ICON_SIZES.SM}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
