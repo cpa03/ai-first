@@ -458,6 +458,25 @@ function ResultsContent() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [idea, loading, router]);
 
+  // Micro-UX: 'd' key navigates back to dashboard for quick idea management
+  // Provides a fast way to return to the dashboard after reviewing results
+  // Consistent with the 'n' shortcut pattern for single-key navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isFocusedOnInput(e.target)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      if (e.key === 'd' && idea && !loading) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        router.push(ROUTES.DASHBOARD);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [idea, loading, router]);
+
   // Micro-UX: Section jump shortcuts for quick navigation on long results pages
   // b = Blueprint, t = Tasks, e = Exports
   // Matches the j/k navigation pattern from dashboard for consistency
@@ -1190,6 +1209,12 @@ function ResultsContent() {
               <kbd className={KBD_HINT_STYLE}>e</kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 Exports
+              </span>
+            </span>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+              <kbd className={KBD_HINT_STYLE}>d</kbd>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                Dashboard
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
