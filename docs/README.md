@@ -87,7 +87,7 @@ Complete index of all IdeaFlow documentation.
 - [Database Migrations](./database-migrations.md) - Database migration guide and conventions
 - [Events System](./events.md) - Event-driven architecture documentation
 - [CI Parallel Tests](./ci-parallel-tests-implementation.md) - Parallel test execution in CI
-- [Skipped Tests Inventory](./skipped-tests-inventory.md) - Complete inventory of skipped tests with investigation status
+- [Skipped Tests Investigation](./skipped-tests-investigation.md) - Complete investigation and inventory of skipped tests
 
 ## Specialist Guides
 
@@ -112,7 +112,7 @@ Complete index of all IdeaFlow documentation.
 - [Security Validation](./security/SECURITY_VALIDATION.md) - Credential exposure prevention and validation
 - [Security Audit - 2026-08-11](./security/SECURITY-AUDIT-20260811.md) - Security audit report
 - [NPM Vulnerabilities](./security/npm-vulnerabilities.md) - NPM dependency vulnerability tracking
-- [Security Verification #1739](./security-verification-1739.md) - Issue #1739 security verification
+- [Security Audit #1739](./audit/SECURITY-AUDIT-1739.md) - Issue #1739 security audit and verification
 - [Quality Assurance](./quality-assurance.md) - Testing and quality standards
 - [Performance Engineer](./performance-engineer.md) - Performance optimization
 - [Performance Optimization](./performance-optimization.md) - Detailed optimization guide
@@ -151,7 +151,7 @@ Complete index of all IdeaFlow documentation.
 ## Task Management
 
 - [Task Guide](./task.md) - Task creation and management
-- [Task Security](./task-security.md) - Security considerations for tasks
+- [Security Audit - 2026-08-11](./security/SECURITY-AUDIT-20260811.md) - Security audit report
 - [Bug Guide](./bug.md) - Bug reporting guidelines
 - [Feature Guide](./feature.md) - Feature request guidelines
 
@@ -272,19 +272,13 @@ Older audit reports (2026-07-08 through 2026-08-11) are archived in [audit/archi
 
 ### Active Reports
 
-- [Repository Maintenance Report - 2026-08-19](./maintenance/2026-08-19-repository-maintenance-report.md) - Repository maintenance report (latest)
-- [Repository Maintenance Report - 2026-08-18 (Loop)](./maintenance/2026-08-18-repository-maintenance-report-loop.md) - Repository maintenance loop report
-- [Repository Maintenance Report - 2026-08-18](./maintenance/2026-08-18-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-17](./maintenance/2026-08-17-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-17 (Loop)](./maintenance/2026-08-17-repository-maintenance-report-loop.md) - Repository maintenance loop report
-- [Repository Maintenance Report - 2026-08-16 (2100)](./maintenance/2026-08-16-repository-maintenance-report-2100.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-16](./maintenance/2026-08-16-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Health Check - 2026-08-15](./maintenance/2026-08-15-repository-health-check.md) - Repository health check report
-- [Repository Maintenance Report - 2026-08-15](./maintenance/2026-08-15-repository-maintenance.md) - Repository maintenance report
+- [Repository Maintenance Report - 2026-08-23](./maintenance/2026-08-23-repository-maintenance-report.md) - Repository maintenance report (latest)
+- [RepoKeeper Summary - 2026-08-23](./maintenance/2026-08-23-repokeeper-summary.md) - RepoKeeper summary
+- [Repository Maintenance Report - 2026-08-19](./maintenance/2026-08-19-repository-maintenance-report.md) - Repository maintenance report
 
 ### Archived Reports
 
-Older maintenance reports (2026-07-07 through 2026-08-14) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/).
+Older maintenance reports (2026-07-07 through 2026-08-18) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/).
 
 ---
 
