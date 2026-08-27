@@ -244,7 +244,7 @@ function TaskItemComponent({
                 {/* Micro-UX: Keyboard shortcut hint for task toggling */}
                 {/* Follows the pattern from ProgressStepper and TaskManagementHeader for discoverability */}
                 <span
-                  className={`hidden sm:inline-flex items-center ${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_MINI} ${TRANSITION_CLASSES.DEFAULT} opacity-0 group-hover:opacity-100 ${GRAY_CLASSES.TEXT_500}`}
+                  className={`hidden sm:inline-flex items-center ${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_MINI} ${TRANSITION_CLASSES.DEFAULT} opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 ${GRAY_CLASSES.TEXT_500}`}
                   aria-hidden="true"
                 >
                   Space

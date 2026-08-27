@@ -85,9 +85,9 @@ export const RISK_LEVEL_CONFIG: Record<
  */
 export const TASK_ITEM_STYLES = {
   CONTAINER:
-    'group w-full text-left flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50/50 hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 ease-out cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
+    'group w-full text-left flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50/50 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-200 ease-out cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
   CONTAINER_COMPLETED:
-    'group w-full text-left flex items-start gap-3 p-3 bg-green-50/50 rounded-lg border border-green-200 hover:border-green-300 hover:bg-green-50/80 hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 ease-out cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
+    'group w-full text-left flex items-start gap-3 p-3 bg-green-50/50 rounded-lg border border-green-200 hover:border-green-300 hover:bg-green-50/80 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-200 ease-out cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
   RISK_INDICATOR: 'border-l-4',
   CHECKBOX: {
     BASE: 'mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-150',
