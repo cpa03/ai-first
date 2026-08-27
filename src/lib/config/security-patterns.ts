@@ -179,13 +179,13 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
   command_injection: [
     {
       pattern:
-        /(?:[;&|`]\s*|\b)(rm|del|format|fdisk|shutdown|reboot|halt|init|env|printenv|powershell|pwsh|cmd\.exe)\b/i,
+        /(?:[;&|\r\n`]\s*|\b)(rm|del|format|fdisk|shutdown|reboot|halt|init|env|printenv|powershell|pwsh|cmd\.exe)\b/i,
       severity: 3,
       description: 'Destructive or sensitive command injection',
     },
     {
       pattern:
-        /[;&|`]\s*(whoami|id|hostname|uname|tasklist|netstat|ipconfig|ifconfig|arp|route)\b/i,
+        /[;&|\r\n`]\s*(whoami|id|hostname|uname|tasklist|netstat|ipconfig|ifconfig|arp|route)\b/i,
       severity: 3,
       description: 'Reconnaissance command injection',
     },
@@ -212,12 +212,12 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
       description: 'Shell bypass or reverse shell execution',
     },
     {
-      pattern: /[;&|`]\s*(cat|ls|dir|type|more|less|head|tail)\s/i,
+      pattern: /[;&|\r\n`]\s*(cat|ls|dir|type|more|less|head|tail)\s/i,
       severity: 2,
       description: 'File reading command',
     },
     {
-      pattern: /[;&|`]\s*(wget|curl|fetch|lynx|links)\s/i,
+      pattern: /[;&|\r\n`]\s*(wget|curl|fetch|lynx|links)\s/i,
       severity: 2,
       description: 'Download command',
     },
