@@ -21,6 +21,7 @@ import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { SECTION_INDICATOR_COLORS } from '@/lib/config/theme';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 
 interface Section {
   id: string;
@@ -236,7 +237,7 @@ function SectionIndicatorComponent({
         })}
       </div>
       <div
-        className={`hidden sm:flex items-center justify-center gap-1.5 mt-2 text-xs ${TEXT_COLORS.MUTED}`}
+        className={`hidden sm:flex items-center justify-center gap-1.5 mt-2 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.MUTED}`}
         aria-hidden="true"
       >
         <span>↑</span>

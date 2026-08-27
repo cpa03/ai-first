@@ -29,6 +29,7 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { SR_ONLY, HIDDEN_SM } from '@/lib/config/remaining-hardcoded-patterns';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 
 interface Step {
   id: string;
@@ -270,7 +271,7 @@ const ProgressStepperComponent = function ProgressStepper({
                     className={`
                       flex items-center justify-center
                       ${ICON_SIZES.XXXL} rounded-full border-2
-                      font-medium text-sm ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE}
+                      font-medium ${TYPOGRAPHY_CLASSES.SMALL} ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE}
                       ${TRANSITION_CLASSES.SLOW}
                       ${isClickable ? `group-hover:scale-110 group-focus-visible:scale-110 group-hover:shadow-md ${COMPONENT_PRIMARY_PATTERNS.PROGRESS_HOVER}` : ''}
                       ${

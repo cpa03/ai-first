@@ -295,7 +295,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             <h2
               id={BLUEPRINT_ELEMENT_IDS.BLUEPRINT_HEADING}
               ref={headingRef}
-              className={`text-xl sm:text-2xl ${TYPOGRAPHY_CLASSES.XL_SEMIBOLD} ${TEXT_COLOR_CLASSES.HEADING}`}
+              className={`${TYPOGRAPHY_CLASSES.COMPONENT_HEADING} sm:${TYPOGRAPHY_CLASSES.SECTION_HEADING} ${TYPOGRAPHY_CLASSES.XL_SEMIBOLD} ${TEXT_COLOR_CLASSES.HEADING}`}
               tabIndex={-1}
               aria-live="polite"
             >
@@ -370,7 +370,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             {/* Follows the pattern from TaskManagementHeader and FooterNav */}
             {/* Only visible on desktop (sm+) to avoid cluttering mobile header */}
             <div
-              className={`hidden sm:flex items-center gap-3 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
+              className={`hidden sm:flex items-center gap-3 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED}`}
               aria-hidden="true"
             >
               <span className={KEYBOARD_HINT_INLINE}>
@@ -417,7 +417,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           <div className={PROSE_PATTERNS.RESPONSIVE}>
             <div className={RELATIVE_GROUP}>
               <pre
-                className={`${TEXT_FORMAT_PATTERNS.WHITESPACE_PRE_WRAP} ${TEXT_FORMAT_PATTERNS.FONT_MONO} text-xs sm:text-sm ${TEXT_COLOR_CLASSES.INPUT} ${BG_COLOR_CLASSES.PAGE} p-4 sm:p-6 rounded-lg ${OVERFLOW_PATTERNS.X_AUTO}`}
+                className={`${TEXT_FORMAT_PATTERNS.WHITESPACE_PRE_WRAP} ${TEXT_FORMAT_PATTERNS.FONT_MONO} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} sm:${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.INPUT} ${BG_COLOR_CLASSES.PAGE} p-4 sm:p-6 rounded-lg ${OVERFLOW_PATTERNS.X_AUTO}`}
                 aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_CONTENT}
               >
                 {blueprint}
@@ -433,7 +433,9 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           className={`border-t ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_FOOTER} ${PRINT_PATTERNS.NO_PRINT}`}
         >
           <div className={COMMON_FLEX_BETWEEN_RESPONSIVE}>
-            <p className={`text-xs sm:text-sm ${TEXT_COLOR_CLASSES.BODY}`}>
+            <p
+              className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} sm:${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY}`}
+            >
               {MESSAGES.BLUEPRINT.FOOTER_TEXT}
             </p>
             <div
@@ -532,7 +534,7 @@ function CopyCodeButton({ text }: { text: string }) {
           className={`
             absolute top-3 right-3 
             flex items-center gap-1.5 px-2.5 py-1.5 
-            text-xs font-medium rounded-md
+            ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-medium rounded-md
             ${TRANSITION_CLASSES.DEFAULT_EASE_OUT}
             ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT}
             ${prefersReducedMotion ? '' : 'motion-reduce:transition-none'}

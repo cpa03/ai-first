@@ -128,7 +128,7 @@ function FeatureGridComponent() {
               aria-hidden="true"
             >
               <span
-                className={`badge-animate ${TEXT_COLORS.BRAND} text-2xl ${TYPOGRAPHY_CLASSES.BOLD} ${
+                className={`badge-animate ${TEXT_COLORS.BRAND} ${TYPOGRAPHY_CLASSES.SECTION_HEADING} ${TYPOGRAPHY_CLASSES.BOLD} ${
                   isVisible ? BADGE_ENTRANCE_GLOW : 'opacity-0'
                 }`}
                 style={{
@@ -192,7 +192,7 @@ function FeatureGridComponent() {
         ))}
       </ul>
       <div
-        className={`hidden sm:flex items-center justify-center gap-2 mt-6 text-xs ${TEXT_COLORS.MUTED}`}
+        className={`hidden sm:flex items-center justify-center gap-2 mt-6 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.MUTED}`}
         role="group"
         aria-label={FEATURE_GRID_LABELS.KEYBOARD_NAV_HINT}
       >

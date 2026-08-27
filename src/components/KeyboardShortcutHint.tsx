@@ -141,16 +141,18 @@ function KeyboardShortcutHintComponent({
             >
               Keyboard shortcuts available
             </p>
-            <p className={`text-xs ${TEXT_COLORS.SECONDARY} mt-1`}>
+            <p
+              className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.SECONDARY} mt-1`}
+            >
               Press{' '}
               <kbd
-                className={`px-1.5 py-0.5 ${BG_COLORS.LIGHT} rounded text-xs font-mono ${TEXT_COLORS.PRIMARY}`}
+                className={`px-1.5 py-0.5 ${BG_COLORS.LIGHT} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono ${TEXT_COLORS.PRIMARY}`}
               >
                 ?
               </kbd>{' '}
               to see all shortcuts, or{' '}
               <kbd
-                className={`px-1.5 py-0.5 ${BG_COLORS.LIGHT} rounded text-xs font-mono ${TEXT_COLORS.PRIMARY}`}
+                className={`px-1.5 py-0.5 ${BG_COLORS.LIGHT} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono ${TEXT_COLORS.PRIMARY}`}
               >
                 {modifierKey} Enter
               </kbd>{' '}

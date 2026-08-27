@@ -20,6 +20,7 @@ import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 import {
   SPINNER_PATTERNS,
   CARD_PATTERNS,
@@ -547,7 +548,7 @@ function ResultsContent() {
               {RESULTS_PAGE_CONTENT.BUTTONS.GO_BACK}
             </Button>
             <span
-              className={`hidden sm:inline-flex items-center gap-1.5 text-xs ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
+              className={`hidden sm:inline-flex items-center gap-1.5 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
               aria-hidden="true"
             >
               <kbd
@@ -575,7 +576,7 @@ function ResultsContent() {
               {RESULTS_PAGE_CONTENT.BUTTONS.GO_HOME}
             </Button>
             <span
-              className={`hidden sm:inline-flex items-center gap-1.5 text-xs ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
+              className={`hidden sm:inline-flex items-center gap-1.5 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
               aria-hidden="true"
             >
               <kbd
@@ -628,7 +629,7 @@ function ResultsContent() {
         {/* Export Options */}
         <div id="exports-section" className={CARD_PATTERNS.WITH_MARGIN}>
           <h2
-            className={`text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.XXL}`}
+            className={`${TYPOGRAPHY_CLASSES.SECTION_HEADING} font-semibold ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.XXL}`}
           >
             {RESULTS_PAGE_CONTENT.EXPORT_HEADING}
           </h2>
@@ -1096,7 +1097,7 @@ function ResultsContent() {
         {/* Micro-UX: Staggered entrance animation matches Export section for visual consistency */}
         <div className={CARD_PATTERNS.WITH_MARGIN}>
           <h2
-            className={`text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.XXL}`}
+            className={`${TYPOGRAPHY_CLASSES.SECTION_HEADING} font-semibold ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.XXL}`}
           >
             {RESULTS_PAGE_CONTENT.SHARE_HEADING}
           </h2>
@@ -1137,7 +1138,7 @@ function ResultsContent() {
           <div className={PY_CLASSES.XL}>
             <h2
               id="start-new-idea-cta"
-              className={`text-xl sm:text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.MD}`}
+              className={`${TYPOGRAPHY_CLASSES.COMPONENT_HEADING} sm:${TYPOGRAPHY_CLASSES.SECTION_HEADING} font-semibold ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.MD}`}
             >
               {RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.TITLE}
             </h2>

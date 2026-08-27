@@ -435,7 +435,7 @@ const ShortcutRow = memo(function ShortcutRow({
       }`}
     >
       <span
-        className={`text-sm ${TRANSITION_CLASSES.COLOR} ${isSelected ? `${PRIMARY_TEXT._700} font-medium` : `${TEXT_COLORS.SECONDARY} group-hover:${TEXT_COLORS.PRIMARY}`}`}
+        className={`${TYPOGRAPHY_CLASSES.SMALL} ${TRANSITION_CLASSES.COLOR} ${isSelected ? `${PRIMARY_TEXT._700} font-medium` : `${TEXT_COLORS.SECONDARY} group-hover:${TEXT_COLORS.PRIMARY}`}`}
       >
         <HighlightedText text={shortcut.description} query={searchQuery} />
       </span>
@@ -451,7 +451,11 @@ const ShortcutRow = memo(function ShortcutRow({
           <React.Fragment key={index}>
             <KeyboardKey>{key}</KeyboardKey>
             {index < displayKeys.length - 1 && (
-              <span className={`${TEXT_COLORS.SECONDARY} text-xs`}>+</span>
+              <span
+                className={`${TEXT_COLORS.SECONDARY} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL}`}
+              >
+                +
+              </span>
             )}
           </React.Fragment>
         ))}
@@ -762,7 +766,7 @@ function KeyboardShortcutsHelpComponent({
                 setSearchQuery(e.target.value);
                 setSelectedIndex(0);
               }}
-              className={`w-full pl-10 pr-10 py-2 text-sm border ${BORDER_COLORS.DEFAULT} rounded-lg ${FOCUS_RING_OFFSET_PATTERNS.INPUT} placeholder:${TEXT_COLORS.MUTED}`}
+              className={`w-full pl-10 pr-10 py-2 ${TYPOGRAPHY_CLASSES.SMALL} border ${BORDER_COLORS.DEFAULT} rounded-lg ${FOCUS_RING_OFFSET_PATTERNS.INPUT} placeholder:${TEXT_COLORS.MUTED}`}
               aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.SEARCH_ARIA_LABEL}
             />
             {searchQuery && (
@@ -794,7 +798,7 @@ function KeyboardShortcutsHelpComponent({
           </div>
           <div className={`${MT_CLASSES.MD} ${FLEX_PATTERNS.BETWEEN}`}>
             <label
-              className={`flex items-center gap-2 text-xs ${TEXT_COLORS.SECONDARY} cursor-pointer`}
+              className={`flex items-center gap-2 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.SECONDARY} cursor-pointer`}
             >
               <input
                 type="checkbox"
@@ -817,7 +821,9 @@ function KeyboardShortcutsHelpComponent({
                   {flatShortcuts.length === 1 ? 'result' : 'results'}
                 </span>
               )}
-              <span className={`text-xs ${TEXT_COLORS.SECONDARY}`}>
+              <span
+                className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.SECONDARY}`}
+              >
                 {searchQuery
                   ? KEYBOARD_SHORTCUTS_MESSAGES.FILTER_STATUS.HAS_QUERY
                   : KEYBOARD_SHORTCUTS_MESSAGES.FILTER_STATUS.NO_QUERY}
@@ -841,7 +847,7 @@ function KeyboardShortcutsHelpComponent({
               setSelectedIndex(0);
               triggerHapticFeedback();
             }}
-            className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+            className={`px-3 py-1 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
               selectedContext === 'all'
                 ? `${BG_COLORS.BRAND} text-white`
                 : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
@@ -866,7 +872,7 @@ function KeyboardShortcutsHelpComponent({
                   setSelectedIndex(0);
                   triggerHapticFeedback();
                 }}
-                className={`px-3 py-1 text-xs font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
+                className={`px-3 py-1 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-medium rounded-full transition-all ${DURATION_TAILWIND[150]} ${
                   selectedContext === context
                     ? `${BG_COLORS.BRAND} text-white`
                     : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
@@ -912,7 +918,9 @@ function KeyboardShortcutsHelpComponent({
               >
                 {KEYBOARD_SHORTCUTS_MESSAGES.TITLE}
               </h2>
-              <p className={`text-sm ${TEXT_COLORS.SECONDARY}`}>
+              <p
+                className={`${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLORS.SECONDARY}`}
+              >
                 {KEYBOARD_SHORTCUTS_MESSAGES.CLOSE_INSTRUCTION.split('Esc')[0]}
                 <KeyboardKey>Esc</KeyboardKey>
                 {KEYBOARD_SHORTCUTS_MESSAGES.CLOSE_INSTRUCTION.split('Esc')[1]}
@@ -977,7 +985,7 @@ function KeyboardShortcutsHelpComponent({
                 {KEYBOARD_SHORTCUTS_HELP_LABELS.NO_RESULTS_TITLE}
               </h3>
               <p
-                className={`text-sm ${TEXT_COLORS.MUTED} max-w-xs ${MB_CLASSES.XL}`}
+                className={`${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLORS.MUTED} max-w-xs ${MB_CLASSES.XL}`}
               >
                 {KEYBOARD_SHORTCUTS_HELP_LABELS.NO_RESULTS_DESCRIPTION}
               </p>
@@ -1031,7 +1039,7 @@ function KeyboardShortcutsHelpComponent({
         {/* Footer */}
         <div className={KEYBOARD_SHORTCUT_FOOTER}>
           <p
-            className={`text-xs ${TEXT_COLORS.SECONDARY} text-center flex items-center justify-center gap-2`}
+            className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.SECONDARY} text-center flex items-center justify-center gap-2`}
           >
             <span
               aria-hidden="true"

@@ -234,7 +234,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                       {MESSAGES.ERROR_BOUNDARY.RETRY_BUTTON}
                     </Button>
                     <span
-                      className={`hidden sm:flex items-center gap-1 text-xs ${TEXT_COLORS.MUTED}`}
+                      className={`hidden sm:flex items-center gap-1 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.MUTED}`}
                       aria-hidden="true"
                     >
                       <kbd
@@ -255,7 +255,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                       </Button>
                     </Link>
                     <span
-                      className={`hidden sm:flex items-center gap-1 text-xs ${TEXT_COLORS.MUTED}`}
+                      className={`hidden sm:flex items-center gap-1 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.MUTED}`}
                       aria-hidden="true"
                     >
                       <kbd
@@ -277,7 +277,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                     {MESSAGES.ERROR_BOUNDARY.DETAILS_BUTTON}
                   </summary>
                   <div
-                    className={`mt-3 text-xs ${TEXT_COLORS.SECONDARY} ${TEXT_FORMAT_PATTERNS.FONT_MONO} ${TEXT_FORMAT_PATTERNS.WHITESPACE_PRE_WRAP} overflow-auto max-h-48`}
+                    className={`mt-3 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.SECONDARY} ${TEXT_FORMAT_PATTERNS.FONT_MONO} ${TEXT_FORMAT_PATTERNS.WHITESPACE_PRE_WRAP} overflow-auto max-h-48`}
                   >
                     <strong>Error:</strong> {this.state.error.toString()}
                     {this.state.errorInfo && (

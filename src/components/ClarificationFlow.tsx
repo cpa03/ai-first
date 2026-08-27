@@ -449,7 +449,9 @@ function ClarificationFlow({
             size="lg"
             ariaLabel={COMPONENT_DEFAULTS.ARIA_LABELS.LOADING_QUESTIONS}
           />
-          <p className={`mt-4 ${TEXT_COLOR_CLASSES.BODY} text-sm`}>
+          <p
+            className={`mt-4 ${TEXT_COLOR_CLASSES.BODY} ${TYPOGRAPHY_CLASSES.SMALL}`}
+          >
             {MESSAGES.CLARIFICATION.GENERATING_QUESTIONS}
           </p>
         </div>
@@ -505,7 +507,9 @@ function ClarificationFlow({
               />
             ))}
           </div>
-          <span className={`text-xs ${TEXT_COLOR_CLASSES.MUTED}`}>
+          <span
+            className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED}`}
+          >
             {CLARIFICATION_FLOW_LABELS.PREPARING_QUESTIONS}
           </span>
         </div>
@@ -546,7 +550,9 @@ function ClarificationFlow({
           className={`flex flex-col items-center justify-center ${PY_CLASSES.XXXXL}`}
         >
           <LoadingSpinner size="lg" />
-          <p className={`mt-4 ${TEXT_COLOR_CLASSES.BODY} text-sm`}>
+          <p
+            className={`mt-4 ${TEXT_COLOR_CLASSES.BODY} ${TYPOGRAPHY_CLASSES.SMALL}`}
+          >
             {MESSAGES.CLARIFICATION.LOADING_QUESTION}
           </p>
         </div>
@@ -643,7 +649,7 @@ function ClarificationFlow({
             </svg>
             <span>{COMPONENT_DEFAULTS.CLARIFICATION_FLOW.REFERENCE_LABEL}</span>
             <kbd
-              className={`hidden sm:inline-flex items-center px-1.5 py-0.5 ${BG_COLOR_CLASSES.LIGHT} ${TEXT_COLOR_CLASSES.MUTED} rounded text-xs font-mono`}
+              className={`hidden sm:inline-flex items-center px-1.5 py-0.5 ${BG_COLOR_CLASSES.LIGHT} ${TEXT_COLOR_CLASSES.MUTED} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono`}
               aria-hidden="true"
             >
               Alt+R
@@ -664,7 +670,7 @@ function ClarificationFlow({
           </svg>
         </summary>
         <div
-          className={`${PX_CLASSES.LG} pb-4 pt-2 text-sm ${TEXT_COLOR_CLASSES.BODY} border-t ${BORDER_COLOR_CLASSES.EXTRA_LIGHT} ${BG_COLOR_CLASSES.CARD}`}
+          className={`${PX_CLASSES.LG} pb-4 pt-2 ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} border-t ${BORDER_COLOR_CLASSES.EXTRA_LIGHT} ${BG_COLOR_CLASSES.CARD}`}
         >
           <div
             className={`${FLEX_PATTERNS.BETWEEN_START} ${SPACING_PATTERNS.GAP4}`}
@@ -726,7 +732,7 @@ function ClarificationFlow({
 
         {elapsedSeconds > 0 && (
           <div
-            className={`${MT_CLASSES.SM} flex items-center justify-end ${GAP_CLASSES.LG} text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
+            className={`${MT_CLASSES.SM} flex items-center justify-end ${GAP_CLASSES.LG} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED}`}
             role="status"
             aria-live="polite"
             aria-label={CLARIFICATION_FLOW_LABELS.TIMER_ARIA_LABEL(
@@ -1041,7 +1047,7 @@ function ClarificationFlow({
                 </div>
                 {currentAnswer && (
                   <p
-                    className={`text-sm ${TEXT_COLORS.SUCCESS_DARK} flex items-center ${GAP_CLASSES.MD_SM} ${ANIMATION_CLASSES.FADE_IN}`}
+                    className={`${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLORS.SUCCESS_DARK} flex items-center ${GAP_CLASSES.MD_SM} ${ANIMATION_CLASSES.FADE_IN}`}
                     role="status"
                     aria-live="polite"
                   >
@@ -1069,7 +1075,7 @@ function ClarificationFlow({
                   !showCelebration &&
                   !isSubmitting && (
                     <div
-                      className={`flex items-center gap-2 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
+                      className={`flex items-center gap-2 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED}`}
                       role="status"
                       aria-live="polite"
                       aria-label={CLARIFICATION_FLOW_LABELS.SELECT_KEYBOARD_ARIA(
@@ -1082,7 +1088,7 @@ function ClarificationFlow({
                       {currentQuestion.options.map((_, index) => (
                         <kbd
                           key={index}
-                          className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                          className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono`}
                         >
                           {index + 1}
                         </kbd>

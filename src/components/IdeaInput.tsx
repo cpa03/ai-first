@@ -379,7 +379,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         {milestoneReached && (
           <div className={RELATIVE}>
             <div
-              className={`flex items-center gap-2 text-sm ${TEXT_COLORS.SUCCESS_DARK} font-medium ${FADE_IN}`}
+              className={`flex items-center gap-2 ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLORS.SUCCESS_DARK} font-medium ${FADE_IN}`}
               role="status"
               aria-live="polite"
             >
@@ -426,7 +426,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
         {!milestoneReached && charactersNeededData ? (
           <p
-            className={`text-sm ${FADE_IN} flex items-center gap-2 ${
+            className={`${TYPOGRAPHY_CLASSES.SMALL} ${FADE_IN} flex items-center gap-2 ${
               charactersNeededData.isNearMinimum
                 ? `${TEXT_COLOR_CLASSES.WARNING_LIGHT} font-medium`
                 : TEXT_COLOR_CLASSES.BRAND
@@ -435,7 +435,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
             aria-live="polite"
           >
             <span
-              className={`inline-flex items-center justify-center ${ICON_SIZES.LG} rounded-full ${BG_COLORS.BRAND_100} ${TEXT_COLORS.BRAND} text-xs ${TYPOGRAPHY_CLASSES.BOLD}`}
+              className={`inline-flex items-center justify-center ${ICON_SIZES.LG} rounded-full ${BG_COLORS.BRAND_100} ${TEXT_COLORS.BRAND} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TYPOGRAPHY_CLASSES.BOLD}`}
             >
               {charactersNeededData.charsNeeded}
             </span>
@@ -504,7 +504,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         <div className={IDEA_INPUT_STATUS_CONTAINER}>
           <div className={IDEA_INPUT_STATUS_ITEMS}>
             <div
-              className={`flex items-center gap-2 text-sm ${TEXT_COLOR_CLASSES.BODY}`}
+              className={`flex items-center gap-2 ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY}`}
               role="group"
               aria-label={MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}
             >

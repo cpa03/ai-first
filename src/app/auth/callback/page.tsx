@@ -35,6 +35,7 @@ import Button from '@/components/Button';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 import StatusAnnouncer from '@/components/StatusAnnouncer';
 import Tooltip from '@/components/Tooltip';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 
 /**
  * AuthCallbackPage - Micro-UX enhanced OAuth callback handler
@@ -251,7 +252,7 @@ export default function AuthCallbackPage() {
           {/* Micro-UX: Title with progress dots for temporal feedback */}
           <div>
             <h1
-              className={`text-xl font-semibold ${GRAY_CLASSES.TEXT_900}`}
+              className={`${TYPOGRAPHY_CLASSES.COMPONENT_HEADING} font-semibold ${GRAY_CLASSES.TEXT_900}`}
               aria-live="polite"
               aria-atomic="true"
             >
@@ -263,7 +264,9 @@ export default function AuthCallbackPage() {
                 {getProgressDots()}
               </span>
             </h1>
-            <p className={`mt-2 text-sm ${GRAY_CLASSES.TEXT_600}`}>
+            <p
+              className={`mt-2 ${TYPOGRAPHY_CLASSES.SMALL} ${GRAY_CLASSES.TEXT_600}`}
+            >
               {COMPONENT_DEFAULTS.LOADING_TEXT.AUTH_CALLBACK_MESSAGE}
             </p>
           </div>
@@ -271,7 +274,7 @@ export default function AuthCallbackPage() {
           {/* Micro-UX: Elapsed time indicator for transparency */}
           {elapsedSeconds > 2 && (
             <p
-              className={`text-xs ${TEXT_COLORS.MUTED} tabular-nums`}
+              className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.MUTED} tabular-nums`}
               aria-live="polite"
               aria-atomic="true"
             >
@@ -396,7 +399,7 @@ export default function AuthCallbackPage() {
               }
             >
               <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono`}
               >
                 Esc
               </kbd>
@@ -411,7 +414,7 @@ export default function AuthCallbackPage() {
                 }
               >
                 <kbd
-                  className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                  className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono`}
                 >
                   Enter
                 </kbd>

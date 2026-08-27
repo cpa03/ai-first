@@ -20,6 +20,7 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 
 interface FooterNavColumn {
   readonly title: string;
@@ -205,12 +206,12 @@ function FooterNavComponent({ columns }: FooterNavProps) {
         >
           <span>Use</span>
           <kbd
-            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono`}
           >
             ←
           </kbd>
           <kbd
-            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono`}
           >
             →
           </kbd>

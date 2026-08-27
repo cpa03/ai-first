@@ -25,6 +25,7 @@ import {
 import { HOMEPAGE_SKELETON_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { HERO_ENTRANCE, CSS_CONTAINMENT } from '@/lib/config';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 import {
   REMAINING_PATTERNS,
   HOMEPAGE_HERO_SECTION,
@@ -206,7 +207,7 @@ export default function HomePageClient() {
           {HOME_PAGE_CONFIG.HERO.TITLE}
         </h1>
         <p
-          className={`text-xl ${GRAY_CLASSES.TEXT_700} max-w-2xl mx-auto ${
+          className={`${TYPOGRAPHY_CLASSES.COMPONENT_HEADING} ${GRAY_CLASSES.TEXT_700} max-w-2xl mx-auto ${
             prefersReducedMotion ? '' : HERO_ENTRANCE
           }`}
           style={
@@ -266,7 +267,7 @@ export default function HomePageClient() {
         >
           <h3
             id={HOME_PAGE_ELEMENT_IDS.IDEA_CONFIRMATION_HEADING}
-            className={`text-lg font-semibold ${TEXT_COLORS.INFO_DARK} mb-2`}
+            className={`${TYPOGRAPHY_CLASSES.SUBHEADING} font-semibold ${TEXT_COLORS.INFO_DARK} mb-2`}
           >
             {HOME_PAGE_CONFIG.CONFIRMATION.LABEL}
           </h3>
@@ -274,11 +275,11 @@ export default function HomePageClient() {
           <div
             className={`flex flex-col sm:flex-row sm:items-center sm:justify-between ${GAP_CLASSES.LG} ${MT_CLASSES.XL}`}
           >
-            <p className={`text-sm ${TEXT_COLORS.INFO}`}>
+            <p className={`${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLORS.INFO}`}>
               {HOME_PAGE_CONFIG.CONFIRMATION.SAVED_WITH_ID}
               {` `}
               <code
-                className={`${BG_COLORS.INFO} px-1.5 py-0.5 rounded ${TEXT_COLORS.INFO_DARK} font-mono text-xs`}
+                className={`${BG_COLORS.INFO} px-1.5 py-0.5 rounded ${TEXT_COLORS.INFO_DARK} font-mono ${TYPOGRAPHY_CLASSES.EXTRA_SMALL}`}
               >
                 {ideaId}
               </code>
@@ -297,7 +298,9 @@ export default function HomePageClient() {
               }
             />
           </div>
-          <p className={`text-sm ${TEXT_COLORS.INFO_LIGHT} mt-3`}>
+          <p
+            className={`${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLORS.INFO_LIGHT} mt-3`}
+          >
             {HOME_PAGE_CONFIG.CONFIRMATION.REDIRECTING}
           </p>
         </section>

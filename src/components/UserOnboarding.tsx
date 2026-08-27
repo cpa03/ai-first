@@ -389,7 +389,7 @@ export default function UserOnboarding() {
           >
             {USER_ONBOARDING_COMPLETION_LABELS.TITLE}
           </h3>
-          <p className={`text-sm ${TEXT_COLORS.SECONDARY}`}>
+          <p className={`${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLORS.SECONDARY}`}>
             {USER_ONBOARDING_COMPLETION_LABELS.DESCRIPTION}
           </p>
         </div>
@@ -484,7 +484,7 @@ export default function UserOnboarding() {
           </h3>
           <p
             id={ONBOARDING_ELEMENT_IDS.ONBOARDING_CONTENT}
-            className={`${TEXT_COLORS.SECONDARY} text-sm leading-relaxed`}
+            className={`${TEXT_COLORS.SECONDARY} ${TYPOGRAPHY_CLASSES.SMALL} leading-relaxed`}
           >
             {currentStep.content}
           </p>
@@ -565,7 +565,7 @@ export default function UserOnboarding() {
               >
                 <button
                   onClick={handlePrev}
-                  className={`px-3 py-1.5 text-sm ${TEXT_COLORS.SECONDARY} ${TEXT_COLORS.HOVER_PRIMARY} ${BG_COLORS.LIGHTER} rounded-lg ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_PATTERNS.DEFAULT}`}
+                  className={`px-3 py-1.5 ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLORS.SECONDARY} ${TEXT_COLORS.HOVER_PRIMARY} ${BG_COLORS.LIGHTER} rounded-lg ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_PATTERNS.DEFAULT}`}
                 >
                   {USER_ONBOARDING_COMPLETION_LABELS.BACK_BUTTON}
                 </button>
@@ -581,7 +581,7 @@ export default function UserOnboarding() {
             >
               <button
                 onClick={handleNext}
-                className={`px-4 py-1.5 text-sm ${BG_COLORS.BRAND} text-white rounded-lg ${BG_COLORS.BRAND_HOVER} ${TRANSITION_CLASSES.COLOR} font-medium ${FOCUS_RING_PATTERNS.DEFAULT}`}
+                className={`px-4 py-1.5 ${TYPOGRAPHY_CLASSES.SMALL} ${BG_COLORS.BRAND} text-white rounded-lg ${BG_COLORS.BRAND_HOVER} ${TRANSITION_CLASSES.COLOR} font-medium ${FOCUS_RING_PATTERNS.DEFAULT}`}
               >
                 {isLastStep
                   ? USER_ONBOARDING_COMPLETION_LABELS.GET_STARTED_BUTTON

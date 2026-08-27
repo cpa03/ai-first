@@ -46,6 +46,7 @@ import {
   GRID_COL_SPAN,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { PRIMARY_COMBINATIONS } from '@/lib/config/primary-colors';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 
 // JSON-LD Structured Data for SEO - Growth: Better search visibility
 const jsonLd = {
@@ -204,7 +205,7 @@ export default async function RootLayout({
                     <div className={FLEX_ITEMS_CENTER}>
                       <Link
                         href={ROUTES.HOME}
-                        className={`text-xl font-semibold ${GRAY_CLASSES.TEXT_900} ${PRIMARY_COMBINATIONS.LINK_HOVER} transition-colors ${PRIMARY_FOCUS_RING} rounded-md px-2 py-1`}
+                        className={`${TYPOGRAPHY_CLASSES.COMPONENT_HEADING} font-semibold ${GRAY_CLASSES.TEXT_900} ${PRIMARY_COMBINATIONS.LINK_HOVER} transition-colors ${PRIMARY_FOCUS_RING} rounded-md px-2 py-1`}
                       >
                         IdeaFlow
                       </Link>
@@ -233,7 +234,7 @@ export default async function RootLayout({
                     <div className={GRID_COL_SPAN}>
                       <Link
                         href={ROUTES.HOME}
-                        className={`text-lg font-semibold ${GRAY_CLASSES.TEXT_900} ${PRIMARY_COMBINATIONS.LINK_HOVER} transition-colors ${PRIMARY_FOCUS_RING} rounded-md`}
+                        className={`${TYPOGRAPHY_CLASSES.SUBHEADING} font-semibold ${GRAY_CLASSES.TEXT_900} ${PRIMARY_COMBINATIONS.LINK_HOVER} transition-colors ${PRIMARY_FOCUS_RING} rounded-md`}
                       >
                         {APP_CONFIG.NAME}
                       </Link>

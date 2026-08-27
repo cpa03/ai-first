@@ -111,6 +111,7 @@ import DashboardSkeleton from '@/components/DashboardSkeleton';
 import { APP_CONFIG } from '@/lib/config';
 import { type IdeaStatus } from '@/lib/config/constants';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 import {
   triggerHapticFeedback,
   getRelativeTime,
@@ -822,7 +823,7 @@ export default function DashboardPage() {
           {ideas.length > 0 && (
             <div className={DASHBOARD_FILTER_BADGE_POSITION}>
               <span
-                className={`flex items-center justify-center min-w-[${DASHBOARD_TAILWIND.STATUS_BADGE_MIN_W}] h-5 px-1.5 text-xs font-semibold rounded-full transition-all ${DURATION_TAILWIND[300]} ${
+                className={`flex items-center justify-center min-w-[${DASHBOARD_TAILWIND.STATUS_BADGE_MIN_W}] h-5 px-1.5 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-semibold rounded-full transition-all ${DURATION_TAILWIND[300]} ${
                   filter !== IDEA_STATUS_CONFIG.FILTERS.ALL
                     ? DASHBOARD_FILTER_BADGE_ACTIVE
                     : DASHBOARD_FILTER_BADGE_INACTIVE
@@ -935,7 +936,7 @@ export default function DashboardPage() {
                 {/* Provides discoverability for quick actions: Enter to clear filter, n to create new idea */}
                 {/* Matches the keyboard hints pattern used elsewhere in the dashboard */}
                 <span
-                  className={`${INLINE_FLEX_PATTERNS.RESPONSIVE_GAP_MD_SM} text-xs ${GRAY_CLASSES.TEXT_500}`}
+                  className={`${INLINE_FLEX_PATTERNS.RESPONSIVE_GAP_MD_SM} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${GRAY_CLASSES.TEXT_500}`}
                   aria-hidden="true"
                 >
                   <span className={INLINE_FLEX_PATTERNS.GAP_MD_SM}>
@@ -1425,7 +1426,7 @@ export default function DashboardPage() {
                 value={deleteConfirmText}
                 onChange={(e) => setDeleteConfirmText(e.target.value)}
                 placeholder={deleteModal.idea.title}
-                className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
+                className={`w-full px-3 py-2 ${TYPOGRAPHY_CLASSES.SMALL} border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
                   deleteConfirmText === deleteModal.idea.title
                     ? `${BORDER_COLORS.SUCCESS_MEDIUM} ${BG_COLORS.SUCCESS_VERY_LIGHT} ${RING_COLORS.SUCCESS_MEDIUM} ${BORDER_COLORS.SUCCESS}`
                     : `${BORDER_COLORS.DEFAULT} ${RING_COLORS.PRIMARY} ${BORDER_COLORS.PRIMARY}`

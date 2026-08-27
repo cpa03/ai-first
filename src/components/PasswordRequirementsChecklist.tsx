@@ -283,7 +283,7 @@ function PasswordRequirementsChecklistComponent({
         {requirements.map((req, index) => (
           <li
             key={req.id}
-            className={`flex items-center gap-2 text-xs ${TRANSITION_CLASSES.DEFAULT} ${
+            className={`flex items-center gap-2 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TRANSITION_CLASSES.DEFAULT} ${
               req.met
                 ? `${TEXT_COLORS.SUCCESS_DARK} font-medium`
                 : TEXT_COLORS.MUTED
@@ -339,7 +339,7 @@ function PasswordRequirementsChecklistComponent({
       </ul>
       {allMet && (
         <p
-          className={`relative text-xs ${TEXT_COLORS.SUCCESS_DARK} font-medium flex items-center gap-1.5 mt-2 ${showCompleteCelebration && !prefersReducedMotion ? FADE_IN : ''}`}
+          className={`relative ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.SUCCESS_DARK} font-medium flex items-center gap-1.5 mt-2 ${showCompleteCelebration && !prefersReducedMotion ? FADE_IN : ''}`}
           role="status"
           aria-live="polite"
         >

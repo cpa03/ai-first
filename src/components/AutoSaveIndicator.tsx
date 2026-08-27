@@ -190,7 +190,7 @@ function AutoSaveIndicatorComponent({
 
   return (
     <div
-      className={`${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM} text-xs transition-all ${DURATION_TAILWIND[300]} ${className}`}
+      className={`${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} transition-all ${DURATION_TAILWIND[300]} ${className}`}
       aria-live="polite"
       aria-atomic="true"
     >

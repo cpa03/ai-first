@@ -39,6 +39,7 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 
 const navLinks = MOBILE_NAV_CONFIG.ITEMS;
 
@@ -217,7 +218,7 @@ function MobileNavComponent() {
                 <Link
                   href={link.href}
                   className={`
-                    px-4 py-3 text-sm sm:text-base font-medium
+                    px-4 py-3 ${TYPOGRAPHY_CLASSES.SMALL} sm:${TYPOGRAPHY_CLASSES.BODY} font-medium
                     ${TRANSITION_CLASSES.SLOW} ease-out
                     border-b-2                     ${active ? COMPONENT_PRIMARY_PATTERNS.NAV_ACTIVE_LINK : `border-transparent ${GRAY_CLASSES.TEXT_800} ${COMPONENT_PRIMARY_PATTERNS.NAV_HOVER}`}
                     ${FOCUS_RING_PATTERNS.DEFAULT} rounded-t-md ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} inline-flex items-center
@@ -302,7 +303,7 @@ function MobileNavComponent() {
               }}
             >
               <span
-                className={`inline-flex items-center px-2 py-1 rounded-md ${BG_COLORS.DEFAULT}/80 shadow-sm text-xs ${GRAY_CLASSES.TEXT_500} ${TEXT_FORMAT_PATTERNS.FONT_MONO} backdrop-blur-sm`}
+                className={`inline-flex items-center px-2 py-1 rounded-md ${BG_COLORS.DEFAULT}/80 shadow-sm ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${GRAY_CLASSES.TEXT_500} ${TEXT_FORMAT_PATTERNS.FONT_MONO} backdrop-blur-sm`}
               >
                 Esc
               </span>
@@ -338,7 +339,7 @@ function MobileNavComponent() {
                       }
                       onClick={closeMenu}
                       className={`
-                        w-full text-left px-6 py-4 text-lg font-semibold
+                        w-full text-left px-6 py-4 ${TYPOGRAPHY_CLASSES.SUBHEADING} font-semibold
                         ${TRANSITION_CLASSES.SLOW} ease-out rounded-md
                         border-l-[${MOBILE_NAV_TAILWIND.ACTIVE_LINK_BORDER_W}] ${active ? PRIMARY_ACTIVE_LINK : `border-transparent ${GRAY_CLASSES.TEXT_800} hover:text-primary-600 ${GRAY_CLASSES.HOVER_BG_50}`}
                         ${FOCUS_RING_PATTERNS.DEFAULT} ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center justify-between
@@ -356,7 +357,7 @@ function MobileNavComponent() {
                         {link.label}
                       </span>
                       <kbd
-                        className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.PROGRESS_NEUTRAL} ${TEXT_COLORS.MUTED} rounded text-xs font-mono transition-opacity ${DURATION_TAILWIND[300]} ${
+                        className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.PROGRESS_NEUTRAL} ${TEXT_COLORS.MUTED} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono transition-opacity ${DURATION_TAILWIND[300]} ${
                           hintsVisible ? 'opacity-60' : 'opacity-0'
                         }`}
                         aria-hidden="true"

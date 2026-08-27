@@ -48,6 +48,7 @@ import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import Tooltip from '@/components/Tooltip';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 
 // Lazy load CopyButton for code splitting
 const CopyButton = dynamic(() => import('@/components/CopyButton'), {
@@ -157,7 +158,7 @@ export default function NotFound() {
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className={`text-2xl font-bold ${GRAY_CLASSES.TEXT_900} mb-2 ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1} focus:outline-none`}
+            className={`${TYPOGRAPHY_CLASSES.SECTION_HEADING} font-bold ${GRAY_CLASSES.TEXT_900} mb-2 ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1} focus:outline-none`}
           >
             Page not found
           </h1>
@@ -362,7 +363,7 @@ export default function NotFound() {
           >
             <h2
               id="popular-pages-heading"
-              className={`text-sm font-medium ${GRAY_CLASSES.TEXT_700} mb-4 text-center`}
+              className={`${TYPOGRAPHY_CLASSES.SMALL} font-medium ${GRAY_CLASSES.TEXT_700} mb-4 text-center`}
             >
               Popular pages
             </h2>
@@ -427,12 +428,12 @@ export default function NotFound() {
                       </span>
                       <span className={TEXT_LEFT}>
                         <span
-                          className={`block text-sm font-medium ${GRAY_CLASSES.TEXT_900} group-hover:${TEXT_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
+                          className={`block ${TYPOGRAPHY_CLASSES.SMALL} font-medium ${GRAY_CLASSES.TEXT_900} group-hover:${TEXT_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
                         >
                           {item.label}
                         </span>
                         <span
-                          className={`block text-xs ${GRAY_CLASSES.TEXT_500}`}
+                          className={`block ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${GRAY_CLASSES.TEXT_500}`}
                         >
                           {item.description}
                         </span>

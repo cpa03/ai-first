@@ -274,7 +274,7 @@ export default function ForgotPasswordPage() {
 
             {resendSuccess && (
               <p
-                className={`${SPACING_CLASSES.TOP_SMALL} text-sm ${SUCCESS_STATE_COLORS.ICON_TEXT} ${HERO_ENTRANCE}`}
+                className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${SUCCESS_STATE_COLORS.ICON_TEXT} ${HERO_ENTRANCE}`}
                 role="status"
                 aria-live="polite"
               >
@@ -306,7 +306,7 @@ export default function ForgotPasswordPage() {
             >
               <Link
                 href={ROUTES.LOGIN}
-                className={`${FORM_PATTERNS.AUTH_LINK} text-sm`}
+                className={`${FORM_PATTERNS.AUTH_LINK} ${TYPOGRAPHY_CLASSES.SMALL}`}
               >
                 Back to sign in
               </Link>
@@ -396,18 +396,18 @@ export default function ForgotPasswordPage() {
               {isLoading ? 'Sending...' : 'Send reset link'}
             </Button>
             <p
-              className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
+              className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
               aria-hidden="true"
             >
               Press{' '}
               <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono`}
               >
                 {isMac ? '⌘' : 'Ctrl'}
               </kbd>
               {' + '}
               <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono`}
               >
                 Enter
               </kbd>
@@ -419,7 +419,9 @@ export default function ForgotPasswordPage() {
         <div
           className={`${SPACING_CLASSES.TOP} ${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
         >
-          <p className={`text-sm ${TEXT_COLOR_CLASSES.BODY}`}>
+          <p
+            className={`${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY}`}
+          >
             Remember your password?{' '}
             <Link href={ROUTES.LOGIN} className={FORM_PATTERNS.AUTH_LINK}>
               Sign in

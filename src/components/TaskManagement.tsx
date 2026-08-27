@@ -416,7 +416,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
               tasks
             </h3>
             <p
-              className={`${TEXT_COLOR_CLASSES.BODY} ${SPACING_CLASSES.ELEMENT} max-w-sm mx-auto text-sm`}
+              className={`${TEXT_COLOR_CLASSES.BODY} ${SPACING_CLASSES.ELEMENT} max-w-sm mx-auto ${TYPOGRAPHY_CLASSES.SMALL}`}
             >
               {statusFilter === 'in_progress'
                 ? 'All tasks are either pending or completed. Keep up the great work!'
@@ -438,7 +438,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
       {/* Micro-UX: Keyboard shortcut hints for discoverability */}
       {/* Matches the pattern established on the dashboard page */}
       <div
-        className={`mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
+        className={`mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED}`}
         aria-hidden="true"
       >
         <span className={KEYBOARD_HINT_INLINE}>

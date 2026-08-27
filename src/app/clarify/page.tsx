@@ -30,6 +30,7 @@ import {
   ANIMATION_CLASSES,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 import {
   CLARIFY_PARAGRAPH_MARGIN,
   CLARIFY_EMPTY_STATE,
@@ -152,7 +153,7 @@ function ClarifySuccessState({
             {/* Micro-UX: Keyboard shortcut hint for blueprint generation */}
             {/* Matches the keyboard hint patterns in dashboard, not-found, and clarification flow */}
             <span
-              className={`hidden sm:inline-flex items-center gap-1.5 text-xs ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
+              className={`hidden sm:inline-flex items-center gap-1.5 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
               aria-hidden="true"
             >
               <kbd
@@ -286,7 +287,7 @@ function ClarifyPageContent() {
             {/* Micro-UX: Keyboard shortcut hint for auth-required state */}
             {/* Matches the keyboard hint patterns in not-found and dashboard pages */}
             <span
-              className={`hidden sm:inline-flex items-center gap-1.5 text-xs ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
+              className={`hidden sm:inline-flex items-center gap-1.5 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
               aria-hidden="true"
             >
               <kbd
@@ -319,7 +320,7 @@ function ClarifyPageContent() {
               {/* Micro-UX: Keyboard shortcut hint for error state */}
               {/* Matches the keyboard hint patterns in not-found and dashboard pages */}
               <span
-                className={`hidden sm:inline-flex items-center gap-1.5 text-xs ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
+                className={`hidden sm:inline-flex items-center gap-1.5 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
                 aria-hidden="true"
               >
                 <kbd
@@ -366,7 +367,9 @@ function ClarifyPageContent() {
           <h1 className={`text-3xl font-bold ${GRAY_CLASSES.TEXT_900} mb-4`}>
             {CLARIFY_PAGE_CONTENT.HEADING}
           </h1>
-          <p className={`text-lg ${GRAY_CLASSES.TEXT_600}`}>
+          <p
+            className={`${TYPOGRAPHY_CLASSES.SUBHEADING} ${GRAY_CLASSES.TEXT_600}`}
+          >
             {CLARIFY_PAGE_CONTENT.SUBHEADING}
           </p>
         </div>

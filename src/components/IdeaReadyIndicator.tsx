@@ -2,6 +2,7 @@
 
 import { memo, useEffect, useState } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 import {
   COMPONENT_CONFIG,
   SVG_STROKE_WIDTHS,
@@ -105,7 +106,7 @@ function IdeaReadyIndicatorComponent({
       </div>
       <span
         className={`
-          text-xs font-medium ${TRANSITION_CLASSES.COLOR_SLOW}
+          ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-medium ${TRANSITION_CLASSES.COLOR_SLOW}
           ${isReady ? TEXT_COLORS.SUCCESS_DARK : TEXT_COLORS.MUTED}
         `}
       >

@@ -32,6 +32,7 @@ import {
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { RESPONSIVE_FLEX_BETWEEN_GAP } from '@/lib/config/remaining-hardcoded-patterns';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 import {
   PRIMARY_BORDER,
   PRIMARY_TEXT,
@@ -188,7 +189,7 @@ function ReferralLinkComponent({
                 tabIndex={0}
                 role="button"
                 aria-label={`${referralUrl}. Press Space or Enter to select the link.`}
-                className={`w-full min-w-0 px-3 py-2 ${WHITE_BG_PATTERNS.DEFAULT} border ${PRIMARY_BORDER._200} rounded-md text-sm ${PRIMARY_TEXT._800} truncate font-mono cursor-pointer ${GRAY_CLASSES.HOVER_BG_50} transition-all ${DURATION_TAILWIND[200]} outline-none ${FOCUS_RING_PATTERNS.DEFAULT}`}
+                className={`w-full min-w-0 px-3 py-2 ${WHITE_BG_PATTERNS.DEFAULT} border ${PRIMARY_BORDER._200} rounded-md ${TYPOGRAPHY_CLASSES.SMALL} ${PRIMARY_TEXT._800} truncate font-mono cursor-pointer ${GRAY_CLASSES.HOVER_BG_50} transition-all ${DURATION_TAILWIND[200]} outline-none ${FOCUS_RING_PATTERNS.DEFAULT}`}
               >
                 {referralUrl}
               </code>

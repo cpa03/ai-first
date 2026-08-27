@@ -15,6 +15,7 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { FLEX_PATTERNS } from '@/lib/config/remaining-styles';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 
 function WhyChooseSectionComponent() {
   const { TITLE, SECTION_STYLES, ARTICLES, ARTICLE_STYLES } = WHY_CHOOSE_CONFIG;
@@ -135,7 +136,7 @@ function WhyChooseSectionComponent() {
         ))}
       </ul>
       <div
-        className={`hidden sm:flex items-center justify-center gap-2 mt-6 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
+        className={`hidden sm:flex items-center justify-center gap-2 mt-6 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED}`}
         aria-label={WHY_CHOOSE_SECTION_LABELS.KEYBOARD_NAV_ARIA_LABEL}
       >
         <span className={FLEX_PATTERNS.GAP_SM}>

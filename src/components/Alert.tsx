@@ -382,7 +382,7 @@ const AlertComponent = function Alert({
       )}
       {onClose && (
         <div
-          className={`${COORDINATE_POSITION_PATTERNS.BOTTOM_LEFT_SM} flex items-center gap-2 text-xs ${showShortcutHint ? 'opacity-60' : 'opacity-0'} focus-within:opacity-60 hover:opacity-60 transition-opacity`}
+          className={`${COORDINATE_POSITION_PATTERNS.BOTTOM_LEFT_SM} flex items-center gap-2 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${showShortcutHint ? 'opacity-60' : 'opacity-0'} focus-within:opacity-60 hover:opacity-60 transition-opacity`}
           aria-hidden="true"
         >
           {shouldAutoDismiss && (

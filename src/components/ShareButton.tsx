@@ -27,6 +27,7 @@ import { useToast } from '@/hooks/useAnnouncement';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 import { PRIMARY_COMBINATIONS } from '@/lib/config/primary-colors';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 
 export interface ShareButtonProps {
   shareUrl?: string;
@@ -207,7 +208,7 @@ const ShareButtonComponent = function ShareButton({
 
   const variantClasses = {
     default: `
-      px-3 py-1.5 text-sm
+      px-3 py-1.5 ${TYPOGRAPHY_CLASSES.SMALL}
       ${BG_COLORS.BRAND} text-white ${BG_COLORS.BRAND_HOVER}
       ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.DEFAULT_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-md

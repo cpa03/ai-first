@@ -19,6 +19,7 @@ import {
   COMMON_SPACING_PATTERNS,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
+import { TYPOGRAPHY_CLASSES } from '@/lib/config';
 
 interface LayoutErrorFallbackProps {
   title: string;
@@ -71,7 +72,7 @@ function LayoutErrorFallbackComponent({
                 {LAYOUT_ERROR_LABELS.RETRY_BUTTON}
               </Button>
               <span
-                className={`hidden sm:flex ${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM} text-xs ${TEXT_COLORS.MUTED}`}
+                className={`hidden sm:flex ${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.MUTED}`}
                 aria-hidden="true"
               >
                 <kbd
@@ -87,7 +88,7 @@ function LayoutErrorFallbackComponent({
                 <Button variant="secondary">{homeLabel}</Button>
               </Link>
               <span
-                className={`hidden sm:flex ${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM} text-xs ${TEXT_COLORS.MUTED}`}
+                className={`hidden sm:flex ${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.MUTED}`}
                 aria-hidden="true"
               >
                 <kbd

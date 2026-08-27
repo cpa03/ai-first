@@ -91,7 +91,7 @@ function PasswordMatchIndicator({
     if (!password) return null;
     return (
       <div
-        className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} ${FADE_IN} ${GRAY_CLASSES.TEXT_600}`}
+        className={`flex items-center gap-2 ${TYPOGRAPHY_CLASSES.SMALL} transition-all ${DURATION_TAILWIND[200]} ${FADE_IN} ${GRAY_CLASSES.TEXT_600}`}
         role="status"
         aria-live="polite"
       >
@@ -120,7 +120,7 @@ function PasswordMatchIndicator({
 
   return (
     <div
-      className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} ${FADE_IN} ${
+      className={`flex items-center gap-2 ${TYPOGRAPHY_CLASSES.SMALL} transition-all ${DURATION_TAILWIND[200]} ${FADE_IN} ${
         matchStatus === 'match'
           ? TEXT_COLORS.SUCCESS_DARK
           : TEXT_COLORS.WARNING_LIGHT
@@ -325,14 +325,14 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
           />
         </div>
         <span
-          className={`text-xs font-medium tabular-nums ${config.textColor} transition-colors ${DURATION_TAILWIND[200]}`}
+          className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-medium tabular-nums ${config.textColor} transition-colors ${DURATION_TAILWIND[200]}`}
           aria-live="polite"
           aria-atomic="true"
         >
           {percentage}%
         </span>
         <span
-          className={`text-xs ${config.textColor} ${transitioning && !prefersReducedMotion ? 'animate-strength-transition-pulse' : ''}`}
+          className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${config.textColor} ${transitioning && !prefersReducedMotion ? 'animate-strength-transition-pulse' : ''}`}
         >
           {config.label}
         </span>
@@ -368,7 +368,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
       )}
       {strength === 'strong' && (
         <div
-          className={`flex items-center gap-1.5 text-xs ${TEXT_COLORS.SUCCESS_DARK} font-medium ${FADE_IN}`}
+          className={`flex items-center gap-1.5 ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLORS.SUCCESS_DARK} font-medium ${FADE_IN}`}
           role="status"
           aria-live="polite"
         >
@@ -790,18 +790,18 @@ export default function SignupPage() {
                 : SIGNUP_PAGE_CONTENT.FORM.SUBMIT_BUTTON}
             </Button>
             <p
-              className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
+              className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
               aria-hidden="true"
             >
               Press{' '}
               <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono`}
               >
                 {isMac ? '⌘' : 'Ctrl'}
               </kbd>
               {' + '}
               <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono`}
               >
                 Enter
               </kbd>
@@ -817,7 +817,7 @@ export default function SignupPage() {
             <div className={FORM_PATTERNS.OAUTH_SEPARATOR_LINE} />
           </div>
           <div
-            className={`relative ${RESPONSIVE_FLEX_PATTERNS.JUSTIFY_CENTER} text-sm`}
+            className={`relative ${RESPONSIVE_FLEX_PATTERNS.JUSTIFY_CENTER} ${TYPOGRAPHY_CLASSES.SMALL}`}
           >
             <span className={FORM_PATTERNS.OAUTH_SEPARATOR_TEXT}>
               {SIGNUP_PAGE_CONTENT.OAUTH.SEPARATOR}

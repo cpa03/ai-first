@@ -414,7 +414,7 @@ export default function LoginPage() {
                   </span>
                 </span>
                 <span
-                  className={`text-sm transition-colors ${DURATION_TAILWIND[200]} ${rememberMe ? FORM_PATTERNS.REMEMBER_ME_ACTIVE : FORM_PATTERNS.REMEMBER_ME_INACTIVE}`}
+                  className={`${TYPOGRAPHY_CLASSES.SMALL} transition-colors ${DURATION_TAILWIND[200]} ${rememberMe ? FORM_PATTERNS.REMEMBER_ME_ACTIVE : FORM_PATTERNS.REMEMBER_ME_INACTIVE}`}
                 >
                   {LOGIN_PAGE_CONTENT.FORM.REMEMBER_ME}
                 </span>
@@ -445,18 +445,18 @@ export default function LoginPage() {
                 : LOGIN_PAGE_CONTENT.FORM.SUBMIT_BUTTON}
             </Button>
             <p
-              className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
+              className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
               aria-hidden="true"
             >
               Press{' '}
               <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono`}
               >
                 {isMac ? '⌘' : 'Ctrl'}
               </kbd>
               {' + '}
               <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} font-mono`}
               >
                 Enter
               </kbd>
@@ -472,7 +472,7 @@ export default function LoginPage() {
             <div className={FORM_PATTERNS.OAUTH_SEPARATOR_LINE} />
           </div>
           <div
-            className={`relative ${RESPONSIVE_FLEX_PATTERNS.JUSTIFY_CENTER} text-sm`}
+            className={`relative ${RESPONSIVE_FLEX_PATTERNS.JUSTIFY_CENTER} ${TYPOGRAPHY_CLASSES.SMALL}`}
           >
             <span className={FORM_PATTERNS.OAUTH_SEPARATOR_TEXT}>
               {LOGIN_PAGE_CONTENT.OAUTH.SEPARATOR}

@@ -722,7 +722,7 @@ const InputWithValidationComponent = forwardRef<
             {helpText && !isInvalid && (
               <p
                 id={`${props.id}-help`}
-                className={`text-sm ${TEXT_COLOR_CLASSES.BODY}`}
+                className={`${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY}`}
               >
                 {helpText}
               </p>
@@ -738,7 +738,7 @@ const InputWithValidationComponent = forwardRef<
               <div role="alert" aria-live="assertive">
                 <p
                   id={`${props.id}-error`}
-                  className={`text-sm ${TEXT_COLORS.ERROR}`}
+                  className={`${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLORS.ERROR}`}
                 >
                   {error}
                 </p>
@@ -797,7 +797,7 @@ const InputWithValidationComponent = forwardRef<
           )}
           {showCharCount && maxLength && charCount > 0 && (
             <div
-              className={`text-xs transition-all ${DURATION_TAILWIND[300]} ease-out ${
+              className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} transition-all ${DURATION_TAILWIND[300]} ease-out ${
                 maxLength - charCount <= maxLength * 0.1
                   ? `${TEXT_COLORS.ERROR} font-medium`
                   : maxLength - charCount <= maxLength * 0.2
