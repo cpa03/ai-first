@@ -756,6 +756,14 @@ export const KEYBOARD_SHORTCUT_HINT_LABELS = {
   DISMISS_ARIA_LABEL: 'Dismiss keyboard shortcut hint',
   /** Screen reader text for the hint */
   SR_TEXT: 'Keyboard shortcut hint',
+  /** Main title for the keyboard shortcut hint toast */
+  TITLE: 'Keyboard shortcuts available',
+  /** Text prompt preceding key badges */
+  PRESS_INSTRUCTION: 'Press',
+  /** Text prompt for opening all shortcuts dialog */
+  SEE_ALL_HINT: 'to see all shortcuts, or',
+  /** Text prompt for submitting action */
+  SUBMIT_HINT: 'to submit.',
 } as const;
 
 /**

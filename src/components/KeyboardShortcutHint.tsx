@@ -20,6 +20,7 @@ import {
   COMMON_SPACING_PATTERNS,
   FLEX_GROW_PATTERNS,
   TYPOGRAPHY_CLASSES,
+  FOCUS_RING_PATTERNS,
 } from '@/lib/config';
 
 interface KeyboardShortcutHintProps {
@@ -139,28 +140,28 @@ function KeyboardShortcutHintComponent({
             <p
               className={`${TYPOGRAPHY_CLASSES.SM_SEMIBOLD} ${TEXT_COLORS.PRIMARY}`}
             >
-              Keyboard shortcuts available
+              {KEYBOARD_SHORTCUT_HINT_LABELS.TITLE}
             </p>
             <p className={`text-xs ${TEXT_COLORS.SECONDARY} mt-1`}>
-              Press{' '}
+              {KEYBOARD_SHORTCUT_HINT_LABELS.PRESS_INSTRUCTION}{' '}
               <kbd
                 className={`px-1.5 py-0.5 ${BG_COLORS.LIGHT} rounded text-xs font-mono ${TEXT_COLORS.PRIMARY}`}
               >
                 ?
               </kbd>{' '}
-              to see all shortcuts, or{' '}
+              {KEYBOARD_SHORTCUT_HINT_LABELS.SEE_ALL_HINT}{' '}
               <kbd
                 className={`px-1.5 py-0.5 ${BG_COLORS.LIGHT} rounded text-xs font-mono ${TEXT_COLORS.PRIMARY}`}
               >
                 {modifierKey} Enter
               </kbd>{' '}
-              to submit.
+              {KEYBOARD_SHORTCUT_HINT_LABELS.SUBMIT_HINT}
             </p>
           </div>
           <button
             type="button"
             onClick={dismiss}
-            className={`flex-shrink-0 p-1 rounded-lg ${TEXT_COLORS.MUTED} hover:${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} ${TRANSITION_CLASSES.COLOR}`}
+            className={`flex-shrink-0 p-1 rounded-lg ${TEXT_COLORS.MUTED} hover:${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} active:scale-95 ${TRANSITION_CLASSES.DEFAULT} ${FOCUS_RING_PATTERNS.DEFAULT}`}
             aria-label={KEYBOARD_SHORTCUT_HINT_LABELS.DISMISS_ARIA_LABEL}
           >
             <svg

@@ -66,6 +66,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 - **Date**: 2026-08-16
 - **Details**: Connected platform-aware keyboard shortcut representations for `CopyButton` directly to `COPY_BUTTON_LABELS.KEYBOARD_SHORTCUT` in `src/lib/config/component-labels.ts`.
 
+### [STRENGTHEN] Strengthen KeyboardShortcutHint Accessibility and Active Scale Feedback
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-27
+- **Details**: Enhanced `KeyboardShortcutHint` dismiss button accessibility with standardized keyboard focus ring patterns (`FOCUS_RING_PATTERNS.DEFAULT`) and active tactile scale feedback (`active:scale-95`). Verified in `tests/KeyboardShortcutHint.test.tsx`.
+
+### [CONNECT] Connect KeyboardShortcutHint Text Labels to Central Component Configs
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-08-27
+- **Details**: Centralized text labels and instruction strings in `KEYBOARD_SHORTCUT_HINT_LABELS` (`src/lib/config/component-labels.ts`) and connected them to `KeyboardShortcutHint.tsx`, eliminating inline hardcoded text.
+
 ---
 
 ## Quick Stats
