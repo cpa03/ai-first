@@ -147,21 +147,41 @@ const COMBINED_TRIGGERS_BY_MIN_SEVERITY: Record<number, RegExp | null> = {
 
 /**
  * PERFORMANCE: Static set of headers to skip during scanning to avoid
- * repeated Set allocations on every request.
+ * repeated Set allocations on every request. Includes standard title-case header names
+ * to avoid calling key.toLowerCase() and allocating strings for common request headers.
  */
 const SKIP_HEADERS = new Set([
   'host',
+  'Host',
   'user-agent',
+  'User-Agent',
   'accept',
+  'Accept',
   'accept-language',
+  'Accept-Language',
   'accept-encoding',
+  'Accept-Encoding',
   'connection',
+  'Connection',
   'content-type',
+  'Content-Type',
   'content-length',
+  'Content-Length',
   'cookie',
+  'Cookie',
   'authorization',
+  'Authorization',
   'x-api-key',
+  'X-API-Key',
+  'X-Api-Key',
   'x-csrf-token',
+  'X-CSRF-Token',
+  'X-Csrf-Token',
+  'x-request-id',
+  'X-Request-ID',
+  'X-Request-Id',
+  'x-client-version',
+  'X-Client-Version',
 ]);
 
 /**
@@ -307,16 +327,20 @@ export function detectSuspiciousPatterns(
 
   const patterns: SuspiciousPatternDetail[] = [];
 
+  const rawUrl = request.url;
+  let pathname: string | undefined;
+  let searchParams: URLSearchParams | undefined;
+
   // PERFORMANCE: Use pre-parsed nextUrl if available (from NextRequest)
   // nextUrl is 15-20x faster than new URL(request.url)
   const nextUrl = (request as NextRequestExtension).nextUrl;
-  let pathname = nextUrl?.pathname;
-  let searchParams = nextUrl?.searchParams;
+  pathname = nextUrl?.pathname;
+  searchParams = nextUrl?.searchParams;
 
   // Fallback to manual parsing only if nextUrl is missing
-  if (!pathname && request.url) {
+  if (!pathname && rawUrl) {
     try {
-      const url = new URL(request.url);
+      const url = new URL(rawUrl);
       pathname = url.pathname;
       searchParams = url.searchParams;
     } catch {
@@ -326,7 +350,7 @@ export function detectSuspiciousPatterns(
 
   if (pathname) {
     const pathFindings = scanString(pathname, 'path', minSeverity);
-    patterns.push(...pathFindings);
+    if (pathFindings.length > 0) patterns.push(...pathFindings);
   }
 
   // Scan query parameters
@@ -334,10 +358,10 @@ export function detectSuspiciousPatterns(
     for (const [key, value] of searchParams.entries()) {
       // Scan BOTH key and value for injection patterns to prevent bypass via bracket notation
       const keyFindings = scanString(key, 'query', minSeverity, key);
-      patterns.push(...keyFindings);
+      if (keyFindings.length > 0) patterns.push(...keyFindings);
 
       const valueFindings = scanString(value, 'query', minSeverity, key);
-      patterns.push(...valueFindings);
+      if (valueFindings.length > 0) patterns.push(...valueFindings);
     }
   }
 
@@ -357,10 +381,10 @@ export function detectSuspiciousPatterns(
         if (!SKIP_HEADERS.has(key) && !SKIP_HEADERS.has(key.toLowerCase())) {
           // Scan BOTH key and value for injection patterns
           const keyFindings = scanString(key, 'header', minSeverity, key);
-          patterns.push(...keyFindings);
+          if (keyFindings.length > 0) patterns.push(...keyFindings);
 
           const headerFindings = scanString(value, 'header', minSeverity, key);
-          patterns.push(...headerFindings);
+          if (headerFindings.length > 0) patterns.push(...headerFindings);
         }
       }
     }
