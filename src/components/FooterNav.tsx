@@ -215,6 +215,20 @@ function FooterNavComponent({ columns }: FooterNavProps) {
             →
           </kbd>
           <span>to navigate</span>
+          <span className={`${TEXT_COLORS.MUTED_LIGHT}`} aria-hidden="true">
+            ·
+          </span>
+          <kbd
+            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+          >
+            Home
+          </kbd>
+          <kbd
+            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+          >
+            End
+          </kbd>
+          <span>jump to first/last</span>
         </div>
       )}
     </>
