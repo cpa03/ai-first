@@ -37,6 +37,7 @@ import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+import CopyButton from '@/components/CopyButton';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -257,6 +258,18 @@ export default function ForgotPasswordPage() {
               We&apos;ve sent a password reset link to{' '}
               <span className={FONT_MEDIUM}>{email}</span>
             </p>
+            <div
+              className={`flex items-center justify-center gap-2 ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+            >
+              <CopyButton
+                textToCopy={email}
+                label="Copy email"
+                successLabel="Copied!"
+                ariaLabel="Copy email address to clipboard"
+                variant="subtle"
+                showToast={false}
+              />
+            </div>
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
             >
