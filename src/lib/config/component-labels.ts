@@ -709,9 +709,15 @@ export const SECTION_INDICATOR_LABELS = {
  */
 export const SCROLL_TO_TOP_BUTTON_LABELS = {
   /** ARIA label for the scroll to top button */
-  ARIA_LABEL: 'Scroll to top (⌘↑ or Ctrl+Home)',
+  ARIA_LABEL: (isMac: boolean) =>
+    `Scroll to top (${isMac ? '⌘↑' : 'Ctrl+Home'})`,
   /** Button text */
   BUTTON_TEXT: 'Scroll to top',
+  /** Keyboard shortcut representation for tooltip hint */
+  KEYBOARD_SHORTCUT: (isMac: boolean) => [
+    isMac ? '⌘' : 'Ctrl',
+    isMac ? '↑' : 'Home',
+  ],
 } as const;
 
 /**

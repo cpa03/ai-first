@@ -14,11 +14,18 @@ describe('ScrollToTopButton Component', () => {
     jest.clearAllMocks();
   });
 
-  it('renders the scroll to top button correctly', () => {
+  it('renders the scroll to top button correctly with platform-aware label', () => {
     render(<ScrollToTopButton />);
     const button = screen.getByRole('button', { name: /Scroll to top/ });
     expect(button).toBeInTheDocument();
     expect(screen.getByText('Scroll to top')).toBeInTheDocument();
+  });
+
+  it('updates aria-label dynamically based on platform', () => {
+    // Non-Mac fallback default
+    render(<ScrollToTopButton />);
+    const button = screen.getByRole('button', { name: /Scroll to top/ });
+    expect(button).toHaveAttribute('aria-label', expect.stringContaining('Scroll to top'));
   });
 
   it('scrolls to top when clicked', () => {

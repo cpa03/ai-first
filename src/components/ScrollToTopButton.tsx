@@ -138,7 +138,7 @@ function ScrollToTopButtonComponent() {
         group
         ${hasAppeared && !prefersReducedMotion ? SCROLL_TO_TOP_APPEAR : ''}
       `}
-      aria-label={SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}
+      aria-label={SCROLL_TO_TOP_BUTTON_LABELS.ARIA_LABEL(isMac)}
     >
       <span>{SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}</span>
       {/* Micro-UX: Persistent keyboard shortcut hint for discoverability */}
@@ -180,10 +180,14 @@ function ScrollToTopButtonComponent() {
 
   // Micro-UX: Show keyboard shortcut in tooltip for discoverability
   // Follows the same pattern as Button component for consistency
-  const shortcut = isMac ? ['⌘', '↑'] : ['Ctrl', 'Home'];
+  const shortcut = [...SCROLL_TO_TOP_BUTTON_LABELS.KEYBOARD_SHORTCUT(isMac)];
 
   return (
-    <Tooltip content="Scroll to top" shortcut={shortcut} position="top">
+    <Tooltip
+      content={SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}
+      shortcut={shortcut}
+      position="top"
+    >
       {buttonElement}
     </Tooltip>
   );
