@@ -34,6 +34,7 @@ import type { ComponentConfig } from '@/lib/config/components';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { MX_CLASSES } from '@/lib/config/spacing';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { PLATFORM } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 import Tooltip from './Tooltip';
@@ -57,9 +58,14 @@ function ScrollToTopComponent({
   const [hasReachedEnd, setHasReachedEnd] = useState(false);
   const [showReachedEndCelebration, setShowReachedEndCelebration] =
     useState(false);
+  const [isMac, setIsMac] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
   const rafRef = useRef<number | null>(null);
   const prevHasReachedEndRef = useRef(false);
+
+  useEffect(() => {
+    setIsMac(PLATFORM.isMac());
+  }, []);
 
   // Keep a reference to the latest visibility state to avoid re-binding the event listener
   const isVisibleRef = useRef(isVisible);
@@ -328,18 +334,18 @@ function ScrollToTopComponent({
             <kbd
               className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
             >
-              {SCROLL_TO_TOP_LABELS.KEYS.HOME}
+              {isMac ? '⌘' : SCROLL_TO_TOP_LABELS.KEYS.HOME}
             </kbd>{' '}
-            {SCROLL_TO_TOP_LABELS.TOP}
+            {isMac ? '↑' : SCROLL_TO_TOP_LABELS.TOP}
             <span className={MX_CLASSES.SM}>
               {SCROLL_TO_TOP_LABELS.SEPARATOR}
             </span>
             <kbd
               className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
             >
-              {SCROLL_TO_TOP_LABELS.KEYS.END}
+              {isMac ? '⌘' : SCROLL_TO_TOP_LABELS.KEYS.END}
             </kbd>{' '}
-            {SCROLL_TO_TOP_LABELS.BOTTOM}
+            {isMac ? '↓' : SCROLL_TO_TOP_LABELS.BOTTOM}
           </>
         )}
       </span>
