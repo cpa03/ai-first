@@ -62,4 +62,30 @@ describe('API Sanitization', () => {
     expect(calls[1]).toBe('Refined');
     expect(calls[2].q1).toBe('X');
   });
+
+  it('sanitizes breakdown userResponses against XSS payloads', async () => {
+    (dbService.getIdea as jest.Mock).mockResolvedValue({
+      id: 'i1',
+      user_id: 'u1',
+    });
+    const req = {
+      method: 'POST',
+      nextUrl: { pathname: '/api/breakdown' },
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({
+        ideaId: 'i1',
+        refinedIdea: 'Refined idea',
+        userResponses: {
+          q1: '<script>alert("xss")</script>InjectedObj',
+          q2: '<img src=x onerror=alert(1)>Val',
+        },
+      }),
+    } as unknown as NextRequest;
+    await breakdownPOST(req, { params: Promise.resolve({}) });
+    const calls = (breakdownEngine.startBreakdown as jest.Mock).mock.calls[0];
+    expect(calls[2].q1).not.toContain('<script>');
+    expect(calls[2].q1).toBe('InjectedObj');
+    expect(calls[2].q2).not.toContain('<img');
+    expect(calls[2].q2).toBe('&lt;img src=x&gt;Val');
+  });
 });
