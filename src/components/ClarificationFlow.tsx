@@ -2,6 +2,7 @@
 
 import { memo, useRef, useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import {
   MIN_ANSWER_LENGTH,
   MAX_ANSWER_LENGTH,
@@ -77,15 +78,23 @@ import InputWithValidation from '@/components/InputWithValidation';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import StatusAnnouncer from '@/components/StatusAnnouncer';
-import CopyButton from '@/components/CopyButton';
-import StepCelebration from '@/components/StepCelebration';
-import Skeleton from '@/components/Skeleton';
-import Tooltip from '@/components/Tooltip';
-import TypingIndicator from '@/components/TypingIndicator';
 import { CapsLockWarning } from '@/components/CapsLockWarning';
 import { useCapsLock } from '@/hooks/useCapsLock';
 import { useClarificationSession } from '@/hooks/useClarificationSession';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+
+// Lazy load less critical components for better code splitting
+const CopyButton = dynamic(() => import('@/components/CopyButton'), {
+  ssr: false,
+});
+const StepCelebration = dynamic(() => import('@/components/StepCelebration'), {
+  ssr: false,
+});
+const Skeleton = dynamic(() => import('@/components/Skeleton'), { ssr: false });
+const Tooltip = dynamic(() => import('@/components/Tooltip'), { ssr: false });
+const TypingIndicator = dynamic(() => import('@/components/TypingIndicator'), {
+  ssr: false,
+});
 
 interface ClarificationFlowProps {
   idea: string;
