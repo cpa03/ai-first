@@ -137,15 +137,15 @@ class EventBus {
 
     // PERFORMANCE OPTIMIZATION (⚡ Bolt):
     // Fast-path subscriber list combining when wildcard or type subscribers are empty.
-    // Avoids unneeded array spreads [...typeSubs] and closure lookups on every emit.
+    // Creates shallow copies [...typeSubs] to prevent mutation issues if handlers unsubscribe during dispatch.
     const typeSubs = this.subscriptions.get(event.type);
     const wildcardSubs = this.subscriptions.get('*');
 
     let allSubs: Subscription[];
     if (!wildcardSubs || wildcardSubs.length === 0) {
-      allSubs = typeSubs || [];
+      allSubs = typeSubs ? [...typeSubs] : [];
     } else if (!typeSubs || typeSubs.length === 0) {
-      allSubs = wildcardSubs;
+      allSubs = [...wildcardSubs];
     } else {
       allSubs = [...typeSubs];
       for (const sub of wildcardSubs) {
