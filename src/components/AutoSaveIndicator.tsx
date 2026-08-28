@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
   COMPONENT_CONFIG,
   ANIMATION_DELAYS,
@@ -41,6 +42,7 @@ function AutoSaveIndicatorComponent({
   const [showIndicator, setShowIndicator] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [progress, setProgress] = useState(0);
+  const prefersReducedMotion = usePrefersReducedMotion();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -233,7 +235,7 @@ function AutoSaveIndicatorComponent({
           {saveState === 'typing' && <span className={PULSE_DOT} />}
           {saveState === 'saving' && (
             <svg
-              className={`${ICON_SIZES.SM_XS} ${TEXT_COLORS.BRAND_LIGHT} animate-spin`}
+              className={`${ICON_SIZES.SM_XS} ${TEXT_COLORS.BRAND_LIGHT} ${prefersReducedMotion ? '' : 'animate-spin'}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               aria-hidden="true"
@@ -251,7 +253,7 @@ function AutoSaveIndicatorComponent({
           )}
           {saveState === 'saved' && (
             <svg
-              className={`${ICON_SIZES.SM_XS} ${TEXT_COLORS.SUCCESS_LIGHT} animate-in zoom-in ${DURATION_TAILWIND[200]}`}
+              className={`${ICON_SIZES.SM_XS} ${TEXT_COLORS.SUCCESS_LIGHT} ${prefersReducedMotion ? '' : 'animate-in zoom-in'} ${DURATION_TAILWIND[200]}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -282,7 +284,9 @@ function AutoSaveIndicatorComponent({
         {saveState === 'saving' && AUTO_SAVE_INDICATOR_LABELS.SAVING}
         {saveState === 'saved' && (
           <span className={COMMON_SPACING_PATTERNS.FLEX_CENTER_SM}>
-            <span className={`animate-in fade-in ${DURATION_TAILWIND[200]}`}>
+            <span
+              className={`${prefersReducedMotion ? '' : 'animate-in fade-in'} ${DURATION_TAILWIND[200]}`}
+            >
               {AUTO_SAVE_INDICATOR_LABELS.SAVED}
             </span>
             {lastSaved && (
@@ -302,7 +306,7 @@ function AutoSaveIndicatorComponent({
                 position="top"
               >
                 <span
-                  className={`${TEXT_COLORS.MUTED} animate-in fade-in slide-in-from-left-1 ${DURATION_TAILWIND[300]} cursor-help border-b border-dotted ${BORDER_COLORS.MUTED} ${TEXT_COLORS.HOVER_SECONDARY} transition-colors ${DURATION_TAILWIND[200]} ${ANIMATION_DELAYS.TAILWIND[100]}`}
+                  className={`${TEXT_COLORS.MUTED} ${prefersReducedMotion ? '' : 'animate-in fade-in slide-in-from-left-1'} ${DURATION_TAILWIND[300]} cursor-help border-b border-dotted ${BORDER_COLORS.MUTED} ${TEXT_COLORS.HOVER_SECONDARY} transition-colors ${DURATION_TAILWIND[200]} ${ANIMATION_DELAYS.TAILWIND[100]}`}
                 >
                   • {formatLastSaved(lastSaved)}
                 </span>
