@@ -37,6 +37,7 @@ import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -50,6 +51,18 @@ export default function ForgotPasswordPage() {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const cooldownTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { openHelp } = useKeyboardShortcuts();
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  // Micro-UX: Circular progress ring for resend cooldown
+  // Provides visual feedback showing how much time remains before resend is available
+  const COOLDOWN_RING_RADIUS = 14;
+  const COOLDOWN_RING_CIRCUMFERENCE = 2 * Math.PI * COOLDOWN_RING_RADIUS;
+  const cooldownProgress = useMemo(() => {
+    if (resendCooldown <= 0) return 0;
+    return (
+      resendCooldown / COMPONENT_CONFIG.FORGOT_PASSWORD.RESEND_COOLDOWN_SECONDS
+    );
+  }, [resendCooldown]);
 
   const isFormValid = useMemo(() => {
     const trimmedEmail = email.trim();
@@ -285,20 +298,57 @@ export default function ForgotPasswordPage() {
             <div
               className={`${SPACING_CLASSES.TOP} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
             >
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={handleResend}
-                disabled={resendCooldown > 0 || isResending}
-                loading={isResending}
-                loadingText="Sending..."
-                className={RESPONSIVE_WIDTH}
-                size="md"
-              >
-                {resendCooldown > 0
-                  ? `Resend in ${resendCooldown}s`
-                  : 'Resend email'}
-              </Button>
+              <div className="relative inline-flex items-center justify-center">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handleResend}
+                  disabled={resendCooldown > 0 || isResending}
+                  loading={isResending}
+                  loadingText="Sending..."
+                  className={`${RESPONSIVE_WIDTH} ${resendCooldown > 0 ? 'relative' : ''}`}
+                  size="md"
+                >
+                  {resendCooldown > 0
+                    ? `Resend in ${resendCooldown}s`
+                    : 'Resend email'}
+                </Button>
+                {resendCooldown > 0 && !prefersReducedMotion && (
+                  <svg
+                    className="absolute inset-0 w-full h-full pointer-events-none"
+                    viewBox="0 0 36 36"
+                    aria-hidden="true"
+                  >
+                    <circle
+                      cx="18"
+                      cy="18"
+                      r={COOLDOWN_RING_RADIUS}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="text-gray-200"
+                    />
+                    <circle
+                      cx="18"
+                      cy="18"
+                      r={COOLDOWN_RING_RADIUS}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="text-primary-500"
+                      strokeLinecap="round"
+                      strokeDasharray={COOLDOWN_RING_CIRCUMFERENCE}
+                      strokeDashoffset={
+                        COOLDOWN_RING_CIRCUMFERENCE * (1 - cooldownProgress)
+                      }
+                      transform="rotate(-90 18 18)"
+                      style={{
+                        transition: 'stroke-dashoffset 1s linear',
+                      }}
+                    />
+                  </svg>
+                )}
+              </div>
             </div>
 
             <div
