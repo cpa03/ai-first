@@ -3,7 +3,7 @@
 set -e
 
 # Apply patch-package patches
-npx patch-package 2>/dev/null || true
+pnpm exec patch-package 2>/dev/null || true
 
 # Run the Cloudflare build
-npx @opennextjs/cloudflare build
+pnpm exec opennextjs-cloudflare build

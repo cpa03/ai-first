@@ -12,18 +12,6 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ## StorX Feature Analysis & Integration Tasks
 
-### [STRENGTHEN] Strengthen ScrollToTop Micro-UX Active States and Platform Shortcuts
-- **Priority**: MEDIUM
-- **Status**: COMPLETE
-- **Date**: 2026-08-28
-- **Details**: Strengthened `ScrollToTop` floating button micro-UX with active tactile scale feedback (`active:scale-95`), focus-visible ring visibility, and platform-aware keyboard shortcut hints (`⌘+↑`/`⌘+↓` on macOS vs `Home`/`End` on Windows/Linux) in tooltips. Verified in `tests/ScrollToTop.test.tsx`.
-
-### [CONNECT] Connect ScrollToTop Platform Shortcuts to System Utilities
-- **Priority**: LOW
-- **Status**: COMPLETE
-- **Date**: 2026-08-28
-- **Details**: Connected platform detection in `ScrollToTop` component directly to `PLATFORM.isMac()` utility and centralized `SCROLL_TO_TOP_LABELS`, maintaining architectural consistency across navigation components.
-
 ### [STRENGTHEN] Strengthen LoadingSpinner Accessibility and Non-Redundant Screen Reader Announcements
 - **Priority**: MEDIUM
 - **Status**: COMPLETE

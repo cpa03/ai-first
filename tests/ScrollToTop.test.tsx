@@ -120,7 +120,7 @@ describe('ScrollToTop', () => {
     expect(screen.getByText('Back to top')).toBeInTheDocument();
   });
 
-  it('should apply custom className and include active scale styling', () => {
+  it('should apply custom className', () => {
     Object.defineProperty(window, 'scrollY', { value: 500, writable: true });
     render(<ScrollToTop showAt={400} className="custom-class" />);
 
@@ -128,16 +128,6 @@ describe('ScrollToTop', () => {
     const button = screen.getByLabelText(/Scroll to top/);
 
     expect(button).toHaveClass('custom-class');
-    expect(button).toHaveClass('active:scale-95');
-  });
-
-  it('should display platform-appropriate shortcut hint symbols in tooltip', () => {
-    Object.defineProperty(window, 'scrollY', { value: 500, writable: true });
-    render(<ScrollToTop showAt={400} />);
-
-    fireEvent.scroll(window);
-    const button = screen.getByLabelText(/Scroll to top/);
-    expect(button).toBeInTheDocument();
   });
 
   it('should use default showAt value of 400', () => {
