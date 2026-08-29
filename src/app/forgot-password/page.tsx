@@ -37,6 +37,10 @@ import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useConfetti } from '@/hooks/useConfetti';
+import { CSS_POSITIONING } from '@/lib/config/css-positioning';
+import { CONFETTI_DOT } from '@/lib/config';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -50,6 +54,8 @@ export default function ForgotPasswordPage() {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const cooldownTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { openHelp } = useKeyboardShortcuts();
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const { fire: fireConfetti, particles: confettiParticles } = useConfetti();
 
   const isFormValid = useMemo(() => {
     const trimmedEmail = email.trim();
@@ -145,6 +151,7 @@ export default function ForgotPasswordPage() {
         }
 
         setSuccess(true);
+        fireConfetti();
       } catch (err) {
         const errorMessage =
           err instanceof Error
@@ -155,7 +162,7 @@ export default function ForgotPasswordPage() {
         setIsLoading(false);
       }
     },
-    [email, validateEmail]
+    [email, validateEmail, fireConfetti]
   );
 
   const submitForm = useCallback(async () => {
@@ -230,7 +237,7 @@ export default function ForgotPasswordPage() {
         >
           <div className={`${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE}`}>
             <div
-              className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex ${ICON_SIZES.XXXXL} items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.NONE}`}
+              className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex ${ICON_SIZES.XXXXL} items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.NONE} relative`}
             >
               <svg
                 className={`${ICON_SIZES.XL} ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
@@ -245,6 +252,25 @@ export default function ForgotPasswordPage() {
                   d="M5 13l4 4L19 7"
                 />
               </svg>
+              {!prefersReducedMotion &&
+                confettiParticles.map((particle) => (
+                  <span
+                    key={particle.id}
+                    className={CONFETTI_DOT}
+                    style={
+                      {
+                        ...CSS_POSITIONING.CENTER_ANIMATED,
+                        width: `${particle.size}px`,
+                        height: `${particle.size}px`,
+                        backgroundColor: particle.color,
+                        '--confetti-x': `${particle.x}px`,
+                        '--confetti-y': `${particle.y}px`,
+                        animationDelay: `${particle.delay}ms`,
+                      } as React.CSSProperties
+                    }
+                    aria-hidden="true"
+                  />
+                ))}
             </div>
             <h1
               className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
