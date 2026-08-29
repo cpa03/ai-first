@@ -99,6 +99,22 @@ export const Z_INDEX_LAYERS = {
 } as const;
 
 /**
+ * Z-Index Tailwind Classes
+ * Maps Z_INDEX_LAYERS to Tailwind utility classes
+ */
+export const Z_INDEX_CLASSES = {
+  BASE: 'z-0',
+  CONTENT: 'z-10',
+  STICKY: 'z-20',
+  OVERLAY: 'z-30',
+  MOBILE_OVERLAY: 'z-[35]',
+  MODAL: 'z-40',
+  MOBILE_MENU: 'z-[45]',
+  TOAST: 'z-50',
+  CELEBRATION: 'z-50',
+} as const;
+
+/**
  * Progress Bar Accessibility Constants
  */
 export const PROGRESS_BAR_A11Y = {

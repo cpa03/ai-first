@@ -87,6 +87,7 @@ export {
   SVG_CIRCLE,
   GAP_SIZES,
   Z_INDEX_LAYERS,
+  Z_INDEX_CLASSES,
   PROGRESS_BAR_A11Y,
   TOOLTIP_CONFIG,
 } from './sizes';
