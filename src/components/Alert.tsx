@@ -338,6 +338,23 @@ const AlertComponent = function Alert({
             }}
             aria-hidden="true"
           />
+          {/* Micro-UX: Pause icon overlay on progress bar when countdown is paused */}
+          {/* Provides immediate visual feedback that the auto-dismiss timer is paused */}
+          {isPaused && (
+            <div
+              className={`absolute bottom-0 left-0 ${HEIGHT_ONLY.XS} flex items-center justify-center transition-opacity ${DURATION_TAILWIND[200]}`}
+              style={{ width: `${progress}%` }}
+              aria-hidden="true"
+            >
+              <svg
+                className="w-2.5 h-2.5 text-current opacity-70"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+              </svg>
+            </div>
+          )}
           <div
             className={`${COORDINATE_POSITION_PATTERNS.BOTTOM_RIGHT_SM} ${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM}`}
             aria-live="polite"
@@ -346,7 +363,9 @@ const AlertComponent = function Alert({
             {remainingSeconds > 0 && (
               <span className={TOAST_DISMISS_BUTTON}>
                 {isPaused ? (
-                  <span className={`flex items-center ${GAP_CLASSES.SM}`}>
+                  <span
+                    className={`flex items-center ${GAP_CLASSES.SM} motion-safe:animate-pulse`}
+                  >
                     <svg
                       className={ICON_SIZES.SM}
                       fill="currentColor"
