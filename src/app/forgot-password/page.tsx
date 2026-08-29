@@ -6,6 +6,7 @@ import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
+import CopyButton from '@/components/CopyButton';
 import { ROUTES } from '@/lib/config';
 import {
   PAGE_LAYOUT_CLASSES,
@@ -256,6 +257,14 @@ export default function ForgotPasswordPage() {
             >
               We&apos;ve sent a password reset link to{' '}
               <span className={FONT_MEDIUM}>{email}</span>
+              <CopyButton
+                textToCopy={email}
+                label="Copy email"
+                successLabel="Copied!"
+                variant="subtle"
+                showToast={true}
+                toastMessage="Email address copied to clipboard"
+              />
             </p>
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
