@@ -236,9 +236,9 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
   ssrf: [
     {
       // SECURITY: Upgraded pattern to detect any loopback IP in the class A range 127.0.0.0/8
-      // with boundary safety, including octal variants (0177.x.x.x), shorthands (e.g. 127.1, 0177.1, 127.0.1, 127.12.34.56), and zero IP ([::])
+      // with boundary safety, including shorthands (e.g. 127.1, 127.0.1, 127.12.34.56) and zero IP ([::])
       pattern:
-        /(localhost|\b127\.(?:[0-9]{1,3}\.){1,3}[0-9]{1,3}\b|\b127\.1\b|\b0177\.(?:[0-9]{1,4}\.){1,3}[0-9]{1,4}\b|\b0177\.1\b|\b0\.0\.0\.0\b|::1|\[::\])/i,
+        /(localhost|\b127\.(?:[0-9]{1,3}\.){1,3}[0-9]{1,3}\b|\b127\.1\b|\b0\.0\.0\.0\b|::1|\[::\])/i,
       severity: 2,
       description: 'Localhost SSRF attempt',
     },
@@ -276,10 +276,10 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
       description: 'Non-standard IP encoding SSRF (hex, decimal, or octal)',
     },
     {
-      // SECURITY: Enhanced to detect the entire loopback subnet block (127.0.0.0/8), octal notation (0177.x), and shorthands
-      // in IPv6-mapped IPv4 formats (e.g., ::ffff:127.0.0.2, ::ffff:0177.0.0.1, ::ffff:127.1), as well as cloud link-local.
+      // SECURITY: Enhanced to detect the entire loopback subnet block (127.0.0.0/8) and shorthands
+      // in IPv6-mapped IPv4 formats (e.g., ::ffff:127.0.0.2, ::ffff:127.1), as well as cloud link-local.
       pattern:
-        /\[?::ffff:(?:127\.(?:[0-9]{1,3}\.){1,3}[0-9]{1,3}|127\.1|0177\.(?:[0-9]{1,4}\.){1,3}[0-9]{1,4}|0177\.1|169\.254\.\d+\.\d+)\]?/i,
+        /\[?::ffff:(?:127\.(?:[0-9]{1,3}\.){1,3}[0-9]{1,3}|127\.1|169\.254\.\d+\.\d+)\]?/i,
       severity: 3,
       description: 'IPv6-mapped IPv4 SSRF',
     },
