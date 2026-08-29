@@ -419,7 +419,7 @@ function ScrollToTopComponent({
 
           {hasReachedEnd && !prefersReducedMotion ? (
             <svg
-              className={`relative z-10 ${ICON_SIZES.LG} ${scrollDepthColor.stroke} ${showReachedEndCelebration ? SUCCESS_POP : ''}`}
+              className={`relative z-${Z_INDEX_LAYERS.CONTENT} ${ICON_SIZES.LG} ${scrollDepthColor.stroke} ${showReachedEndCelebration ? SUCCESS_POP : ''}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -434,7 +434,7 @@ function ScrollToTopComponent({
             </svg>
           ) : showPercentage && !prefersReducedMotion ? (
             <span
-              className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} font-semibold ${scrollDepthColor.text} tabular-nums leading-none transition-colors ${DURATION_TAILWIND[300]} ease-out`}
+              className={`relative z-${Z_INDEX_LAYERS.CONTENT} ${TEXT_SIZE_CLASSES.XS} font-semibold ${scrollDepthColor.text} tabular-nums leading-none transition-colors ${DURATION_TAILWIND[300]} ease-out`}
               aria-hidden="true"
             >
               {animatedPercentage}
@@ -442,7 +442,7 @@ function ScrollToTopComponent({
           ) : (
             <svg
               className={`
-                relative z-10 ${ICON_SIZES.LG} transition-all ${DURATION_TAILWIND[200]}
+                relative z-${Z_INDEX_LAYERS.CONTENT} ${ICON_SIZES.LG} transition-all ${DURATION_TAILWIND[200]}
                 ${prefersReducedMotion ? '' : isNearTop ? 'group-hover:translate-y-0.5' : 'group-hover:-translate-y-0.5'}
               `}
               fill="none"
