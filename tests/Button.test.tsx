@@ -124,6 +124,24 @@ describe('Button', () => {
     });
   });
 
+  describe('tactile feedback and accessibility', () => {
+    it('applies tactile hover and active scale feedback when enabled', () => {
+      render(<Button variant="primary">Click Me</Button>);
+      const button = screen.getByRole('button', { name: /click me/i });
+
+      expect(button.className).toContain('hover:scale-[1.02]');
+      expect(button.className).toContain('active:scale-[0.98]');
+    });
+
+    it('suppresses active scale feedback when disabled', () => {
+      render(<Button disabled>Disabled Button</Button>);
+      const button = screen.getByRole('button', { name: /disabled button/i });
+
+      expect(button.className).toContain('hover:scale-100');
+      expect(button.className).toContain('active:scale-100');
+    });
+  });
+
   describe('focus ring accessibility', () => {
     it('primary variant has primary focus ring color', () => {
       render(<Button variant="primary">Primary</Button>);

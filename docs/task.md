@@ -66,6 +66,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 - **Date**: 2026-08-16
 - **Details**: Connected platform-aware keyboard shortcut representations for `CopyButton` directly to `COPY_BUTTON_LABELS.KEYBOARD_SHORTCUT` in `src/lib/config/component-labels.ts`.
 
+### [STRENGTHEN] Standardize Button Active Tactile Feedback and Accessibility
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-29
+- **Details**: Strengthened `Button` component active click feedback (`active:scale-[0.98]`) across interactive button states while maintaining motion-reduction accessibility and keyboard activation parity. Verified in `tests/Button.test.tsx`.
+
+### [CONNECT] Connect Button Micro-UX Interactive Styles to Central Configs
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-08-29
+- **Details**: Verified `Button` interactive state transitions and button styling connect directly to centralized configurations in `src/lib/config/theme/styles.ts`, ensuring zero uncoordinated styling rules.
+
 ---
 
 ## Quick Stats
