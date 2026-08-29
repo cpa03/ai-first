@@ -58,6 +58,7 @@
     "user-stories:validate": "node scripts/validate-user-stories.js",
     "check:circular": "node scripts/check-circular-deps.js",
     "bug:scan": "bash scripts/bug-scan.sh",
+    "bugfixer:workflow": "bash scripts/bugfixer-workflow.sh",
     "backup": "bash scripts/backup.sh",
     "backup:verify": "bash scripts/backup-verify.sh",
     "backup:monitor": "bash scripts/backup-monitor.sh",
