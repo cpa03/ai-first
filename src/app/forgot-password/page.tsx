@@ -285,20 +285,55 @@ export default function ForgotPasswordPage() {
             <div
               className={`${SPACING_CLASSES.TOP} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
             >
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={handleResend}
-                disabled={resendCooldown > 0 || isResending}
-                loading={isResending}
-                loadingText="Sending..."
-                className={RESPONSIVE_WIDTH}
-                size="md"
-              >
-                {resendCooldown > 0
-                  ? `Resend in ${resendCooldown}s`
-                  : 'Resend email'}
-              </Button>
+              {/* Micro-UX: Circular cooldown progress ring around resend button */}
+              {/* Provides clear visual feedback about remaining cooldown time */}
+              {/* The ring depletes clockwise as countdown progresses */}
+              <div className="relative inline-flex items-center justify-center">
+                {resendCooldown > 0 && (
+                  <svg
+                    className="absolute inset-0 w-full h-full pointer-events-none"
+                    viewBox="0 0 120 48"
+                    aria-hidden="true"
+                  >
+                    <circle
+                      cx="60"
+                      cy="24"
+                      r="22"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="text-gray-200 dark:text-gray-700"
+                    />
+                    <circle
+                      cx="60"
+                      cy="24"
+                      r="22"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="text-primary-500 dark:text-primary-400 transition-all duration-1000 ease-linear"
+                      strokeDasharray={`${2 * Math.PI * 22}`}
+                      strokeDashoffset={`${2 * Math.PI * 22 * (1 - resendCooldown / COMPONENT_CONFIG.FORGOT_PASSWORD.RESEND_COOLDOWN_SECONDS)}`}
+                      strokeLinecap="round"
+                      transform="rotate(-90 60 24)"
+                    />
+                  </svg>
+                )}
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handleResend}
+                  disabled={resendCooldown > 0 || isResending}
+                  loading={isResending}
+                  loadingText="Sending..."
+                  className={`${RESPONSIVE_WIDTH} relative z-10`}
+                  size="md"
+                >
+                  {resendCooldown > 0
+                    ? `Resend in ${resendCooldown}s`
+                    : 'Resend email'}
+                </Button>
+              </div>
             </div>
 
             <div
