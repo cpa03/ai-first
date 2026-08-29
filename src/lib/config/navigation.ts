@@ -125,9 +125,9 @@ export const FOOTER_NAV_CONFIG = {
     {
       title: 'Product',
       items: [
-        { href: '/', label: 'Home' },
-        { href: '/clarify', label: 'Get Started' },
-        { href: '/dashboard', label: 'Dashboard' },
+        { href: '/', label: 'Home', ariaLabel: 'Home' },
+        { href: '/clarify', label: 'Get Started', ariaLabel: 'Get Started' },
+        { href: '/dashboard', label: 'Dashboard', ariaLabel: 'Dashboard' },
       ],
     },
     {
