@@ -109,10 +109,10 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
  * 'eyJ' (jwt), '://' (urls), common assignment operators ':', '=', and '#', and specific API key prefixes,
  * and common secret-related keywords.
  * PERFORMANCE: Single regex test is faster than multiple tests on every log message.
- * The numeric trigger requires at least two digits to avoid scanning common single-digit IDs.
+ * The numeric trigger uses `[^\d]*` instead of `[\s\S]*` to prevent catastrophic greedy backtracking across long text.
  */
 const COMBINED_TRIGGER_REGEX =
-  /\d[\s\S]*\d|[@:=#]|eyJ|:\/\/|sk_|pk_|rk_|AKIA|sk-|api[-_ ]?key|secret|token|password|passphrase|credential|auth|authorization|bearer/i;
+  /\d[^\d]*\d|[@:=#]|eyJ|:\/\/|sk_|pk_|rk_|AKIA|sk-|api[-_ ]?key|secret|token|password|passphrase|credential|auth|authorization|bearer/i;
 
 /**
  * Specific triggers for API keys and secrets to avoid running the full complex regex.
