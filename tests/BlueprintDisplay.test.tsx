@@ -133,4 +133,24 @@ describe('BlueprintDisplay', () => {
       );
     });
   });
+
+  it('displays platform-aware keyboard shortcut hints on desktop', async () => {
+    const idea = 'Test idea';
+    const answers = { target_audience: 'Developers' };
+
+    render(<BlueprintDisplay idea={idea} answers={answers} />);
+
+    await waitFor(
+      () => {
+        expect(
+          screen.getAllByText(/your project blueprint/i).length
+        ).toBeGreaterThan(0);
+      },
+      { timeout: TEST_CONFIG.SHORT_TIMEOUT }
+    );
+
+    expect(screen.getByText('C')).toBeInTheDocument();
+    expect(screen.getByText('P')).toBeInTheDocument();
+    expect(screen.getByText('D')).toBeInTheDocument();
+  });
 });

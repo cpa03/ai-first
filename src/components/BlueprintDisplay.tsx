@@ -308,7 +308,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                     ? MESSAGES.BLUEPRINT.COPIED_BUTTON
                     : MESSAGES.BLUEPRINT.COPY_BUTTON
                 }
-                shortcut={['⌘', 'C']}
+                shortcut={BLUEPRINT_DISPLAY_LABELS.COPY_SHORTCUT(isMac)}
               >
                 <Button
                   onClick={handleCopyWithFocus}
@@ -327,7 +327,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
               </Tooltip>
               <Tooltip
                 content={MESSAGES.BLUEPRINT.PRINT_BUTTON}
-                shortcut={['⌘', 'P']}
+                shortcut={BLUEPRINT_DISPLAY_LABELS.PRINT_SHORTCUT(isMac)}
               >
                 <Button
                   onClick={handlePrint}
@@ -354,7 +354,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
               </Tooltip>
               <Tooltip
                 content={MESSAGES.BLUEPRINT.DOWNLOAD_BUTTON}
-                shortcut={['⌘', 'D']}
+                shortcut={BLUEPRINT_DISPLAY_LABELS.DOWNLOAD_SHORTCUT(isMac)}
               >
                 <Button
                   onClick={handleDownloadWithFocus}

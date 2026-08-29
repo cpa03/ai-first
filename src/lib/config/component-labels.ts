@@ -634,6 +634,9 @@ export const BLUEPRINT_DISPLAY_LABELS = {
   COPY_BUTTON_SUCCESS: 'Copied!',
   COPY_ARIA_DEFAULT: 'Copy blueprint to clipboard',
   COPY_ARIA_SUCCESS: 'Copied to clipboard',
+  COPY_SHORTCUT: (isMac: boolean) => [isMac ? '⌘' : 'Ctrl', 'C'],
+  PRINT_SHORTCUT: (isMac: boolean) => [isMac ? '⌘' : 'Ctrl', 'P'],
+  DOWNLOAD_SHORTCUT: (isMac: boolean) => [isMac ? '⌘' : 'Ctrl', 'D'],
 } as const;
 
 /**
