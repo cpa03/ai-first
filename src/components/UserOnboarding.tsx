@@ -99,6 +99,7 @@ export default function UserOnboarding() {
   const [showCelebration, setShowCelebration] = useState(false);
   const animatingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const celebrationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const celebrationDialogRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
   const { particles, fire } = useConfetti();
 
@@ -277,6 +278,73 @@ export default function UserOnboarding() {
   }, []);
 
   /**
+   * Micro-UX: Dismiss celebration dialog with Escape key
+   * Provides keyboard-only users a way to close the completion modal
+   */
+  const handleCelebrationDismiss = useCallback(() => {
+    if (celebrationTimeoutRef.current) {
+      clearTimeout(celebrationTimeoutRef.current);
+    }
+    localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
+    setIsVisible(false);
+    setShowCelebration(false);
+    trackEvent(ANALYTICS_EVENTS.ONBOARDING_COMPLETE, {
+      total_steps: TOUR_STEPS.length,
+      dismissed_early: true,
+    });
+  }, []);
+
+  /**
+   * Micro-UX: Focus trap for celebration dialog
+   * Keeps keyboard focus within the modal when it's open
+   * Pressing Tab cycles through focusable elements inside the dialog
+   */
+  useEffect(() => {
+    if (!showCelebration || !celebrationDialogRef.current) return;
+
+    const dialog = celebrationDialogRef.current;
+    const focusableElements = dialog.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+
+    if (focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    // Focus the first element when celebration appears
+    firstElement?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        triggerHapticFeedback();
+        handleCelebrationDismiss();
+        return;
+      }
+
+      if (e.key !== 'Tab') return;
+
+      if (e.shiftKey) {
+        // Shift+Tab: if on first element, wrap to last
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement?.focus();
+        }
+      } else {
+        // Tab: if on last element, wrap to first
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement?.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [showCelebration, handleCelebrationDismiss]);
+
+  /**
    * Micro-UX: Keyboard navigation for onboarding tour
    * ArrowRight/Enter = Next step, ArrowLeft/Backspace = Previous step, Escape = Skip
    * Improves accessibility for keyboard-only users
@@ -329,6 +397,7 @@ export default function UserOnboarding() {
   if (showCelebration) {
     return (
       <div
+        ref={celebrationDialogRef}
         className={`fixed inset-0 z-[${Z_INDEX_LAYERS.MODAL}] flex items-center justify-center`}
         role="dialog"
         aria-label={USER_ONBOARDING_LABELS.COMPLETION_ARIA_LABEL}
