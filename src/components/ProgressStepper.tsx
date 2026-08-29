@@ -263,7 +263,7 @@ const ProgressStepperComponent = function ProgressStepper({
                 onClick={() => handleStepClick(index)}
                 onKeyDown={(e) => handleStepKeyDown(e, index)}
                 disabled={!isClickable}
-                className={`flex items-center w-full rounded-full transition-all duration-200 ${isClickable ? `cursor-pointer group ${FOCUS_RING_PATTERNS.DEFAULT}` : 'cursor-default'}`}
+                className={`flex items-center w-full rounded-full ${TRANSITION_CLASSES.DEFAULT} ${isClickable ? `cursor-pointer group ${FOCUS_RING_PATTERNS.DEFAULT}` : 'cursor-default'}`}
               >
                 <div className={FLEX_PATTERNS.BETWEEN} aria-hidden="true">
                   <div
