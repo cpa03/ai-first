@@ -272,19 +272,13 @@ Older audit reports (2026-07-08 through 2026-08-11) are archived in [audit/archi
 
 ### Active Reports
 
-- [Repository Maintenance Report - 2026-08-19](./maintenance/2026-08-19-repository-maintenance-report.md) - Repository maintenance report (latest)
-- [Repository Maintenance Report - 2026-08-18 (Loop)](./maintenance/2026-08-18-repository-maintenance-report-loop.md) - Repository maintenance loop report
-- [Repository Maintenance Report - 2026-08-18](./maintenance/2026-08-18-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-17](./maintenance/2026-08-17-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-17 (Loop)](./maintenance/2026-08-17-repository-maintenance-report-loop.md) - Repository maintenance loop report
-- [Repository Maintenance Report - 2026-08-16 (2100)](./maintenance/2026-08-16-repository-maintenance-report-2100.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-16](./maintenance/2026-08-16-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Health Check - 2026-08-15](./maintenance/2026-08-15-repository-health-check.md) - Repository health check report
-- [Repository Maintenance Report - 2026-08-15](./maintenance/2026-08-15-repository-maintenance.md) - Repository maintenance report
+- [RepoKeeper Maintenance Summary - 2026-08-23](./maintenance/2026-08-23-repokeeper-summary.md) - Latest maintenance summary
+- [Repository Maintenance Report - 2026-08-23](./maintenance/2026-08-23-repository-maintenance-report.md) - Repository maintenance report
+- [Repository Maintenance Report - 2026-08-19](./maintenance/2026-08-19-repository-maintenance-report.md) - Repository maintenance report
 
 ### Archived Reports
 
-Older maintenance reports (2026-07-07 through 2026-08-14) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/).
+Older maintenance reports (2026-07-07 through 2026-08-18) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/).
 
 ---
 
