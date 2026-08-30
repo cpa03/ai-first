@@ -497,6 +497,8 @@ function KeyboardShortcutsHelpComponent({
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const selectedItemRef = useRef<HTMLDivElement>(null);
   const shortcutsContainerRef = useRef<HTMLDivElement>(null);
+  const tabListRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const { storeFocus, restoreFocus: restoreFocusFn } = useFocusManagement(
     isOpen,
@@ -644,6 +646,53 @@ function KeyboardShortcutsHelpComponent({
       });
     }
   }, [selectedIndex, prefersReducedMotion]);
+
+  // Micro-UX: Arrow-key navigation between category filter tabs
+  // Follows WAI-ARIA Tabs pattern — ArrowLeft/Right cycle tabs, Home/End jump
+  const handleTabKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const tabCount = 1 + contextOrder.length; // "All" + context tabs
+      const currentIndex =
+        selectedContext === 'all'
+          ? 0
+          : contextOrder.indexOf(selectedContext) + 1;
+
+      let nextIndex = currentIndex;
+
+      switch (e.key) {
+        case 'ArrowRight':
+          e.preventDefault();
+          nextIndex = (currentIndex + 1) % tabCount;
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          nextIndex = (currentIndex - 1 + tabCount) % tabCount;
+          break;
+        case 'Home':
+          e.preventDefault();
+          nextIndex = 0;
+          break;
+        case 'End':
+          e.preventDefault();
+          nextIndex = tabCount - 1;
+          break;
+        default:
+          return;
+      }
+
+      triggerHapticFeedback();
+
+      if (nextIndex === 0) {
+        setSelectedContext('all');
+      } else {
+        setSelectedContext(contextOrder[nextIndex - 1]);
+      }
+
+      setSelectedIndex(0);
+      tabRefs.current[nextIndex]?.focus();
+    },
+    [selectedContext]
+  );
 
   // Micro-UX: Focus trap for accessibility
   // Prevents keyboard users from tabbing outside the modal to elements behind the backdrop
@@ -828,13 +877,19 @@ function KeyboardShortcutsHelpComponent({
 
         {/* Category filter chips */}
         <div
+          ref={tabListRef}
           className={`px-6 py-3 border-b ${BORDER_COLORS.DEFAULT} flex flex-wrap gap-2`}
           role="tablist"
           aria-label="Filter shortcuts by category"
+          onKeyDown={handleTabKeyDown}
         >
           <button
             type="button"
+            ref={(el) => {
+              tabRefs.current[0] = el;
+            }}
             role="tab"
+            tabIndex={selectedContext === 'all' ? 0 : -1}
             aria-selected={selectedContext === 'all'}
             onClick={() => {
               setSelectedContext('all');
@@ -849,7 +904,7 @@ function KeyboardShortcutsHelpComponent({
           >
             All
           </button>
-          {contextOrder.map((context) => {
+          {contextOrder.map((context, index) => {
             const count = keyboardShortcuts.filter(
               (s) => s.context === context
             ).length;
@@ -857,7 +912,11 @@ function KeyboardShortcutsHelpComponent({
               <button
                 key={context}
                 type="button"
+                ref={(el) => {
+                  tabRefs.current[index + 1] = el;
+                }}
                 role="tab"
+                tabIndex={selectedContext === context ? 0 : -1}
                 aria-selected={selectedContext === context}
                 onClick={() => {
                   setSelectedContext(
