@@ -12,6 +12,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ## StorX Feature Analysis & Integration Tasks
 
+### [STRENGTHEN] Strengthen StepCelebration Accessibility and Reduced Motion Compatibility
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-30
+- **Details**: Enhanced `StepCelebration` with live screen reader announcements via `<StatusAnnouncer>` and reduced-motion fallback handling, verified with unit tests in `tests/StepCelebration.test.tsx`.
+
+### [CONNECT] Connect StepCelebration Labels to Central Component Configs
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-08-30
+- **Details**: Verified that step progress formatting and announcement strings in `StepCelebration` connect directly to `STEP_CELEBRATION_LABELS` in `src/lib/config/component-labels.ts`.
+
 ### [STRENGTHEN] Strengthen LoadingSpinner Accessibility and Non-Redundant Screen Reader Announcements
 - **Priority**: MEDIUM
 - **Status**: COMPLETE
