@@ -71,11 +71,24 @@ export interface CSRFValidationResult {
 function extractOrigin(request: Request): string | null {
   const origin = request.headers.get('origin');
   if (origin) {
-    return origin.toLowerCase();
+    // SECURITY: Reject origin headers containing CRLF, control characters, or whitespace to prevent header injection/log poisoning
+    if (/[\r\n\x00-\x1F\x7F\s]/.test(origin)) {
+      return null;
+    }
+    try {
+      const originUrl = new URL(origin);
+      return originUrl.origin.toLowerCase();
+    } catch {
+      return null;
+    }
   }
 
   const referer = request.headers.get('referer');
   if (referer) {
+    // SECURITY: Reject referer headers containing CRLF or control characters
+    if (/[\r\n\x00-\x1F\x7F]/.test(referer)) {
+      return null;
+    }
     try {
       const refererUrl = new URL(referer);
       return refererUrl.origin.toLowerCase();
