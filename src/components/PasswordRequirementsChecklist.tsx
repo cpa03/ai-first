@@ -268,6 +268,11 @@ function PasswordRequirementsChecklistComponent({
           aria-valuenow={metCount}
           aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
           aria-valuemax={total}
+          aria-valuetext={PASSWORD_REQUIREMENTS_LABELS.PROGRESS_VALUE_TEXT(
+            strengthLabel,
+            metCount,
+            total
+          )}
           aria-label={PASSWORD_REQUIREMENTS_LABELS.PROGRESS_ARIA_LABEL(
             metCount,
             total
@@ -296,7 +301,7 @@ function PasswordRequirementsChecklistComponent({
             <span
               className={`flex-shrink-0 ${ICON_SIZES.MD} rounded-full flex items-center justify-center ${TRANSITION_CLASSES.DEFAULT} ${
                 req.met ? BG_COLORS.SUCCESS_LIGHT : BG_COLORS.LIGHTER
-              }`}
+              } ${newlyMetIds.has(req.id) && !prefersReducedMotion ? 'scale-110' : ''}`}
               aria-hidden="true"
             >
               {req.met ? (

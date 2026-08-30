@@ -686,6 +686,9 @@ export const PASSWORD_REQUIREMENTS_LABELS = {
   /** Screen reader announcement when requirement count changes */
   PROGRESS_ANNOUNCEMENT: (metCount: number, total: number) =>
     `${metCount} of ${total} requirements met`,
+  /** Human-readable progress text for aria-valuetext */
+  PROGRESS_VALUE_TEXT: (strengthLabel: string, metCount: number, total: number) =>
+    `${strengthLabel}: ${metCount} of ${total} requirements met`,
 } as const;
 
 /**

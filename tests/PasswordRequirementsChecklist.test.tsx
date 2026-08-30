@@ -25,6 +25,10 @@ describe('PasswordRequirementsChecklist', () => {
     const progressbar = screen.getByRole('progressbar');
     expect(progressbar).toBeInTheDocument();
     expect(progressbar).toHaveAttribute('aria-valuenow', '0');
+    expect(progressbar).toHaveAttribute(
+      'aria-valuetext',
+      'Weak: 0 of 5 requirements met'
+    );
 
     // Requirement list container should have aria-live="polite"
     const list = screen.getByRole('list');
@@ -67,6 +71,10 @@ describe('PasswordRequirementsChecklist', () => {
 
     const progressbar = screen.getByRole('progressbar');
     expect(progressbar).toHaveAttribute('aria-valuenow', '2');
+    expect(progressbar).toHaveAttribute(
+      'aria-valuetext',
+      'Medium: 2 of 5 requirements met'
+    );
 
     // Met requirements: uppercase, lowercase
     expect(
@@ -104,6 +112,10 @@ describe('PasswordRequirementsChecklist', () => {
 
     const progressbar = screen.getByRole('progressbar');
     expect(progressbar).toHaveAttribute('aria-valuenow', '5');
+    expect(progressbar).toHaveAttribute(
+      'aria-valuetext',
+      'Strong: 5 of 5 requirements met'
+    );
 
     // All should be met
     expect(
