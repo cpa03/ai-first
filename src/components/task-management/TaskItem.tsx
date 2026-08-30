@@ -74,13 +74,42 @@ function TaskItemComponent({
       // Micro-UX: Fire confetti on task completion for delightful feedback
       // Matches the pattern established in CopyButton, ShareButton, and EmailButton
       fire();
+      // Micro-UX: Show undo toast for accidental completions
+      // Standard pattern in Gmail, Google Tasks, Todoist
+      const win = window as Window & {
+        showToast?: (options: {
+          type: 'success';
+          message: string;
+          duration?: number;
+          action?: { label: string; onClick: () => void };
+        }) => void;
+      };
+      if (win.showToast) {
+        win.showToast({
+          type: 'success',
+          message: `Task "${task.title}" completed`,
+          duration: 5000,
+          action: {
+            label: 'Undo',
+            onClick: () => onToggle(task.id, task.status),
+          },
+        });
+      }
       const timer = setTimeout(
         () => setShowCelebration(false),
         TASK_ANIMATION_CONFIG.CELEBRATION_DURATION_MS
       );
       return () => clearTimeout(timer);
     }
-  }, [isCompleted, isUpdating, task.status, fire]);
+  }, [
+    isCompleted,
+    isUpdating,
+    task.status,
+    task.title,
+    task.id,
+    onToggle,
+    fire,
+  ]);
 
   const handleClick = useCallback(() => {
     triggerHapticFeedback();

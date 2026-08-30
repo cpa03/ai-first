@@ -41,17 +41,24 @@ import { isFocusedOnInput } from '@/lib/dom-utils';
 // to avoid the high CPU and OS-level secure entropy/crypto overhead of `generateId()`.
 let toastIdCounter = 0;
 
+export interface ToastAction {
+  label: string;
+  onClick: () => void;
+}
+
 export interface Toast {
   id: string;
   type: 'success' | 'error' | 'warning' | 'info';
   message: string;
   duration?: number;
+  action?: ToastAction;
 }
 
 export interface ToastOptions {
   type: 'success' | 'error' | 'warning' | 'info';
   message: string;
   duration?: number;
+  action?: ToastAction;
 }
 
 interface ToastProps {
@@ -302,6 +309,18 @@ function ToastComponent({ toast, onClose }: ToastProps) {
           {toast.message}
         </p>
       </div>
+      {toast.action && (
+        <button
+          onClick={() => {
+            toast.action!.onClick();
+            handleClose();
+          }}
+          className={`flex-shrink-0 ${ML_CLASSES.MD} px-3 py-1 text-sm font-medium ${styles.textColor} hover:opacity-75 ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT.replace('focus-visible:', 'focus:')} rounded-md transition-opacity`}
+          aria-label={toast.action.label}
+        >
+          {toast.action.label}
+        </button>
+      )}
       <button
         onClick={handleClose}
         className={`flex-shrink-0 ${ML_CLASSES.MD} ${styles.textColor} hover:opacity-75 ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT.replace('focus-visible:', 'focus:')} rounded-md ${P_CLASSES.SM} ${MIN_SIZE_CLASSES.TOAST_BUTTON} transition-opacity`}
