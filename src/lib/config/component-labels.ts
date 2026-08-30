@@ -201,6 +201,8 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
   CLOSE_ARIA_LABEL: 'Close command palette',
   COPY_SHORTCUT_ARIA_LABEL: (keys: string[]) =>
     `Copy shortcut: ${keys.join(' plus ')}`,
+  /** Category filter tablist aria-label */
+  CATEGORY_FILTER_ARIA_LABEL: 'Filter shortcuts by category',
   /** Separator between keyboard shortcut key combinations */
   SEPARATOR: '·',
   /** Keyboard shortcut context labels */
