@@ -383,15 +383,12 @@ export default function DashboardPage() {
 
   const modalRef = useRef<HTMLDivElement>(null);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
-  const deleteConfirmInputRef = useRef<HTMLInputElement>(null);
 
-  useFocusManagement(deleteModal.isOpen, { delay: 0, restoreFocus: true });
-
-  useEffect(() => {
-    if (deleteConfirmInputRef.current) {
-      deleteConfirmInputRef.current.focus();
-    }
-  }, [deleteModal.isOpen]);
+  const {
+    focusRef,
+    storeFocus: _storeFocus,
+    restoreFocus: _restoreFocus,
+  } = useFocusManagement(deleteModal.isOpen, { delay: 0, restoreFocus: true });
 
   useEffect(() => {
     if (!deleteModal.isOpen) return;
@@ -1419,7 +1416,7 @@ export default function DashboardPage() {
                 {DASHBOARD_PAGE_CONTENT.DELETE_CONFIRM.INPUT_LABEL}
               </label>
               <input
-                ref={deleteConfirmInputRef}
+                ref={focusRef as React.RefObject<HTMLInputElement>}
                 id={DASHBOARD_ELEMENT_IDS.DELETE_CONFIRM_INPUT}
                 type="text"
                 value={deleteConfirmText}
