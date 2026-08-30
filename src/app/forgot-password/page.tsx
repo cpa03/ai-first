@@ -263,6 +263,23 @@ export default function ForgotPasswordPage() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [submitForm]);
 
+  // Micro-UX: Keyboard shortcut to navigate back to login from success state
+  // Pressing 'L' provides a quick way to return to sign in after checking email
+  useEffect(() => {
+    if (!success) return;
+
+    const handleSuccessKeyDown = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === 'l' && !isFocusedOnInput(e.target)) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        window.location.href = ROUTES.LOGIN;
+      }
+    };
+
+    document.addEventListener('keydown', handleSuccessKeyDown);
+    return () => document.removeEventListener('keydown', handleSuccessKeyDown);
+  }, [success]);
+
   if (success) {
     return (
       <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
@@ -358,24 +375,40 @@ export default function ForgotPasswordPage() {
                 </Link>
               </Tooltip>
             </div>
-            <p
-              className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
-              aria-hidden="true"
+            <div
+              className={`${SPACING_CLASSES.TOP} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
             >
-              Press{' '}
-              <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+              <p
+                className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
+                aria-hidden="true"
               >
-                {isMac ? '⌘' : 'Ctrl'}
-              </kbd>
-              {' + '}
-              <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                Press{' '}
+                <kbd
+                  className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                >
+                  L
+                </kbd>
+                {' to return to sign in'}
+              </p>
+            </div>
+
+            <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_BAR}>
+              <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_GROUP}>
+                <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+                  <kbd className={KBD_HINT_STYLE}>L</kbd>
+                  <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                    Back to sign in
+                  </span>
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={openHelp}
+                className={DASHBOARD_PATTERNS.VIEW_SHORTCUTS_BTN}
               >
-                Enter
-              </kbd>
-              {' to sign in'}
-            </p>
+                View all
+              </button>
+            </div>
           </div>
         </div>
       </div>
