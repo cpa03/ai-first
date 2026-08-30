@@ -514,6 +514,12 @@ function KeyboardShortcutsHelpComponent({
     };
   }, []);
 
+  // Micro-UX: Reset selection index when search query or context filter changes
+  // Prevents stale selection state when filtered results shrink or reorder
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [searchQuery, selectedContext]);
+
   // Detect Mac
   useEffect(() => {
     setIsMac(PLATFORM.isMac());
