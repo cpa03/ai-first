@@ -95,4 +95,134 @@ describe('CSRF Security', () => {
     const result = validateCSRF(request);
     expect(result.valid).toBe(true);
   });
+
+  describe('Origin Header Sanitization', () => {
+    const trustedOrigins = ['https://myapp.vercel.app'];
+
+    it('should REJECT origin headers with javascript: protocol', () => {
+      const request = new Request('https://myapp.vercel.app/api/action', {
+        method: 'POST',
+        headers: {
+          Origin: 'javascript:alert(1)',
+        },
+      });
+
+      const result = validateCSRF(request, { trustedOrigins });
+      expect(result.valid).toBe(false);
+    });
+
+    it('should REJECT origin headers with file: protocol', () => {
+      const request = new Request('https://myapp.vercel.app/api/action', {
+        method: 'POST',
+        headers: {
+          Origin: 'file:///etc/passwd',
+        },
+      });
+
+      const result = validateCSRF(request, { trustedOrigins });
+      expect(result.valid).toBe(false);
+    });
+
+    it('should REJECT origin headers with data: protocol', () => {
+      const request = new Request('https://myapp.vercel.app/api/action', {
+        method: 'POST',
+        headers: {
+          Origin: 'data:text/html,<script>alert(1)</script>',
+        },
+      });
+
+      const result = validateCSRF(request, { trustedOrigins });
+      expect(result.valid).toBe(false);
+    });
+
+    it('should ACCEPT valid HTTPS origin', () => {
+      const request = new Request('https://myapp.vercel.app/api/action', {
+        method: 'POST',
+        headers: {
+          Origin: 'https://myapp.vercel.app',
+        },
+      });
+
+      const result = validateCSRF(request, { trustedOrigins });
+      expect(result.valid).toBe(true);
+    });
+
+    it('should ACCEPT valid HTTP origin in development', () => {
+      const request = new Request('http://localhost:3000/api/action', {
+        method: 'POST',
+        headers: {
+          Origin: 'http://localhost:3000',
+        },
+      });
+
+      const result = validateCSRF(request, {
+        trustedOrigins: ['http://localhost:3000'],
+      });
+      expect(result.valid).toBe(true);
+    });
+
+    it('should REJECT origins with spaces (potential header injection)', () => {
+      const request = new Request('https://myapp.vercel.app/api/action', {
+        method: 'POST',
+        headers: {
+          Origin: 'https://trusted.com evil.com',
+        },
+      });
+
+      const result = validateCSRF(request, { trustedOrigins });
+      expect(result.valid).toBe(false);
+    });
+
+    it('should REJECT empty origin header', () => {
+      const request = new Request('https://myapp.vercel.app/api/action', {
+        method: 'POST',
+        headers: {
+          Origin: '',
+        },
+      });
+
+      const result = validateCSRF(request, { trustedOrigins });
+      expect(result.valid).toBe(false);
+    });
+  });
+
+  describe('Referer Header Sanitization', () => {
+    const trustedOrigins = ['https://myapp.vercel.app'];
+
+    it('should ACCEPT valid HTTPS referer', () => {
+      const request = new Request('https://myapp.vercel.app/api/action', {
+        method: 'POST',
+        headers: {
+          Referer: 'https://myapp.vercel.app/page',
+        },
+      });
+
+      const result = validateCSRF(request, { trustedOrigins });
+      expect(result.valid).toBe(true);
+    });
+
+    it('should REJECT referer with invalid protocol', () => {
+      const request = new Request('https://myapp.vercel.app/api/action', {
+        method: 'POST',
+        headers: {
+          Referer: 'javascript:alert(1)',
+        },
+      });
+
+      const result = validateCSRF(request, { trustedOrigins });
+      expect(result.valid).toBe(false);
+    });
+
+    it('should REJECT referer with malformed URL', () => {
+      const request = new Request('https://myapp.vercel.app/api/action', {
+        method: 'POST',
+        headers: {
+          Referer: 'not-a-valid-url',
+        },
+      });
+
+      const result = validateCSRF(request, { trustedOrigins });
+      expect(result.valid).toBe(false);
+    });
+  });
 });

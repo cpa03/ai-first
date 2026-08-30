@@ -68,16 +68,67 @@ export interface CSRFValidationResult {
   origin?: string;
 }
 
+/**
+ * Checks if a string contains CRLF injection attempts or control characters.
+ * Rejects: \r, \n, \x00-\x1F, \x7F (control characters), and whitespace.
+ */
+function containsMaliciousCharacters(input: string): boolean {
+  return /[\r\n\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(input);
+}
+
+/**
+ * Validates that an origin string is well-formed and safe.
+ * Rejects CRLF injection, control characters, and malformed URLs.
+ */
+function sanitizeOrigin(origin: string): string | null {
+  // Reject empty or whitespace-only strings
+  if (!origin || origin.trim() === '') {
+    return null;
+  }
+
+  // Reject CRLF injection and control characters
+  if (containsMaliciousCharacters(origin)) {
+    return null;
+  }
+
+  // Reject origins with spaces (potential header injection)
+  if (/\s/.test(origin)) {
+    return null;
+  }
+
+  // Try to parse as URL to validate structure
+  try {
+    const url = new URL(origin);
+    // Only allow http/https protocols
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+      return null;
+    }
+    // Return normalized origin (protocol + hostname + port)
+    return url.origin.toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
 function extractOrigin(request: Request): string | null {
   const origin = request.headers.get('origin');
   if (origin) {
-    return origin.toLowerCase();
+    return sanitizeOrigin(origin);
   }
 
   const referer = request.headers.get('referer');
   if (referer) {
+    // Reject CRLF injection in referer
+    if (containsMaliciousCharacters(referer)) {
+      return null;
+    }
+
     try {
       const refererUrl = new URL(referer);
+      // Only allow http/https protocols
+      if (refererUrl.protocol !== 'http:' && refererUrl.protocol !== 'https:') {
+        return null;
+      }
       return refererUrl.origin.toLowerCase();
     } catch {
       return null;
