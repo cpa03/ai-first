@@ -59,6 +59,10 @@ export const ANIMATION_CONFIG = {
    */
   ALERT_EXIT: EnvLoader.number('UI_ANIMATION_ALERT_EXIT', 200, 50, 1000),
 
+  ALERT: {
+    SHORTCUT_HINT_INITIAL_FLASH_MS: 2500,
+  },
+
   /**
    * Step transition delay (ms)
    * Delay between step transitions in multi-step flows (clarification, onboarding)

@@ -132,6 +132,21 @@ const AlertComponent = function Alert({
   }, []);
 
   useEffect(() => {
+    if (onClose && !prefersReducedMotion) {
+      setShowShortcutHint(true);
+      shortcutHintTimeoutRef.current = setTimeout(() => {
+        setShowShortcutHint(false);
+      }, ANIMATION_CONFIG.ALERT.SHORTCUT_HINT_INITIAL_FLASH_MS);
+    }
+    return () => {
+      if (shortcutHintTimeoutRef.current) {
+        clearTimeout(shortcutHintTimeoutRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     return cleanupTimers;
   }, [cleanupTimers]);
 
