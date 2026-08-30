@@ -43,6 +43,11 @@ export {
   ANIMATION_PHYSICS,
   SVG_ANIMATION,
   TRANSITION_CLASSES,
+  OPACITY_CLASSES,
+  SCALE_CLASSES,
+  ROTATE_CLASSES,
+  TRANSLATE_CLASSES,
+  TRANSFORM_PATTERNS,
 } from './animations';
 
 export type {
@@ -50,6 +55,11 @@ export type {
   AnimationDelays,
   AnimationPhysics,
   TransitionClasses,
+  OpacityClasses,
+  ScaleClasses,
+  RotateClasses,
+  TranslateClasses,
+  TransformPatterns,
 } from './animations';
 
 // Styles

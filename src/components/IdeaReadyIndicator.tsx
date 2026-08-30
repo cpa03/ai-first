@@ -15,6 +15,8 @@ import {
   COMPONENT_STATE_COLORS,
   ICON_SIZES,
   ANIMATION_CONFIG,
+  OPACITY_CLASSES,
+  SCALE_CLASSES,
 } from '@/lib/config';
 
 interface IdeaReadyIndicatorProps {
@@ -51,7 +53,9 @@ function IdeaReadyIndicatorComponent({
   return (
     <div
       className={`inline-flex items-center gap-1.5 ${TRANSITION_CLASSES.SLOW} ${
-        isReady ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        isReady
+          ? `${OPACITY_CLASSES.FULL} ${SCALE_CLASSES.FULL}`
+          : `${OPACITY_CLASSES.HIDDEN} ${SCALE_CLASSES.ALMOST_FULL}`
       } ${className}`}
       role="status"
       aria-live="polite"
@@ -67,7 +71,7 @@ function IdeaReadyIndicatorComponent({
         <svg
           className={`
             ${ICON_SIZES.SM} ${TRANSITION_CLASSES.SLOW}
-            ${showCheckmark ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
+            ${showCheckmark ? `${OPACITY_CLASSES.FULL} ${SCALE_CLASSES.FULL}` : `${OPACITY_CLASSES.HIDDEN} ${SCALE_CLASSES.HALF}`}
           `}
           fill="none"
           viewBox={SVG_VIEWBOX.STANDARD}
@@ -98,7 +102,7 @@ function IdeaReadyIndicatorComponent({
         {/* Subtle pulse ring on ready */}
         {isReady && !prefersReducedMotion && (
           <div
-            className={`absolute inset-0 rounded-full ${BG_COLORS.SUCCESS_LIGHTER} animate-ping-once opacity-30`}
+            className={`absolute inset-0 rounded-full ${BG_COLORS.SUCCESS_LIGHTER} animate-ping-once ${OPACITY_CLASSES.MEDIUM_LOW}`}
             aria-hidden="true"
           />
         )}

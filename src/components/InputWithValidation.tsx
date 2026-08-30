@@ -45,6 +45,9 @@ import {
   FADE_IN,
   COUNTER_PULSE,
   COUNTER_GLOW,
+  OPACITY_CLASSES,
+  SCALE_CLASSES,
+  ROTATE_CLASSES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { UI_CONFIG } from '@/lib/config/constants';
@@ -670,8 +673,8 @@ const InputWithValidationComponent = forwardRef<
                       <svg
                         className={`absolute inset-0 ${SVG_SIZES.SMD} ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
                           passwordVisible
-                            ? 'opacity-100 scale-100 rotate-0'
-                            : 'opacity-0 scale-75 -rotate-45'
+                            ? `${OPACITY_CLASSES.FULL} ${SCALE_CLASSES.FULL} ${ROTATE_CLASSES.NONE}`
+                            : `${OPACITY_CLASSES.HIDDEN} ${SCALE_CLASSES.THREE_QUARTERS} ${ROTATE_CLASSES.MINUS_45}`
                         }`}
                         fill="none"
                         viewBox={SVG_VIEWBOX.STANDARD}
@@ -694,8 +697,8 @@ const InputWithValidationComponent = forwardRef<
                       <svg
                         className={`absolute inset-0 ${SVG_SIZES.SMD} ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
                           passwordVisible
-                            ? 'opacity-0 scale-75 rotate-45'
-                            : 'opacity-100 scale-100 rotate-0'
+                            ? `${OPACITY_CLASSES.HIDDEN} ${SCALE_CLASSES.THREE_QUARTERS} ${ROTATE_CLASSES.PLUS_45}`
+                            : `${OPACITY_CLASSES.FULL} ${SCALE_CLASSES.FULL} ${ROTATE_CLASSES.NONE}`
                         }`}
                         fill="none"
                         viewBox={SVG_VIEWBOX.STANDARD}

@@ -2,8 +2,11 @@
 
 import { memo, useState, useEffect } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { SKELETON_PATTERNS } from '@/lib/config';
-import { TRANSITION_CLASSES } from '@/lib/config/theme';
+import {
+  SKELETON_PATTERNS,
+  OPACITY_CLASSES,
+  TRANSITION_CLASSES,
+} from '@/lib/config';
 
 interface SkeletonProps {
   className?: string;
@@ -63,8 +66,8 @@ function SkeletonComponent({
     <div
       className={`${baseClasses} ${variantClasses[variant]} ${className} ${
         !prefersReducedMotion && !hasAppeared
-          ? 'opacity-0'
-          : `opacity-100 ${TRANSITION_CLASSES.SLOW_EASE_OUT}`
+          ? OPACITY_CLASSES.HIDDEN
+          : `${OPACITY_CLASSES.FULL} ${TRANSITION_CLASSES.SLOW_EASE_OUT}`
       }`}
       aria-hidden="true"
     />

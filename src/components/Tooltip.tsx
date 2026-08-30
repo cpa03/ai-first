@@ -22,8 +22,10 @@ import {
   TEXT_COLORS,
   BG_COLORS,
   BORDER_COLOR_CLASSES,
-  DURATION_TAILWIND,
   TOOLTIP_CONFIG,
+  OPACITY_CLASSES,
+  SCALE_CLASSES,
+  TRANSITION_CLASSES,
 } from '@/lib/config';
 
 const VIEWPORT_PADDING = TOOLTIP_CONFIG.VIEWPORT_PADDING;
@@ -296,8 +298,8 @@ function TooltipComponent({
           className={`
             absolute pointer-events-none
             ${positionClasses[computedPosition]}
-            ${prefersReducedMotion ? '' : `transition-all ${DURATION_TAILWIND[200]} ease-out`}
-            ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+            ${prefersReducedMotion ? '' : `${TRANSITION_CLASSES.DEFAULT_EASE_OUT}`}
+            ${isVisible ? `${OPACITY_CLASSES.FULL} ${SCALE_CLASSES.FULL}` : `${OPACITY_CLASSES.HIDDEN} ${SCALE_CLASSES.ALMOST_FULL}`}
           `}
           style={tooltipStyle}
         >

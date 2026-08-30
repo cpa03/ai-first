@@ -12,6 +12,8 @@ import {
   BORDER_COLORS,
   REMAINING_PATTERNS,
   CSS_POSITIONING,
+  OPACITY_CLASSES,
+  SCALE_CLASSES,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { LOADING_SPINNER_ELAPSED_TEXT } from '@/lib/config/remaining-hardcoded-patterns';
@@ -150,8 +152,8 @@ function LoadingSpinnerComponent({
     <div
       className={`flex justify-center items-center gap-2.5 ${className} ${
         !prefersReducedMotion && !hasAppeared
-          ? 'opacity-0 scale-90'
-          : `opacity-100 scale-100 ${TRANSITION_CLASSES.SLOW_EASE_OUT}`
+          ? `${OPACITY_CLASSES.HIDDEN} ${SCALE_CLASSES.NEARLY_FULL}`
+          : `${OPACITY_CLASSES.FULL} ${SCALE_CLASSES.FULL} ${TRANSITION_CLASSES.SLOW_EASE_OUT}`
       }`}
       role={COMPONENT_CONFIG.ARIA.STATUS}
       aria-live={COMPONENT_CONFIG.ARIA.POLITE}

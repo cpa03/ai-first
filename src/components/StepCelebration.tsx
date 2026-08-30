@@ -31,6 +31,10 @@ import {
   STEP_CELEBRATION_PROGRESS_COMPLETE,
   DRAW_CHECK,
   ANIMATION_MAGIC_NUMBERS,
+  OPACITY_CLASSES,
+  SCALE_CLASSES,
+  ROTATE_CLASSES,
+  TRANSLATE_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -152,7 +156,7 @@ function StepCelebrationComponent({
           fixed inset-0 pointer-events-none z-[${Z_INDEX_LAYERS.OVERLAY}]
           flex items-center justify-center
           ${TRANSITION_CLASSES.COLOR_SLOW}
-          ${isExiting ? 'opacity-0' : 'opacity-100'}
+          ${isExiting ? OPACITY_CLASSES.HIDDEN : OPACITY_CLASSES.FULL}
         `}
         aria-hidden="true"
         role="presentation"
@@ -161,7 +165,7 @@ function StepCelebrationComponent({
           className={`
 absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRATION_TAILWIND.BACKDROP_BLUR}]
           ${TRANSITION_CLASSES.COLOR_SLOW}
-          ${isExiting ? 'opacity-0' : 'opacity-100'}
+          ${isExiting ? OPACITY_CLASSES.HIDDEN : OPACITY_CLASSES.FULL}
         `}
         />
 
@@ -169,7 +173,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
           className={`
           relative flex flex-col items-center justify-center
           transform ${TRANSITION_CLASSES.ULTRA_SLOW}
-          ${isExiting ? 'scale-90 opacity-0' : 'scale-100 opacity-100'}
+          ${isExiting ? `${SCALE_CLASSES.NEARLY_FULL} ${OPACITY_CLASSES.HIDDEN}` : `${SCALE_CLASSES.FULL} ${OPACITY_CLASSES.FULL}`}
         `}
           style={{
             transitionTimingFunction: UI_CONFIG.ANIMATION.EASING.SPRING,
@@ -193,7 +197,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
 
           <div className={RELATIVE}>
             <svg
-              className={`${COMPONENT_CONFIG.STEP_CELEBRATION.CONTAINER_SIZE} -rotate-90`}
+              className={`${COMPONENT_CONFIG.STEP_CELEBRATION.CONTAINER_SIZE} ${ROTATE_CLASSES.MINUS_90}`}
               viewBox={`0 0 ${COMPONENT_CONFIG.STEP_CELEBRATION.VIEWBOX_SIZE} ${COMPONENT_CONFIG.STEP_CELEBRATION.VIEWBOX_SIZE}`}
             >
               <circle
@@ -234,7 +238,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
                 className={`
                 ${STEP_CELEBRATION_CHECKMARK_CONTAINER}
                 transform ${TRANSITION_CLASSES.ULTRA_SLOW}
-                ${isExiting ? 'scale-50 opacity-0' : 'scale-100 opacity-100'}
+                ${isExiting ? `${SCALE_CLASSES.HALF} ${OPACITY_CLASSES.HIDDEN}` : `${SCALE_CLASSES.FULL} ${OPACITY_CLASSES.FULL}`}
               `}
                 style={{
                   transitionDelay: ANIMATION_DELAYS.INLINE.SHORT,
@@ -269,7 +273,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
                 <div
                   className={`
                   ${STEP_CELEBRATION_RIPPLE_1}
-                  ${isExiting ? 'scale-150 opacity-0' : 'scale-100 opacity-100'}
+                  ${isExiting ? `${SCALE_CLASSES.DOUBLE} ${OPACITY_CLASSES.HIDDEN}` : `${SCALE_CLASSES.FULL} ${OPACITY_CLASSES.FULL}`}
                 `}
                   style={{
                     transition: `all ${ANIMATION_DELAYS.INLINE.RIPPLE} ease-out`,
@@ -278,7 +282,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
                 <div
                   className={`
                   ${STEP_CELEBRATION_RIPPLE_2}
-                  ${isExiting ? 'scale-175 opacity-0' : 'scale-100 opacity-100'}
+                  ${isExiting ? `${SCALE_CLASSES.VERY_LARGE} ${OPACITY_CLASSES.HIDDEN}` : `${SCALE_CLASSES.FULL} ${OPACITY_CLASSES.FULL}`}
                 `}
                   style={{
                     transition: `all ${ANIMATION_DELAYS.INLINE.STEP_TRANSITION} ease-out ${ANIMATION_DELAYS.INLINE.SHORT}`,
@@ -292,7 +296,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
             className={`
             ${STEP_CELEBRATION_TEXT_CONTAINER}
             transform ${TRANSITION_CLASSES.ULTRA_SLOW}
-            ${isExiting ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'}
+            ${isExiting ? `${TRANSLATE_CLASSES.DOWN_4} ${OPACITY_CLASSES.HIDDEN}` : `${TRANSLATE_CLASSES.NONE_Y} ${OPACITY_CLASSES.FULL}`}
           `}
             style={{
               transitionDelay: ANIMATION_DELAYS.INLINE.MEDIUM,

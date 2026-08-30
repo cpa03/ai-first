@@ -35,6 +35,9 @@ import {
   PRIMARY_LINK,
   BODY_OVERFLOW_CONFIG,
   ROUNDED_CLASSES,
+  OPACITY_CLASSES,
+  TRANSLATE_CLASSES,
+  TRANSFORM_PATTERNS,
 } from '@/lib/config';
 import { MT_CLASSES, MB_CLASSES } from '@/lib/config/spacing';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -728,12 +731,12 @@ function KeyboardShortcutsHelpComponent({
       aria-labelledby={ARIA_HEADING_IDS.KEYBOARD_SHORTCUTS}
     >
       <div
-        className={`absolute inset-0 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm transition-opacity ${DURATION_TAILWIND[300]} ${isLeaving ? 'opacity-0' : 'opacity-50'}`}
+        className={`absolute inset-0 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm ${TRANSITION_CLASSES.OPACITY_SLOW} ${isLeaving ? OPACITY_CLASSES.HIDDEN : OPACITY_CLASSES.HALF}`}
         aria-hidden="true"
       />
       <div
         ref={modalRef}
-        className={`relative ${BG_COLORS.DEFAULT} ${ROUNDED_CLASSES.EXTRA_LARGE} ${SHADOW_CLASSES.EXTRA_LARGE} max-w-lg w-full ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} overflow-hidden transform ${TRANSITION_CLASSES.DEFAULT} ${isLeaving ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}
+        className={`relative ${BG_COLORS.DEFAULT} ${ROUNDED_CLASSES.EXTRA_LARGE} ${SHADOW_CLASSES.EXTRA_LARGE} max-w-lg w-full ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} overflow-hidden transform ${TRANSITION_CLASSES.DEFAULT} ${isLeaving ? TRANSFORM_PATTERNS.EXIT : TRANSFORM_PATTERNS.ENTRANCE}`}
       >
         {/* Search */}
         <div
@@ -741,7 +744,7 @@ function KeyboardShortcutsHelpComponent({
         >
           <div className={RELATIVE}>
             <svg
-              className={`absolute left-3 top-1/2 -translate-y-1/2 ${ICON_SIZES.MD} ${TEXT_COLORS.SECONDARY}`}
+              className={`absolute left-3 top-1/2 ${TRANSLATE_CLASSES.UP_HALF} ${ICON_SIZES.MD} ${TEXT_COLORS.SECONDARY}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -773,7 +776,7 @@ function KeyboardShortcutsHelpComponent({
                   setSelectedIndex(0);
                   searchInputRef.current?.focus();
                 }}
-                className={`absolute right-3 top-1/2 -translate-y-1/2 p-0.5 ${TEXT_COLORS.SECONDARY} ${GRAY_CLASSES.HOVER_TEXT_700} rounded-full ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.COLOR} focus:outline-none focus:ring-2 focus:ring-primary-500 ${FOCUS_RING_OFFSET_PATTERNS.COMPACT.split(' ').pop()}`}
+                className={`absolute right-3 top-1/2 ${TRANSLATE_CLASSES.UP_HALF} p-0.5 ${TEXT_COLORS.SECONDARY} ${GRAY_CLASSES.HOVER_TEXT_700} rounded-full ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.COLOR} focus:outline-none focus:ring-2 focus:ring-primary-500 ${FOCUS_RING_OFFSET_PATTERNS.COMPACT.split(' ').pop()}`}
                 aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CLEAR_SEARCH_LABEL}
               >
                 <svg
