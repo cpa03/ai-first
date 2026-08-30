@@ -121,29 +121,49 @@ function ScrollToTopButtonComponent() {
   );
 
   const buttonElement = (
-    <button
-      type="button"
-      onClick={handleScrollToTop}
-      onKeyDown={handleKeyDown}
-      onMouseEnter={() => setIsHoveredOrFocused(true)}
-      onMouseLeave={() => setIsHoveredOrFocused(false)}
-      onFocus={() => setIsHoveredOrFocused(true)}
-      onBlur={() => setIsHoveredOrFocused(false)}
-      className={`
-        text-sm ${GRAY_CLASSES.TEXT_500}
-        ${TRANSITION_CLASSES.COLOR} ease-out
-        ${COMPONENT_PRIMARY_PATTERNS.SCROLL_TO_TOP_HOVER}
-        ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} rounded-md
-        inline-flex items-center gap-1.5
-        group
-        ${hasAppeared && !prefersReducedMotion ? SCROLL_TO_TOP_APPEAR : ''}
-      `}
-      aria-label={SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}
-    >
-      <span>{SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}</span>
+    <div className="inline-flex items-center gap-1.5">
+      <button
+        type="button"
+        onClick={handleScrollToTop}
+        onKeyDown={handleKeyDown}
+        onMouseEnter={() => setIsHoveredOrFocused(true)}
+        onMouseLeave={() => setIsHoveredOrFocused(false)}
+        onFocus={() => setIsHoveredOrFocused(true)}
+        onBlur={() => setIsHoveredOrFocused(false)}
+        className={`
+          text-sm ${GRAY_CLASSES.TEXT_500}
+          ${TRANSITION_CLASSES.COLOR} ease-out
+          ${COMPONENT_PRIMARY_PATTERNS.SCROLL_TO_TOP_HOVER}
+          ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} rounded-md
+          inline-flex items-center gap-1.5
+          group
+          ${hasAppeared && !prefersReducedMotion ? SCROLL_TO_TOP_APPEAR : ''}
+        `}
+      >
+        <span>{SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}</span>
+        <svg
+          className={`${ICON_SIZES.SM} transition-transform ${TRANSITION_CLASSES.DEFAULT} ${
+            isHoveredOrFocused && !prefersReducedMotion
+              ? '-translate-y-0.5'
+              : ''
+          }`}
+          fill="none"
+          viewBox={SVG_VIEWBOX.STANDARD}
+          stroke="currentColor"
+          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5 10l7-7m0 0l7 7m-7-7v18"
+          />
+        </svg>
+      </button>
       {/* Micro-UX: Persistent keyboard shortcut hint for discoverability */}
       {/* Only visible on desktop (sm+) to avoid cluttering mobile footer */}
       {/* Subtle opacity ensures it doesn't distract from the main button text */}
+      {/* Placed outside button to prevent affecting accessible name */}
       <span
         className={`hidden sm:inline-flex items-center gap-1 transition-opacity ${TRANSITION_CLASSES.DEFAULT}`}
         aria-hidden="true"
@@ -159,23 +179,7 @@ function ScrollToTopButtonComponent() {
           {isMac ? '↑' : 'Home'}
         </kbd>
       </span>
-      <svg
-        className={`${ICON_SIZES.SM} transition-transform ${TRANSITION_CLASSES.DEFAULT} ${
-          isHoveredOrFocused && !prefersReducedMotion ? '-translate-y-0.5' : ''
-        }`}
-        fill="none"
-        viewBox={SVG_VIEWBOX.STANDARD}
-        stroke="currentColor"
-        strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M5 10l7-7m0 0l7 7m-7-7v18"
-        />
-      </svg>
-    </button>
+    </div>
   );
 
   // Micro-UX: Show keyboard shortcut in tooltip for discoverability
