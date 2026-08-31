@@ -27,8 +27,9 @@ import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
  * that smoothly scrolls to the top of the page. Provides haptic feedback
  * and keyboard accessibility for a delightful user experience.
  *
- * Micro-UX: Adds a subtle pulse animation on first appearance to draw
- * user attention to this useful feature, especially on long pages.
+ * Micro-UX: Entrance animation triggers via IntersectionObserver when the
+ * button scrolls into view, ensuring users see the delightful animation
+ * on long pages instead of it playing off-screen on mount.
  *
  * Micro-UX: Shows persistent keyboard shortcut hint (⌘+↑ / Ctrl+Home)
  * next to the button text on desktop for discoverability. Follows the
@@ -42,23 +43,43 @@ function ScrollToTopButtonComponent() {
   const [hasAppeared, setHasAppeared] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
   const pulseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const buttonContainerRef = useRef<HTMLSpanElement>(null);
+  const hasTriggeredRef = useRef(false);
 
   // Micro-UX: Detect platform for keyboard shortcut display
   useEffect(() => {
     setIsMac(PLATFORM.isMac());
   }, []);
 
+  // Micro-UX: Trigger entrance animation only when button becomes visible in viewport
+  // Uses IntersectionObserver so the animation plays when users scroll to the footer,
+  // not on mount (which would play off-screen on long pages)
   useEffect(() => {
-    if (!prefersReducedMotion) {
-      requestAnimationFrame(() => {
-        setHasAppeared(true);
-      });
-      pulseTimeoutRef.current = setTimeout(() => {
-        setHasAppeared(false);
-      }, COMPONENT_CONFIG.SCROLL_TO_TOP_BUTTON.PULSE_DURATION_MS);
-    }
+    if (prefersReducedMotion) return;
+
+    const container = buttonContainerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry?.isIntersecting && !hasTriggeredRef.current) {
+          hasTriggeredRef.current = true;
+          requestAnimationFrame(() => {
+            setHasAppeared(true);
+          });
+          pulseTimeoutRef.current = setTimeout(() => {
+            setHasAppeared(false);
+          }, COMPONENT_CONFIG.SCROLL_TO_TOP_BUTTON.PULSE_DURATION_MS);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(container);
 
     return () => {
+      observer.disconnect();
       if (pulseTimeoutRef.current) {
         clearTimeout(pulseTimeoutRef.current);
       }
@@ -183,9 +204,11 @@ function ScrollToTopButtonComponent() {
   const shortcut = isMac ? ['⌘', '↑'] : ['Ctrl', 'Home'];
 
   return (
-    <Tooltip content="Scroll to top" shortcut={shortcut} position="top">
-      {buttonElement}
-    </Tooltip>
+    <span ref={buttonContainerRef} className="inline-flex">
+      <Tooltip content="Scroll to top" shortcut={shortcut} position="top">
+        {buttonElement}
+      </Tooltip>
+    </span>
   );
 }
 
