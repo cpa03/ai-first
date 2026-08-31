@@ -105,6 +105,7 @@ function FeatureGridComponent() {
               ${BG_COLORS.DEFAULT}
               ${FOCUS_RING_OFFSET_PATTERNS.LARGE}
               focus-visible:scale-[1.03] focus-visible:shadow-xl focus-visible:shadow-primary-200/60
+              active:scale-[0.99]
               transition-transform transition-shadow ${DURATION_TAILWIND[200]} ease-out
               motion-reduce:transition-none
               ${isVisible ? animationClasses[index] : 'opacity-0'}
@@ -194,7 +195,7 @@ function FeatureGridComponent() {
       <div
         className={`hidden sm:flex items-center justify-center gap-2 mt-6 text-xs ${TEXT_COLORS.MUTED}`}
         role="group"
-        aria-label={FEATURE_GRID_LABELS.KEYBOARD_NAV_HINT}
+        aria-label={FEATURE_GRID_LABELS.KEYBOARD_NAV_ARIA_LABEL}
       >
         <span className={FLEX_PATTERNS.GAP_SM}>
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
@@ -215,7 +216,7 @@ function FeatureGridComponent() {
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             End
           </kbd>
-          <span>jump to first/last</span>
+          <span>{FEATURE_GRID_LABELS.KEYBOARD_JUMP_HINT}</span>
         </span>
       </div>
       <div

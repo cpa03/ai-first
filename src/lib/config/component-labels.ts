@@ -552,6 +552,8 @@ export const FEATURE_GRID_LABELS = {
     `Step ${step}: ${title}. ${description}`,
   STEPS_LIST_ARIA_LABEL: 'How it works: 3 steps',
   KEYBOARD_NAV_HINT: 'Use arrow keys to navigate between steps',
+  KEYBOARD_NAV_ARIA_LABEL: 'Keyboard navigation available',
+  KEYBOARD_JUMP_HINT: 'jump to first/last',
 } as const;
 
 /**
