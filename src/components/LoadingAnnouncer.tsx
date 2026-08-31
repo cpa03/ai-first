@@ -16,11 +16,18 @@ function LoadingAnnouncerComponent({
   const previousMessageRef = useRef<string>('');
 
   useEffect(() => {
-    if (message && message !== previousMessageRef.current) {
+    if (message) {
       const announcer = announcerRef.current;
       if (announcer) {
-        announcer.textContent = message;
-        previousMessageRef.current = message;
+        // Micro-UX: Reset textContent to empty before setting new message.
+        // This forces screen readers to re-announce even identical messages
+        // (e.g., when a loading state triggers twice with the same text).
+        // Without the reset, aria-live regions skip duplicate text.
+        announcer.textContent = '';
+        requestAnimationFrame(() => {
+          announcer.textContent = message;
+          previousMessageRef.current = message;
+        });
       }
     }
   }, [message]);
