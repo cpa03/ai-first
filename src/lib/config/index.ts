@@ -506,10 +506,12 @@ export {
   CONTAINER_WIDTHS,
   FORM_OVERLAY_STYLES,
   FORM_ARIA_LABELS,
+  SCROLL_ELEMENT_Z_INDEX,
   type PageLayout,
   type OpacityConfig,
   type FormOverlayStyles,
   type FormAriaLabels,
+  type ScrollElementZIndex,
 } from './page-layout';
 
 // Tailwind Arbitrary Values Configuration

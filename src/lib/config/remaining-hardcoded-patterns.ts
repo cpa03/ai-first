@@ -17,6 +17,8 @@
  * ```
  */
 
+import { SCROLL_ELEMENT_Z_INDEX } from './page-layout';
+
 /**
  * Table body styles
  * Used in: Dashboard page table body
@@ -64,7 +66,7 @@ export const SPINNER_BORDER_RING =
  * Loading spinner SVG container
  * Used in: LoadingSpinner
  */
-export const SPINNER_SVG_CONTAINER = 'relative z-10 rounded-full';
+export const SPINNER_SVG_CONTAINER = `relative ${SCROLL_ELEMENT_Z_INDEX.BASE} rounded-full`;
 
 /**
  * Loading spinner circle opacity

@@ -113,6 +113,16 @@ export const OPACITY_CONFIG = {
 } as const;
 
 /**
+ * Scroll Element Z-Index Configuration
+ * Centralizes z-index values for scroll-related UI elements
+ * Used in ScrollToTop, ScrollProgress, and similar components
+ */
+export const SCROLL_ELEMENT_Z_INDEX = {
+  /** z-10 - Base layer for scroll elements (buttons, progress indicators) */
+  BASE: 'z-10',
+} as const;
+
+/**
  * Form Loading Overlay Styles
  * Centralizes the shared pattern used in login/signup pages for submitting overlays
  * Eliminates hardcoded backdrop-blur, bg-white/60, and z-index values
@@ -123,10 +133,9 @@ export const FORM_OVERLAY_STYLES = {
   /** White overlay opacity for form submission */
   OVERLAY_BG: 'bg-white/60',
   /** Z-index for form submission overlay */
-  Z_INDEX: 'z-10',
+  Z_INDEX: SCROLL_ELEMENT_Z_INDEX.BASE,
   /** Complete overlay class string for form submission loading state */
-  CONTAINER:
-    'absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl animate-fade-in',
+  CONTAINER: `absolute inset-0 bg-white/60 backdrop-blur-[2px] ${SCROLL_ELEMENT_Z_INDEX.BASE} flex items-center justify-center rounded-xl animate-fade-in`,
   /** Spinner container classes */
   SPINNER_CONTAINER: 'flex flex-col items-center gap-3',
   /** Spinner element classes */
@@ -150,3 +159,4 @@ export type PageLayout = typeof PAGE_LAYOUT;
 export type OpacityConfig = typeof OPACITY_CONFIG;
 export type FormOverlayStyles = typeof FORM_OVERLAY_STYLES;
 export type FormAriaLabels = typeof FORM_ARIA_LABELS;
+export type ScrollElementZIndex = typeof SCROLL_ELEMENT_Z_INDEX;

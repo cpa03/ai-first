@@ -179,8 +179,8 @@ function SectionIndicatorComponent({
           : 'translateY(-50%) translateX(-8px)',
         pointerEvents: isVisible ? 'auto' : 'none',
         transition: prefersReducedMotion
-          ? 'opacity 0.15s ease, transform 0.15s ease'
-          : 'opacity 0.3s ease, transform 0.3s ease',
+          ? `opacity ${DURATION_TAILWIND[150]} ease, transform ${DURATION_TAILWIND[150]} ease`
+          : `opacity ${DURATION_TAILWIND[300]} ease, transform ${DURATION_TAILWIND[300]} ease`,
       }}
     >
       <div

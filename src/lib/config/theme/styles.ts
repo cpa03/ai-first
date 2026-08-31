@@ -7,6 +7,7 @@ import { EnvLoader } from '../environment';
 import { PROGRESS_PERCENTAGE } from '../modular-constants';
 import { BORDER_COLORS, RING_COLORS } from './colors';
 import { FOCUS_SHADOWS } from './shadows';
+import { Z_INDEX_LAYERS } from './sizes';
 
 /**
  * Complete input styling configurations by state
@@ -185,7 +186,7 @@ export const TABLE_PATTERNS = {
  */
 export const MODAL_PATTERNS = {
   overlay: 'fixed inset-0 bg-gray-900/50',
-  container: 'fixed inset-0 z-50 flex items-center justify-center p-4',
+  container: `fixed inset-0 z-[${Z_INDEX_LAYERS.MODAL}] flex items-center justify-center p-4`,
   content: {
     container: 'bg-white rounded-lg shadow-lg p-8 max-w-md w-full',
     transition: 'transition-all duration-200',
