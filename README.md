@@ -75,12 +75,18 @@
   /user-stories/            ← User story specifications
 /src/
   /app/                    ← Next.js app (app router)
+    /layout.tsx            ← Root layout component
+    /page.tsx              ← Home page
     /HomePageClient.tsx    ← Home page client component
+    /not-found.tsx         ← 404 page
+    /robots.ts             ← Robots.txt
+    /sitemap.ts            ← Sitemap
     /clarify/              ← Clarification flow pages
     /results/              ← Results display pages
     /dashboard/            ← Dashboard and analytics pages
     /login/                ← Login page
     /signup/               ← Signup page
+    /forgot-password/      ← Forgot password pages
     /auth/callback/        ← OAuth callback handler
     /api/                  ← API routes
       /health/             ← Health check endpoints
@@ -107,8 +113,6 @@
       /admin/              ← Admin endpoints
         /rate-limit/      ← Rate limit management
       /csp-report/         ← CSP violation reports
-    /robots.ts          ← Robots.txt
-    /sitemap.ts         ← Sitemap
   /components/             ← React components
     /Alert.tsx             ← Alert component
     /AutoSaveIndicator.tsx  ← Auto-save status indicator
@@ -168,6 +172,7 @@
     /useClarificationSession.ts ← Clarification session hook
     /useConfetti.ts          ← Confetti animation hook
     /useCountUp.ts          ← Count up animation hook
+    /useKeyboardNavigation.ts ← Keyboard navigation hook
     /usePrefersReducedMotion.ts ← Reduced motion preference hook
     /useScrollToError.ts    ← Scroll to error hook
     /useSessionDuration.ts  ← Session duration tracking hook
@@ -204,7 +209,7 @@
     /api-handler/        ← API handler utilities
       /wrapper.ts        ← API request wrapper
       /response.ts       ← Response formatting
-    /config/             ← Configuration modules (69 files)
+    /config/             ← Configuration modules (94 files)
       /constants.ts      ← Centralized constants
       /environment.ts    ← Environment configuration
       /database-tables.ts ← Database table names
@@ -259,6 +264,7 @@
     /security.ts          ← Security types
     /task.ts              ← Task types
     /cloudflare.d.ts      ← Cloudflare types
+    /next-request.d.ts    ← Next.js request types
   /styles/                  ← Global styles
   /templates/               ← Template files
     /blueprint-template.ts ← Blueprint template
