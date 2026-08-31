@@ -127,6 +127,18 @@ export const AUTH_ELEMENT_IDS = {
 
   /** Forgot password form ID */
   FORGOT_PASSWORD_FORM: 'forgot-password-form',
+
+  /** Email input field ID (used across login, signup, forgot-password) */
+  EMAIL: 'email',
+
+  /** Password input field ID (used across login, signup) */
+  PASSWORD: 'password',
+
+  /** Confirm password input field ID (signup only) */
+  CONFIRM_PASSWORD: 'confirmPassword',
+
+  /** Auth callback content container ID */
+  AUTH_CONTENT: 'auth-content',
 } as const;
 
 /**
@@ -146,6 +158,9 @@ export const ERROR_ELEMENT_IDS = {
 export const KEYBOARD_SHORTCUTS_ELEMENT_IDS = {
   /** Keyboard shortcuts title ID */
   TITLE: 'keyboard-shortcuts-title',
+
+  /** Filter shortcuts by category aria-label */
+  FILTER_LABEL: 'Filter shortcuts by category',
 } as const;
 
 /**
@@ -157,6 +172,31 @@ export const ONBOARDING_ELEMENT_IDS = {
 
   /** Onboarding content ID */
   ONBOARDING_CONTENT: 'onboarding-content',
+} as const;
+
+/**
+ * Not Found page element IDs
+ */
+export const NOT_FOUND_ELEMENT_IDS = {
+  /** Popular pages heading ID */
+  POPULAR_PAGES_HEADING: 'popular-pages-heading',
+} as const;
+
+/**
+ * Results page element IDs
+ */
+export const RESULTS_ELEMENT_IDS = {
+  /** Blueprint section container ID */
+  BLUEPRINT_SECTION: 'blueprint-section',
+
+  /** Tasks section container ID */
+  TASKS_SECTION: 'tasks-section',
+
+  /** Exports section container ID */
+  EXPORTS_SECTION: 'exports-section',
+
+  /** Start new idea CTA button ID */
+  START_NEW_IDEA_CTA: 'start-new-idea-cta',
 } as const;
 
 /**
@@ -237,6 +277,8 @@ export const ALL_ELEMENT_IDS = {
   ERROR: ERROR_ELEMENT_IDS,
   KEYBOARD_SHORTCUTS: KEYBOARD_SHORTCUTS_ELEMENT_IDS,
   ONBOARDING: ONBOARDING_ELEMENT_IDS,
+  NOT_FOUND: NOT_FOUND_ELEMENT_IDS,
+  RESULTS: RESULTS_ELEMENT_IDS,
   ARIA_HEADING: ARIA_HEADING_IDS,
   ARIA_SELECTORS,
 } as const;
@@ -252,5 +294,7 @@ export type AuthElementIds = typeof AUTH_ELEMENT_IDS;
 export type ErrorElementIds = typeof ERROR_ELEMENT_IDS;
 export type KeyboardShortcutsElementIds = typeof KEYBOARD_SHORTCUTS_ELEMENT_IDS;
 export type OnboardingElementIds = typeof ONBOARDING_ELEMENT_IDS;
+export type NotFoundElementIds = typeof NOT_FOUND_ELEMENT_IDS;
+export type ResultsElementIds = typeof RESULTS_ELEMENT_IDS;
 export type AriaHeadingIds = typeof ARIA_HEADING_IDS;
 export type AriaSelectors = typeof ARIA_SELECTORS;

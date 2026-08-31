@@ -703,7 +703,7 @@ export default function SignupPage() {
           <div className={SPACE_Y_PATTERNS.LG}>
             <InputWithValidation
               ref={emailInputRef}
-              id="email"
+              id={AUTH_ELEMENT_IDS.EMAIL}
               name="email"
               type="email"
               label={SIGNUP_PAGE_CONTENT.FORM.EMAIL_LABEL}
@@ -719,7 +719,7 @@ export default function SignupPage() {
 
             <InputWithValidation
               ref={passwordInputRef}
-              id="password"
+              id={AUTH_ELEMENT_IDS.PASSWORD}
               name="password"
               type="password"
               label={SIGNUP_PAGE_CONTENT.FORM.PASSWORD_LABEL}
@@ -748,7 +748,7 @@ export default function SignupPage() {
 
             <InputWithValidation
               ref={confirmPasswordInputRef}
-              id="confirmPassword"
+              id={AUTH_ELEMENT_IDS.CONFIRM_PASSWORD}
               name="confirmPassword"
               type="password"
               label={SIGNUP_PAGE_CONTENT.FORM.CONFIRM_PASSWORD_LABEL}

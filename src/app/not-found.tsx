@@ -44,7 +44,10 @@ import {
   TEXT_LEFT,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import type { ComponentConfig } from '@/lib/config/components';
-import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
+import {
+  ERROR_ELEMENT_IDS,
+  NOT_FOUND_ELEMENT_IDS,
+} from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import Tooltip from '@/components/Tooltip';
@@ -361,12 +364,12 @@ export default function NotFound() {
             className={`${POPULAR_PAGES_SECTION} ${BORDER_COLORS.LIGHT} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_6}`}
           >
             <h2
-              id="popular-pages-heading"
+              id={NOT_FOUND_ELEMENT_IDS.POPULAR_PAGES_HEADING}
               className={`text-sm font-medium ${GRAY_CLASSES.TEXT_700} mb-4 text-center`}
             >
               Popular pages
             </h2>
-            <nav aria-labelledby="popular-pages-heading">
+            <nav aria-labelledby={NOT_FOUND_ELEMENT_IDS.POPULAR_PAGES_HEADING}>
               <ul className={POPULAR_PAGES_GRID}>
                 {[
                   {

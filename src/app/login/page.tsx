@@ -327,7 +327,7 @@ export default function LoginPage() {
           <div className={SPACE_Y_PATTERNS.LG}>
             <InputWithValidation
               ref={emailInputRef}
-              id="email"
+              id={AUTH_ELEMENT_IDS.EMAIL}
               name="email"
               type="email"
               label={LOGIN_PAGE_CONTENT.FORM.EMAIL_LABEL}
@@ -344,7 +344,7 @@ export default function LoginPage() {
             <div className={SPACE_Y_PATTERNS.SM_MD}>
               <InputWithValidation
                 ref={passwordInputRef}
-                id="password"
+                id={AUTH_ELEMENT_IDS.PASSWORD}
                 name="password"
                 type="password"
                 label={LOGIN_PAGE_CONTENT.FORM.PASSWORD_LABEL}

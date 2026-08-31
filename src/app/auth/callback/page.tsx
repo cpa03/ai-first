@@ -33,6 +33,7 @@ import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import Button from '@/components/Button';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
+import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import StatusAnnouncer from '@/components/StatusAnnouncer';
 import Tooltip from '@/components/Tooltip';
 
@@ -235,7 +236,10 @@ export default function AuthCallbackPage() {
         {COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.SKIP_LINK}
       </a>
 
-      <div id="auth-content" className={`${CONTAINER_WIDTHS.XS} w-full`}>
+      <div
+        id={AUTH_ELEMENT_IDS.AUTH_CONTENT}
+        className={`${CONTAINER_WIDTHS.XS} w-full`}
+      >
         <div className={`text-center ${SPACE_Y_PATTERNS.XL}`}>
           {/* Micro-UX: Animated spinner with progress feedback */}
           <div className={CENTER_INLINE_FLEX}>

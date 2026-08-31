@@ -857,6 +857,8 @@ export {
   ERROR_ELEMENT_IDS,
   KEYBOARD_SHORTCUTS_ELEMENT_IDS,
   ONBOARDING_ELEMENT_IDS,
+  NOT_FOUND_ELEMENT_IDS,
+  RESULTS_ELEMENT_IDS,
   ARIA_HEADING_IDS,
   ARIA_SELECTORS,
   ALL_ELEMENT_IDS,
@@ -870,6 +872,8 @@ export {
   type ErrorElementIds,
   type KeyboardShortcutsElementIds,
   type OnboardingElementIds,
+  type NotFoundElementIds,
+  type ResultsElementIds,
   type AriaHeadingIds,
   type AriaSelectors,
 } from './element-ids';

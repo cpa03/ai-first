@@ -370,7 +370,7 @@ export default function ForgotPasswordPage() {
 
           <InputWithValidation
             ref={emailInputRef}
-            id="email"
+            id={AUTH_ELEMENT_IDS.EMAIL}
             name="email"
             type="email"
             label="Email address"
