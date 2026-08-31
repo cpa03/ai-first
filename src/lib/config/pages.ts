@@ -210,6 +210,7 @@ export const FORGOT_PASSWORD_PAGE_CONFIG = {
     NONE: 'delay-0',
     STEP_1: 'delay-75',
     STEP_2: 'delay-150',
+    STEP_2_5: 'delay-175',
     STEP_3: 'delay-200',
     STEP_4: 'delay-250',
   } as const,

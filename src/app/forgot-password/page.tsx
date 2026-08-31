@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
@@ -37,6 +38,10 @@ import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+
+const CopyButton = dynamic(() => import('@/components/CopyButton'), {
+  ssr: false,
+});
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -257,6 +262,23 @@ export default function ForgotPasswordPage() {
               We&apos;ve sent a password reset link to{' '}
               <span className={FONT_MEDIUM}>{email}</span>
             </p>
+            <div
+              className={`${SPACING_CLASSES.TOP_SMALL} flex items-center justify-center gap-2 ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2_5}`}
+            >
+              <span
+                className={`${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED}`}
+              >
+                Verify this is correct:
+              </span>
+              <CopyButton
+                textToCopy={email}
+                label="Copy email"
+                successLabel="Copied!"
+                ariaLabel="Copy email address to clipboard"
+                variant="subtle"
+                showToast={false}
+              />
+            </div>
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
             >
