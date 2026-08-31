@@ -266,10 +266,29 @@ describe('Suspicious Pattern Detection Improvements', () => {
     });
 
     it('should detect internal method prototype pollution', () => {
-      const methods = ['__defineGetter__', '__lookupSetter__'];
+      const methods = ['setPrototypeOf', '__defineGetter__', '__lookupSetter__'];
       for (const method of methods) {
         const request = createMockRequest(
           `https://example.com/api/test?pollute=obj.${method}("foo", ...)`
+        );
+        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        expect(result.detected).toBe(true);
+        expect(result.maxSeverity).toBe(3);
+        expect(
+          result.patterns.some((p) => p.category === 'prototype_pollution')
+        ).toBe(true);
+      }
+    });
+
+    it('should detect Object.setPrototypeOf and Reflect.setPrototypeOf pollution attempts', () => {
+      const payloads = [
+        'Object.setPrototypeOf(obj, null)',
+        'Reflect.setPrototypeOf(target, proto)',
+        'setPrototypeOf(target, proto)',
+      ];
+      for (const payload of payloads) {
+        const request = createMockRequest(
+          `https://example.com/api/test?q=${encodeURIComponent(payload)}`
         );
         const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
         expect(result.detected).toBe(true);

@@ -387,8 +387,9 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
 
   prototype_pollution: [
     {
+      // SECURITY: Enhanced to detect setPrototypeOf (e.g. Object.setPrototypeOf, Reflect.setPrototypeOf, setPrototypeOf)
       pattern:
-        /(__proto__|__defineGetter__|__defineSetter__|__lookupGetter__|__lookupSetter__)\s*[\[.(]/i,
+        /(__proto__|setPrototypeOf|__defineGetter__|__defineSetter__|__lookupGetter__|__lookupSetter__)\s*[\[.(]/i,
       severity: 3,
       description: 'Prototype pollution via internal methods',
     },
