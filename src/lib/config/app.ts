@@ -57,6 +57,10 @@ export const APP_CONFIG = {
     CODE: EnvLoader.string('APP_CURRENCY_CODE', 'USD'),
   },
 
+  I18N: {
+    DEFAULT_LOCALE: EnvLoader.string('APP_LOCALE', 'en-US'),
+  },
+
   CONTACT: {
     /** Support email address - Env: APP_SUPPORT_EMAIL (default: 'support@ideaflow.ai') */
     SUPPORT_EMAIL: EnvLoader.string('APP_SUPPORT_EMAIL', 'support@ideaflow.ai'),

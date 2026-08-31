@@ -5,6 +5,7 @@ import { RETRY_CONFIG } from './config/constants';
 import { TIME_UNITS, TIME_CONVERSION } from './config/time';
 import { UI_CONFIG } from './config/ui-config';
 import { CACHE_CONFIG } from './config/cache';
+import { APP_CONFIG } from './config/app';
 
 export function cn(...inputs: ClassValue[]) {
   // PERFORMANCE: Early-return fast-path for single non-empty string without spaces.
@@ -352,7 +353,7 @@ function getCachedFormatter(
  */
 export function formatAbsoluteDate(
   date: Date,
-  locale: string = 'en-US',
+  locale: string = APP_CONFIG.I18N.DEFAULT_LOCALE,
   options: Intl.DateTimeFormatOptions = DEFAULT_ABS_DATE_OPTIONS
 ): string {
   const formatter = getCachedFormatter(locale, options);
@@ -407,7 +408,7 @@ export function parseDate(dateInput: string | Date): Date {
 
 export function getRelativeTime(
   dateString: string | Date,
-  locale: string = 'en-US'
+  locale: string = APP_CONFIG.I18N.DEFAULT_LOCALE
 ): string {
   const date = parseDate(dateString);
   const diffMs = Date.now() - date.getTime();

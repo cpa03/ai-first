@@ -14,6 +14,7 @@ import {
   HISTOGRAM_BUCKETS,
 } from '@/lib/config/metrics-config';
 import { PLATFORM_ENV_KEYS } from '@/lib/config/env-keys';
+import { HTTP_HEADERS } from '@/lib/config/http';
 
 interface Register {
   metrics: () => Promise<string>;
@@ -50,7 +51,7 @@ const createNoOpMetric = () => ({
 if (isEdge) {
   register = {
     metrics: async () => '',
-    contentType: 'text/plain',
+    contentType: HTTP_HEADERS.TEXT_PLAIN,
     clear: () => {},
   };
   httpRequestDuration = createNoOpMetric();
@@ -118,7 +119,7 @@ if (isEdge) {
     // Fallback to no-op
     register = {
       metrics: async () => '',
-      contentType: 'text/plain',
+      contentType: HTTP_HEADERS.TEXT_PLAIN,
       clear: () => {},
     };
     httpRequestDuration = createNoOpMetric();
