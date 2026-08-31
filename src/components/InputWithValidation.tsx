@@ -48,6 +48,7 @@ import {
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { UI_CONFIG } from '@/lib/config/constants';
+import { UI_CONFIG as UI_CONFIG_UI } from '@/lib/config/ui';
 import { COMPONENT_CONFIG } from '@/lib/config';
 import { RIGHT_CLASSES, TOP_CLASSES } from '@/lib/config/positioning';
 import {
@@ -716,6 +717,35 @@ const InputWithValidationComponent = forwardRef<
             </>
           )}
         </div>
+
+        {/* Micro-UX: Persistent keyboard shortcut hint for password visibility toggle */}
+        {/* Shows when password field is focused, making the shortcut discoverable without hover */}
+        {/* Follows the pattern from login page (⌘+Enter) and ScrollToTopButton (⌘+↑) */}
+        {showPasswordToggle && !multiline && isFocused && (
+          <div
+            className={`flex items-center gap-1.5 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
+            aria-hidden="true"
+          >
+            <kbd
+              className={UI_CONFIG_UI.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+            >
+              {isMac ? '⌘' : 'Ctrl'}
+            </kbd>
+            <kbd
+              className={UI_CONFIG_UI.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+            >
+              ⇧
+            </kbd>
+            <kbd
+              className={UI_CONFIG_UI.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+            >
+              P
+            </kbd>
+            <span className="ml-0.5">
+              {passwordVisible ? 'hide' : 'show'} password
+            </span>
+          </div>
+        )}
 
         <div className={FLEX_PATTERNS.BETWEEN_START}>
           <div>
