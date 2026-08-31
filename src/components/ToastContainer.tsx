@@ -304,7 +304,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       </div>
       <button
         onClick={handleClose}
-        className={`flex-shrink-0 ${ML_CLASSES.MD} ${styles.textColor} hover:opacity-75 ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT.replace('focus-visible:', 'focus:')} rounded-md ${P_CLASSES.SM} ${MIN_SIZE_CLASSES.TOAST_BUTTON} transition-opacity`}
+        className={`flex-shrink-0 ${ML_CLASSES.MD} ${styles.textColor} hover:opacity-75 active:scale-95 ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT.replace('focus-visible:', 'focus:')} rounded-md ${P_CLASSES.SM} ${MIN_SIZE_CLASSES.TOAST_BUTTON} transition-all`}
         aria-label={TOAST_CONTAINER_LABELS.CLOSE_ARIA_LABEL}
       >
         <svg

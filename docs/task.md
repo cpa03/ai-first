@@ -66,6 +66,12 @@ This file contains only **active tasks** that are currently in progress or pendi
 - **Date**: 2026-08-16
 - **Details**: Connected platform-aware keyboard shortcut representations for `CopyButton` directly to `COPY_BUTTON_LABELS.KEYBOARD_SHORTCUT` in `src/lib/config/component-labels.ts`.
 
+### [STRENGTHEN] Standardize ToastContainer Close Button Interaction and Logging
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-18
+- **Details**: Standardized interactive touch/click scale feedback (`active:scale-95 transition-all`) on Toast dismiss `<button>` elements and converted direct console warnings in `rate-limit.ts` to `logger.warn`.
+
 ---
 
 ## Quick Stats

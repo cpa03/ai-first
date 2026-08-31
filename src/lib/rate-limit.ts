@@ -17,6 +17,9 @@ import {
   PROGRESS_PERCENTAGE,
 } from './config/modular-constants';
 import { API_ERROR_MESSAGES } from './config/error-messages';
+import { createLogger } from './logger';
+
+const logger = createLogger('RateLimit');
 
 export interface RateLimitInfo {
   limit: number;
@@ -273,8 +276,8 @@ function generateRequestFingerprint(request: Request): string {
     typeof process !== 'undefined' &&
     ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'production'
   ) {
-    console.warn(
-      `[RateLimit] SECURITY: Using client-controlled fingerprint fallback. ` +
+    logger.warn(
+      `SECURITY: Using client-controlled fingerprint fallback. ` +
         `This is vulnerable to header spoofing. Ensure platform headers are set. ` +
         `URL: ${request.url}`
     );
@@ -716,8 +719,8 @@ async function performEnhancedCleanup(): Promise<void> {
         typeof process !== 'undefined' &&
         process.env?.NODE_ENV === 'development'
       ) {
-        console.warn(
-          `[RateLimit] Store approaching capacity: ${storeSize}/${maxSize}. ` +
+        logger.warn(
+          `Store approaching capacity: ${storeSize}/${maxSize}. ` +
             `Removed ${entriesToRemove} entries. Cleanup #${cleanupCount}`
         );
       }
@@ -735,8 +738,8 @@ function cleanupOrphanedLocks(): void {
       typeof process !== 'undefined' &&
       process.env?.NODE_ENV === 'development'
     ) {
-      console.warn(
-        `[RateLimit] Cleared ${MAX_ORPHANED_LOCKS} orphaned locks as safety measure`
+      logger.warn(
+        `Cleared ${MAX_ORPHANED_LOCKS} orphaned locks as safety measure`
       );
     }
   }
