@@ -235,12 +235,13 @@ function SectionIndicatorComponent({
           );
         })}
       </div>
+      {/* Micro-UX: Descriptive keyboard hint with styled kbd elements for discoverability */}
       <div
-        className={`hidden sm:flex items-center justify-center gap-1.5 mt-2 text-xs ${TEXT_COLORS.MUTED}`}
+        className={`hidden sm:flex items-center justify-center gap-1 mt-2 text-xs ${TEXT_COLORS.MUTED}`}
         aria-hidden="true"
       >
-        <span>↑</span>
-        <span>↓</span>
+        <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_MINI}>↑</kbd>
+        <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_MINI}>↓</kbd>
       </div>
       <div
         role="status"
