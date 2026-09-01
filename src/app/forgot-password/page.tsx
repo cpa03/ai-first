@@ -21,8 +21,8 @@ import {
   FORM_OVERLAY_STYLES,
   FORM_ARIA_LABELS,
   UI_CONFIG,
-  GRAY_CLASSES,
   FORGOT_PASSWORD_PAGE_CONFIG,
+  FORGOT_PASSWORD_PAGE_CONTENT,
   DASHBOARD_PATTERNS,
   KBD_HINT_STYLE,
   ICON_SIZES,
@@ -249,24 +249,26 @@ export default function ForgotPasswordPage() {
             <h1
               className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
             >
-              Check your email
+              {FORGOT_PASSWORD_PAGE_CONTENT.SUCCESS.HEADING}
             </h1>
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
             >
-              We&apos;ve sent a password reset link to{' '}
+              {FORGOT_PASSWORD_PAGE_CONTENT.SUCCESS.MESSAGE_PREFIX}{' '}
               <span className={FONT_MEDIUM}>{email}</span>
             </p>
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
             >
-              Didn&apos;t receive the email? Check your spam folder or resend
-              below.
+              {FORGOT_PASSWORD_PAGE_CONTENT.SUCCESS.MESSAGE_SUFFIX}
             </p>
 
             {error && (
               <div className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE}`}>
-                <Alert type="error" title="Error">
+                <Alert
+                  type="error"
+                  title={FORGOT_PASSWORD_PAGE_CONTENT.ERRORS.TITLE}
+                >
                   {error}
                 </Alert>
               </div>
@@ -278,7 +280,7 @@ export default function ForgotPasswordPage() {
                 role="status"
                 aria-live="polite"
               >
-                Reset email resent successfully!
+                {FORGOT_PASSWORD_PAGE_CONTENT.SUCCESS.RESEND_SUCCESS}
               </p>
             )}
 
@@ -291,13 +293,17 @@ export default function ForgotPasswordPage() {
                 onClick={handleResend}
                 disabled={resendCooldown > 0 || isResending}
                 loading={isResending}
-                loadingText="Sending..."
+                loadingText={
+                  FORGOT_PASSWORD_PAGE_CONTENT.SUCCESS.RESEND_LOADING
+                }
                 className={RESPONSIVE_WIDTH}
                 size="md"
               >
                 {resendCooldown > 0
-                  ? `Resend in ${resendCooldown}s`
-                  : 'Resend email'}
+                  ? FORGOT_PASSWORD_PAGE_CONTENT.SUCCESS.RESEND_COOLDOWN(
+                      resendCooldown
+                    )
+                  : FORGOT_PASSWORD_PAGE_CONTENT.SUCCESS.RESEND_BUTTON}
               </Button>
             </div>
 
@@ -308,7 +314,7 @@ export default function ForgotPasswordPage() {
                 href={ROUTES.LOGIN}
                 className={`${FORM_PATTERNS.AUTH_LINK} text-sm`}
               >
-                Back to sign in
+                {FORGOT_PASSWORD_PAGE_CONTENT.BUTTONS.BACK_TO_LOGIN}
               </Link>
             </div>
           </div>
@@ -323,7 +329,7 @@ export default function ForgotPasswordPage() {
         href="#forgot-password-form"
         className={`${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.BASE} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.BG} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.TEXT}`}
       >
-        Skip to forgot password form
+        {FORGOT_PASSWORD_PAGE_CONTENT.HEADING}
       </a>
 
       <div
@@ -338,7 +344,7 @@ export default function ForgotPasswordPage() {
             <div className={FORM_OVERLAY_STYLES.SPINNER_CONTAINER}>
               <div className={FORM_OVERLAY_STYLES.SPINNER} />
               <span className={FORM_OVERLAY_STYLES.LOADING_TEXT}>
-                Sending reset link...
+                {FORGOT_PASSWORD_PAGE_CONTENT.FORM.SUBMIT_LOADING}
               </span>
             </div>
           </div>
@@ -347,13 +353,12 @@ export default function ForgotPasswordPage() {
           <h1
             className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING}`}
           >
-            Forgot your password?
+            {FORGOT_PASSWORD_PAGE_CONTENT.HEADING}
           </h1>
           <p
             className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
           >
-            Enter your email address and we&apos;ll send you a link to reset
-            your password.
+            {FORGOT_PASSWORD_PAGE_CONTENT.SUBHEADING}
           </p>
         </div>
 
@@ -363,7 +368,10 @@ export default function ForgotPasswordPage() {
           onSubmit={handleSubmit}
         >
           {error && (
-            <Alert type="error" title="Error">
+            <Alert
+              type="error"
+              title={FORGOT_PASSWORD_PAGE_CONTENT.ERRORS.TITLE}
+            >
               {error}
             </Alert>
           )}
@@ -373,7 +381,7 @@ export default function ForgotPasswordPage() {
             id="email"
             name="email"
             type="email"
-            label="Email address"
+            label={FORGOT_PASSWORD_PAGE_CONTENT.FORM.EMAIL_LABEL}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isLoading}
@@ -393,25 +401,20 @@ export default function ForgotPasswordPage() {
               attention={isFormValid && !isLoading}
               shortcut={isMac ? ['⌘', 'Enter'] : ['Ctrl', 'Enter']}
             >
-              {isLoading ? 'Sending...' : 'Send reset link'}
+              {isLoading
+                ? FORGOT_PASSWORD_PAGE_CONTENT.FORM.SUBMIT_LOADING
+                : FORGOT_PASSWORD_PAGE_CONTENT.FORM.SUBMIT_BUTTON}
             </Button>
             <p
               className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
               aria-hidden="true"
             >
-              Press{' '}
-              <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
-              >
-                {isMac ? '⌘' : 'Ctrl'}
-              </kbd>
-              {' + '}
-              <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
-              >
-                Enter
-              </kbd>
-              {' to submit'}
+              {FORGOT_PASSWORD_PAGE_CONTENT.FORM.KEYBOARD_HINT.replace(
+                '{key}',
+                isMac
+                  ? FORGOT_PASSWORD_PAGE_CONTENT.FORM.KEYBOARD_HINT_KEY_MAC
+                  : FORGOT_PASSWORD_PAGE_CONTENT.FORM.KEYBOARD_HINT_KEY_OTHER
+              )}
             </p>
           </div>
         </form>
@@ -420,9 +423,9 @@ export default function ForgotPasswordPage() {
           className={`${SPACING_CLASSES.TOP} ${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
         >
           <p className={`text-sm ${TEXT_COLOR_CLASSES.BODY}`}>
-            Remember your password?{' '}
+            {FORGOT_PASSWORD_PAGE_CONTENT.FOOTER.REMEMBER_PASSWORD}{' '}
             <Link href={ROUTES.LOGIN} className={FORM_PATTERNS.AUTH_LINK}>
-              Sign in
+              {FORGOT_PASSWORD_PAGE_CONTENT.FOOTER.SIGN_IN}
             </Link>
           </p>
         </div>
@@ -432,7 +435,7 @@ export default function ForgotPasswordPage() {
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
               <kbd className={KBD_HINT_STYLE}>?</kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
-                Shortcuts
+                {FORGOT_PASSWORD_PAGE_CONTENT.FOOTER.SHORTCUTS}
               </span>
             </span>
           </div>
@@ -441,7 +444,7 @@ export default function ForgotPasswordPage() {
             onClick={openHelp}
             className={DASHBOARD_PATTERNS.VIEW_SHORTCUTS_BTN}
           >
-            View all
+            {FORGOT_PASSWORD_PAGE_CONTENT.FOOTER.VIEW_ALL}
           </button>
         </div>
       </div>

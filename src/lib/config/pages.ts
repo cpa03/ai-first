@@ -338,6 +338,52 @@ export const SIGNUP_PAGE_CONTENT = {
 } as const;
 
 /**
+ * Forgot password page content configuration
+ * Eliminates hardcoded UI strings in forgot password page
+ */
+export const FORGOT_PASSWORD_PAGE_CONTENT = {
+  HEADING: 'Reset your password',
+  SUBHEADING:
+    "Enter your email address and we'll send you a link to reset your password.",
+  FORM: {
+    EMAIL_LABEL: 'Email address',
+    EMAIL_PLACEHOLDER: 'Enter your email',
+    SUBMIT_BUTTON: 'Send reset link',
+    SUBMIT_LOADING: 'Sending reset link...',
+    KEYBOARD_HINT: 'Press {key} to submit',
+    KEYBOARD_HINT_KEY_MAC: '⌘',
+    KEYBOARD_HINT_KEY_OTHER: 'Ctrl',
+    KEYBOARD_HINT_PLUS: '+',
+    KEYBOARD_HINT_ACTION: 'to submit',
+  },
+  SUCCESS: {
+    HEADING: 'Check your email',
+    MESSAGE_PREFIX: "We've sent a password reset link to",
+    MESSAGE_SUFFIX:
+      "Didn't receive the email? Check your spam folder or resend below.",
+    RESEND_BUTTON: 'Resend',
+    RESEND_LOADING: 'Sending...',
+    RESEND_COOLDOWN: (seconds: number) => `Resend in ${seconds}s`,
+    RESEND_SUCCESS: 'Reset email resent successfully!',
+  },
+  ERRORS: {
+    TITLE: 'Error',
+    INVALID_EMAIL: 'Please enter a valid email address',
+    SEND_FAILED: 'Failed to send reset link. Please try again.',
+    RESEND_FAILED: 'Failed to resend email. Please try again.',
+  },
+  FOOTER: {
+    REMEMBER_PASSWORD: 'Remember your password?',
+    SIGN_IN: 'Sign in',
+    SHORTCUTS: 'Shortcuts',
+    VIEW_ALL: 'View all',
+  },
+  BUTTONS: {
+    BACK_TO_LOGIN: 'Back to login',
+  },
+} as const;
+
+/**
  * Clarify page content configuration
  * Eliminates hardcoded UI strings in clarify page
  */
@@ -545,6 +591,12 @@ export const SIGNUP_ERROR_FALLBACK = {
     'We encountered an issue while loading the sign up page. Please try again.',
 } as const;
 
+export const FORGOT_PASSWORD_ERROR_FALLBACK = {
+  TITLE: 'Forgot Password Unavailable',
+  MESSAGE:
+    'We encountered an issue while loading the forgot password page. Please try again.',
+} as const;
+
 export const DASHBOARD_ERROR_FALLBACK = {
   TITLE: 'Dashboard Unavailable',
   MESSAGE:
@@ -576,6 +628,7 @@ export const AUTH_CALLBACK_ERROR_FALLBACK = {
 export const LAYOUT_ERROR_FALLBACKS = {
   LOGIN: LOGIN_ERROR_FALLBACK,
   SIGNUP: SIGNUP_ERROR_FALLBACK,
+  FORGOT_PASSWORD: FORGOT_PASSWORD_ERROR_FALLBACK,
   DASHBOARD: DASHBOARD_ERROR_FALLBACK,
   CLARIFY: CLARIFY_ERROR_FALLBACK,
   RESULTS: RESULTS_ERROR_FALLBACK,
