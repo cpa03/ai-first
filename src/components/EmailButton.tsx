@@ -17,6 +17,7 @@ import {
   TEXT_COLORS,
   COMPONENT_STATE_COLORS,
   CONFETTI_DOT,
+  TRANSITION_STATES,
 } from '@/lib/config';
 import { EMAIL_BUTTON_LABELS } from '@/lib/config/component-labels';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -174,8 +175,8 @@ const EmailButtonComponent = function EmailButton({
               <svg
                 className={`absolute inset-0 ${SVG_SIZES.MD} ${iconTransition} ${
                   state === 'success'
-                    ? 'opacity-0 scale-75'
-                    : 'opacity-100 scale-100'
+                    ? TRANSITION_STATES.HIDDEN_MEDIUM
+                    : TRANSITION_STATES.VISIBLE
                 }`}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}
@@ -193,8 +194,8 @@ const EmailButtonComponent = function EmailButton({
               <svg
                 className={`absolute inset-0 ${SVG_SIZES.MD} ${COMPONENT_STATE_COLORS.EMAIL.SUCCESS_CHECKMARK} ${iconTransition} ${
                   state === 'success'
-                    ? 'opacity-100 scale-100'
-                    : 'opacity-0 scale-50'
+                    ? TRANSITION_STATES.VISIBLE
+                    : TRANSITION_STATES.HIDDEN_LARGE
                 }`}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}

@@ -9,6 +9,7 @@ import {
   TEXT_COLORS,
   TYPOGRAPHY_CLASSES,
   PULSE_ONCE,
+  TRANSITION_STATES,
 } from '@/lib/config';
 import { CAPS_LOCK_WARNING_LABELS } from '@/lib/config/component-labels';
 import { FADE_IN } from '@/lib/config/animation-classes';
@@ -83,7 +84,11 @@ function CapsLockWarningComponent({
   return (
     <div
       className={`flex items-center gap-1.5 ${TEXT_COLORS.WARNING_LIGHT} ${TYPOGRAPHY_CLASSES.XS_MEDIUM} transition-all ${DURATION_TAILWIND[200]} ease-out ${
-        prefersReducedMotion ? '' : isExiting ? 'opacity-0 scale-95' : FADE_IN
+        prefersReducedMotion
+          ? ''
+          : isExiting
+            ? TRANSITION_STATES.HIDDEN_SMALL
+            : FADE_IN
       } ${className}`}
       role="status"
       aria-live="polite"

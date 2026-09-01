@@ -14,6 +14,7 @@ import {
   COMPONENT_STATE_COLORS,
   CONFETTI_DOT,
   COPY_SUCCESS_GLOW,
+  TRANSITION_STATES,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import Tooltip from './Tooltip';
@@ -147,7 +148,7 @@ const CopyButtonComponent = function CopyButton({
               <svg
                 className={`
               absolute inset-0 ${SVG_SIZES.MD} ${TRANSITION_CLASSES.DEFAULT}
-              ${copied ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}
+              ${copied ? TRANSITION_STATES.HIDDEN_MEDIUM : TRANSITION_STATES.VISIBLE}
             `}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}
@@ -162,7 +163,7 @@ const CopyButtonComponent = function CopyButton({
               <svg
                 className={`
               absolute inset-0 ${SVG_SIZES.MD} ${COMPONENT_STATE_COLORS.COPIED.CHECKMARK} ${TRANSITION_CLASSES.DEFAULT}
-              ${copied ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
+              ${copied ? TRANSITION_STATES.VISIBLE : TRANSITION_STATES.HIDDEN_LARGE}
             `}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}

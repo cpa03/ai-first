@@ -645,6 +645,7 @@ export {
   PLAY_STATE_VALUES,
   DIRECTION_VALUES,
   ANIMATION_PRESETS,
+  TRANSITION_STATES,
   type AnimationValues,
 } from './animation-values';
 

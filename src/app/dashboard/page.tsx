@@ -54,6 +54,7 @@ import {
   SPACING_UTILITY_PATTERNS,
   RESPONSIVE_FLEX_PATTERNS,
   API_CONFIG,
+  TRANSITION_STATES,
 } from '@/lib/config';
 import {
   DASHBOARD_FILTER_BAR,
@@ -837,7 +838,9 @@ export default function DashboardPage() {
         {filter !== 'all' && (
           <div
             className={`${DASHBOARD_FILTER_CLEAR_CONTAINER} transition-all ${DURATION_TAILWIND[200]} ease-out ${
-              isFilterClearing ? 'opacity-0 scale-95 -translate-x-2' : FADE_IN
+              isFilterClearing
+                ? `${TRANSITION_STATES.HIDDEN_SMALL} -translate-x-2`
+                : FADE_IN
             }`}
           >
             <span className={DASHBOARD_PATTERNS.STATUS_BADGE_ACTIVE}>

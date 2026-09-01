@@ -18,7 +18,12 @@ import {
   TYPOGRAPHY_CLASSES,
   PROGRESS_BAR_A11Y,
 } from '@/lib/config/theme';
-import { ANIMATION_CLASSES, SUCCESS_POP, SUCCESS_CHECK } from '@/lib/config';
+import {
+  ANIMATION_CLASSES,
+  SUCCESS_POP,
+  SUCCESS_CHECK,
+  TRANSITION_STATES,
+} from '@/lib/config';
 import { PROGRESS_PERCENTAGE } from '@/lib/config/modular-constants';
 import { ICON_SIZES, INDICATOR_SIZES } from '@/lib/config/icon-sizes';
 import {
@@ -426,7 +431,7 @@ export default function UserOnboarding() {
           fixed z-[${Z_INDEX_LAYERS.MODAL}] ${CONTAINER_WIDTH_CLASSES.ONBOARDING} ${BG_COLORS.DEFAULT} rounded-xl ${SHADOW_CLASSES.EXTRA_LARGE} 
           border ${BORDER_COLORS.LIGHT} p-5
           ${TRANSITION_CLASSES.SLOW} ease-out
-          ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
+          ${isAnimating ? TRANSITION_STATES.HIDDEN_SMALL : TRANSITION_STATES.VISIBLE}
         `}
         style={{
           top: tooltipPosition.top,

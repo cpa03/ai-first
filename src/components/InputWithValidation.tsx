@@ -45,6 +45,7 @@ import {
   FADE_IN,
   COUNTER_PULSE,
   COUNTER_GLOW,
+  TRANSITION_STATES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { UI_CONFIG } from '@/lib/config/constants';
@@ -670,8 +671,8 @@ const InputWithValidationComponent = forwardRef<
                       <svg
                         className={`absolute inset-0 ${SVG_SIZES.SMD} ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
                           passwordVisible
-                            ? 'opacity-100 scale-100 rotate-0'
-                            : 'opacity-0 scale-75 -rotate-45'
+                            ? `${TRANSITION_STATES.VISIBLE} rotate-0`
+                            : `${TRANSITION_STATES.HIDDEN_MEDIUM} -rotate-45`
                         }`}
                         fill="none"
                         viewBox={SVG_VIEWBOX.STANDARD}
@@ -694,8 +695,8 @@ const InputWithValidationComponent = forwardRef<
                       <svg
                         className={`absolute inset-0 ${SVG_SIZES.SMD} ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
                           passwordVisible
-                            ? 'opacity-0 scale-75 rotate-45'
-                            : 'opacity-100 scale-100 rotate-0'
+                            ? `${TRANSITION_STATES.HIDDEN_MEDIUM} rotate-45`
+                            : `${TRANSITION_STATES.VISIBLE} rotate-0`
                         }`}
                         fill="none"
                         viewBox={SVG_VIEWBOX.STANDARD}

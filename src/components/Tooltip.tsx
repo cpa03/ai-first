@@ -24,6 +24,7 @@ import {
   BORDER_COLOR_CLASSES,
   DURATION_TAILWIND,
   TOOLTIP_CONFIG,
+  TRANSITION_STATES,
 } from '@/lib/config';
 
 const VIEWPORT_PADDING = TOOLTIP_CONFIG.VIEWPORT_PADDING;
@@ -297,7 +298,7 @@ function TooltipComponent({
             absolute pointer-events-none
             ${positionClasses[computedPosition]}
             ${prefersReducedMotion ? '' : `transition-all ${DURATION_TAILWIND[200]} ease-out`}
-            ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+            ${isVisible ? TRANSITION_STATES.VISIBLE : TRANSITION_STATES.HIDDEN_SMALL}
           `}
           style={tooltipStyle}
         >

@@ -16,6 +16,7 @@ import {
   BG_COLORS,
   CONFETTI_DOT,
   SHARE_SUCCESS_GLOW,
+  TRANSITION_STATES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -249,7 +250,7 @@ const ShareButtonComponent = function ShareButton({
               <svg
                 className={`
               absolute inset-0 ${SVG_SIZES.MD} ${TRANSITION_CLASSES.DEFAULT}
-              ${shared ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}
+              ${shared ? TRANSITION_STATES.HIDDEN_MEDIUM : TRANSITION_STATES.VISIBLE}
             `}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}
@@ -268,7 +269,7 @@ const ShareButtonComponent = function ShareButton({
               <svg
                 className={`
               absolute inset-0 ${SVG_SIZES.MD} ${COMPONENT_STATE_COLORS.SHARED.CHECKMARK} ${TRANSITION_CLASSES.DEFAULT}
-              ${shared ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
+              ${shared ? TRANSITION_STATES.VISIBLE : TRANSITION_STATES.HIDDEN_LARGE}
             `}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}

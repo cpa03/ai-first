@@ -20,6 +20,7 @@ import {
   COMMON_SPACING_PATTERNS,
   FLEX_GROW_PATTERNS,
   TYPOGRAPHY_CLASSES,
+  TRANSITION_STATES,
 } from '@/lib/config';
 
 interface KeyboardShortcutHintProps {
@@ -108,7 +109,7 @@ function KeyboardShortcutHintComponent({
           ${BG_COLORS.DEFAULT} ${SHADOW_CLASSES.LARGE} rounded-xl
           border ${BORDER_COLORS.LIGHT}
           p-4 transition-opacity transition-transform will-change-transform
-          ${isExiting ? 'opacity-0 translate-y-2 scale-95' : 'opacity-100 translate-y-0 scale-100'}
+          ${isExiting ? `${TRANSITION_STATES.HIDDEN_SMALL} translate-y-2` : `${TRANSITION_STATES.VISIBLE} translate-y-0`}
         `}
         style={{
           transitionDuration: prefersReducedMotion

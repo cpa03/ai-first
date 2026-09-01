@@ -15,6 +15,7 @@ import {
   COMPONENT_STATE_COLORS,
   ICON_SIZES,
   ANIMATION_CONFIG,
+  TRANSITION_STATES,
 } from '@/lib/config';
 
 interface IdeaReadyIndicatorProps {
@@ -51,7 +52,7 @@ function IdeaReadyIndicatorComponent({
   return (
     <div
       className={`inline-flex items-center gap-1.5 ${TRANSITION_CLASSES.SLOW} ${
-        isReady ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        isReady ? TRANSITION_STATES.VISIBLE : TRANSITION_STATES.HIDDEN_SMALL
       } ${className}`}
       role="status"
       aria-live="polite"
@@ -67,7 +68,7 @@ function IdeaReadyIndicatorComponent({
         <svg
           className={`
             ${ICON_SIZES.SM} ${TRANSITION_CLASSES.SLOW}
-            ${showCheckmark ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
+            ${showCheckmark ? TRANSITION_STATES.VISIBLE : TRANSITION_STATES.HIDDEN_LARGE}
           `}
           fill="none"
           viewBox={SVG_VIEWBOX.STANDARD}

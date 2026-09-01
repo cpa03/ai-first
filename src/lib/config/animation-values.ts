@@ -337,6 +337,15 @@ export const ANIMATION_VALUES = {
     POSITION: 'transition-position',
   },
 
+  TRANSITION_STATES: {
+    HIDDEN: 'opacity-0',
+    VISIBLE: 'opacity-100 scale-100',
+    HIDDEN_SMALL: 'opacity-0 scale-95',
+    HIDDEN_MEDIUM: 'opacity-0 scale-75',
+    HIDDEN_LARGE: 'opacity-0 scale-50',
+    VISIBLE_LARGE: 'opacity-100 scale-105',
+  } as const,
+
   // Keyframe animation names
   KEYFRAMES: {
     NONE: 'none',
@@ -681,3 +690,4 @@ export const FILL_MODE_VALUES = ANIMATION_VALUES.FILL_MODE;
 export const PLAY_STATE_VALUES = ANIMATION_VALUES.PLAY_STATE;
 export const DIRECTION_VALUES = ANIMATION_VALUES.DIRECTION;
 export const ANIMATION_PRESETS = ANIMATION_VALUES.PRESETS;
+export const TRANSITION_STATES = ANIMATION_VALUES.TRANSITION_STATES;

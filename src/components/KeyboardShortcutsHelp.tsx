@@ -35,6 +35,7 @@ import {
   PRIMARY_LINK,
   BODY_OVERFLOW_CONFIG,
   ROUNDED_CLASSES,
+  TRANSITION_STATES,
 } from '@/lib/config';
 import { MT_CLASSES, MB_CLASSES } from '@/lib/config/spacing';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -733,7 +734,7 @@ function KeyboardShortcutsHelpComponent({
       />
       <div
         ref={modalRef}
-        className={`relative ${BG_COLORS.DEFAULT} ${ROUNDED_CLASSES.EXTRA_LARGE} ${SHADOW_CLASSES.EXTRA_LARGE} max-w-lg w-full ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} overflow-hidden transform ${TRANSITION_CLASSES.DEFAULT} ${isLeaving ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}
+        className={`relative ${BG_COLORS.DEFAULT} ${ROUNDED_CLASSES.EXTRA_LARGE} ${SHADOW_CLASSES.EXTRA_LARGE} max-w-lg w-full ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} overflow-hidden transform ${TRANSITION_CLASSES.DEFAULT} ${isLeaving ? `${TRANSITION_STATES.HIDDEN_SMALL} translate-y-4` : `${TRANSITION_STATES.VISIBLE} translate-y-0`}`}
       >
         {/* Search */}
         <div
