@@ -172,8 +172,10 @@ const InputWithValidationComponent = forwardRef<
     const [passwordCopied, setPasswordCopied] = useState(false);
     const [showSuccessFlash, setShowSuccessFlash] = useState(false);
     const [showValidCelebration, setShowValidCelebration] = useState(false);
+    const [showPasteIndicator, setShowPasteIndicator] = useState(false);
     const [isMac, setIsMac] = useState(false);
     const internalTextareaRef = useRef<HTMLTextAreaElement>(null);
+    const pasteIndicatorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const prevValidRef = useRef(false);
     const prefersReducedMotion = usePrefersReducedMotion();
     const currentValue = typeof value === 'string' ? value : '';
@@ -201,6 +203,27 @@ const InputWithValidationComponent = forwardRef<
     useEffect(() => {
       setIsMac(PLATFORM.isMac());
     }, []);
+
+    useEffect(() => {
+      return () => {
+        if (pasteIndicatorTimeoutRef.current) {
+          clearTimeout(pasteIndicatorTimeoutRef.current);
+        }
+      };
+    }, []);
+
+    const handlePaste = useCallback(() => {
+      if (showPasswordToggle) {
+        triggerHapticFeedback();
+        setShowPasteIndicator(true);
+        if (pasteIndicatorTimeoutRef.current) {
+          clearTimeout(pasteIndicatorTimeoutRef.current);
+        }
+        pasteIndicatorTimeoutRef.current = setTimeout(() => {
+          setShowPasteIndicator(false);
+        }, COMPONENT_CONFIG.INPUT_VALIDATION.PASTE_INDICATOR_DURATION_MS);
+      }
+    }, [showPasswordToggle]);
 
     const adjustTextareaHeight = useCallback(() => {
       const textarea = internalTextareaRef.current;
@@ -465,7 +488,36 @@ const InputWithValidationComponent = forwardRef<
               onBlur={handleBlur}
               onFocus={handleFocus}
               onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
             />
+          )}
+
+          {showPasteIndicator && (
+            <div
+              className={`absolute ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} ${RIGHT_CLASSES.XXXXL} pointer-events-none animate-in ${FADE_IN} ${TRANSITION_CLASSES.DEFAULT}`}
+              role="status"
+              aria-live="polite"
+            >
+              <span
+                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK}`}
+              >
+                <svg
+                  className={`${ICON_SIZES.SM_XS}`}
+                  fill="none"
+                  viewBox={SVG_VIEWBOX.STANDARD}
+                  stroke="currentColor"
+                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
+                </svg>
+                {INPUT_VALIDATION_LABELS.PASTE_DETECTED}
+              </span>
+            </div>
           )}
 
           {isValid && charCount > 0 && (

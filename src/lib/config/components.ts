@@ -373,6 +373,12 @@ export const COMPONENT_CONFIG = {
       100,
       2000
     ),
+    PASTE_INDICATOR_DURATION_MS: EnvLoader.number(
+      'COMPONENT_INPUT_PASTE_INDICATOR_MS',
+      2000,
+      500,
+      5000
+    ),
   } as const,
 
   IDEA_INPUT: {

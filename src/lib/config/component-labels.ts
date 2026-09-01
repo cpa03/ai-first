@@ -74,6 +74,10 @@ export const INPUT_VALIDATION_LABELS = {
   /** Character limit warning message when approaching max */
   CHAR_LIMIT_WARNING: (charsRemaining: number) =>
     `${charsRemaining} character${charsRemaining !== 1 ? 's' : ''} remaining`,
+  /** Paste detected indicator text for password fields */
+  PASTE_DETECTED: 'Pasted',
+  /** ARIA live announcement when paste is detected */
+  PASTE_DETECTED_ARIA: 'Content pasted into field',
 } as const;
 
 /**
