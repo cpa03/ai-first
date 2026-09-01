@@ -123,6 +123,10 @@ const EmailButton = dynamic(() => import('@/components/EmailButton'), {
   ),
 });
 
+const StatusAnnouncer = dynamic(() => import('@/components/StatusAnnouncer'), {
+  ssr: false,
+});
+
 interface Idea {
   id: string;
   user_id: string;
@@ -204,6 +208,9 @@ function ResultsContent() {
   // Micro-UX: Ref for auto-scrolling to export success alert
   // Ensures users see their export confirmation even if they've scrolled down to the export buttons
   const exportSuccessRef = useRef<HTMLDivElement>(null);
+  // Micro-UX: State for blueprint copy feedback
+  const [blueprintCopied, setBlueprintCopied] = useState(false);
+  const blueprintCopyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Detect platform for keyboard shortcut display
   useEffect(() => {
@@ -494,6 +501,52 @@ function ResultsContent() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [idea, loading, prefersReducedMotion]);
 
+  useEffect(() => {
+    return () => {
+      if (blueprintCopyTimeoutRef.current) {
+        clearTimeout(blueprintCopyTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!idea || loading) return;
+
+      if ((e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey) {
+        if (e.key.toLowerCase() === 'c') {
+          const selection = window.getSelection()?.toString();
+          if (!selection) {
+            e.preventDefault();
+            const blueprintEl = document.getElementById('blueprint-section');
+            const text = blueprintEl?.textContent || '';
+            if (text) {
+              navigator.clipboard.writeText(text).then(() => {
+                triggerHapticFeedback();
+                setBlueprintCopied(true);
+                if (blueprintCopyTimeoutRef.current) {
+                  clearTimeout(blueprintCopyTimeoutRef.current);
+                }
+                blueprintCopyTimeoutRef.current = setTimeout(() => {
+                  setBlueprintCopied(false);
+                }, COMPONENT_CONFIG.COPY_FEEDBACK.DURATION_MS);
+              });
+            }
+          }
+        }
+
+        if (e.key.toLowerCase() === 'p') {
+          e.preventDefault();
+          triggerHapticFeedback();
+          window.print();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [idea, loading]);
+
   // Micro-UX: Auto-scroll to export success alert when export completes
   // Users may have scrolled down to click export buttons; this ensures they see the confirmation
   useEffect(() => {
@@ -600,6 +653,10 @@ function ResultsContent() {
 
   return (
     <>
+      <StatusAnnouncer
+        message="Blueprint copied to clipboard"
+        triggered={blueprintCopied}
+      />
       <ScrollProgress />
       <SectionIndicator sections={sections} />
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
