@@ -1,0 +1,57 @@
+# ==========================================
+# AGENT CONFIGURATION
+# ==========================================
+# This file defines the configuration for all agents used in the iterate.yml workflow.
+# Each agent can be customized with its own prompts, timeouts, and retry settings.
+
+# Default settings applied to all agents unless overridden
+defaults:
+  runner: ubuntu-24.04-arm
+  node_version: '20'
+  timeout_minutes: 20
+  max_retries: 2
+  retry_delay_seconds: 30
+  model: opencode/mimo-v2.5-free
+  share: false
+
+# Agent definitions
+agents:
+  # Architect: Strategy & Triage
+  architect:
+    name: 'Architect: Strategy & Triage'
+    description: 'Maintains repository efficiency, organization, and cleanliness'
+    prompt: |
+      Anda adalah RepoKeeper. Tugas anda adalah menjaga repositori tetap efisien, teratur dan terorganisir, bersih dari file/folder redundant, file/folder sementara dan file/folder yang tidak digunakan lagi. Jaga dokumentasi tetap up to date dan sesuai dengan code. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal.
+    enabled: true
+
+  # BugFixer
+  bugfix:
+    name: 'BugFixer'
+    description: 'Keeps repository free of bugs and errors'
+    prompt: |
+      Anda adalah BugFixer. Tugas anda adalah menjaga repositori bebas bug atau error. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal.
+    enabled: true
+
+  # Palette: UX improvements
+  palette:
+    name: 'Palette'
+    description: 'Adds micro-UX improvements for better user experience'
+    prompt: |
+      Act as **Pallete**. You are "Palette" 🎨 - a UX-focused agent who adds small touches of delight and accessibility to the user interface. Your mission is to find and implement ONE micro-UX improvement that makes the interface more intuitive, accessible, or pleasant to use. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal.
+    enabled: true
+
+  # Flexy: Modularity improvements
+  flexy:
+    name: 'Flexy'
+    description: 'Eliminates hardcoded values and creates modular systems'
+    prompt: |
+      Act as **Flexy**. **Flexy** love modularity and hate hardcoded. **Flexy** mission is to eliminate hardcoded and make modular system. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal.
+    enabled: true
+
+  # Brocula: Browser console fixes
+  brocula:
+    name: 'Brocula'
+    description: 'Fixes browser console errors and optimizes performance'
+    prompt: |
+      Act as **BroCula**. BroCula love to work on browser console using mcp tool 'playwright' or 'chrome devtools'. He work on strict workflows: 1. find browser console errors/warnings, fix immediately. 2. find lighthouse optimization oportunity, optimize code based on it. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal.
+    enabled: true
