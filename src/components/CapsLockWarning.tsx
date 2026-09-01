@@ -87,6 +87,7 @@ function CapsLockWarningComponent({
       } ${className}`}
       role="status"
       aria-live="polite"
+      aria-atomic="true"
     >
       <svg
         className={`${SVG_SIZES.SMD} flex-shrink-0 ${pulseOnce && !prefersReducedMotion ? PULSE_ONCE : ''}`}

@@ -35,10 +35,11 @@ describe('CapsLockWarning', () => {
     // Warning text should be displayed using centralized label
     expect(screen.getByText(CAPS_LOCK_WARNING_LABELS.WARNING_TEXT)).toBeInTheDocument();
 
-    // Must have a "status" role with "polite" live region for accessibility
+    // Must have a "status" role with "polite" live region and aria-atomic for accessibility
     const warningRegion = screen.getByRole('status');
     expect(warningRegion).toBeInTheDocument();
     expect(warningRegion).toHaveAttribute('aria-live', 'polite');
+    expect(warningRegion).toHaveAttribute('aria-atomic', 'true');
 
     // Should have fade-in animation by default when reduced motion is false
     expect(warningRegion).toHaveClass('animate-fade-in');
