@@ -643,6 +643,26 @@ export default function SignupPage() {
             {SIGNUP_PAGE_CONTENT.SUCCESS.RETURN_LINK}
           </Link>
         </div>
+
+        {/* Micro-UX: Keyboard shortcuts hint bar on success state for discoverability */}
+        {/* Consistent with the form state and other auth pages (login, forgot-password) */}
+        <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_BAR}>
+          <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_GROUP}>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+              <kbd className={KBD_HINT_STYLE}>?</kbd>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                Shortcuts
+              </span>
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={openHelp}
+            className={DASHBOARD_PATTERNS.VIEW_SHORTCUTS_BTN}
+          >
+            View all
+          </button>
+        </div>
       </div>
     );
   }

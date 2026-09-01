@@ -312,6 +312,26 @@ export default function ForgotPasswordPage() {
               </Link>
             </div>
           </div>
+
+          {/* Micro-UX: Keyboard shortcuts hint bar on success state for discoverability */}
+          {/* Consistent with the form state and other auth pages (login, signup) */}
+          <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_BAR}>
+            <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_GROUP}>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+                <kbd className={KBD_HINT_STYLE}>?</kbd>
+                <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                  Shortcuts
+                </span>
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={openHelp}
+              className={DASHBOARD_PATTERNS.VIEW_SHORTCUTS_BTN}
+            >
+              View all
+            </button>
+          </div>
         </div>
       </div>
     );
