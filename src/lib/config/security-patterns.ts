@@ -268,10 +268,10 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
     },
     {
       // SECURITY: Enhanced to detect protocol-relative (//) and optional scheme (http(s)://) SSRF patterns,
-      // avoiding raw naked decimal/hex numbers to prevent catastrophic false positives with Unix timestamps,
-      // database IDs, CSS colors, or system hashes.
+      // including dotted octal loopback representations (e.g. 0177.0.0.1, 0177.1), while avoiding raw naked
+      // decimal/hex numbers to prevent false positives with timestamps or IDs.
       pattern:
-        /(?:(?:https?|gopher|ftp|dict|file):)?\/\/(?:0x[0-9a-f]+|[0-9]{8,12}|0[0-7]{10,12})\b/i,
+        /(?:(?:https?|gopher|ftp|dict|file):)?\/\/(?:0x[0-9a-f]+|[0-9]{8,12}|0[0-7]{10,12}|0[0-7]{1,3}\.(?:[0-9]{1,4}\.){0,3}[0-9]{1,4})\b/i,
       severity: 3,
       description: 'Non-standard IP encoding SSRF (hex, decimal, or octal)',
     },
