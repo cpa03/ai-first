@@ -104,7 +104,7 @@ const DEFAULT_SOCIAL_LINKS: NavItem[] = [
       'https://twitter.com/ideaflowai'
     ),
     label: 'Twitter',
-    ariaLabel: 'Follow us on Twitter',
+    ariaLabel: 'Twitter',
   },
   {
     href: EnvLoader.string(
@@ -112,7 +112,7 @@ const DEFAULT_SOCIAL_LINKS: NavItem[] = [
       'https://github.com/cpa03/ai-first'
     ),
     label: 'GitHub',
-    ariaLabel: 'View on GitHub',
+    ariaLabel: 'GitHub',
   },
 ];
 
