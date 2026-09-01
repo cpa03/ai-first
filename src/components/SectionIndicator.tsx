@@ -215,8 +215,8 @@ function SectionIndicatorComponent({
                   ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}
                   ${
                     isActive
-                      ? `${SECTION_INDICATOR_COLORS.ACTIVE_BG} scale-125`
-                      : `${SECTION_INDICATOR_COLORS.INACTIVE_BG} ${SECTION_INDICATOR_COLORS.INACTIVE_HOVER_BG} hover:scale-110 focus-visible:scale-125`
+                      ? `${SECTION_INDICATOR_COLORS.ACTIVE_BG} scale-125 active:scale-110`
+                      : `${SECTION_INDICATOR_COLORS.INACTIVE_BG} ${SECTION_INDICATOR_COLORS.INACTIVE_HOVER_BG} hover:scale-110 active:scale-95 focus-visible:scale-125`
                   }
                 `}
                 aria-label={SECTION_INDICATOR_LABELS.SECTION_ARIA_LABEL(

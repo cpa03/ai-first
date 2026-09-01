@@ -12,6 +12,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ## StorX Feature Analysis & Integration Tasks
 
+### [STRENGTHEN] Strengthen SectionIndicator Micro-UX with Tactile Scale Feedback
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-18
+- **Details**: Enhanced `SectionIndicator` navigation buttons with active tactile scale transforms (`active:scale-95` for inactive dots, `active:scale-110` for active dot), providing immediate physical interaction feedback matching design system standards.
+
+### [CONNECT] Connect SectionIndicator Styling and Accessibility Tokens to Central Config
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-08-18
+- **Details**: Verified `SectionIndicator` component draws all transition classes, z-index values, colors, labels, and focus rings directly from centralized modular config modules in `src/lib/config/`.
+
 ### [STRENGTHEN] Strengthen LoadingSpinner Accessibility and Non-Redundant Screen Reader Announcements
 - **Priority**: MEDIUM
 - **Status**: COMPLETE
