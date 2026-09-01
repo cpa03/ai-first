@@ -32,6 +32,7 @@ import {
   RESPONSIVE_WIDTH,
   FONT_MEDIUM,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { FORGOT_PASSWORD_PATTERNS } from '@/lib/config/page-patterns';
 import { SUCCESS_STATE_COLORS } from '@/lib/config/theme';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -226,11 +227,11 @@ export default function ForgotPasswordPage() {
     return (
       <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
         <div
-          className={`${CONTAINER_WIDTHS.XS} w-full ${SPACE_Y_PATTERNS.XL} relative`}
+          className={`${CONTAINER_WIDTHS.XS} ${FORGOT_PASSWORD_PATTERNS.FORM_CONTAINER} ${SPACE_Y_PATTERNS.XL} relative`}
         >
           <div className={`${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE}`}>
             <div
-              className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex ${ICON_SIZES.XXXXL} items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.NONE}`}
+              className={`${FORGOT_PASSWORD_PATTERNS.SUCCESS_ICON} ${SPACING_CLASSES.COMPONENT} ${ICON_SIZES.XXXXL} ${SUCCESS_STATE_COLORS.ICON_BG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.NONE}`}
             >
               <svg
                 className={`${ICON_SIZES.XL} ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
@@ -252,13 +253,17 @@ export default function ForgotPasswordPage() {
               Check your email
             </h1>
             <p
-              className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+              className={`${SPACING_CLASSES.TOP_SMALL} ${FORGOT_PASSWORD_PATTERNS.SUCCESS_TEXT} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
             >
               We&apos;ve sent a password reset link to{' '}
-              <span className={FONT_MEDIUM}>{email}</span>
+              <span
+                className={`${FORGOT_PASSWORD_PATTERNS.SUCCESS_EMAIL} ${FONT_MEDIUM}`}
+              >
+                {email}
+              </span>
             </p>
             <p
-              className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
+              className={`${SPACING_CLASSES.TOP_SMALL} ${FORGOT_PASSWORD_PATTERNS.SUCCESS_SMALL_TEXT} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
             >
               Didn&apos;t receive the email? Check your spam folder or resend
               below.
@@ -274,7 +279,7 @@ export default function ForgotPasswordPage() {
 
             {resendSuccess && (
               <p
-                className={`${SPACING_CLASSES.TOP_SMALL} text-sm ${SUCCESS_STATE_COLORS.ICON_TEXT} ${HERO_ENTRANCE}`}
+                className={`${SPACING_CLASSES.TOP_SMALL} ${FORGOT_PASSWORD_PATTERNS.SUCCESS_RESEND} ${SUCCESS_STATE_COLORS.ICON_TEXT} ${HERO_ENTRANCE}`}
                 role="status"
                 aria-live="polite"
               >
@@ -327,7 +332,7 @@ export default function ForgotPasswordPage() {
       </a>
 
       <div
-        className={`${CONTAINER_WIDTHS.XS} w-full ${SPACE_Y_PATTERNS.XL} relative`}
+        className={`${CONTAINER_WIDTHS.XS} ${FORGOT_PASSWORD_PATTERNS.FORM_CONTAINER} ${SPACE_Y_PATTERNS.XL} relative`}
       >
         {isLoading && (
           <div

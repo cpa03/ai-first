@@ -30,6 +30,7 @@ import {
   HOMEPAGE_HERO_SECTION,
   HOMEPAGE_HERO_ACTIONS,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { HOMEPAGE_PATTERNS } from '@/lib/config/page-patterns';
 
 const ShareButton = dynamic(() => import('@/components/ShareButton'), {
   loading: () => (
@@ -73,25 +74,22 @@ const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
   loading: () => (
     <section
       aria-hidden="true"
-      className={`${MT_CLASSES.XXXXL} grid md:grid-cols-3 ${GAP_CLASSES.XXXL}`}
+      className={`${MT_CLASSES.XXXXL} ${HOMEPAGE_PATTERNS.FEATURE_GRID}`}
       style={{ minHeight: HOMEPAGE_SKELETON_TAILWIND.FEATURE_GRID_MIN_H }}
     >
       {[1, 2, 3].map((i) => (
-        <div
-          key={i}
-          className={`text-center p-6 rounded-xl bg-white border ${GRAY_CLASSES.BORDER_200} flex flex-col items-center justify-center`}
-        >
+        <div key={i} className={HOMEPAGE_PATTERNS.FEATURE_CARD}>
           <Skeleton
             variant="circle"
-            className={`${REMAINING_PATTERNS.SKELETON_SIZES.FEATURE_CIRCLE} mx-auto mb-4`}
+            className={`${REMAINING_PATTERNS.SKELETON_SIZES.FEATURE_CIRCLE} ${HOMEPAGE_PATTERNS.FEATURE_CARD_CIRCLE}`}
           />
           <Skeleton
             variant="text"
-            className={`${REMAINING_PATTERNS.SKELETON_SIZES.FEATURE_TITLE} mx-auto mb-2 w-3/4`}
+            className={`${REMAINING_PATTERNS.SKELETON_SIZES.FEATURE_TITLE} ${HOMEPAGE_PATTERNS.FEATURE_CARD_TITLE}`}
           />
           <Skeleton
             variant="text"
-            className={`${REMAINING_PATTERNS.SKELETON_SIZES.FEATURE_DESC} mx-auto w-full`}
+            className={`${REMAINING_PATTERNS.SKELETON_SIZES.FEATURE_DESC} ${HOMEPAGE_PATTERNS.FEATURE_CARD_DESC}`}
           />
         </div>
       ))}
@@ -105,7 +103,7 @@ const WhyChooseSection = dynamic(
     loading: () => (
       <section
         aria-hidden="true"
-        className={`${MT_CLASSES.XXXXL} ${GRAY_CLASSES.BG_50} rounded-lg p-8`}
+        className={`${MT_CLASSES.XXXXL} ${GRAY_CLASSES.BG_50} ${HOMEPAGE_PATTERNS.WHY_CHOOSE_CONTAINER}`}
         style={{ minHeight: HOMEPAGE_SKELETON_TAILWIND.WHY_CHOOSE_MIN_H }}
       >
         <Skeleton
@@ -116,7 +114,7 @@ const WhyChooseSection = dynamic(
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className={`flex items-start ${SPACE_X_PATTERNS.MD} p-4 rounded-lg bg-white border ${GRAY_CLASSES.BORDER_200}`}
+              className={`${HOMEPAGE_PATTERNS.WHY_CHOOSE_CARD} ${SPACE_X_PATTERNS.MD}`}
             >
               <Skeleton
                 variant="circle"
@@ -125,11 +123,11 @@ const WhyChooseSection = dynamic(
               <div className={REMAINING_PATTERNS.SKELETON_LAYOUT.FLEX_GROW}>
                 <Skeleton
                   variant="text"
-                  className={`${REMAINING_PATTERNS.SKELETON_SIZES.WHY_CHOOSE_ITEM_TITLE} mb-2 w-1/2`}
+                  className={`${REMAINING_PATTERNS.SKELETON_SIZES.WHY_CHOOSE_ITEM_TITLE} ${HOMEPAGE_PATTERNS.WHY_CHOOSE_ITEM_TITLE}`}
                 />
                 <Skeleton
                   variant="text"
-                  className={`${REMAINING_PATTERNS.SKELETON_SIZES.FEATURE_DESC} w-3/4`}
+                  className={`${REMAINING_PATTERNS.SKELETON_SIZES.FEATURE_DESC} ${HOMEPAGE_PATTERNS.WHY_CHOOSE_ITEM_DESC}`}
                 />
               </div>
             </div>
@@ -194,7 +192,7 @@ export default function HomePageClient() {
       >
         <h1
           id={HOME_PAGE_ELEMENT_IDS.HERO_HEADING}
-          className={`text-4xl font-bold ${GRAY_CLASSES.TEXT_900} mb-4 ${
+          className={`${HOMEPAGE_PATTERNS.HERO_HEADING} ${GRAY_CLASSES.TEXT_900} ${
             prefersReducedMotion ? '' : HERO_ENTRANCE
           }`}
           style={
@@ -206,7 +204,7 @@ export default function HomePageClient() {
           {HOME_PAGE_CONFIG.HERO.TITLE}
         </h1>
         <p
-          className={`text-xl ${GRAY_CLASSES.TEXT_700} max-w-2xl mx-auto ${
+          className={`${HOMEPAGE_PATTERNS.HERO_DESCRIPTION} ${GRAY_CLASSES.TEXT_700} ${
             prefersReducedMotion ? '' : HERO_ENTRANCE
           }`}
           style={
@@ -262,11 +260,11 @@ export default function HomePageClient() {
         <section
           aria-live="polite"
           aria-labelledby={ARIA_HEADING_IDS.IDEA_CONFIRMATION}
-          className={`mt-8 ${BG_COLORS.INFO_LIGHT} ${BORDER_COLORS.INFO} rounded-lg p-6`}
+          className={`${HOMEPAGE_PATTERNS.IDEA_CONFIRMATION} ${BG_COLORS.INFO_LIGHT} ${BORDER_COLORS.INFO}`}
         >
           <h3
             id={HOME_PAGE_ELEMENT_IDS.IDEA_CONFIRMATION_HEADING}
-            className={`text-lg font-semibold ${TEXT_COLORS.INFO_DARK} mb-2`}
+            className={`${HOMEPAGE_PATTERNS.IDEA_CONFIRMATION_HEADING} ${TEXT_COLORS.INFO_DARK}`}
           >
             {HOME_PAGE_CONFIG.CONFIRMATION.LABEL}
           </h3>
@@ -278,7 +276,7 @@ export default function HomePageClient() {
               {HOME_PAGE_CONFIG.CONFIRMATION.SAVED_WITH_ID}
               {` `}
               <code
-                className={`${BG_COLORS.INFO} px-1.5 py-0.5 rounded ${TEXT_COLORS.INFO_DARK} font-mono text-xs`}
+                className={`${HOMEPAGE_PATTERNS.IDEA_CONFIRMATION_CODE} ${BG_COLORS.INFO} ${TEXT_COLORS.INFO_DARK}`}
               >
                 {ideaId}
               </code>
@@ -297,7 +295,9 @@ export default function HomePageClient() {
               }
             />
           </div>
-          <p className={`text-sm ${TEXT_COLORS.INFO_LIGHT} mt-3`}>
+          <p
+            className={`${HOMEPAGE_PATTERNS.IDEA_CONFIRMATION_TEXT} ${TEXT_COLORS.INFO_LIGHT}`}
+          >
             {HOME_PAGE_CONFIG.CONFIRMATION.REDIRECTING}
           </p>
         </section>

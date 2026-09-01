@@ -30,19 +30,11 @@ import {
 } from '@/lib/config';
 import { ANIMATION_PATTERNS } from '@/lib/config/remaining-styles';
 import {
-  NOT_FOUND_404_CONTAINER,
-  NOT_FOUND_BUTTON_INLINE,
-  NOT_FOUND_BUTTON_INLINE_FULL,
-  NOT_FOUND_SHORTCUTS_SECTION,
   KEYBOARD_HINT_INLINE,
-  POPULAR_PAGES_SECTION,
-  POPULAR_PAGES_GRID,
-  POPULAR_PAGES_ITEM,
-  POPULAR_PAGES_ICON,
   COPY_URL_HINT,
-  NOT_FOUND_COPY_SECTION,
   TEXT_LEFT,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { NOT_FOUND_PATTERNS } from '@/lib/config/page-patterns';
 import type { ComponentConfig } from '@/lib/config/components';
 import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
@@ -142,12 +134,12 @@ export default function NotFound() {
           id={ERROR_ELEMENT_IDS.ERROR_CONTENT}
           className={`${CARD_PATTERNS.CENTERED_LARGE} ${HERO_ENTRANCE}`}
         >
-          <div className={NOT_FOUND_404_CONTAINER}>
+          <div className={NOT_FOUND_PATTERNS.CONTAINER}>
             <div
-              className={`inline-flex items-center justify-center ${ICON_SIZES.MASSIVE} rounded-full ${GRAY_CLASSES.BG_100}`}
+              className={`${NOT_FOUND_PATTERNS.ICON_CONTAINER} ${ICON_SIZES.MASSIVE} ${GRAY_CLASSES.BG_100}`}
             >
               <span
-                className={`text-4xl font-bold ${GRAY_CLASSES.TEXT_300} select-none ${prefersReducedMotion ? '' : BREATHE}`}
+                className={`${NOT_FOUND_PATTERNS.NUMBER_TEXT} ${GRAY_CLASSES.TEXT_300} ${prefersReducedMotion ? '' : BREATHE}`}
               >
                 404
               </span>
@@ -157,20 +149,20 @@ export default function NotFound() {
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className={`text-2xl font-bold ${GRAY_CLASSES.TEXT_900} mb-2 ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1} focus:outline-none`}
+            className={`${NOT_FOUND_PATTERNS.HEADING} ${GRAY_CLASSES.TEXT_900} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1} focus:outline-none`}
           >
             Page not found
           </h1>
 
           <p
-            className={`${GRAY_CLASSES.TEXT_600} mb-8 max-w-sm mx-auto ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+            className={`${NOT_FOUND_PATTERNS.DESCRIPTION} ${GRAY_CLASSES.TEXT_600} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           >
             Sorry, we couldn&apos;t find the page you&apos;re looking for. It
             may have been moved or doesn&apos;t exist.
           </p>
 
           <div
-            className={`flex flex-col sm:flex-row gap-3 justify-center ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
+            className={`${NOT_FOUND_PATTERNS.BUTTON_GROUP} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
           >
             <Tooltip
               content={NOT_FOUND_LABELS.GO_BACK_TOOLTIP}
@@ -180,7 +172,7 @@ export default function NotFound() {
               <Button
                 variant="primary"
                 onClick={handleGoBack}
-                className={NOT_FOUND_BUTTON_INLINE}
+                className={NOT_FOUND_PATTERNS.BUTTON_INLINE}
               >
                 <svg
                   className={ICON_SIZES.MD}
@@ -208,7 +200,7 @@ export default function NotFound() {
               >
                 <Button
                   variant="secondary"
-                  className={NOT_FOUND_BUTTON_INLINE_FULL}
+                  className={NOT_FOUND_PATTERNS.BUTTON_INLINE_FULL}
                 >
                   <svg
                     className={ICON_SIZES.MD}
@@ -237,7 +229,7 @@ export default function NotFound() {
               <Link href={ROUTES.DASHBOARD}>
                 <Button
                   variant="outline"
-                  className={NOT_FOUND_BUTTON_INLINE_FULL}
+                  className={NOT_FOUND_PATTERNS.BUTTON_INLINE_FULL}
                 >
                   <svg
                     className={ICON_SIZES.MD}
@@ -260,7 +252,7 @@ export default function NotFound() {
           </div>
 
           <div
-            className={`${NOT_FOUND_COPY_SECTION} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
+            className={`${NOT_FOUND_PATTERNS.COPY_SECTION} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
           >
             <CopyButton
               textToCopy={
@@ -294,7 +286,7 @@ export default function NotFound() {
           {/* Micro-UX: Keyboard shortcut hints for discoverability */}
           {/* Uses discover-pulse animation to draw attention to available shortcuts */}
           <div
-            className={`${NOT_FOUND_SHORTCUTS_SECTION} ${GRAY_CLASSES.TEXT_500} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5} ${ANIMATION_PATTERNS.DISCOVER_PULSE} rounded-lg px-4 py-2`}
+            className={`${NOT_FOUND_PATTERNS.SHORTCUTS_SECTION} ${GRAY_CLASSES.TEXT_500} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5} ${ANIMATION_PATTERNS.DISCOVER_PULSE} rounded-lg px-4 py-2`}
             aria-hidden="true"
           >
             <span className={KEYBOARD_HINT_INLINE}>
@@ -358,7 +350,7 @@ export default function NotFound() {
           {/* Micro-UX: Popular pages suggestions to help users find what they're looking for */}
           {/* Provides quick access to common destinations, reducing frustration from 404 errors */}
           <div
-            className={`${POPULAR_PAGES_SECTION} ${BORDER_COLORS.LIGHT} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_6}`}
+            className={`${NOT_FOUND_PATTERNS.POPULAR_SECTION} ${BORDER_COLORS.LIGHT} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_6}`}
           >
             <h2
               id="popular-pages-heading"
@@ -367,7 +359,7 @@ export default function NotFound() {
               Popular pages
             </h2>
             <nav aria-labelledby="popular-pages-heading">
-              <ul className={POPULAR_PAGES_GRID}>
+              <ul className={NOT_FOUND_PATTERNS.POPULAR_GRID}>
                 {[
                   {
                     href: ROUTES.HOME,
@@ -409,10 +401,10 @@ export default function NotFound() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className={`${POPULAR_PAGES_ITEM} ${BORDER_COLORS.LIGHT} ${BG_COLORS.DEFAULT} hover:${BORDER_COLORS.PRIMARY_LIGHT} hover:${BG_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2`}
+                      className={`${NOT_FOUND_PATTERNS.POPULAR_ITEM} ${BORDER_COLORS.LIGHT} ${BG_COLORS.DEFAULT} hover:${BORDER_COLORS.PRIMARY_LIGHT} hover:${BG_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2`}
                     >
                       <span
-                        className={`${POPULAR_PAGES_ICON} ${BG_COLORS.LIGHT} group-hover:${BG_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
+                        className={`${NOT_FOUND_PATTERNS.POPULAR_ICON} ${BG_COLORS.LIGHT} group-hover:${BG_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
                       >
                         <svg
                           className={`${ICON_SIZES.LG} ${GRAY_CLASSES.TEXT_500} group-hover:${TEXT_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}

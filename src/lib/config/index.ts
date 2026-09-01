@@ -1145,3 +1145,17 @@ export {
   type PrimaryCombinations,
   type ComponentPrimaryPatterns,
 } from './primary-colors';
+
+// Page Patterns Configuration
+// Centralizes hardcoded Tailwind classes used in page components
+export {
+  HOMEPAGE_PATTERNS,
+  NOT_FOUND_PATTERNS,
+  FORGOT_PASSWORD_PATTERNS,
+  COMMON_PAGE_PATTERNS,
+  PAGE_PATTERNS,
+  type HOMEPAGE_PATTERNS as HomepagePatterns,
+  type NOT_FOUND_PATTERNS as NotFoundPatterns,
+  type FORGOT_PASSWORD_PATTERNS as ForgotPasswordPatterns,
+  type COMMON_PAGE_PATTERNS as CommonPagePatterns,
+} from './page-patterns';
