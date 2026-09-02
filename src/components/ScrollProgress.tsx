@@ -159,6 +159,29 @@ function ScrollProgressComponent() {
     setIsDragging(false);
   }, []);
 
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (e.touches.length > 0) {
+        setIsDragging(true);
+        scrollToPosition(e.touches[0].clientX);
+      }
+    },
+    [scrollToPosition]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (isDragging && e.touches.length > 0) {
+        scrollToPosition(e.touches[0].clientX);
+      }
+    },
+    [isDragging, scrollToPosition]
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
   useEffect(() => {
     if (isDragging) {
       const handleGlobalMouseMove = (e: MouseEvent) => {
@@ -167,12 +190,26 @@ function ScrollProgressComponent() {
       const handleGlobalMouseUp = () => {
         setIsDragging(false);
       };
+      const handleGlobalTouchMove = (e: TouchEvent) => {
+        if (e.touches.length > 0) {
+          scrollToPosition(e.touches[0].clientX);
+        }
+      };
+      const handleGlobalTouchEnd = () => {
+        setIsDragging(false);
+      };
 
       document.addEventListener('mousemove', handleGlobalMouseMove);
       document.addEventListener('mouseup', handleGlobalMouseUp);
+      document.addEventListener('touchmove', handleGlobalTouchMove, {
+        passive: true,
+      });
+      document.addEventListener('touchend', handleGlobalTouchEnd);
       return () => {
         document.removeEventListener('mousemove', handleGlobalMouseMove);
         document.removeEventListener('mouseup', handleGlobalMouseUp);
+        document.removeEventListener('touchmove', handleGlobalTouchMove);
+        document.removeEventListener('touchend', handleGlobalTouchEnd);
       };
     }
   }, [isDragging, scrollToPosition]);
@@ -199,12 +236,15 @@ function ScrollProgressComponent() {
           ? SCROLL_PROGRESS_LABELS.KEYBOARD_ARIA(displayPercentage)
           : SCROLL_PROGRESS_LABELS.ARIA_LABEL
       }
-      aria-roledescription="Use arrow keys to navigate"
+      aria-roledescription={SCROLL_PROGRESS_LABELS.KEYBOARD_HINT}
       title={SCROLL_PROGRESS_LABELS.KEYBOARD_HINT}
       onClick={handleClick}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
