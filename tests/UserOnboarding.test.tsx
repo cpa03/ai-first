@@ -67,6 +67,7 @@ describe('UserOnboarding Component', () => {
     expect(
       screen.getByRole('button', { name: /Skip onboarding tour/i })
     ).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('should not render if user has already completed onboarding', () => {
