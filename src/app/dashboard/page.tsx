@@ -1106,6 +1106,22 @@ export default function DashboardPage() {
                   {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.BUTTON}
                 </Button>
               </Link>
+              {/* Micro-UX: Keyboard shortcut hints for the empty state */}
+              {/* Helps new users discover keyboard shortcuts from the very first interaction */}
+              {/* Matches the keyboard hints pattern used in the filtered empty state */}
+              <span
+                className={`${INLINE_FLEX_PATTERNS.RESPONSIVE_GAP_MD_SM} text-xs ${GRAY_CLASSES.TEXT_500} mt-4`}
+                aria-hidden="true"
+              >
+                <span className={INLINE_FLEX_PATTERNS.GAP_MD_SM}>
+                  <kbd className={KBD_HINT_STYLE}>n</kbd>
+                  <span>new idea</span>
+                </span>
+                <span className={INLINE_FLEX_PATTERNS.GAP_MD_SM}>
+                  <kbd className={KBD_HINT_STYLE}>?</kbd>
+                  <span>shortcuts</span>
+                </span>
+              </span>
             </>
           )}
         </div>
