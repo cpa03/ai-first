@@ -1146,29 +1146,35 @@ function ResultsContent() {
             >
               {RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.DESCRIPTION}
             </p>
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => router.push(ROUTES.HOME)}
-              aria-label={RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.ARIA_LABEL}
-              className={`inline-flex items-center ${GAP_CLASSES.MD} ${prefersReducedMotion ? '' : 'hover:-translate-y-0.5 active:translate-y-0'} transition-transform`}
+            <Tooltip
+              content={RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.TOOLTIP}
+              shortcut={['n']}
+              position="top"
             >
-              <svg
-                className={`${ICON_SIZES.MD}`}
-                fill="none"
-                viewBox={SVG_VIEWBOX.STANDARD}
-                stroke="currentColor"
-                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-                aria-hidden="true"
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => router.push(ROUTES.HOME)}
+                aria-label={RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.ARIA_LABEL}
+                className={`inline-flex items-center ${GAP_CLASSES.MD} ${prefersReducedMotion ? '' : 'hover:-translate-y-0.5 active:translate-y-0'} transition-transform`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              {RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.BUTTON}
-            </Button>
+                <svg
+                  className={`${ICON_SIZES.MD}`}
+                  fill="none"
+                  viewBox={SVG_VIEWBOX.STANDARD}
+                  stroke="currentColor"
+                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                {RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.BUTTON}
+              </Button>
+            </Tooltip>
           </div>
         </section>
 

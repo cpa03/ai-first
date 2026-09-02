@@ -423,6 +423,7 @@ export const RESULTS_PAGE_CONTENT = {
       'Turn your next idea into an actionable plan with AI-powered breakdowns.',
     BUTTON: 'Start New Idea',
     ARIA_LABEL: 'Start a new idea and create another project blueprint',
+    TOOLTIP: 'Create another project blueprint',
   },
 } as const;
 
