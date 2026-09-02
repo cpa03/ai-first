@@ -2,8 +2,12 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
-// Only initialize Cloudflare dev mode in development
-if (process.env.NODE_ENV !== 'production') {
+// Only initialize Cloudflare dev mode when running local development server
+if (
+  process.env.NODE_ENV === 'development' &&
+  (process.env.NEXT_PHASE === 'phase-development-server' ||
+    process.argv.includes('dev'))
+) {
   const { initOpenNextCloudflareForDev } = require('@opennextjs/cloudflare');
   initOpenNextCloudflareForDev();
 }
