@@ -34,6 +34,7 @@ import {
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { SUCCESS_STATE_COLORS } from '@/lib/config/theme';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
+import { FORGOT_PASSWORD_LABELS } from '@/lib/config/component-labels';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
@@ -149,7 +150,7 @@ export default function ForgotPasswordPage() {
         const errorMessage =
           err instanceof Error
             ? err.message
-            : 'Failed to send reset email. Please try again.';
+            : FORGOT_PASSWORD_LABELS.SEND_ERROR_DEFAULT;
         setError(errorMessage);
       } finally {
         setIsLoading(false);
@@ -200,7 +201,7 @@ export default function ForgotPasswordPage() {
       const errorMessage =
         err instanceof Error
           ? err.message
-          : 'Failed to resend email. Please try again.';
+          : FORGOT_PASSWORD_LABELS.RESEND_ERROR_DEFAULT;
       setError(errorMessage);
     } finally {
       setIsResending(false);
@@ -266,7 +267,7 @@ export default function ForgotPasswordPage() {
 
             {error && (
               <div className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE}`}>
-                <Alert type="error" title="Error">
+                <Alert type="error" title={FORGOT_PASSWORD_LABELS.ERROR_TITLE}>
                   {error}
                 </Alert>
               </div>
@@ -278,7 +279,7 @@ export default function ForgotPasswordPage() {
                 role="status"
                 aria-live="polite"
               >
-                Reset email resent successfully!
+                {FORGOT_PASSWORD_LABELS.SUCCESS_MESSAGE}
               </p>
             )}
 
@@ -291,7 +292,7 @@ export default function ForgotPasswordPage() {
                 onClick={handleResend}
                 disabled={resendCooldown > 0 || isResending}
                 loading={isResending}
-                loadingText="Sending..."
+                loadingText={FORGOT_PASSWORD_LABELS.RESEND_LOADING}
                 className={RESPONSIVE_WIDTH}
                 size="md"
               >
@@ -323,7 +324,7 @@ export default function ForgotPasswordPage() {
         href="#forgot-password-form"
         className={`${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.BASE} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.BG} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.TEXT}`}
       >
-        Skip to forgot password form
+        {FORGOT_PASSWORD_LABELS.SKIP_LINK}
       </a>
 
       <div
@@ -338,7 +339,7 @@ export default function ForgotPasswordPage() {
             <div className={FORM_OVERLAY_STYLES.SPINNER_CONTAINER}>
               <div className={FORM_OVERLAY_STYLES.SPINNER} />
               <span className={FORM_OVERLAY_STYLES.LOADING_TEXT}>
-                Sending reset link...
+                {FORGOT_PASSWORD_LABELS.LOADING_TEXT}
               </span>
             </div>
           </div>
@@ -393,7 +394,9 @@ export default function ForgotPasswordPage() {
               attention={isFormValid && !isLoading}
               shortcut={isMac ? ['⌘', 'Enter'] : ['Ctrl', 'Enter']}
             >
-              {isLoading ? 'Sending...' : 'Send reset link'}
+              {isLoading
+                ? FORGOT_PASSWORD_LABELS.SEND_BUTTON_LOADING
+                : FORGOT_PASSWORD_LABELS.SEND_BUTTON_DEFAULT}
             </Button>
             <p
               className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
@@ -411,7 +414,7 @@ export default function ForgotPasswordPage() {
               >
                 Enter
               </kbd>
-              {' to submit'}
+              {FORGOT_PASSWORD_LABELS.SUBMIT_HINT}
             </p>
           </div>
         </form>
@@ -420,9 +423,9 @@ export default function ForgotPasswordPage() {
           className={`${SPACING_CLASSES.TOP} ${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
         >
           <p className={`text-sm ${TEXT_COLOR_CLASSES.BODY}`}>
-            Remember your password?{' '}
+            {FORGOT_PASSWORD_LABELS.REMEMBER_PASSWORD}{' '}
             <Link href={ROUTES.LOGIN} className={FORM_PATTERNS.AUTH_LINK}>
-              Sign in
+              {FORGOT_PASSWORD_LABELS.SIGN_IN_LINK}
             </Link>
           </p>
         </div>

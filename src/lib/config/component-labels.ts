@@ -759,6 +759,48 @@ export const KEYBOARD_SHORTCUT_HINT_LABELS = {
 } as const;
 
 /**
+ * Forgot Password Page Labels
+ * Eliminates hardcoded strings in forgot-password/page.tsx
+ */
+export const FORGOT_PASSWORD_LABELS = {
+  /** Error alert title */
+  ERROR_TITLE: 'Error',
+  /** Success message after sending reset email */
+  SUCCESS_MESSAGE: 'Reset email resent successfully!',
+  /** Loading text for resend button */
+  RESEND_LOADING: 'Sending...',
+  /** Default error message for resend failure */
+  RESEND_ERROR_DEFAULT: 'Failed to resend email. Please try again.',
+  /** Default error message for initial send failure */
+  SEND_ERROR_DEFAULT: 'Failed to send reset email. Please try again.',
+  /** Button text when sending */
+  SEND_BUTTON_LOADING: 'Sending...',
+  /** Button text for send action */
+  SEND_BUTTON_DEFAULT: 'Send reset link',
+  /** Keyboard shortcut hint */
+  SUBMIT_HINT: ' to submit',
+  /** Remember password text */
+  REMEMBER_PASSWORD: 'Remember your password?',
+  /** Sign in link text */
+  SIGN_IN_LINK: 'Sign in',
+  /** Skip link text */
+  SKIP_LINK: 'Skip to forgot password form',
+  /** Loading overlay text */
+  LOADING_TEXT: 'Sending reset link...',
+} as const;
+
+/**
+ * Forgot Password Layout Labels
+ * Eliminates hardcoded strings in forgot-password/layout.tsx
+ */
+export const FORGOT_PASSWORD_LAYOUT_LABELS = {
+  /** Error fallback title */
+  ERROR_TITLE: 'Something went wrong',
+  /** Error fallback message */
+  ERROR_MESSAGE: 'We encountered an error loading this page. Please try again.',
+} as const;
+
+/**
  * Component Labels - Combined export
  * Provides all component labels in a single object
  */
@@ -791,6 +833,8 @@ export const COMPONENT_LABELS = {
   SCROLL_PROGRESS: SCROLL_PROGRESS_LABELS,
   PASSWORD_REQUIREMENTS: PASSWORD_REQUIREMENTS_LABELS,
   CAPS_LOCK_WARNING: CAPS_LOCK_WARNING_LABELS,
+  FORGOT_PASSWORD: FORGOT_PASSWORD_LABELS,
+  FORGOT_PASSWORD_LAYOUT: FORGOT_PASSWORD_LAYOUT_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
@@ -824,4 +868,6 @@ export type WhyChooseSectionLabels = typeof WHY_CHOOSE_SECTION_LABELS;
 export type ScrollProgressLabels = typeof SCROLL_PROGRESS_LABELS;
 export type PasswordRequirementsLabels = typeof PASSWORD_REQUIREMENTS_LABELS;
 export type CapsLockWarningLabels = typeof CAPS_LOCK_WARNING_LABELS;
+export type ForgotPasswordLabels = typeof FORGOT_PASSWORD_LABELS;
+export type ForgotPasswordLayoutLabels = typeof FORGOT_PASSWORD_LAYOUT_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;

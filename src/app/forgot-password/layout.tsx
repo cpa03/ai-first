@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import LayoutErrorFallback from '@/components/LayoutErrorFallback';
+import { FORGOT_PASSWORD_LAYOUT_LABELS } from '@/lib/config/component-labels';
 
 export const metadata: Metadata = {
   title: 'Forgot Password - IdeaFlow',
@@ -17,8 +18,8 @@ export default function ForgotPasswordLayout({
     <ErrorBoundary
       fallback={
         <LayoutErrorFallback
-          title="Something went wrong"
-          message="We encountered an error loading this page. Please try again."
+          title={FORGOT_PASSWORD_LAYOUT_LABELS.ERROR_TITLE}
+          message={FORGOT_PASSWORD_LAYOUT_LABELS.ERROR_MESSAGE}
         />
       }
     >
