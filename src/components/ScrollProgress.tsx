@@ -199,7 +199,7 @@ function ScrollProgressComponent() {
           ? SCROLL_PROGRESS_LABELS.KEYBOARD_ARIA(displayPercentage)
           : SCROLL_PROGRESS_LABELS.ARIA_LABEL
       }
-      aria-roledescription="Use arrow keys to navigate"
+      aria-roledescription={SCROLL_PROGRESS_LABELS.KEYBOARD_HINT}
       title={SCROLL_PROGRESS_LABELS.KEYBOARD_HINT}
       onClick={handleClick}
       onMouseDown={handleMouseDown}
