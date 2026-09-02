@@ -1151,6 +1151,7 @@ function ResultsContent() {
               size="lg"
               onClick={() => router.push(ROUTES.HOME)}
               aria-label={RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.ARIA_LABEL}
+              shortcut={['N']}
               className={`inline-flex items-center ${GAP_CLASSES.MD} ${prefersReducedMotion ? '' : 'hover:-translate-y-0.5 active:translate-y-0'} transition-transform`}
             >
               <svg
