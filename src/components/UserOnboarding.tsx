@@ -47,6 +47,7 @@ import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
 import Tooltip from './Tooltip';
+import StatusAnnouncer from './StatusAnnouncer';
 import { CONFETTI_DOT } from '@/lib/config';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { MX_CLASSES } from '@/lib/config/spacing';
@@ -333,6 +334,10 @@ export default function UserOnboarding() {
         role="dialog"
         aria-label={USER_ONBOARDING_LABELS.COMPLETION_ARIA_LABEL}
       >
+        <StatusAnnouncer
+          message={USER_ONBOARDING_COMPLETION_LABELS.TITLE}
+          triggered={showCelebration}
+        />
         <div
           className={`absolute inset-0 ${BG_COLORS.OVERLAY} backdrop-blur-sm`}
           aria-hidden="true"
@@ -433,6 +438,18 @@ export default function UserOnboarding() {
           left: tooltipPosition.left,
         }}
       >
+        <StatusAnnouncer
+          message={
+            currentStep
+              ? USER_ONBOARDING_COMPLETION_LABELS.STEP_ANNOUNCEMENT(
+                  currentStepIndex + 1,
+                  TOUR_STEPS.length,
+                  currentStep.title
+                )
+              : ''
+          }
+          triggered={isVisible && !showCelebration}
+        />
         {/* Progress bar */}
         <div
           className={`absolute top-0 left-0 h-1 ${BG_COLORS.BRAND_500} rounded-t-xl transition-all ${DURATION_TAILWIND[300]}`}
@@ -453,7 +470,7 @@ export default function UserOnboarding() {
           >
             <button
               onClick={handleSkip}
-              className={`${TEXT_COLORS.MUTED_DARK} ${TEXT_COLORS.HOVER_SECONDARY} ${TRANSITION_CLASSES.COLOR} p-1 ${FOCUS_RING_PATTERNS.DEFAULT} rounded-md`}
+              className={`${TEXT_COLORS.MUTED_DARK} ${TEXT_COLORS.HOVER_SECONDARY} ${TRANSITION_CLASSES.COLOR} p-1 ${FOCUS_RING_PATTERNS.DEFAULT} rounded-md ${prefersReducedMotion ? '' : 'active:scale-95 transition-all'}`}
               aria-label={USER_ONBOARDING_LABELS.SKIP_ARIA_LABEL}
             >
               <svg
@@ -509,7 +526,7 @@ export default function UserOnboarding() {
                       setCurrentStepIndex(index);
                     }
                   }}
-                  className={`rounded-full transition-all ${DURATION_TAILWIND[200]} ease-out ${FOCUS_RING_PATTERNS.DEFAULT} hover:scale-125 focus-visible:scale-125 ${
+                  className={`rounded-full transition-all ${DURATION_TAILWIND[200]} ease-out ${FOCUS_RING_PATTERNS.DEFAULT} hover:scale-125 focus-visible:scale-125 ${prefersReducedMotion ? '' : 'active:scale-90'} ${
                     index === currentStepIndex
                       ? `${INDICATOR_SIZES.PILL} ${BG_COLORS.BRAND}`
                       : index < currentStepIndex
@@ -565,7 +582,7 @@ export default function UserOnboarding() {
               >
                 <button
                   onClick={handlePrev}
-                  className={`px-3 py-1.5 text-sm ${TEXT_COLORS.SECONDARY} ${TEXT_COLORS.HOVER_PRIMARY} ${BG_COLORS.LIGHTER} rounded-lg ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_PATTERNS.DEFAULT}`}
+                  className={`px-3 py-1.5 text-sm ${TEXT_COLORS.SECONDARY} ${TEXT_COLORS.HOVER_PRIMARY} ${BG_COLORS.LIGHTER} rounded-lg ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_PATTERNS.DEFAULT} ${prefersReducedMotion ? '' : 'active:scale-95 transition-all'}`}
                 >
                   {USER_ONBOARDING_COMPLETION_LABELS.BACK_BUTTON}
                 </button>
@@ -581,7 +598,7 @@ export default function UserOnboarding() {
             >
               <button
                 onClick={handleNext}
-                className={`px-4 py-1.5 text-sm ${BG_COLORS.BRAND} text-white rounded-lg ${BG_COLORS.BRAND_HOVER} ${TRANSITION_CLASSES.COLOR} font-medium ${FOCUS_RING_PATTERNS.DEFAULT}`}
+                className={`px-4 py-1.5 text-sm ${BG_COLORS.BRAND} text-white rounded-lg ${BG_COLORS.BRAND_HOVER} ${TRANSITION_CLASSES.COLOR} font-medium ${FOCUS_RING_PATTERNS.DEFAULT} ${prefersReducedMotion ? '' : 'active:scale-[0.98] transition-all'}`}
               >
                 {isLastStep
                   ? USER_ONBOARDING_COMPLETION_LABELS.GET_STARTED_BUTTON

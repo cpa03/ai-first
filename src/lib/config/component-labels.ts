@@ -500,6 +500,8 @@ export const USER_ONBOARDING_COMPLETION_LABELS = {
   DESCRIPTION: "You're ready to turn your ideas into actionable plans.",
   STEP_INDICATOR: (current: number, total: number) =>
     `Step ${current} of ${total}`,
+  STEP_ANNOUNCEMENT: (step: number, total: number, title: string) =>
+    `Step ${step} of ${total}: ${title}`,
   NAVIGATE_HINT: 'navigate',
   SKIP_HINT: 'skip',
   BACK_BUTTON: 'Back',
