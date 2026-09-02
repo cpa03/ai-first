@@ -27,6 +27,7 @@ import {
   KBD_HINT_STYLE,
   ICON_SIZES,
   COMPONENT_CONFIG,
+  ALERT_TITLES,
 } from '@/lib/config';
 import {
   RESPONSIVE_WIDTH,
@@ -266,7 +267,7 @@ export default function ForgotPasswordPage() {
 
             {error && (
               <div className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE}`}>
-                <Alert type="error" title="Error">
+                <Alert type="error" title={ALERT_TITLES.ERROR}>
                   {error}
                 </Alert>
               </div>
@@ -363,7 +364,7 @@ export default function ForgotPasswordPage() {
           onSubmit={handleSubmit}
         >
           {error && (
-            <Alert type="error" title="Error">
+            <Alert type="error" title={ALERT_TITLES.ERROR}>
               {error}
             </Alert>
           )}

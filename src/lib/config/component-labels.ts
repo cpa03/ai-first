@@ -213,6 +213,8 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
   } as const,
   /** Keyboard shortcut context display order */
   CONTEXT_ORDER: ['global', 'command', 'navigation', 'form', 'modal'] as const,
+  /** Category filter chips aria-label */
+  FILTER_ARIA_LABEL: 'Filter shortcuts by category',
   /** Keyboard shortcut descriptions - eliminates hardcoded strings */
   SHORTCUT_DESCRIPTIONS: {
     OPEN_COMMAND_PALETTE: 'Open command palette',
@@ -319,6 +321,32 @@ export const ALERT_LABELS = {
   SNOOZE_SHORTCUT_HINT: 'Press s to snooze',
   /** Keyboard shortcut hint for dismiss */
   DISMISS_SHORTCUT_HINT: 'Press d to dismiss',
+} as const;
+
+/**
+ * Alert Titles
+ * Eliminates hardcoded title strings in Alert components
+ */
+export const ALERT_TITLES = {
+  /** Generic error alert title */
+  ERROR: 'Error',
+  /** Generic warning alert title */
+  WARNING: 'Warning',
+  /** Generic info alert title */
+  INFO: 'Info',
+  /** Generic success alert title */
+  SUCCESS: 'Success',
+} as const;
+
+/**
+ * Layout Fallback Labels
+ * Eliminates hardcoded fallback titles and messages in ErrorBoundary layout fallbacks
+ */
+export const LAYOUT_FALLBACK_LABELS = {
+  /** Default error fallback title */
+  ERROR_TITLE: 'Something went wrong',
+  /** Default error fallback message */
+  ERROR_MESSAGE: 'We encountered an error loading this page. Please try again.',
 } as const;
 
 /**
@@ -791,6 +819,8 @@ export const COMPONENT_LABELS = {
   SCROLL_PROGRESS: SCROLL_PROGRESS_LABELS,
   PASSWORD_REQUIREMENTS: PASSWORD_REQUIREMENTS_LABELS,
   CAPS_LOCK_WARNING: CAPS_LOCK_WARNING_LABELS,
+  ALERT_TITLES,
+  LAYOUT_FALLBACK: LAYOUT_FALLBACK_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
@@ -824,4 +854,6 @@ export type WhyChooseSectionLabels = typeof WHY_CHOOSE_SECTION_LABELS;
 export type ScrollProgressLabels = typeof SCROLL_PROGRESS_LABELS;
 export type PasswordRequirementsLabels = typeof PASSWORD_REQUIREMENTS_LABELS;
 export type CapsLockWarningLabels = typeof CAPS_LOCK_WARNING_LABELS;
+export type AlertTitles = typeof ALERT_TITLES;
+export type LayoutFallbackLabels = typeof LAYOUT_FALLBACK_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;

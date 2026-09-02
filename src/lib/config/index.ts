@@ -425,6 +425,8 @@ export {
   DASHBOARD_LABELS,
   BLUEPRINT_DISPLAY_LABELS,
   WHY_CHOOSE_SECTION_LABELS,
+  ALERT_TITLES,
+  LAYOUT_FALLBACK_LABELS,
   type ShareButtonLabels,
   type CopyButtonLabels,
   type InputValidationLabels,
