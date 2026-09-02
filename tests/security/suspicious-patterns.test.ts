@@ -251,7 +251,7 @@ describe('Suspicious Pattern Detection Improvements', () => {
     });
 
     it('should detect new NoSQL injection operators', () => {
-      const operators = ['$accumulator', '$function'];
+      const operators = ['$accumulator', '$function', '$and', '$nor', '$not'];
       for (const op of operators) {
         const request = createMockRequest(
           `https://example.com/api/test?q={"${op}":"..."}`
@@ -262,6 +262,24 @@ describe('Suspicious Pattern Detection Improvements', () => {
         expect(
           result.patterns.some((p) => p.category === 'nosql_injection')
         ).toBe(true);
+      }
+    });
+
+    it('should detect modern HTML5 event handler XSS injections', () => {
+      const payloads = [
+        '<details open ontoggle=alert(1)>',
+        '<div onpointerover=alert(1)>',
+        '<div ondragstart=alert(1)>',
+        '<div ontouchstart=alert(1)>',
+      ];
+      for (const payload of payloads) {
+        const request = createMockRequest(
+          `https://example.com/api/test?attr=${encodeURIComponent(payload)}`
+        );
+        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        expect(result.detected).toBe(true);
+        expect(result.maxSeverity).toBe(3);
+        expect(result.patterns.some((p) => p.category === 'xss')).toBe(true);
       }
     });
 

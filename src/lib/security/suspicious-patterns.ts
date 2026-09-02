@@ -249,6 +249,9 @@ function scanString(
   // PERFORMANCE: Use simple for loop over pre-filtered array for maximum speed
   for (let i = 0; i < patterns.length; i++) {
     const { category, pattern, severity, description } = patterns[i];
+    if (pattern.global) {
+      pattern.lastIndex = 0;
+    }
     if (pattern.test(input)) {
       matches.push({
         category,

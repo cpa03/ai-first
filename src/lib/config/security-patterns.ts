@@ -79,8 +79,7 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
       description: 'JavaScript protocol',
     },
     {
-      pattern:
-        /on(load|error|click|mouse|focus|blur|key|submit|change|scroll)\s*=/gi,
+      pattern: /on[a-z]{2,20}\s*=/gi,
       severity: 3,
       description: 'Event handler injection',
     },
@@ -359,7 +358,7 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
     },
     {
       pattern:
-        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size|expr|jsonSchema)['"]?\s*[:\]]/i,
+        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size|expr|jsonSchema|and|nor|not)['"]?\s*[:\]]/i,
       severity: 3,
       description: 'MongoDB operator injection',
     },
