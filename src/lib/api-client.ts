@@ -1,6 +1,6 @@
 import { ApiResponse } from '@/lib/api-handler';
 import { TIMEOUT_CONFIG } from '@/lib/config/constants';
-import { API_ERROR_MESSAGES } from '@/lib/config';
+import { API_ERROR_MESSAGES, HTTP_HEADERS } from '@/lib/config';
 
 /**
  * Error class for API request failures
@@ -172,8 +172,8 @@ export async function apiRequest<T = unknown>(
 
   const headers = new Headers(fetchOptions.headers);
 
-  if (body && !headers.has('Content-Type')) {
-    headers.set('Content-Type', 'application/json');
+  if (body && !headers.has(HTTP_HEADERS.CONTENT_TYPE)) {
+    headers.set(HTTP_HEADERS.CONTENT_TYPE, HTTP_HEADERS.APPLICATION_JSON);
   }
 
   const requestBody =

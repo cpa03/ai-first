@@ -16,6 +16,7 @@ import {
   LOADING_PATTERNS,
   IDEA_STATUS_CONFIG,
   HTTP_HEADERS,
+  HTTP_METHODS,
   CLARIFY_PAGE_CONTENT,
   PAGE_LAYOUT_CLASSES,
   CONTAINER_WIDTHS,
@@ -221,7 +222,7 @@ function ClarifyPageContent() {
           const response = await fetchWithTimeout(
             `${API_ROUTES.IDEAS}/${ideaId}`,
             {
-              method: 'PUT',
+              method: HTTP_METHODS.PUT,
               headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
               body: JSON.stringify({
                 status: IDEA_STATUS_CONFIG.TYPES.CLARIFIED,

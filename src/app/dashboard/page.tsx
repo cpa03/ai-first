@@ -44,6 +44,7 @@ import {
   COMPONENT_CONFIG,
   KBD_HINT_STYLE,
   GRAY_CLASSES,
+  HTTP_METHODS,
   createRouteWithParams,
   FADE_IN,
   FOCUS_RING,
@@ -328,7 +329,7 @@ export default function DashboardPage() {
       setDeletingId(id);
 
       const response = await fetchWithTimeout(`${API_ROUTES.IDEAS}/${id}`, {
-        method: 'DELETE',
+        method: HTTP_METHODS.DELETE,
       });
 
       if (!response.ok) {
