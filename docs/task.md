@@ -66,6 +66,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 - **Date**: 2026-08-16
 - **Details**: Connected platform-aware keyboard shortcut representations for `CopyButton` directly to `COPY_BUTTON_LABELS.KEYBOARD_SHORTCUT` in `src/lib/config/component-labels.ts`.
 
+### [STRENGTHEN] Strengthen ScrollProgress Mobile Touch Interaction and Accessibility
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-09-02
+- **Details**: Enhanced `ScrollProgress` with full touch drag event handling (`onTouchStart`, `onTouchMove`, `onTouchEnd`) for touchscreens and active visual state responsiveness while honoring `prefersReducedMotion`. Verified in `tests/ScrollProgress.test.tsx`.
+
+### [CONNECT] Connect ScrollProgress ARIA Role Descriptions to Central Component Configs
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-09-02
+- **Details**: Connected `aria-roledescription` in `ScrollProgress` directly to `SCROLL_PROGRESS_LABELS.KEYBOARD_HINT` in `src/lib/config/component-labels.ts`, eliminating inline hardcoded text strings.
+
 ---
 
 ## Quick Stats
