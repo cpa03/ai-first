@@ -20,6 +20,7 @@ export class Cache<T = unknown> {
   private onEvict?: (key: string, entry: CacheEntry<unknown>) => void;
   private misses: number;
   private totalHits: number;
+  private slidingThreshold: number;
 
   constructor(options: CacheOptions = {}) {
     this.cache = new Map();
@@ -29,6 +30,23 @@ export class Cache<T = unknown> {
     this.onEvict = options.onEvict;
     this.misses = 0;
     this.totalHits = 0;
+
+    // PERFORMANCE: Pre-calculate sliding expiration threshold once during initialization.
+    // This avoids recalculating Math.min, checking maxSize/ttl existence, and evaluating
+    // division on every single cache read operation (get / has).
+    if (this.maxSize || this.ttl) {
+      const hasLargeCache = !this.maxSize || this.maxSize >= 10;
+      this.slidingThreshold = hasLargeCache
+        ? this.ttl
+          ? Math.min(
+              CACHE_CONFIG.SLIDING_EXPIRATION.THRESHOLD_MS,
+              this.ttl / CACHE_CONFIG.SLIDING_EXPIRATION.TTL_FRACTION_DIVISOR
+            )
+          : CACHE_CONFIG.SLIDING_EXPIRATION.THRESHOLD_MS
+        : 0;
+    } else {
+      this.slidingThreshold = -1;
+    }
   }
 
   set(key: string, value: T): void {
@@ -77,28 +95,17 @@ export class Cache<T = unknown> {
       return null;
     }
 
-    // PERFORMANCE: Sliding expiration and LRU tracking.
+    // PERFORMANCE: Sliding expiration and LRU tracking using pre-calculated slidingThreshold.
     // Only update timestamp and move to the end of the Map if the entry has not been updated recently.
     // This avoids extremely expensive delete/set operations on every read of hot keys,
-    // while still keeping the LRU/expiration order approximately correct.
-    // Threshold: For small caches (maxSize < 10, often in unit tests), we use strict LRU (threshold = 0).
-    // For larger caches, we use configurable threshold (or TTL fraction) to eliminate redundant Map writes.
-    if (this.maxSize || this.ttl) {
-      const hasLargeCache = !this.maxSize || this.maxSize >= 10;
-      const threshold = hasLargeCache
-        ? this.ttl
-          ? Math.min(
-              CACHE_CONFIG.SLIDING_EXPIRATION.THRESHOLD_MS,
-              this.ttl / CACHE_CONFIG.SLIDING_EXPIRATION.TTL_FRACTION_DIVISOR
-            )
-          : CACHE_CONFIG.SLIDING_EXPIRATION.THRESHOLD_MS
-        : 0;
-
-      if (now - entry.timestamp >= threshold) {
-        entry.timestamp = now;
-        this.cache.delete(key);
-        this.cache.set(key, entry);
-      }
+    // while eliminating redundant Math.min and branching calculations per read call.
+    if (
+      this.slidingThreshold >= 0 &&
+      now - entry.timestamp >= this.slidingThreshold
+    ) {
+      entry.timestamp = now;
+      this.cache.delete(key);
+      this.cache.set(key, entry);
     }
 
     entry.hits++;
@@ -123,28 +130,17 @@ export class Cache<T = unknown> {
       return false;
     }
 
-    // PERFORMANCE: Sliding expiration and LRU tracking.
+    // PERFORMANCE: Sliding expiration and LRU tracking using pre-calculated slidingThreshold.
     // Only update timestamp and move to the end of the Map if the entry has not been updated recently.
     // This avoids extremely expensive delete/set operations on every read of hot keys,
-    // while still keeping the LRU/expiration order approximately correct.
-    // Threshold: For small caches (maxSize < 10, often in unit tests), we use strict LRU (threshold = 0).
-    // For larger caches, we use configurable threshold (or TTL fraction) to eliminate redundant Map writes.
-    if (this.maxSize || this.ttl) {
-      const hasLargeCache = !this.maxSize || this.maxSize >= 10;
-      const threshold = hasLargeCache
-        ? this.ttl
-          ? Math.min(
-              CACHE_CONFIG.SLIDING_EXPIRATION.THRESHOLD_MS,
-              this.ttl / CACHE_CONFIG.SLIDING_EXPIRATION.TTL_FRACTION_DIVISOR
-            )
-          : CACHE_CONFIG.SLIDING_EXPIRATION.THRESHOLD_MS
-        : 0;
-
-      if (now - entry.timestamp >= threshold) {
-        entry.timestamp = now;
-        this.cache.delete(key);
-        this.cache.set(key, entry);
-      }
+    // while eliminating redundant Math.min and branching calculations per read call.
+    if (
+      this.slidingThreshold >= 0 &&
+      now - entry.timestamp >= this.slidingThreshold
+    ) {
+      entry.timestamp = now;
+      this.cache.delete(key);
+      this.cache.set(key, entry);
     }
 
     entry.hits++;
