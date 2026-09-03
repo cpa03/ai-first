@@ -10,6 +10,7 @@
 
 import crypto from 'node:crypto';
 import { SECURITY_CONFIG } from '@/lib/config/modular-constants';
+import { HTTP_METHODS } from '@/lib/config/http';
 import { timingSafeEqualStrings } from '@/lib/security/crypto';
 import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
@@ -295,7 +296,7 @@ export async function createSignedRequest(
   options: RequestInit = {}
 ): Promise<RequestInit> {
   const timestamp = createTimestamp();
-  const method = options.method || 'GET';
+  const method = options.method || HTTP_METHODS.GET;
   const body = typeof options.body === 'string' ? options.body : '';
 
   // Get path from URL
