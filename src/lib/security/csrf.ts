@@ -1,5 +1,6 @@
 import { APP_CONFIG } from '@/lib/config/app';
 import { ENV_ACCESSORS } from '@/lib/config/env-keys';
+import { HTTP_METHODS } from '@/lib/config/http';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
@@ -52,7 +53,12 @@ function getOriginsConfig() {
 }
 
 export const CSRF_CONFIG = {
-  STATE_CHANGING_METHODS: ['POST', 'PUT', 'DELETE', 'PATCH'] as const,
+  STATE_CHANGING_METHODS: [
+    HTTP_METHODS.POST,
+    HTTP_METHODS.PUT,
+    HTTP_METHODS.DELETE,
+    HTTP_METHODS.PATCH,
+  ] as const,
 
   get TRUSTED_ORIGINS(): string[] {
     // Return a shallow copy to prevent external mutation of the internal list

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { triggerHapticFeedback } from '@/lib/utils';
-import { UI_TIMING_CONFIG } from '@/lib/config';
+import { UI_TIMING_CONFIG, API_ERROR_MESSAGES } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/ui-config';
 import { createLogger } from '@/lib/logger';
 
@@ -89,7 +89,7 @@ export function useClipboard(
         const message =
           err instanceof Error
             ? err.message
-            : 'Failed to copy to clipboard. Please try again.';
+            : API_ERROR_MESSAGES.HOOKS.CLIPBOARD_COPY_FAILED;
         logger.error('Failed to copy text to clipboard', err);
         setHasError(true);
         setErrorMessage(message);
@@ -133,7 +133,7 @@ export function useClipboard(
       const message =
         err instanceof Error
           ? err.message
-          : 'Failed to read from clipboard. Please check permissions.';
+          : API_ERROR_MESSAGES.HOOKS.CLIPBOARD_READ_FAILED;
       logger.error('Failed to read from clipboard', err);
       setHasError(true);
       setErrorMessage(message);

@@ -16,6 +16,7 @@ import {
   CARD_PATTERNS,
   DASHBOARD_FILTER_LABELS,
   API_ERROR_MESSAGES,
+  HTTP_METHODS,
   ROUTES,
   API_ROUTES,
   DASHBOARD_PAGE_CONTENT,
@@ -328,7 +329,7 @@ export default function DashboardPage() {
       setDeletingId(id);
 
       const response = await fetchWithTimeout(`${API_ROUTES.IDEAS}/${id}`, {
-        method: 'DELETE',
+        method: HTTP_METHODS.DELETE,
       });
 
       if (!response.ok) {

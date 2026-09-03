@@ -365,6 +365,9 @@ export const API_ERROR_MESSAGES = {
     BLUEPRINT_COPIED: 'Blueprint copied to clipboard!',
     BLUEPRINT_COPY_FAILED:
       'Failed to copy. Please try selecting and copying manually.',
+    CLIPBOARD_COPY_FAILED: 'Failed to copy to clipboard. Please try again.',
+    CLIPBOARD_READ_FAILED:
+      'Failed to read from clipboard. Please check permissions.',
   },
 } as const;
 
