@@ -14,6 +14,7 @@ import {
   PROGRESS_PERCENTAGE,
   PRECISION_CONFIG,
   MESSAGES,
+  HTTP_METHODS,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { useToast } from '@/hooks/useAnnouncement';
@@ -295,7 +296,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         const response = await fetchWithTimeout(
           API_ENDPOINTS.TASK_STATUS(taskId),
           {
-            method: 'PATCH',
+            method: HTTP_METHODS.PATCH,
             headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
             body: JSON.stringify({ status: newStatus }),
           }
