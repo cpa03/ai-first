@@ -16,6 +16,7 @@ import {
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { LOADING_SPINNER_ELAPSED_TEXT } from '@/lib/config/remaining-hardcoded-patterns';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import { LOADING_SPINNER_LABELS } from '@/lib/config/component-labels';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface LoadingSpinnerProps {
@@ -214,8 +215,12 @@ function LoadingSpinnerComponent({
         <span
           className={`${LOADING_SPINNER_ELAPSED_TEXT} ${FADE_IN}`}
           aria-live="polite"
+          aria-atomic="true"
         >
-          {COMPONENT_CONFIG.SPINNER.ELAPSED_TIME_LABEL} ({elapsedSeconds}s)
+          {LOADING_SPINNER_LABELS.ELAPSED_TIME_FORMAT(
+            COMPONENT_CONFIG.SPINNER.ELAPSED_TIME_LABEL,
+            elapsedSeconds
+          )}
         </span>
       )}
     </div>
