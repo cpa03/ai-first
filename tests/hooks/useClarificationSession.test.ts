@@ -31,6 +31,13 @@ jest.mock('@/lib/config', () => ({
   API_ENDPOINTS: {
     CLARIFY: '/api/clarify',
   },
+  HTTP_METHODS: {
+    GET: 'GET',
+    POST: 'POST',
+    PUT: 'PUT',
+    DELETE: 'DELETE',
+    PATCH: 'PATCH',
+  },
   HTTP_HEADERS: {
     JSON_CONTENT_TYPE: { 'Content-Type': 'application/json' },
   },
