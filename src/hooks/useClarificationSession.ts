@@ -13,6 +13,7 @@ import {
   HTTP_HEADERS,
   PROGRESS_PERCENTAGE,
   CLARIFICATION_TIMER_CONFIG,
+  HTTP_METHODS,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { PLATFORM } from '@/lib/dom-utils';
@@ -284,7 +285,7 @@ export function useClarificationSession(
         const response = await fetchWithTimeout(
           API_ENDPOINTS.CLARIFY,
           {
-            method: 'POST',
+            method: HTTP_METHODS.POST,
             headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
             body: JSON.stringify({ idea, ideaId }),
           },
