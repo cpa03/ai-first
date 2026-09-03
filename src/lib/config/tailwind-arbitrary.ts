@@ -65,12 +65,12 @@ export const STEP_CELEBRATION_TAILWIND = {
  * Homepage skeleton loading Tailwind arbitrary values
  */
 export const HOMEPAGE_SKELETON_TAILWIND = {
-  /** Minimum height for idea input skeleton - Env: HOMEPAGE_IDEA_INPUT_MIN_H (default: '160px') */
-  IDEA_INPUT_MIN_H: EnvLoader.string('HOMEPAGE_IDEA_INPUT_MIN_H', '160px'),
-  /** Minimum height for feature grid skeleton - Env: HOMEPAGE_FEATURE_GRID_MIN_H (default: '300px') */
-  FEATURE_GRID_MIN_H: EnvLoader.string('HOMEPAGE_FEATURE_GRID_MIN_H', '300px'),
-  /** Minimum height for why choose section skeleton - Env: HOMEPAGE_WHY_CHOOSE_MIN_H (default: '400px') */
-  WHY_CHOOSE_MIN_H: EnvLoader.string('HOMEPAGE_WHY_CHOOSE_MIN_H', '400px'),
+  /** Minimum height for idea input skeleton - Env: HOMEPAGE_IDEA_INPUT_MIN_H (default: '300px') */
+  IDEA_INPUT_MIN_H: EnvLoader.string('HOMEPAGE_IDEA_INPUT_MIN_H', '300px'),
+  /** Minimum height for feature grid skeleton - Env: HOMEPAGE_FEATURE_GRID_MIN_H (default: '240px') */
+  FEATURE_GRID_MIN_H: EnvLoader.string('HOMEPAGE_FEATURE_GRID_MIN_H', '240px'),
+  /** Minimum height for why choose section skeleton - Env: HOMEPAGE_WHY_CHOOSE_MIN_H (default: '350px') */
+  WHY_CHOOSE_MIN_H: EnvLoader.string('HOMEPAGE_WHY_CHOOSE_MIN_H', '350px'),
 } as const;
 
 /**
