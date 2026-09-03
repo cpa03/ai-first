@@ -1030,7 +1030,7 @@ function ResultsContent() {
                   .SHOW_SHORTCUTS
               }
             >
-              <span>View all shortcuts</span>
+              <span>{RESULTS_PAGE_CONTENT.VIEW_SHORTCUTS}</span>
               <svg
                 className={SVG_SIZES.SM}
                 fill="none"
