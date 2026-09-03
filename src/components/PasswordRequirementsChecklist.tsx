@@ -280,62 +280,80 @@ function PasswordRequirementsChecklistComponent({
         </div>
       </div>
       <ul className={SPACE_Y_PATTERNS.SM_MD} aria-live="polite">
-        {requirements.map((req, index) => (
-          <li
-            key={req.id}
-            className={`flex items-center gap-2 text-xs ${TRANSITION_CLASSES.DEFAULT} ${
-              req.met
-                ? `${TEXT_COLORS.SUCCESS_DARK} font-medium`
-                : TEXT_COLORS.MUTED
-            } ${hasAppeared && !prefersReducedMotion ? `${CHECKLIST_ITEM} ${CHECKLIST_ITEM}-${index + 1}` : ''} ${newlyMetIds.has(req.id) && !prefersReducedMotion ? REQUIREMENT_MET : ''}`}
-            aria-label={PASSWORD_REQUIREMENTS_LABELS.REQUIREMENT_ARIA_LABEL(
-              req.label,
-              req.met
-            )}
-          >
-            <span
-              className={`flex-shrink-0 ${ICON_SIZES.MD} rounded-full flex items-center justify-center ${TRANSITION_CLASSES.DEFAULT} ${
-                req.met ? BG_COLORS.SUCCESS_LIGHT : BG_COLORS.LIGHTER
-              }`}
-              aria-hidden="true"
-            >
-              {req.met ? (
-                <svg
-                  className={`${ICON_SIZES.SM} ${COMPONENT_STATE_COLORS.PASSWORD.MET_CHECKMARK} ${prefersReducedMotion ? '' : `animate-in zoom-in ${DURATION_TAILWIND[200]}`}`}
-                  fill="none"
-                  viewBox={SVG_VIEWBOX.STANDARD}
-                  stroke="currentColor"
-                  strokeWidth={SVG_STROKE_WIDTHS.THICK}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className={`${ICON_SIZES.SM} ${COMPONENT_STATE_COLORS.PASSWORD.UNMET_ICON}`}
-                  fill="none"
-                  viewBox={SVG_VIEWBOX.STANDARD}
-                  stroke="currentColor"
-                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
+        {requirements.map((req, index) => {
+          const isSpecialCharRequirement = req.id === 'special';
+          const showSpecialCharHint =
+            isSpecialCharRequirement && !req.met && password.length > 0;
+
+          return (
+            <li
+              key={req.id}
+              className={`flex flex-col gap-1 text-xs ${TRANSITION_CLASSES.DEFAULT} ${
+                req.met
+                  ? `${TEXT_COLORS.SUCCESS_DARK} font-medium`
+                  : TEXT_COLORS.MUTED
+              } ${hasAppeared && !prefersReducedMotion ? `${CHECKLIST_ITEM} ${CHECKLIST_ITEM}-${index + 1}` : ''} ${newlyMetIds.has(req.id) && !prefersReducedMotion ? REQUIREMENT_MET : ''}`}
+              aria-label={PASSWORD_REQUIREMENTS_LABELS.REQUIREMENT_ARIA_LABEL(
+                req.label,
+                req.met
               )}
-            </span>
-            <span
-              className={`leading-none ${req.met && !prefersReducedMotion ? STRIKETHROUGH : ''}`}
             >
-              {req.label}
-            </span>
-          </li>
-        ))}
+              <div className="flex items-center gap-2">
+                <span
+                  className={`flex-shrink-0 ${ICON_SIZES.MD} rounded-full flex items-center justify-center ${TRANSITION_CLASSES.DEFAULT} ${
+                    req.met ? BG_COLORS.SUCCESS_LIGHT : BG_COLORS.LIGHTER
+                  }`}
+                  aria-hidden="true"
+                >
+                  {req.met ? (
+                    <svg
+                      className={`${ICON_SIZES.SM} ${COMPONENT_STATE_COLORS.PASSWORD.MET_CHECKMARK} ${prefersReducedMotion ? '' : `animate-in zoom-in ${DURATION_TAILWIND[200]}`}`}
+                      fill="none"
+                      viewBox={SVG_VIEWBOX.STANDARD}
+                      stroke="currentColor"
+                      strokeWidth={SVG_STROKE_WIDTHS.THICK}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className={`${ICON_SIZES.SM} ${COMPONENT_STATE_COLORS.PASSWORD.UNMET_ICON}`}
+                      fill="none"
+                      viewBox={SVG_VIEWBOX.STANDARD}
+                      stroke="currentColor"
+                      strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
+                    </svg>
+                  )}
+                </span>
+                <span
+                  className={`leading-none ${req.met && !prefersReducedMotion ? STRIKETHROUGH : ''}`}
+                >
+                  {req.label}
+                </span>
+              </div>
+              {showSpecialCharHint && !prefersReducedMotion && (
+                <span
+                  className={`ml-6 text-xs ${TEXT_COLORS.MUTED} opacity-70 ${FADE_IN}`}
+                  aria-label={
+                    PASSWORD_REQUIREMENTS_LABELS.SPECIAL_CHAR_HINT_ARIA
+                  }
+                >
+                  {PASSWORD_REQUIREMENTS_LABELS.SPECIAL_CHAR_HINT}
+                </span>
+              )}
+            </li>
+          );
+        })}
       </ul>
       {allMet && (
         <p
