@@ -88,6 +88,64 @@ function ClarifyPageLoading() {
   );
 }
 
+// Micro-UX: No-idea state with keyboard shortcut hint and Enter key handler
+// Provides discoverable keyboard navigation consistent with success and error states
+function ClarifyNoIdeaState({
+  onGoHome,
+  prefersReducedMotion,
+  isMac,
+}: {
+  onGoHome: () => void;
+  prefersReducedMotion: boolean;
+  isMac: boolean;
+}) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isFocusedOnInput(e.target)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        triggerHapticFeedback();
+        onGoHome();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onGoHome]);
+
+  return (
+    <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
+      <div className={ANIMATION_CLASSES.SLIDE_UP}>
+        <Alert type="warning" title={CLARIFY_PAGE_CONTENT.NO_IDEA_TITLE}>
+          <p className={CLARIFY_PARAGRAPH_MARGIN}>
+            {CLARIFY_PAGE_CONTENT.NO_IDEA_MESSAGE}
+          </p>
+          <div className={REMAINING_PATTERNS.CLARIFY_LAYOUT.RESPONSIVE_FLEX}>
+            <Button onClick={onGoHome} variant="primary">
+              {CLARIFY_PAGE_CONTENT.BUTTONS.GO_TO_HOME}
+            </Button>
+            {/* Micro-UX: Keyboard shortcut hint for no-idea state */}
+            {/* Matches the keyboard hint patterns in auth-required and error states */}
+            <span
+              className={`hidden sm:inline-flex items-center gap-1.5 text-xs ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
+              aria-hidden="true"
+            >
+              <kbd
+                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+              >
+                {isMac ? '↵' : 'Enter'}
+              </kbd>
+              <span>to go home</span>
+            </span>
+          </div>
+        </Alert>
+      </div>
+    </div>
+  );
+}
+
 // Micro-UX: Success state with keyboard shortcut hint and Enter key handler
 // Provides discoverable keyboard navigation consistent with dashboard and not-found patterns
 function ClarifySuccessState({
@@ -342,18 +400,11 @@ function ClarifyPageContent() {
 
   if (!idea) {
     return (
-      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
-        <div className={ANIMATION_CLASSES.SLIDE_UP}>
-          <Alert type="warning" title={CLARIFY_PAGE_CONTENT.NO_IDEA_TITLE}>
-            <p className={CLARIFY_PARAGRAPH_MARGIN}>
-              {CLARIFY_PAGE_CONTENT.NO_IDEA_MESSAGE}
-            </p>
-            <Button onClick={() => router.push(ROUTES.HOME)} variant="primary">
-              {CLARIFY_PAGE_CONTENT.BUTTONS.GO_TO_HOME}
-            </Button>
-          </Alert>
-        </div>
-      </div>
+      <ClarifyNoIdeaState
+        onGoHome={() => router.push(ROUTES.HOME)}
+        prefersReducedMotion={prefersReducedMotion}
+        isMac={isMac}
+      />
     );
   }
 
