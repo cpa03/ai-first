@@ -251,7 +251,7 @@ describe('Suspicious Pattern Detection Improvements', () => {
     });
 
     it('should detect new NoSQL injection operators', () => {
-      const operators = ['$accumulator', '$function'];
+      const operators = ['$accumulator', '$function', '$where', '$and', '$nor'];
       for (const op of operators) {
         const request = createMockRequest(
           `https://example.com/api/test?q={"${op}":"..."}`
