@@ -37,6 +37,11 @@ import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+import dynamic from 'next/dynamic';
+
+const CopyButton = dynamic(() => import('@/components/CopyButton'), {
+  ssr: false,
+});
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -256,6 +261,14 @@ export default function ForgotPasswordPage() {
             >
               We&apos;ve sent a password reset link to{' '}
               <span className={FONT_MEDIUM}>{email}</span>
+              <CopyButton
+                textToCopy={email}
+                variant="icon-only"
+                label="Copy email"
+                successLabel="Copied!"
+                ariaLabel="Copy email address to clipboard"
+                className="ml-2 inline-flex"
+              />
             </p>
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
