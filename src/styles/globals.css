@@ -2200,6 +2200,36 @@ button[aria-disabled='true'].btn-glow-hover {
   }
 }
 
+/* Section Highlight Animation - Micro-UX delight for hash navigation */
+/* Creates a subtle background highlight when navigating to a section via hash link */
+/* Provides visual feedback about which section was just navigated to */
+@keyframes sectionHighlight {
+  0% {
+    background-color: transparent;
+  }
+  15% {
+    background-color: rgb(59 130 246 / 0.08); /* primary-500 with 8% opacity */
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.section-highlight {
+  animation: sectionHighlight 2s var(--ease-smooth) forwards;
+  border-radius: 8px;
+  margin: -8px;
+  padding: 8px;
+}
+
+/* Reduced motion support for section highlight */
+@media (prefers-reduced-motion: reduce) {
+  .section-highlight {
+    animation: none;
+    background-color: transparent;
+  }
+}
+
 /* Print Styles */
 @media print {
   body {
