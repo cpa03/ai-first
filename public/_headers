@@ -22,7 +22,6 @@
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
-  X-XSS-Protection: 0
   X-Permitted-Cross-Domain-Policies: none
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), browsing-topics=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()
@@ -82,7 +81,6 @@
   Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
-  X-XSS-Protection: 0
   X-Permitted-Cross-Domain-Policies: none
   Referrer-Policy: strict-origin-when-cross-origin
   # HSTS: Force HTTPS for API routes
