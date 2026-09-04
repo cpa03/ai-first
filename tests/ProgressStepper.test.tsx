@@ -90,4 +90,29 @@ describe('ProgressStepper Component', () => {
       expect(handleStepClick).toHaveBeenCalledWith(0);
     }
   });
+
+  it('renders status announcer region for screen reader announcements', () => {
+    render(<ProgressStepper steps={mockSteps} currentStep={1} />);
+
+    const statusAnnouncer = screen.getByRole('status');
+    expect(statusAnnouncer).toBeInTheDocument();
+  });
+
+  it('applies tactile active scale classes to clickable step buttons', () => {
+    const handleStepClick = jest.fn();
+    render(
+      <ProgressStepper
+        steps={mockSteps}
+        currentStep={1}
+        onStepClick={handleStepClick}
+      />
+    );
+
+    const stepButtons = screen.getAllByRole('button');
+    const clickableButton = stepButtons.find((btn) =>
+      btn.className.includes('active:scale')
+    );
+
+    expect(clickableButton).toBeDefined();
+  });
 });
