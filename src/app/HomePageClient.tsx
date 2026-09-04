@@ -158,10 +158,18 @@ export default function HomePageClient() {
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    import('@/lib/analytics').then(({ trackPageView }) => trackPageView());
+    import('@/lib/analytics')
+      .then(({ trackPageView }) => trackPageView())
+      .catch(() => {
+        // Analytics module unavailable - silently ignore
+      });
 
     const handlePageHide = () => {
-      import('@/lib/analytics').then(({ flush }) => flush());
+      import('@/lib/analytics')
+        .then(({ flush }) => flush())
+        .catch(() => {
+          // Analytics module unavailable - silently ignore
+        });
     };
     window.addEventListener('pagehide', handlePageHide);
     return () => window.removeEventListener('pagehide', handlePageHide);
@@ -172,10 +180,12 @@ export default function HomePageClient() {
       setIdea(submittedIdea);
       setIdeaId(submittedIdeaId);
 
-      import('@/lib/analytics').then(({ trackIdeaSubmit, trackFunnelStep }) => {
-        trackIdeaSubmit(submittedIdeaId);
-        trackFunnelStep('idea_submission', 1, 4);
-      });
+      import('@/lib/analytics')
+        .then(({ trackIdeaSubmit, trackFunnelStep }) => {
+          trackIdeaSubmit(submittedIdeaId);
+          trackFunnelStep('idea_submission', 1, 4);
+        })
+        .catch(() => {});
 
       router.push(
         `/clarify?idea=${encodeURIComponent(submittedIdea)}&ideaId=${submittedIdeaId}`
@@ -236,12 +246,13 @@ export default function HomePageClient() {
             label={HOME_PAGE_CONFIG.SHARE.LABEL}
             ariaLabel={HOME_PAGE_CONFIG.SHARE.ARIA_LABEL}
             onShare={() =>
-              import('@/lib/analytics').then(
-                ({ trackEvent, ANALYTICS_EVENTS }) =>
+              import('@/lib/analytics')
+                .then(({ trackEvent, ANALYTICS_EVENTS }) =>
                   trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE_CLICK, {
                     share_platform: 'web_share_api',
                   })
-              )
+                )
+                .catch(() => {})
             }
           />
         </div>
@@ -291,9 +302,9 @@ export default function HomePageClient() {
               variant="default"
               toastMessage={HOME_PAGE_CONFIG.CONFIRMATION.COPY_ID_TOAST}
               onCopy={() =>
-                import('@/lib/analytics').then(({ trackCopyAction }) =>
-                  trackCopyAction('idea_id')
-                )
+                import('@/lib/analytics')
+                  .then(({ trackCopyAction }) => trackCopyAction('idea_id'))
+                  .catch(() => {})
               }
             />
           </div>
