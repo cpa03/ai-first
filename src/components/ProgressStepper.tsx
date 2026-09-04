@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import StatusAnnouncer from '@/components/StatusAnnouncer';
 import {
   UI_CONFIG,
   SVG_STROKE_WIDTHS,
@@ -194,7 +195,7 @@ const ProgressStepperComponent = function ProgressStepper({
                     disabled={!isClickable}
                     className={`
                       rounded-full ${TRANSITION_CLASSES.SLOW_EASE_OUT}
-                      ${isClickable ? `cursor-pointer hover:scale-125 hover:shadow-md hover:shadow-primary-200/50 ${FOCUS_RING_PATTERNS.DEFAULT}` : 'cursor-default'}
+                      ${isClickable ? `cursor-pointer hover:scale-125 active:scale-95 hover:shadow-md hover:shadow-primary-200/50 ${FOCUS_RING_PATTERNS.DEFAULT}` : 'cursor-default'}
                       ${
                         step.current
                           ? `${ICON_SIZES.MD} ${BG_COLORS.BRAND} scale-110 shadow-md shadow-primary-200 ${GENTLE_PULSE}`
@@ -263,7 +264,7 @@ const ProgressStepperComponent = function ProgressStepper({
                 onClick={() => handleStepClick(index)}
                 onKeyDown={(e) => handleStepKeyDown(e, index)}
                 disabled={!isClickable}
-                className={`flex items-center w-full rounded-full transition-all duration-200 ${isClickable ? `cursor-pointer group ${FOCUS_RING_PATTERNS.DEFAULT}` : 'cursor-default'}`}
+                className={`flex items-center w-full rounded-full transition-all duration-200 ${isClickable ? `cursor-pointer group active:scale-[0.98] ${FOCUS_RING_PATTERNS.DEFAULT}` : 'cursor-default'}`}
               >
                 <div className={FLEX_PATTERNS.BETWEEN} aria-hidden="true">
                   <div
@@ -272,7 +273,7 @@ const ProgressStepperComponent = function ProgressStepper({
                       ${ICON_SIZES.XXXL} rounded-full border-2
                       font-medium text-sm ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE}
                       ${TRANSITION_CLASSES.SLOW}
-                      ${isClickable ? `group-hover:scale-110 group-focus-visible:scale-110 group-hover:shadow-md ${COMPONENT_PRIMARY_PATTERNS.PROGRESS_HOVER}` : ''}
+                      ${isClickable ? `group-hover:scale-110 group-focus-visible:scale-110 group-active:scale-95 group-hover:shadow-md ${COMPONENT_PRIMARY_PATTERNS.PROGRESS_HOVER}` : ''}
                       ${
                         step.completed
                           ? `${COMPONENT_PRIMARY_PATTERNS.ACTIVE_STEP} ${BG_COLORS.BRAND} text-white`
@@ -324,7 +325,10 @@ const ProgressStepperComponent = function ProgressStepper({
                       <span
                         className={`${PROGRESS_STEPPER_STYLES.DESKTOP_STEP_COUNT} ${TEXT_COLORS.BRAND_LIGHT}`}
                       >
-                        Step {currentStep + 1} of {steps.length}
+                        {PROGRESS_STEPPER_LABELS.STEP_COUNTER(
+                          currentStep + 1,
+                          steps.length
+                        )}
                       </span>
                     )}
                   </div>
@@ -374,6 +378,18 @@ const ProgressStepperComponent = function ProgressStepper({
           </span>
         </div>
       )}
+      {/* Micro-UX: Screen reader status announcement on step change */}
+      <StatusAnnouncer
+        message={
+          steps[currentStep]
+            ? PROGRESS_STEPPER_LABELS.STEP_ANNOUNCEMENT(
+                currentStep + 1,
+                steps.length,
+                steps[currentStep].label
+              )
+            : ''
+        }
+      />
     </nav>
   );
 };
