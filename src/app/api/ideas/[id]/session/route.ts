@@ -9,6 +9,7 @@ import { dbService } from '@/lib/db';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { STATUS_CODES } from '@/lib/config/constants';
+import { RESOURCE_TYPES } from '@/lib/config/modular-constants';
 
 async function handleGet(context: ApiContext) {
   const { request, params } = context;
@@ -35,7 +36,7 @@ async function handleGet(context: ApiContext) {
     );
   }
 
-  verifyResourceOwnership(user.id, idea.user_id, 'idea');
+  verifyResourceOwnership(user.id, idea.user_id, RESOURCE_TYPES.IDEA);
 
   const session = await dbService.getIdeaSession(ideaId!);
 
