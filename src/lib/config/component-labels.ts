@@ -319,6 +319,10 @@ export const ALERT_LABELS = {
   SNOOZE_SHORTCUT_HINT: 'Press s to snooze',
   /** Keyboard shortcut hint for dismiss */
   DISMISS_SHORTCUT_HINT: 'Press d to dismiss',
+  /** Shortcut hint label for snooze action */
+  SNOOZE_HINT_LABEL: 'snooze',
+  /** Shortcut hint label for dismiss action */
+  DISMISS_HINT_LABEL: 'dismiss',
 } as const;
 
 /**

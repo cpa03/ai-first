@@ -123,7 +123,7 @@ export const ALERT_BASE_STYLES = {
     'transition-all duration-200 ease-out motion-reduce:transition-none',
   visible: 'opacity-100 scale-100 translate-y-0',
   exiting: 'opacity-0 scale-[0.98] translate-y-[-8px]',
-  closeButton: `flex-shrink-0 ml-2 hover:opacity-75 focus:outline-none rounded-md p-1 min-h-[${EnvLoader.number('UI_ALERT_CLOSE_BUTTON_SIZE', 32, 24, 48)}px] min-w-[${EnvLoader.number('UI_ALERT_CLOSE_BUTTON_SIZE', 32, 24, 48)}px] transition-opacity`,
+  closeButton: `flex-shrink-0 ml-2 hover:opacity-75 active:scale-95 motion-reduce:active:scale-100 focus:outline-none rounded-md p-1 min-h-[${EnvLoader.number('UI_ALERT_CLOSE_BUTTON_SIZE', 32, 24, 48)}px] min-w-[${EnvLoader.number('UI_ALERT_CLOSE_BUTTON_SIZE', 32, 24, 48)}px] transition-all`,
 } as const;
 
 /**
