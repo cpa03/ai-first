@@ -382,10 +382,11 @@ export function sanitizeObject<T>(input: T): T {
 
   if (typeof input === 'object' && input.constructor === Object) {
     let result: Record<string, unknown> | null = null;
-    const keys = Object.keys(input);
+    const inputObj = input as Record<string, unknown>;
+    const keys = Object.keys(inputObj);
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
-      const value = (input as Record<string, unknown>)[key];
+      const value = inputObj[key];
 
       let sanitizedValue: unknown;
       if (
@@ -403,7 +404,7 @@ export function sanitizeObject<T>(input: T): T {
         result = {};
         for (let j = 0; j < i; j++) {
           const prevKey = keys[j];
-          result[prevKey] = (input as Record<string, unknown>)[prevKey];
+          result[prevKey] = inputObj[prevKey];
         }
         result[key] = sanitizedValue;
       }
