@@ -34,6 +34,15 @@ jest.mock('@/lib/config', () => ({
   HTTP_HEADERS: {
     JSON_CONTENT_TYPE: { 'Content-Type': 'application/json' },
   },
+  HTTP_METHODS: {
+    GET: 'GET',
+    POST: 'POST',
+    PUT: 'PUT',
+    DELETE: 'DELETE',
+    PATCH: 'PATCH',
+    OPTIONS: 'OPTIONS',
+    HEAD: 'HEAD',
+  },
   PROGRESS_PERCENTAGE: {
     MAX: 100,
     MIN: 0,
