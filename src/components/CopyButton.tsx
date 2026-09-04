@@ -23,7 +23,10 @@ import { useClipboard } from '@/hooks/useClipboard';
 import { useToast } from '@/hooks/useAnnouncement';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { PLATFORM } from '@/lib/dom-utils';
-import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  INLINE_FLEX_RELATIVE,
+  EASING_CLASSES,
+} from '@/lib/config/remaining-hardcoded-patterns';
 
 export interface CopyButtonProps {
   textToCopy: string;
@@ -96,7 +99,7 @@ const CopyButtonComponent = function CopyButton({
 
   const baseClasses = `
     inline-flex items-center justify-center gap-2
-    font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out transform
+    font-medium ${TRANSITION_CLASSES.DEFAULT} ${EASING_CLASSES.OUT} transform
     ${FOCUS_RING_PATTERNS.DEFAULT}
     ${COMPONENT_CONFIG.COPY_FEEDBACK.FOCUS_RING_CLASS} focus-visible:ring-offset-gray-100
     motion-reduce:transition-none motion-reduce:hover:transform-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100

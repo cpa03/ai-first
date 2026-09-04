@@ -59,6 +59,7 @@ import { PLATFORM } from '@/lib/dom-utils';
 import {
   PASSWORD_VISIBLE_TINT,
   VALID_CHECKMARK_COLOR,
+  EASING_CLASSES,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   SR_ONLY,
@@ -777,7 +778,7 @@ const InputWithValidationComponent = forwardRef<
                 </div>
               )}
               <span
-                className={`${TYPOGRAPHY_CLASSES.SM_MEDIUM} transition-colors ${DURATION_TAILWIND[300]} ease-out ${
+                className={`${TYPOGRAPHY_CLASSES.SM_MEDIUM} transition-colors ${DURATION_TAILWIND[300]} ${EASING_CLASSES.OUT} ${
                   maxLength && charCount > maxLength ? COUNTER_PULSE : ''
                 }`}
                 style={
@@ -797,7 +798,7 @@ const InputWithValidationComponent = forwardRef<
           )}
           {showCharCount && maxLength && charCount > 0 && (
             <div
-              className={`text-xs transition-all ${DURATION_TAILWIND[300]} ease-out ${
+              className={`text-xs transition-all ${DURATION_TAILWIND[300]} ${EASING_CLASSES.OUT} ${
                 maxLength - charCount <= maxLength * 0.1
                   ? `${TEXT_COLORS.ERROR} font-medium`
                   : maxLength - charCount <= maxLength * 0.2

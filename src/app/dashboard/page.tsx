@@ -68,6 +68,7 @@ import {
   MARGIN_TOP_4,
   SR_ONLY,
   RELATIVE,
+  EASING_CLASSES,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   PRIMARY_RING,
@@ -836,7 +837,7 @@ export default function DashboardPage() {
         </div>
         {filter !== 'all' && (
           <div
-            className={`${DASHBOARD_FILTER_CLEAR_CONTAINER} transition-all ${DURATION_TAILWIND[200]} ease-out ${
+            className={`${DASHBOARD_FILTER_CLEAR_CONTAINER} transition-all ${DURATION_TAILWIND[200]} ${EASING_CLASSES.OUT} ${
               isFilterClearing ? 'opacity-0 scale-95 -translate-x-2' : FADE_IN
             }`}
           >

@@ -43,6 +43,7 @@ import {
   COMMON_SPACING_PATTERNS,
 } from '@/lib/config/spacing';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { EASING_CLASSES } from '@/lib/config/remaining-hardcoded-patterns';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
@@ -425,7 +426,7 @@ export default function UserOnboarding() {
         className={`
           fixed z-[${Z_INDEX_LAYERS.MODAL}] ${CONTAINER_WIDTH_CLASSES.ONBOARDING} ${BG_COLORS.DEFAULT} rounded-xl ${SHADOW_CLASSES.EXTRA_LARGE} 
           border ${BORDER_COLORS.LIGHT} p-5
-          ${TRANSITION_CLASSES.SLOW} ease-out
+          ${TRANSITION_CLASSES.SLOW} ${EASING_CLASSES.OUT}
           ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
         `}
         style={{
@@ -509,7 +510,7 @@ export default function UserOnboarding() {
                       setCurrentStepIndex(index);
                     }
                   }}
-                  className={`rounded-full transition-all ${DURATION_TAILWIND[200]} ease-out ${FOCUS_RING_PATTERNS.DEFAULT} hover:scale-125 focus-visible:scale-125 ${
+                  className={`rounded-full transition-all ${DURATION_TAILWIND[200]} ${EASING_CLASSES.OUT} ${FOCUS_RING_PATTERNS.DEFAULT} hover:scale-125 focus-visible:scale-125 ${
                     index === currentStepIndex
                       ? `${INDICATOR_SIZES.PILL} ${BG_COLORS.BRAND}`
                       : index < currentStepIndex

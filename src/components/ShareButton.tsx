@@ -25,7 +25,10 @@ import StatusAnnouncer from './StatusAnnouncer';
 import { useConfetti } from '@/hooks/useConfetti';
 import { useToast } from '@/hooks/useAnnouncement';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
-import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  INLINE_FLEX_RELATIVE,
+  EASING_CLASSES,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { PRIMARY_COMBINATIONS } from '@/lib/config/primary-colors';
 
 export interface ShareButtonProps {
@@ -200,7 +203,7 @@ const ShareButtonComponent = function ShareButton({
 
   const baseClasses = `
     inline-flex items-center justify-center gap-2
-    font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out transform
+    font-medium ${TRANSITION_CLASSES.DEFAULT} ${EASING_CLASSES.OUT} transform
     ${FOCUS_RING_OFFSET_PATTERNS.ON_DARK}
     motion-reduce:transition-none motion-reduce:hover:transform-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100
   `;

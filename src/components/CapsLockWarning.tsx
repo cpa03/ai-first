@@ -12,6 +12,7 @@ import {
 } from '@/lib/config';
 import { CAPS_LOCK_WARNING_LABELS } from '@/lib/config/component-labels';
 import { FADE_IN } from '@/lib/config/animation-classes';
+import { EASING_CLASSES } from '@/lib/config/remaining-hardcoded-patterns';
 import { ANIMATION_DELAYS } from '@/lib/config/theme';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -82,7 +83,7 @@ function CapsLockWarningComponent({
 
   return (
     <div
-      className={`flex items-center gap-1.5 ${TEXT_COLORS.WARNING_LIGHT} ${TYPOGRAPHY_CLASSES.XS_MEDIUM} transition-all ${DURATION_TAILWIND[200]} ease-out ${
+      className={`flex items-center gap-1.5 ${TEXT_COLORS.WARNING_LIGHT} ${TYPOGRAPHY_CLASSES.XS_MEDIUM} transition-all ${DURATION_TAILWIND[200]} ${EASING_CLASSES.OUT} ${
         prefersReducedMotion ? '' : isExiting ? 'opacity-0 scale-95' : FADE_IN
       } ${className}`}
       role="status"

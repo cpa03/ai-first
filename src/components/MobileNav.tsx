@@ -28,8 +28,11 @@ import {
   GAP_CLASSES,
   TEXT_FORMAT_PATTERNS,
 } from '@/lib/config';
-import { FLEX_SPACE_X } from '@/lib/config/remaining-hardcoded-patterns';
-import { HINT_OVERLAY } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  FLEX_SPACE_X,
+  HINT_OVERLAY,
+  EASING_CLASSES,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
@@ -218,7 +221,7 @@ function MobileNavComponent() {
                   href={link.href}
                   className={`
                     px-4 py-3 text-sm sm:text-base font-medium
-                    ${TRANSITION_CLASSES.SLOW} ease-out
+                    ${TRANSITION_CLASSES.SLOW} ${EASING_CLASSES.OUT}
                     border-b-2                     ${active ? COMPONENT_PRIMARY_PATTERNS.NAV_ACTIVE_LINK : `border-transparent ${GRAY_CLASSES.TEXT_800} ${COMPONENT_PRIMARY_PATTERNS.NAV_HOVER}`}
                     ${FOCUS_RING_PATTERNS.DEFAULT} rounded-t-md ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} inline-flex items-center
                     ${active ? COMPONENT_PRIMARY_PATTERNS.NAV_ACTIVE_BG : `${GRAY_CLASSES.HOVER_BG_50}`}
@@ -254,13 +257,13 @@ function MobileNavComponent() {
           aria-hidden="true"
         >
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${isOpen ? 'rotate-45 translate-y-1' : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ${EASING_CLASSES.IN_OUT} motion-reduce:transition-none ${isOpen ? 'rotate-45 translate-y-1' : ''}`}
           />
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${MT_CLASSES.MD_SM} ${isOpen ? 'opacity-0 scale-0' : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ${EASING_CLASSES.IN_OUT} motion-reduce:transition-none ${MT_CLASSES.MD_SM} ${isOpen ? 'opacity-0 scale-0' : ''}`}
           />
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${MT_CLASSES.MD_SM} ${isOpen ? '-rotate-45 -translate-y-1' : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ${EASING_CLASSES.IN_OUT} motion-reduce:transition-none ${MT_CLASSES.MD_SM} ${isOpen ? '-rotate-45 -translate-y-1' : ''}`}
           />
         </div>
       </button>
@@ -339,7 +342,7 @@ function MobileNavComponent() {
                       onClick={closeMenu}
                       className={`
                         w-full text-left px-6 py-4 text-lg font-semibold
-                        ${TRANSITION_CLASSES.SLOW} ease-out rounded-md
+                        ${TRANSITION_CLASSES.SLOW} ${EASING_CLASSES.OUT} rounded-md
                         border-l-[${MOBILE_NAV_TAILWIND.ACTIVE_LINK_BORDER_W}] ${active ? PRIMARY_ACTIVE_LINK : `border-transparent ${GRAY_CLASSES.TEXT_800} hover:text-primary-600 ${GRAY_CLASSES.HOVER_BG_50}`}
                         ${FOCUS_RING_PATTERNS.DEFAULT} ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center justify-between
                       `}

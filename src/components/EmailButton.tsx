@@ -22,7 +22,10 @@ import { EMAIL_BUTTON_LABELS } from '@/lib/config/component-labels';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
-import { INLINE_FLEX_RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  INLINE_FLEX_RELATIVE,
+  EASING_CLASSES,
+} from '@/lib/config/remaining-hardcoded-patterns';
 
 export interface EmailButtonProps {
   ideaTitle: string;
@@ -163,7 +166,7 @@ const EmailButtonComponent = function EmailButton({
             aria-keyshortcuts="Control+Shift+E, Meta+Shift+E"
             className={`
               hover:-translate-y-0.5 active:translate-y-0
-              transition-all ${TRANSITION_CLASSES.DEFAULT} ease-out transform
+              transition-all ${TRANSITION_CLASSES.DEFAULT} ${EASING_CLASSES.OUT} transform
               motion-reduce:hover:transform-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100
               ${className}
             `}

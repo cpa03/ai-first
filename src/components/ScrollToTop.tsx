@@ -37,7 +37,10 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 import Tooltip from './Tooltip';
-import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  SR_ONLY,
+  EASING_CLASSES,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 
 interface ScrollToTopProps {
@@ -360,7 +363,7 @@ function ScrollToTopComponent({
             ${BG_COLORS.DEFAULT} ${TEXT_COLORS.SECONDARY}
             rounded-full ${SHADOW_CLASSES.LARGE}
             border ${BORDER_COLORS.LIGHT}
-            ${TRANSITION_CLASSES.SLOW} ease-out
+            ${TRANSITION_CLASSES.SLOW} ${EASING_CLASSES.OUT}
             ${GRAY_CLASSES.HOVER_BG_50} ${COMPONENT_PRIMARY_PATTERNS.SCROLL_TO_TOP_HOVER} hover:${SHADOW_CLASSES.EXTRA_LARGE} hover:scale-110
             ${COMPONENT_PRIMARY_PATTERNS.SCROLL_TO_TOP_BORDER_HOVER}
             ${FOCUS_RING_OFFSET_PATTERNS.LARGE}
@@ -408,7 +411,7 @@ function ScrollToTopComponent({
                 stroke="currentColor"
                 strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                 strokeLinecap="round"
-                className={`${scrollDepthColor.stroke} transition-colors ${DURATION_TAILWIND[300]} ease-out`}
+                className={`${scrollDepthColor.stroke} transition-colors ${DURATION_TAILWIND[300]} ${EASING_CLASSES.OUT}`}
                 style={{
                   strokeDasharray: circumference,
                   strokeDashoffset: strokeDashoffset,
@@ -434,7 +437,7 @@ function ScrollToTopComponent({
             </svg>
           ) : showPercentage && !prefersReducedMotion ? (
             <span
-              className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} font-semibold ${scrollDepthColor.text} tabular-nums leading-none transition-colors ${DURATION_TAILWIND[300]} ease-out`}
+              className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} font-semibold ${scrollDepthColor.text} tabular-nums leading-none transition-colors ${DURATION_TAILWIND[300]} ${EASING_CLASSES.OUT}`}
               aria-hidden="true"
             >
               {animatedPercentage}

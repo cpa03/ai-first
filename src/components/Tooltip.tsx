@@ -30,7 +30,10 @@ const VIEWPORT_PADDING = TOOLTIP_CONFIG.VIEWPORT_PADDING;
 const TRIGGER_SPACING = TOOLTIP_CONFIG.TRIGGER_SPACING;
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { PLATFORM } from '@/lib/dom-utils';
-import { RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  RELATIVE,
+  EASING_CLASSES,
+} from '@/lib/config/remaining-hardcoded-patterns';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -296,7 +299,7 @@ function TooltipComponent({
           className={`
             absolute pointer-events-none
             ${positionClasses[computedPosition]}
-            ${prefersReducedMotion ? '' : `transition-all ${DURATION_TAILWIND[200]} ease-out`}
+            ${prefersReducedMotion ? '' : `transition-all ${DURATION_TAILWIND[200]} ${EASING_CLASSES.OUT}`}
             ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
           `}
           style={tooltipStyle}

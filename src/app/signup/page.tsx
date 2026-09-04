@@ -55,6 +55,7 @@ import {
 import {
   SIGNUP_TIP_ITEM,
   JUSTIFY_CENTER,
+  EASING_CLASSES,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { PRIMARY_COMBINATIONS } from '@/lib/config/primary-colors';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
@@ -315,7 +316,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
       <div className={COMMON_SPACING_PATTERNS.FLEX_CENTER_SM}>
         <div className={FORM_PATTERNS.STRENGTH_BAR_TRACK}>
           <div
-            className={`h-full ${config.color} transition-all ${DURATION_TAILWIND[300]} ease-out rounded-full`}
+            className={`h-full ${config.color} transition-all ${DURATION_TAILWIND[300]} ${EASING_CLASSES.OUT} rounded-full`}
             style={{ width: `${percentage}%` }}
             role="progressbar"
             aria-valuenow={score}

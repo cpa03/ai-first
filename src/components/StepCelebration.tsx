@@ -35,7 +35,10 @@ import {
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { ABSOLUTE_CENTER_FLEX_COL } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  ABSOLUTE_CENTER_FLEX_COL,
+  EASING_CLASSES,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface StepCelebrationProps {
@@ -222,7 +225,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
                   (stepNumber / totalSteps) *
                     COMPONENT_DEFAULTS.PROGRESS.COMPLETE
                 )}
-                className={`transition-all ${DURATION_TAILWIND[700]} ease-out`}
+                className={`transition-all ${DURATION_TAILWIND[700]} ${EASING_CLASSES.OUT}`}
                 style={{
                   filter: `drop-shadow(0 0 ${ANIMATION_CONFIG.SHADOW_BLUR.DROP}px ${CELEBRATION_COLORS.SHADOWS.DROP_SHADOW})`,
                 }}
@@ -257,7 +260,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
                       strokeDashoffset: isExiting
                         ? SVG_ANIMATION.CHECKMARK_PATH_LENGTH
                         : 0,
-                      transition: `stroke-dashoffset ${ANIMATION_DELAYS.INLINE.STANDARD} ease-out`,
+                      transition: `stroke-dashoffset ${ANIMATION_DELAYS.INLINE.STANDARD} ${EASING_CLASSES.OUT}`,
                     }}
                   />
                 </svg>
@@ -272,7 +275,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
                   ${isExiting ? 'scale-150 opacity-0' : 'scale-100 opacity-100'}
                 `}
                   style={{
-                    transition: `all ${ANIMATION_DELAYS.INLINE.RIPPLE} ease-out`,
+                    transition: `all ${ANIMATION_DELAYS.INLINE.RIPPLE} ${EASING_CLASSES.OUT}`,
                   }}
                 />
                 <div
@@ -281,7 +284,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
                   ${isExiting ? 'scale-175 opacity-0' : 'scale-100 opacity-100'}
                 `}
                   style={{
-                    transition: `all ${ANIMATION_DELAYS.INLINE.STEP_TRANSITION} ease-out ${ANIMATION_DELAYS.INLINE.SHORT}`,
+                    transition: `all ${ANIMATION_DELAYS.INLINE.STEP_TRANSITION} ${EASING_CLASSES.OUT} ${ANIMATION_DELAYS.INLINE.SHORT}`,
                   }}
                 />
               </>

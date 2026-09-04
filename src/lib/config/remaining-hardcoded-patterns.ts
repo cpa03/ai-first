@@ -582,6 +582,24 @@ export const SKIP_LINK = 'skip-link';
 export const PEER_SR_ONLY = 'peer sr-only';
 
 /**
+ * CSS Easing/Timing Function classes
+ * Used in: MobileNav, ScrollToTop, ShareButton, CopyButton, EmailButton, Tooltip,
+ * InputWithValidation, StepCelebration, CapsLockWarning, ScrollProgress,
+ * UserOnboarding, FeatureGrid, Alert, ToastContainer
+ * Eliminates hardcoded 'ease-out', 'ease-in-out', 'ease-in' strings
+ */
+export const EASING_CLASSES = {
+  /** ease-out - standard deceleration for most UI transitions */
+  OUT: 'ease-out',
+  /** ease-in-out - smooth acceleration and deceleration */
+  IN_OUT: 'ease-in-out',
+  /** ease-in - acceleration for exit animations */
+  IN: 'ease-in',
+  /** ease-linear - constant speed for continuous animations */
+  LINEAR: 'ease-linear',
+} as const;
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -654,4 +672,5 @@ export const REMAINING_PATTERNS = {
   GRID_COL_SPAN,
   SKIP_LINK,
   PEER_SR_ONLY,
+  EASING_CLASSES,
 } as const;

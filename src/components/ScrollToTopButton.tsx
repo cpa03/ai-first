@@ -15,6 +15,7 @@ import {
   SCROLL_TO_TOP_APPEAR,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
+import { EASING_CLASSES } from '@/lib/config/remaining-hardcoded-patterns';
 import { PLATFORM } from '@/lib/dom-utils';
 import { SCROLL_TO_TOP_BUTTON_LABELS } from '@/lib/config/component-labels';
 import Tooltip from './Tooltip';
@@ -131,7 +132,7 @@ function ScrollToTopButtonComponent() {
       onBlur={() => setIsHoveredOrFocused(false)}
       className={`
         text-sm ${GRAY_CLASSES.TEXT_500}
-        ${TRANSITION_CLASSES.COLOR} ease-out
+        ${TRANSITION_CLASSES.COLOR} ${EASING_CLASSES.OUT}
         ${COMPONENT_PRIMARY_PATTERNS.SCROLL_TO_TOP_HOVER}
         ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} rounded-md
         inline-flex items-center gap-1.5

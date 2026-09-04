@@ -20,6 +20,7 @@ import {
   TEXT_FORMAT_PATTERNS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
+import { EASING_CLASSES } from '@/lib/config/remaining-hardcoded-patterns';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -298,7 +299,7 @@ function ScrollProgressComponent() {
         className={`h-full rounded-r-full ${GRADIENT_CONFIG.SCROLL_PROGRESS_BAR} ${
           prefersReducedMotion
             ? ''
-            : `transition-all ${DURATION_TAILWIND[150]} ease-out`
+            : `transition-all ${DURATION_TAILWIND[150]} ${EASING_CLASSES.OUT}`
         } ${isHovered || isDragging ? 'opacity-90' : 'opacity-100'}`}
         style={{ width: `${scrollPercent}%` }}
       />

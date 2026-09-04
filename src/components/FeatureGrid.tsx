@@ -28,7 +28,10 @@ import {
   HOME_PAGE_ELEMENT_IDS,
   ARIA_HEADING_IDS,
 } from '@/lib/config/element-ids';
-import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  SR_ONLY,
+  EASING_CLASSES,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
 import { useKeyboardNavigation } from '@/hooks/useKeyboardNavigation';
 
@@ -105,7 +108,7 @@ function FeatureGridComponent() {
               ${BG_COLORS.DEFAULT}
               ${FOCUS_RING_OFFSET_PATTERNS.LARGE}
               focus-visible:scale-[1.03] focus-visible:shadow-xl focus-visible:shadow-primary-200/60
-              transition-transform transition-shadow ${DURATION_TAILWIND[200]} ease-out
+              transition-transform transition-shadow ${DURATION_TAILWIND[200]} ${EASING_CLASSES.OUT}
               motion-reduce:transition-none
               ${isVisible ? animationClasses[index] : 'opacity-0'}
               ${focusedIndex === index ? FOCUS_RING_OFFSET_PATTERNS.NAVIGATION_FOCUSED : ''}
