@@ -605,6 +605,23 @@ export default function DashboardPage() {
         triggerHapticFeedback();
         router.push(ROUTES.HOME);
       }
+
+      // Micro-UX: Number keys 1-5 for quick filter switching
+      // Matches the pattern established in TaskManagementHeader for filter shortcuts (1-3)
+      // Provides instant filter switching without needing to navigate to the select dropdown
+      const filterShortcuts: Record<string, string> = {
+        '1': 'all',
+        '2': 'draft',
+        '3': 'clarified',
+        '4': 'breakdown',
+        '5': 'completed',
+      };
+      if (filterShortcuts[e.key] && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        setFilter(filterShortcuts[e.key]);
+        return;
+      }
     };
 
     document.addEventListener('keydown', handleKeyboardShortcuts);
@@ -872,6 +889,26 @@ export default function DashboardPage() {
             </Tooltip>
           </div>
         )}
+        {/* Micro-UX: Keyboard shortcut hints for quick filter switching */}
+        {/* Shows 1-5 keys next to the filter for discoverability, matching the TaskManagementHeader pattern */}
+        <div
+          className={`hidden sm:flex items-center gap-2 text-xs ${GRAY_CLASSES.TEXT_500}`}
+          aria-hidden="true"
+        >
+          <span className="font-medium">Filters:</span>
+          {[
+            { key: '1', label: 'All' },
+            { key: '2', label: 'Draft' },
+            { key: '3', label: 'Clarified' },
+            { key: '4', label: 'Breakdown' },
+            { key: '5', label: 'Done' },
+          ].map(({ key, label }) => (
+            <span key={key} className="flex items-center gap-1">
+              <kbd className={KBD_HINT_STYLE}>{key}</kbd>
+              <span>{label}</span>
+            </span>
+          ))}
+        </div>
         <button
           type="button"
           onClick={() => {
