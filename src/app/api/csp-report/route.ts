@@ -1,6 +1,6 @@
 import { createLogger } from '@/lib/logger';
 import { withApiHandler, ApiContext } from '@/lib/api-handler';
-import { STATUS_CODES } from '@/lib/config';
+import { STATUS_CODES, HTTP_HEADERS } from '@/lib/config';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { SECURITY_CONFIG } from '@/lib/config/security-config';
@@ -47,7 +47,7 @@ async function handleCSPReport(context: ApiContext): Promise<Response> {
 
     try {
       if (
-        contentType.includes('application/json') ||
+        contentType.includes(HTTP_HEADERS.APPLICATION_JSON) ||
         contentType.includes('application/csp-report')
       ) {
         reportData = await request.json();
