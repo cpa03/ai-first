@@ -1128,13 +1128,7 @@ export default function DashboardPage() {
                   <th scope="col" className={TABLE_PATTERNS.header.cell}>
                     {DASHBOARD_PAGE_CONTENT.TABLE.CREATED_HEADER}
                   </th>
-                  <th
-                    scope="col"
-                    className={TABLE_PATTERNS.header.cell.replace(
-                      'text-left',
-                      'text-right'
-                    )}
-                  >
+                  <th scope="col" className={TABLE_PATTERNS.header.cellRight}>
                     {DASHBOARD_PAGE_CONTENT.TABLE.ACTIONS_HEADER}
                   </th>
                 </tr>
