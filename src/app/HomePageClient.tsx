@@ -262,7 +262,7 @@ export default function HomePageClient() {
         <section
           aria-live="polite"
           aria-labelledby={ARIA_HEADING_IDS.IDEA_CONFIRMATION}
-          className={`mt-8 ${BG_COLORS.INFO_LIGHT} ${BORDER_COLORS.INFO} rounded-lg p-6`}
+          className={`mt-8 ${BG_COLORS.INFO_LIGHT} ${BORDER_COLORS.INFO} ${REMAINING_PATTERNS.INFO_CARD_CONTAINER}`}
         >
           <h3
             id={HOME_PAGE_ELEMENT_IDS.IDEA_CONFIRMATION_HEADING}
@@ -278,7 +278,7 @@ export default function HomePageClient() {
               {HOME_PAGE_CONFIG.CONFIRMATION.SAVED_WITH_ID}
               {` `}
               <code
-                className={`${BG_COLORS.INFO} px-1.5 py-0.5 rounded ${TEXT_COLORS.INFO_DARK} font-mono text-xs`}
+                className={`${BG_COLORS.INFO} ${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE} ${TEXT_COLORS.INFO_DARK}`}
               >
                 {ideaId}
               </code>
