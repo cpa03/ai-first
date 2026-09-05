@@ -81,6 +81,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     handleDownload,
     handleCopy,
     dismissCelebration,
+    handleCancel,
   } = useBlueprintGeneration(idea, answers);
 
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -166,6 +167,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             className={BLUEPRINT_DISPLAY_STYLES.LOADING_SPINNER}
             ariaLabel={MESSAGES.BLUEPRINT.ARIA_LABEL_GENERATING}
             showElapsedTime
+            onCancel={handleCancel}
           />
           <h2
             className={`${BLUEPRINT_DISPLAY_STYLES.LOADING_TITLE} ${TEXT_COLOR_CLASSES.HEADING}`}
