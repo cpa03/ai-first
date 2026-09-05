@@ -456,21 +456,42 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
 
   ssti: [
     {
+      pattern: /\{\{\{\s*.*?\s*\}\}\}/,
+      severity: 3,
+      description: 'Triple brace unescaped template interpolation',
+    },
+    {
       pattern: /\{\{\s*['"]?.*['"]?\s*\}\}/,
       severity: 3,
       description: 'Generic template interpolation pattern',
     },
     {
       pattern:
-        /\{\{\s*(config|self|request|session|g|get_flashed_messages|url_for|app)\s*\}\}/i,
+        /\{\{\s*(config|self|request|session|g|get_flashed_messages|url_for|app)\b/i,
       severity: 3,
       description: 'SSTI sensitive object access',
     },
     {
       pattern:
-        /\{\{\s*.*\.(__class__|__mro__|__subclasses__|__globals__)\s*\}\}/i,
+        /\{\{\s*.*\.(__class__|__mro__|__subclasses__|__globals__|constructor|prototype)\b/i,
       severity: 3,
-      description: 'Python SSTI introspection',
+      description: 'Python/JS SSTI introspection',
+    },
+    {
+      pattern:
+        /\{\{\s*.*?\b(process|mainModule|require|exec|eval|system|popen|import|getAttribute)\b/i,
+      severity: 3,
+      description: 'SSTI code execution function access',
+    },
+    {
+      pattern: /\{\{\s*\d+\s*[\*\/+-]\s*\d+\s*\}\}/,
+      severity: 3,
+      description: 'SSTI mathematical expression evaluation',
+    },
+    {
+      pattern: /\{\{\s*['"][^'"]+['"]\s*\+\s*['"][^'"]+['"]\s*\}\}/,
+      severity: 3,
+      description: 'SSTI string concatenation payload',
     },
     {
       pattern: /\$\{\s*.*\s*\}/,
