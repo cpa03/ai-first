@@ -4,6 +4,7 @@ import { memo, useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import Button from '@/components/Button';
 import Tooltip from '@/components/Tooltip';
 import CopyButton from '@/components/CopyButton';
+import StatusAnnouncer from '@/components/StatusAnnouncer';
 import {
   MESSAGES,
   TASK_HEADER_STYLES,
@@ -76,6 +77,9 @@ function TaskManagementHeaderComponent({
   // Provides visual feedback when counts update after filter selection
   const [animatingCount, setAnimatingCount] = useState<string | null>(null);
   const prevFilterCountsRef = useRef(filterCounts);
+  const [filterAnnouncement, setFilterAnnouncement] = useState('');
+  const [filterAnnouncementTriggered, setFilterAnnouncementTriggered] =
+    useState(false);
 
   useEffect(() => {
     const prevCounts = prevFilterCountsRef.current;
@@ -95,6 +99,19 @@ function TaskManagementHeaderComponent({
     }
     prevFilterCountsRef.current = filterCounts;
   }, [filterCounts, prefersReducedMotion]);
+
+  const handleFilterClick = useCallback(
+    (filter: 'all' | 'in_progress' | 'completed') => {
+      triggerHapticFeedback();
+      onFilterChange(filter);
+      const count = filterCounts[filter];
+      setFilterAnnouncement(
+        TASK_MANAGEMENT_LABELS.FILTER_ANNOUNCEMENT(count, filter)
+      );
+      setFilterAnnouncementTriggered(true);
+    },
+    [onFilterChange, filterCounts]
+  );
 
   useEffect(() => {
     const justReached100 =
@@ -187,7 +204,7 @@ function TaskManagementHeaderComponent({
       }
 
       const nextFilter = FILTER_ORDER[nextIndex];
-      onFilterChange(nextFilter);
+      handleFilterClick(nextFilter);
 
       const radioGroup = radioGroupRef.current;
       if (radioGroup) {
@@ -196,7 +213,7 @@ function TaskManagementHeaderComponent({
         nextButton?.focus();
       }
     },
-    [statusFilter, onFilterChange, FILTER_ORDER]
+    [statusFilter, handleFilterClick, FILTER_ORDER]
   );
 
   return (
@@ -242,6 +259,11 @@ function TaskManagementHeaderComponent({
       </div>
 
       <div className={MT_CLASSES.XL}>
+        <StatusAnnouncer
+          message={filterAnnouncement}
+          triggered={filterAnnouncementTriggered}
+          politeness="polite"
+        />
         <div
           ref={radioGroupRef}
           className={`${FLEX_PATTERNS.GAP_MD} ${MB_CLASSES.LG}`}
@@ -269,11 +291,8 @@ function TaskManagementHeaderComponent({
                   isActive
                 )}
                 tabIndex={isActive ? 0 : -1}
-                onClick={() => {
-                  triggerHapticFeedback();
-                  onFilterChange(filter);
-                }}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${TYPOGRAPHY_CLASSES.XS_MEDIUM} rounded-full ${TRANSITION_CLASSES.DEFAULT} ${
+                onClick={() => handleFilterClick(filter)}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${TYPOGRAPHY_CLASSES.XS_MEDIUM} rounded-full ${TRANSITION_CLASSES.DEFAULT} active:scale-95 motion-reduce:active:scale-100 ${
                   isActive
                     ? `${COMPONENT_PRIMARY_PATTERNS.BADGE_SECONDARY} ${FOCUS_RING_OFFSET_PATTERNS.FILTER_ACTIVE}`
                     : `${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} ${GRAY_CLASSES.HOVER_BG_100} ${GRAY_CLASSES.HOVER_TEXT_800}`

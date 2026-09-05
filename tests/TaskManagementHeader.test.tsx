@@ -43,15 +43,39 @@ describe('TaskManagementHeader', () => {
     );
   });
 
-  it('handles clicking filter buttons and triggers onFilterChange', () => {
+  it('handles clicking filter buttons, triggers onFilterChange, and includes active scale styling', () => {
     render(<TaskManagementHeader {...mockProps} />);
 
     const inProgressButton = screen.getByRole('radio', {
       name: /Filter by In Progress tasks/i,
     });
+
+    expect(inProgressButton.className).toContain('active:scale-95');
+    expect(inProgressButton.className).toContain('motion-reduce:active:scale-100');
+
     fireEvent.click(inProgressButton);
 
     expect(mockProps.onFilterChange).toHaveBeenCalledWith('in_progress');
+  });
+
+  it('announces filter changes to screen readers via StatusAnnouncer', () => {
+    jest.useFakeTimers();
+    render(<TaskManagementHeader {...mockProps} />);
+
+    const inProgressButton = screen.getByRole('radio', {
+      name: /Filter by In Progress tasks/i,
+    });
+
+    fireEvent.click(inProgressButton);
+
+    jest.advanceTimersByTime(200);
+
+    const announcers = screen.getAllByRole('status', { hidden: true });
+    const hasAnnouncement = announcers.some((announcer) =>
+      announcer.textContent?.includes('Showing 6 in_progress tasks')
+    );
+    expect(hasAnnouncement).toBe(true);
+    jest.useRealTimers();
   });
 
   it('supports arrow key navigation across the radio group', () => {
