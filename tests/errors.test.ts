@@ -904,30 +904,6 @@ describe('generateErrorFingerprint', () => {
 
     expect(fp).toMatch(/^fp_[a-f0-9]{8}$/);
   });
-
-  it('benchmarks generateErrorFingerprint performance', () => {
-    const messages = [
-      'User not found in database',
-      'Invalid input parameter: email required',
-      'Failed to connect to host 192.168.1.5: timeout after 5000ms',
-      'Resource with ID 123e4567-e89b-12d3-a456-426614174000 not found',
-      'Rate limit exceeded for user 987654321',
-      'Validation error on field title',
-    ];
-
-    const iterations = 50000;
-    const start = performance.now();
-    for (let i = 0; i < iterations; i++) {
-      generateErrorFingerprint('ERR_CODE', messages[i % messages.length]);
-    }
-    const end = performance.now();
-    const duration = end - start;
-
-    console.log(
-      `[Benchmark] generateErrorFingerprint for ${iterations} runs took ${duration.toFixed(2)}ms`
-    );
-    expect(duration).toBeGreaterThan(0);
-  });
 });
 
 describe('AppError fingerprint', () => {
