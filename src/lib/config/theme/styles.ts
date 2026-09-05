@@ -158,6 +158,9 @@ export const TABLE_PATTERNS = {
   header: {
     container: 'bg-gray-50',
     cell: 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+    /** Right-aligned header cell - eliminates .replace('text-left', 'text-right') */
+    cellRight:
+      'px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider',
   },
   row: {
     default: '',

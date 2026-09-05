@@ -72,13 +72,7 @@ function DashboardSkeletonComponent() {
                 <th scope="col" className={TABLE_PATTERNS.header.cell}>
                   {DASHBOARD_LABELS.TABLE_HEADERS.CREATED}
                 </th>
-                <th
-                  scope="col"
-                  className={TABLE_PATTERNS.header.cell.replace(
-                    'text-left',
-                    'text-right'
-                  )}
-                >
+                <th scope="col" className={TABLE_PATTERNS.header.cellRight}>
                   {DASHBOARD_LABELS.TABLE_HEADERS.ACTIONS}
                 </th>
               </tr>
