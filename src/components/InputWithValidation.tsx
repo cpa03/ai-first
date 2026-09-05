@@ -530,39 +530,45 @@ const InputWithValidationComponent = forwardRef<
             </div>
           )}
 
-          {showClearButton && (
-            <div
-              className={`absolute ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} ${hasIcon || showPasswordToggle ? RIGHT_CLASSES.XXXXL : RIGHT_CLASSES.LG}`}
+          {/* Micro-UX: CSS transition for smooth clear button entrance/exit */}
+          <div
+            className={`absolute ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} ${hasIcon || showPasswordToggle ? RIGHT_CLASSES.XXXXL : RIGHT_CLASSES.LG} transition-all duration-200 ease-out ${
+              showClearButton
+                ? 'opacity-100 scale-100 pointer-events-auto'
+                : 'opacity-0 scale-75 pointer-events-none'
+            }`}
+            aria-hidden={!showClearButton}
+          >
+            <Tooltip
+              content={`Clear ${label}`}
+              shortcut={['Esc']}
+              position="top"
+              disabled={!showClearButton}
             >
-              <Tooltip
-                content={`Clear ${label}`}
-                shortcut={['Esc']}
-                position="top"
+              <button
+                type="button"
+                onClick={handleClear}
+                className={`${INPUT_BUTTON_SIZES.CLEAR_BUTTON} flex items-center justify-center ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} rounded-full ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
+                aria-label={`Clear ${label}`}
+                tabIndex={showClearButton ? 0 : -1}
               >
-                <button
-                  type="button"
-                  onClick={handleClear}
-                  className={`${INPUT_BUTTON_SIZES.CLEAR_BUTTON} flex items-center justify-center ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} rounded-full ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in ${FADE_IN} zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
-                  aria-label={`Clear ${label}`}
+                <svg
+                  className={SVG_SIZES.SMD}
+                  fill="none"
+                  viewBox={SVG_VIEWBOX.STANDARD}
+                  stroke="currentColor"
+                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                  aria-hidden="true"
                 >
-                  <svg
-                    className={SVG_SIZES.SMD}
-                    fill="none"
-                    viewBox={SVG_VIEWBOX.STANDARD}
-                    stroke="currentColor"
-                    strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </Tooltip>
-            </div>
-          )}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </Tooltip>
+          </div>
 
           {showPasswordToggle && !multiline && (
             <>
