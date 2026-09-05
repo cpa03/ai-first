@@ -295,7 +295,7 @@ export default function LoginPage() {
             <div className={FORM_OVERLAY_STYLES.SPINNER_CONTAINER}>
               <div className={FORM_OVERLAY_STYLES.SPINNER} />
               <span className={FORM_OVERLAY_STYLES.LOADING_TEXT}>
-                Signing in...
+                {LOGIN_PAGE_CONTENT.FORM.SUBMIT_LOADING}
               </span>
             </div>
           </div>
