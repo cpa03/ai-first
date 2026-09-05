@@ -2,16 +2,28 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { supabaseClient } from '@/lib/db';
-import Button from '@/components/Button';
-import InputWithValidation from '@/components/InputWithValidation';
-import Alert from '@/components/Alert';
-import { CapsLockWarning } from '@/components/CapsLockWarning';
-import { PasswordRequirementsChecklist } from '@/components/PasswordRequirementsChecklist';
-import { useCapsLock } from '@/hooks/useCapsLock';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
+
+const Button = dynamic(() => import('@/components/Button'));
+const InputWithValidation = dynamic(
+  () => import('@/components/InputWithValidation')
+);
+const Alert = dynamic(() => import('@/components/Alert'));
+const CapsLockWarning = dynamic(() =>
+  import('@/components/CapsLockWarning').then((mod) => ({
+    default: mod.CapsLockWarning,
+  }))
+);
+const PasswordRequirementsChecklist = dynamic(() =>
+  import('@/components/PasswordRequirementsChecklist').then((mod) => ({
+    default: mod.PasswordRequirementsChecklist,
+  }))
+);
+import { useCapsLock } from '@/hooks/useCapsLock';
 import {
   OAUTH_PROVIDER_COLORS,
   PASSWORD_VALIDATION_CONFIG,
