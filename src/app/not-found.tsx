@@ -361,12 +361,12 @@ export default function NotFound() {
             className={`${POPULAR_PAGES_SECTION} ${BORDER_COLORS.LIGHT} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_6}`}
           >
             <h2
-              id="popular-pages-heading"
+              id={ERROR_ELEMENT_IDS.POPULAR_PAGES_HEADING}
               className={`text-sm font-medium ${GRAY_CLASSES.TEXT_700} mb-4 text-center`}
             >
               Popular pages
             </h2>
-            <nav aria-labelledby="popular-pages-heading">
+            <nav aria-labelledby={ERROR_ELEMENT_IDS.POPULAR_PAGES_HEADING}>
               <ul className={POPULAR_PAGES_GRID}>
                 {[
                   {

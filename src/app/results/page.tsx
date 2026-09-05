@@ -58,6 +58,7 @@ import {
   FLEX_CENTER,
   MARGIN_BOTTOM_4,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { RESULTS_ELEMENT_IDS } from '@/lib/config/element-ids';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
   ssr: false,
@@ -616,17 +617,20 @@ function ResultsContent() {
           </Button>
         </div>
 
-        <div id="blueprint-section">
+        <div id={RESULTS_ELEMENT_IDS.BLUEPRINT_SECTION}>
           <BlueprintDisplay idea={idea.raw_text} answers={formattedAnswers} />
         </div>
 
         {/* Task Management */}
-        <div id="tasks-section" className={MT_CLASSES.XXXL}>
+        <div id={RESULTS_ELEMENT_IDS.TASKS_SECTION} className={MT_CLASSES.XXXL}>
           <TaskManagement ideaId={idea.id} />
         </div>
 
         {/* Export Options */}
-        <div id="exports-section" className={CARD_PATTERNS.WITH_MARGIN}>
+        <div
+          id={RESULTS_ELEMENT_IDS.EXPORTS_SECTION}
+          className={CARD_PATTERNS.WITH_MARGIN}
+        >
           <h2
             className={`text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} ${MB_CLASSES.XXL}`}
           >
