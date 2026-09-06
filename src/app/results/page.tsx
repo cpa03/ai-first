@@ -58,6 +58,7 @@ import {
   FLEX_CENTER,
   MARGIN_BOTTOM_4,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { FADE_IN } from '@/lib/config/animation-classes';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
   ssr: false,
@@ -641,7 +642,7 @@ function ResultsContent() {
           >
             {/* Markdown Export */}
             <div
-              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              className={`${prefersReducedMotion ? '' : FADE_IN}`}
               style={
                 !prefersReducedMotion
                   ? { animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }
@@ -670,7 +671,7 @@ function ResultsContent() {
 
             {/* JSON Export */}
             <div
-              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              className={`${prefersReducedMotion ? '' : FADE_IN}`}
               style={
                 !prefersReducedMotion
                   ? { animationDelay: ANIMATION_DELAYS.INLINE.SHORT }
@@ -697,7 +698,7 @@ function ResultsContent() {
 
             {/* Notion Export */}
             <div
-              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              className={`${prefersReducedMotion ? '' : FADE_IN}`}
               style={
                 !prefersReducedMotion
                   ? { animationDelay: ANIMATION_DELAYS.INLINE.MEDIUM }
@@ -745,7 +746,7 @@ function ResultsContent() {
 
             {/* Trello Export */}
             <div
-              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              className={`${prefersReducedMotion ? '' : FADE_IN}`}
               style={
                 !prefersReducedMotion
                   ? { animationDelay: ANIMATION_DELAYS.INLINE.LONG }
@@ -793,7 +794,7 @@ function ResultsContent() {
 
             {/* Google Tasks Export */}
             <div
-              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              className={`${prefersReducedMotion ? '' : FADE_IN}`}
               style={
                 !prefersReducedMotion
                   ? { animationDelay: ANIMATION_DELAYS.INLINE.STANDARD }
@@ -845,7 +846,7 @@ function ResultsContent() {
 
             {/* GitHub Projects Export */}
             <div
-              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              className={`${prefersReducedMotion ? '' : FADE_IN}`}
               style={
                 !prefersReducedMotion
                   ? { animationDelay: ANIMATION_DELAYS.INLINE.EXTENDED }
@@ -898,7 +899,7 @@ function ResultsContent() {
 
             {/* Email to Self - Growth: User retention and accessibility */}
             <div
-              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              className={`${prefersReducedMotion ? '' : FADE_IN}`}
               style={
                 !prefersReducedMotion
                   ? { animationDelay: ANIMATION_DELAYS.INLINE.RIPPLE }
@@ -1104,7 +1105,7 @@ function ResultsContent() {
             {RESULTS_PAGE_CONTENT.SHARE_MESSAGE}
           </p>
           <div
-            className={`flex flex-wrap ${GAP_CLASSES.XL} ${prefersReducedMotion ? '' : 'fade-in'}`}
+            className={`flex flex-wrap ${GAP_CLASSES.XL} ${prefersReducedMotion ? '' : FADE_IN}`}
             style={
               !prefersReducedMotion
                 ? { animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }

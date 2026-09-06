@@ -46,6 +46,7 @@ import {
   RELATIVE,
   PEER_SR_ONLY,
   JUSTIFY_CENTER,
+  DISABLED_CURSOR,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useScrollToError } from '@/hooks/useScrollToError';
@@ -390,7 +391,7 @@ export default function LoginPage() {
                     className={`
                       ${FORM_PATTERNS.CHECKBOX_BASE}
                       ${rememberMe ? FORM_PATTERNS.CHECKBOX_CHECKED : FORM_PATTERNS.CHECKBOX_UNCHECKED}
-                      ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+                      ${isLoading ? DISABLED_CURSOR : ''}
                     `}
                     aria-hidden="true"
                   >

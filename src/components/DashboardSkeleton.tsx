@@ -18,6 +18,7 @@ import {
   COMMON_SPACING_PATTERNS,
   OVERFLOW_PATTERNS,
 } from '@/lib/config';
+import { TEXT_ALIGNMENT } from '@/lib/config/remaining-hardcoded-patterns';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
@@ -75,8 +76,8 @@ function DashboardSkeletonComponent() {
                 <th
                   scope="col"
                   className={TABLE_PATTERNS.header.cell.replace(
-                    'text-left',
-                    'text-right'
+                    TEXT_ALIGNMENT.LEFT,
+                    TEXT_ALIGNMENT.RIGHT
                   )}
                 >
                   {DASHBOARD_LABELS.TABLE_HEADERS.ACTIONS}
