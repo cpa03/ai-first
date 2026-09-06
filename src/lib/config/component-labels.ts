@@ -721,6 +721,10 @@ export const SCROLL_TO_TOP_BUTTON_LABELS = {
 export const MOBILE_NAV_LABELS = {
   /** Title attribute for the close button */
   CLOSE_TITLE: 'Press Escape to close',
+  /** Screen reader announcement when menu opens */
+  MENU_OPENED_ANNOUNCEMENT: 'Navigation menu expanded',
+  /** Screen reader announcement when menu closes */
+  MENU_CLOSED_ANNOUNCEMENT: 'Navigation menu collapsed',
 } as const;
 
 /**
