@@ -147,6 +147,16 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     PROGRESS_PERCENTAGE.MAX
   );
 
+  const getReadingTimeSeconds = useCallback(() => {
+    const wordCount = idea.trim().split(/\s+/).filter(Boolean).length;
+    if (wordCount === 0) return 0;
+    const wordsPerSecond = 200 / 60;
+    return Math.max(1, Math.round(wordCount / wordsPerSecond));
+  }, [idea]);
+
+  const readingTimeSeconds = getReadingTimeSeconds();
+  const showReadingTime = idea.trim().length >= MIN_IDEA_LENGTH;
+
   const focusInput = useCallback(() => {
     const input = inputRef.current;
     if (input) {
@@ -515,6 +525,17 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
               </span>
             </div>
             <AutoSaveIndicator value={idea} />
+            {showReadingTime && (
+              <span
+                className={`text-xs ${TEXT_COLOR_CLASSES.MUTED} tabular-nums`}
+                role="status"
+                aria-label={IDEA_INPUT_LABELS.READING_TIME_ARIA_LABEL(
+                  readingTimeSeconds
+                )}
+              >
+                {IDEA_INPUT_LABELS.READING_TIME_LABEL(readingTimeSeconds)}
+              </span>
+            )}
           </div>
           <div className={IDEA_INPUT_STATUS_ITEM}>
             {!idea.trim() && !isSubmitting && (
