@@ -68,6 +68,9 @@ import {
   MARGIN_TOP_4,
   SR_ONLY,
   RELATIVE,
+  TABLE_DIVIDER,
+  DASHBOARD_FILTER_SELECT,
+  DASHBOARD_STATUS_BADGE,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   PRIMARY_RING,
@@ -750,7 +753,7 @@ export default function DashboardPage() {
                 triggerHapticFeedback();
                 setFilter(e.target.value);
               }}
-              className={`block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg focus:ring-2 ${PRIMARY_RING.FOCUS_500} focus:border-primary-500 cursor-pointer ${FOCUS_RING} transition-all ${DURATION_TAILWIND[200]} ${
+              className={`${DASHBOARD_FILTER_SELECT} ${PRIMARY_RING.FOCUS_500} focus:border-primary-500 ${FOCUS_RING} transition-all ${DURATION_TAILWIND[200]} ${
                 filter !== 'all'
                   ? DASHBOARD_PATTERNS.FILTER_ACTIVE
                   : DASHBOARD_PATTERNS.FILTER_INACTIVE
@@ -822,7 +825,7 @@ export default function DashboardPage() {
           {ideas.length > 0 && (
             <div className={DASHBOARD_FILTER_BADGE_POSITION}>
               <span
-                className={`flex items-center justify-center min-w-[${DASHBOARD_TAILWIND.STATUS_BADGE_MIN_W}] h-5 px-1.5 text-xs font-semibold rounded-full transition-all ${DURATION_TAILWIND[300]} ${
+                className={`${DASHBOARD_STATUS_BADGE} min-w-[${DASHBOARD_TAILWIND.STATUS_BADGE_MIN_W}] ${DURATION_TAILWIND[300]} ${
                   filter !== IDEA_STATUS_CONFIG.FILTERS.ALL
                     ? DASHBOARD_FILTER_BADGE_ACTIVE
                     : DASHBOARD_FILTER_BADGE_INACTIVE
@@ -1113,7 +1116,7 @@ export default function DashboardPage() {
         <div className={CARD_PATTERNS.OVERFLOW_HIDDEN}>
           <div className={OVERFLOW_PATTERNS.X_AUTO}>
             <table
-              className={`${TABLE_PATTERNS.container} divide-y divide-gray-200`}
+              className={`${TABLE_PATTERNS.container} ${TABLE_DIVIDER}`}
               role="table"
               aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.IDEAS_LIST}
             >

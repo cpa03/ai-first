@@ -582,6 +582,43 @@ export const SKIP_LINK = 'skip-link';
 export const PEER_SR_ONLY = 'peer sr-only';
 
 /**
+ * Table divider pattern (divide-y with gray border)
+ * Used in: DashboardSkeleton, Dashboard page table
+ * Eliminates hardcoded `divide-y divide-gray-200`
+ */
+export const TABLE_DIVIDER = 'divide-y divide-gray-200';
+
+/**
+ * Deliverable card accent border (left border highlight)
+ * Used in: TaskManagementSkeleton
+ * Eliminates hardcoded `border-l-4 border-l-gray-200`
+ */
+export const DELIVERABLE_ACCENT_BORDER = 'border-l-4 border-l-gray-200';
+
+/**
+ * Dashboard filter select input styles
+ * Used in: Dashboard page filter dropdown
+ * Eliminates long inline className with hardcoded Tailwind classes
+ */
+export const DASHBOARD_FILTER_SELECT =
+  'block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg cursor-pointer';
+
+/**
+ * Dashboard status badge (count indicator)
+ * Used in: Dashboard page filter badge
+ * Eliminates long inline className with hardcoded Tailwind classes
+ */
+export const DASHBOARD_STATUS_BADGE =
+  'flex items-center justify-center h-5 px-1.5 text-xs font-semibold rounded-full transition-all';
+
+/**
+ * Dashboard filter clear button transition
+ * Used in: Dashboard page clear filter button
+ * Eliminates long inline className with hardcoded Tailwind classes
+ */
+export const DASHBOARD_FILTER_CLEAR_BTN = 'transition-all ease-out';
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -654,4 +691,9 @@ export const REMAINING_PATTERNS = {
   GRID_COL_SPAN,
   SKIP_LINK,
   PEER_SR_ONLY,
+  TABLE_DIVIDER,
+  DELIVERABLE_ACCENT_BORDER,
+  DASHBOARD_FILTER_SELECT,
+  DASHBOARD_STATUS_BADGE,
+  DASHBOARD_FILTER_CLEAR_BTN,
 } as const;
