@@ -54,6 +54,7 @@ import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { PLATFORM } from '@/lib/dom-utils';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { ML_CLASSES } from '@/lib/config/spacing';
+import { HTTP_METHODS } from '@/lib/config/http';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';

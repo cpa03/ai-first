@@ -16,6 +16,7 @@ import {
   MESSAGES,
   HTTP_METHODS,
 } from '@/lib/config';
+import { HTTP_METHODS } from '@/lib/config/http';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { useToast } from '@/hooks/useAnnouncement';
 

@@ -70,6 +70,7 @@ import {
   SR_ONLY,
   RELATIVE,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { HTTP_METHODS } from '@/lib/config/http';
 import {
   PRIMARY_RING,
   COMPONENT_PRIMARY_PATTERNS,

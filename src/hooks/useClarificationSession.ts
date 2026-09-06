@@ -15,6 +15,7 @@ import {
   CLARIFICATION_TIMER_CONFIG,
   HTTP_METHODS,
 } from '@/lib/config';
+import { HTTP_METHODS } from '@/lib/config/http';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { PLATFORM } from '@/lib/dom-utils';
 
