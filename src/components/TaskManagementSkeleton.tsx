@@ -18,11 +18,13 @@ import {
   SKELETON_SIZE_PATTERNS,
   TEXT_ALIGNMENT,
   MB_CLASSES,
+  ML_CLASSES,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import {
   SKELETON_FULL_THIRD,
   FLEX_1,
+  SKELETON_BORDER_LEFT_GRAY,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
@@ -67,15 +69,15 @@ function TaskManagementSkeletonComponent() {
           </div>
           <div className={`text-right ${SPACE_Y_PATTERNS.SM}`}>
             <Skeleton
-              className={`${SKELETON_SIZE_PATTERNS.ICON_LG} ml-auto`}
+              className={`${SKELETON_SIZE_PATTERNS.ICON_LG} ${ML_CLASSES.AUTO}`}
               variant="text"
             />
             <Skeleton
-              className={`${SKELETON_SIZE_PATTERNS.CAPTION_SM} ml-auto`}
+              className={`${SKELETON_SIZE_PATTERNS.CAPTION_SM} ${ML_CLASSES.AUTO}`}
               variant="text"
             />
             <Skeleton
-              className={`${SKELETON_SIZE_PATTERNS.CAPTION_SM} ml-auto`}
+              className={`${SKELETON_SIZE_PATTERNS.CAPTION_SM} ${ML_CLASSES.AUTO}`}
               variant="text"
             />
           </div>
@@ -113,7 +115,7 @@ function TaskManagementSkeletonComponent() {
             }}
           >
             <div
-              className={`${CARD_PATTERNS.BASE} border-l-4 border-l-gray-200`}
+              className={`${CARD_PATTERNS.BASE} ${SKELETON_BORDER_LEFT_GRAY}`}
             >
               {/* Deliverable header */}
               <div className={FLEX_PATTERNS.BETWEEN}>
@@ -130,11 +132,11 @@ function TaskManagementSkeletonComponent() {
                 <div className={FLEX_PATTERNS.GAP_XL}>
                   <div className={TEXT_ALIGNMENT.RIGHT}>
                     <Skeleton
-                      className={`${SKELETON_SIZE_PATTERNS.BADGE_SM} ${MB_CLASSES.SM} ml-auto`}
+                      className={`${SKELETON_SIZE_PATTERNS.BADGE_SM} ${MB_CLASSES.SM} ${ML_CLASSES.AUTO}`}
                       variant="text"
                     />
                     <Skeleton
-                      className={`${SKELETON_SIZE_PATTERNS.CAPTION_SM} ml-auto`}
+                      className={`${SKELETON_SIZE_PATTERNS.CAPTION_SM} ${ML_CLASSES.AUTO}`}
                       variant="text"
                     />
                   </div>

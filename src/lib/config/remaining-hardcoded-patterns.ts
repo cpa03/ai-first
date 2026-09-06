@@ -582,6 +582,24 @@ export const SKIP_LINK = 'skip-link';
 export const PEER_SR_ONLY = 'peer sr-only';
 
 /**
+ * Table body divide pattern
+ * Used in: DashboardSkeleton, dashboard page table
+ */
+export const TABLE_BODY_DIVIDE = 'divide-y divide-gray-200';
+
+/**
+ * Skeleton card left border indicator
+ * Used in: TaskManagementSkeleton deliverable cards
+ */
+export const SKELETON_BORDER_LEFT_GRAY = 'border-l-4 border-l-gray-200';
+
+/**
+ * Hidden on small screens, block on medium and above
+ * Used in: Forgot password, login, signup page helper text
+ */
+export const HIDDEN_SM_BLOCK = 'hidden sm:block';
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -654,4 +672,7 @@ export const REMAINING_PATTERNS = {
   GRID_COL_SPAN,
   SKIP_LINK,
   PEER_SR_ONLY,
+  TABLE_BODY_DIVIDE,
+  SKELETON_BORDER_LEFT_GRAY,
+  HIDDEN_SM_BLOCK,
 } as const;

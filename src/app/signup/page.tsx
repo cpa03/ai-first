@@ -55,6 +55,7 @@ import {
 import {
   SIGNUP_TIP_ITEM,
   JUSTIFY_CENTER,
+  HIDDEN_SM_BLOCK,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { PRIMARY_COMBINATIONS } from '@/lib/config/primary-colors';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
@@ -790,7 +791,7 @@ export default function SignupPage() {
                 : SIGNUP_PAGE_CONTENT.FORM.SUBMIT_BUTTON}
             </Button>
             <p
-              className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
+              className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center ${HIDDEN_SM_BLOCK}`}
               aria-hidden="true"
             >
               Press{' '}
