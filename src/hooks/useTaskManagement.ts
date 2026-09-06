@@ -9,6 +9,7 @@ import type { TaskStatus } from '@/types/task';
 import {
   API_ENDPOINTS,
   HTTP_HEADERS,
+  HTTP_METHODS,
   API_ERROR_MESSAGES,
   TASK_CONFIG,
   PROGRESS_PERCENTAGE,
@@ -295,7 +296,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         const response = await fetchWithTimeout(
           API_ENDPOINTS.TASK_STATUS(taskId),
           {
-            method: 'PATCH',
+            method: HTTP_METHODS.PATCH,
             headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
             body: JSON.stringify({ status: newStatus }),
           }
