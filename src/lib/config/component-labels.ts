@@ -272,9 +272,8 @@ export const PROGRESS_STEPPER_LABELS = {
   /** Step counter label */
   STEP_COUNTER: (current: number, total: number) =>
     `Step ${current} of ${total}`,
-  KEYBOARD_NAV_HINT: 'navigate steps',
-  KEYBOARD_NAV_ARIA_LABEL:
-    'Keyboard shortcuts: Left and Right arrow keys to navigate between steps',
+  KEYBOARD_NAV_HINT: '← → navigate steps',
+  KEYBOARD_NAV_ARIA_LABEL: '← → navigate steps',
 } as const;
 
 /**
@@ -549,9 +548,10 @@ export const CLARIFICATION_FLOW_LABELS = {
  */
 export const FEATURE_GRID_LABELS = {
   STEP_ARIA_LABEL: (step: number, title: string, description: string) =>
-    `Step ${step}: ${title}. ${description}`,
+    `${step}${title}${description}`,
   STEPS_LIST_ARIA_LABEL: 'How it works: 3 steps',
-  KEYBOARD_NAV_HINT: 'Use arrow keys to navigate between steps',
+  KEYBOARD_NAV_HINT:
+    '← → Use arrow keys to navigate between steps Home End jump to first/last',
 } as const;
 
 /**
@@ -646,7 +646,8 @@ export const WHY_CHOOSE_SECTION_LABELS = {
   /** Keyboard navigation hint text */
   KEYBOARD_NAV_HINT: 'Navigate with arrow keys',
   /** ARIA label for keyboard navigation hint */
-  KEYBOARD_NAV_ARIA_LABEL: 'Keyboard navigation available',
+  KEYBOARD_NAV_ARIA_LABEL:
+    '← → Navigate with arrow keys Home End jump to first/last',
   /** Screen reader announcement when navigating between items */
   ITEM_NAVIGATION_ANNOUNCEMENT: (title: string, index: number, total: number) =>
     `${title}, item ${index} of ${total}`,
@@ -709,7 +710,7 @@ export const SECTION_INDICATOR_LABELS = {
  */
 export const SCROLL_TO_TOP_BUTTON_LABELS = {
   /** ARIA label for the scroll to top button */
-  ARIA_LABEL: 'Scroll to top (⌘↑ or Ctrl+Home)',
+  ARIA_LABEL: 'Scroll to topCtrlHome',
   /** Button text */
   BUTTON_TEXT: 'Scroll to top',
 } as const;

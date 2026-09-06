@@ -247,7 +247,7 @@ export const MESSAGES = {
     SUBMIT_BUTTON: 'Start Clarifying →',
     PROCESSING_BUTTON: 'Processing...',
     KEYBOARD_SHORTCUT_LABEL: (isMac: boolean) =>
-      `Keyboard shortcut: ${isMac ? 'Command' : 'Control'} Enter to submit`,
+      `${isMac ? '⌘' : 'Ctrl'}Enterto submit`,
     NEW_LINE_SHORTCUT_LABEL: (isMac: boolean) =>
       `${isMac ? 'Shift' : 'Shift'} + Enter for new line`,
     ENCOURAGEMENT: [
