@@ -353,13 +353,13 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
 
   nosql_injection: [
     {
-      pattern: /\$(where|accumulator|function)['"]?\s*[:\]]/i,
+      pattern: /\$(where|accumulator|function)\b/i,
       severity: 3,
-      description: 'MongoDB NoSQL injection operator',
+      description: 'MongoDB NoSQL injection operator or JS evaluation',
     },
     {
       pattern:
-        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size|expr|jsonSchema)['"]?\s*[:\]]/i,
+        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size|expr|jsonSchema|and|or|nor|not)\b/i,
       severity: 3,
       description: 'MongoDB operator injection',
     },
