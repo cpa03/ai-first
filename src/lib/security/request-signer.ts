@@ -254,7 +254,12 @@ export function parseSignatureHeader(
       }
     }
 
-    if (timestamp === undefined || signature === undefined) {
+    if (
+      timestamp === undefined ||
+      Number.isNaN(timestamp) ||
+      !Number.isFinite(timestamp) ||
+      signature === undefined
+    ) {
       return null;
     }
 
