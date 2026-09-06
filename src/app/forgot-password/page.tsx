@@ -1,11 +1,16 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
+
+const CopyButton = dynamic(() => import('@/components/CopyButton'), {
+  ssr: false,
+});
 import { ROUTES } from '@/lib/config';
 import {
   PAGE_LAYOUT_CLASSES,
@@ -255,7 +260,14 @@ export default function ForgotPasswordPage() {
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
             >
               We&apos;ve sent a password reset link to{' '}
-              <span className={FONT_MEDIUM}>{email}</span>
+              <CopyButton
+                textToCopy={email}
+                label={email}
+                successLabel="Email copied!"
+                variant="subtle"
+                ariaLabel="Copy email address"
+                className={FONT_MEDIUM}
+              />
             </p>
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
