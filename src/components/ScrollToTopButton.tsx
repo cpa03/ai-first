@@ -138,7 +138,6 @@ function ScrollToTopButtonComponent() {
         group
         ${hasAppeared && !prefersReducedMotion ? SCROLL_TO_TOP_APPEAR : ''}
       `}
-      aria-label={SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}
     >
       <span>{SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}</span>
       {/* Micro-UX: Persistent keyboard shortcut hint for discoverability */}
