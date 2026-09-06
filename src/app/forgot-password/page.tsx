@@ -3,10 +3,15 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { supabaseClient } from '@/lib/db';
+import dynamic from 'next/dynamic';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
 import { ROUTES } from '@/lib/config';
+
+const CopyButton = dynamic(() => import('@/components/CopyButton'), {
+  ssr: false,
+});
 import {
   PAGE_LAYOUT_CLASSES,
   CONTAINER_WIDTHS,
@@ -257,6 +262,17 @@ export default function ForgotPasswordPage() {
               We&apos;ve sent a password reset link to{' '}
               <span className={FONT_MEDIUM}>{email}</span>
             </p>
+            <div
+              className={`flex items-center justify-center gap-2 ${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+            >
+              <CopyButton
+                textToCopy={email}
+                label="Copy email"
+                successLabel="Copied!"
+                ariaLabel={`Copy email address ${email}`}
+                variant="subtle"
+              />
+            </div>
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
             >
