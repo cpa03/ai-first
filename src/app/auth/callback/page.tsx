@@ -28,6 +28,7 @@ import {
   RESPONSIVE_WIDTH,
   FLEX_1,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -229,13 +230,16 @@ export default function AuthCallbackPage() {
 
       {/* Micro-UX: Skip to content link for keyboard users */}
       <a
-        href="#auth-content"
+        href={`#${AUTH_ELEMENT_IDS.AUTH_CONTENT}`}
         className={`${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.BASE} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.BG} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.TEXT}`}
       >
         {COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.SKIP_LINK}
       </a>
 
-      <div id="auth-content" className={`${CONTAINER_WIDTHS.XS} w-full`}>
+      <div
+        id={AUTH_ELEMENT_IDS.AUTH_CONTENT}
+        className={`${CONTAINER_WIDTHS.XS} w-full`}
+      >
         <div className={`text-center ${SPACE_Y_PATTERNS.XL}`}>
           {/* Micro-UX: Animated spinner with progress feedback */}
           <div className={CENTER_INLINE_FLEX}>

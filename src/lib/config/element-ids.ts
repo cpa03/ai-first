@@ -113,6 +113,21 @@ export const DASHBOARD_ELEMENT_IDS = {
 } as const;
 
 /**
+ * Results page element IDs
+ * IDs for blueprint, tasks, and exports sections
+ */
+export const RESULTS_ELEMENT_IDS = {
+  /** Blueprint section ID */
+  BLUEPRINT_SECTION: 'blueprint-section',
+
+  /** Tasks section ID */
+  TASKS_SECTION: 'tasks-section',
+
+  /** Exports section ID */
+  EXPORTS_SECTION: 'exports-section',
+} as const;
+
+/**
  * Auth form element IDs
  */
 export const AUTH_ELEMENT_IDS = {
@@ -127,6 +142,9 @@ export const AUTH_ELEMENT_IDS = {
 
   /** Forgot password form ID */
   FORGOT_PASSWORD_FORM: 'forgot-password-form',
+
+  /** Auth callback content ID */
+  AUTH_CONTENT: 'auth-content',
 } as const;
 
 /**
@@ -138,6 +156,9 @@ export const ERROR_ELEMENT_IDS = {
 
   /** Error content ID */
   ERROR_CONTENT: 'error-content',
+
+  /** Popular pages heading ID (used in not-found page) */
+  POPULAR_PAGES_HEADING: 'popular-pages-heading',
 } as const;
 
 /**
@@ -233,6 +254,7 @@ export const ALL_ELEMENT_IDS = {
   IDEA_INPUT: IDEA_INPUT_ELEMENT_IDS,
   BLUEPRINT: BLUEPRINT_ELEMENT_IDS,
   DASHBOARD: DASHBOARD_ELEMENT_IDS,
+  RESULTS: RESULTS_ELEMENT_IDS,
   AUTH: AUTH_ELEMENT_IDS,
   ERROR: ERROR_ELEMENT_IDS,
   KEYBOARD_SHORTCUTS: KEYBOARD_SHORTCUTS_ELEMENT_IDS,
@@ -248,6 +270,7 @@ export type ClarificationElementIds = typeof CLARIFICATION_ELEMENT_IDS;
 export type IdeaInputElementIds = typeof IDEA_INPUT_ELEMENT_IDS;
 export type BlueprintElementIds = typeof BLUEPRINT_ELEMENT_IDS;
 export type DashboardElementIds = typeof DASHBOARD_ELEMENT_IDS;
+export type ResultsElementIds = typeof RESULTS_ELEMENT_IDS;
 export type AuthElementIds = typeof AUTH_ELEMENT_IDS;
 export type ErrorElementIds = typeof ERROR_ELEMENT_IDS;
 export type KeyboardShortcutsElementIds = typeof KEYBOARD_SHORTCUTS_ELEMENT_IDS;
