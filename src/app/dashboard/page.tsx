@@ -18,6 +18,7 @@ import {
   API_ERROR_MESSAGES,
   ROUTES,
   API_ROUTES,
+  HTTP_METHODS,
   DASHBOARD_PAGE_CONTENT,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
@@ -328,7 +329,7 @@ export default function DashboardPage() {
       setDeletingId(id);
 
       const response = await fetchWithTimeout(`${API_ROUTES.IDEAS}/${id}`, {
-        method: 'DELETE',
+        method: HTTP_METHODS.DELETE,
       });
 
       if (!response.ok) {

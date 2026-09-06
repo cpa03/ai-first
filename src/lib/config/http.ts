@@ -52,6 +52,8 @@ export const STATUS_CODES = {
 export const HTTP_HEADERS = {
   CONTENT_TYPE: 'Content-Type',
   APPLICATION_JSON: 'application/json',
+  TEXT_PLAIN: 'text/plain',
+  TEXT_HTML: 'text/html',
   JSON_CONTENT_TYPE: { 'Content-Type': 'application/json' },
   X_REQUEST_ID: 'X-Request-ID',
   X_CORRELATION_ID: 'X-Correlation-ID',
