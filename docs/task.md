@@ -12,6 +12,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ## StorX Feature Analysis & Integration Tasks
 
+### [STRENGTHEN] Strengthen LoadingSpinner Atomic Live Region Announcements
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-09-03
+- **Details**: Strengthened `LoadingSpinner` accessibility by setting `aria-atomic="true"` on the elapsed time live region span (`aria-live="polite"`), ensuring screen readers present full elapsed time status updates atomically without fragmenting. Verified in `tests/LoadingSpinner.test.tsx`.
+
+### [CONNECT] Connect LoadingSpinner Elapsed Time Label Formatting to Central Component Configs
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-09-03
+- **Details**: Connected `LoadingSpinner` elapsed time text formatting directly to `LOADING_SPINNER_LABELS.ELAPSED_TIME_FORMAT` in `src/lib/config/component-labels.ts`, eliminating inline string concatenation and reinforcing system-wide label modularity.
+
 ### [STRENGTHEN] Strengthen LoadingSpinner Accessibility and Non-Redundant Screen Reader Announcements
 - **Priority**: MEDIUM
 - **Status**: COMPLETE

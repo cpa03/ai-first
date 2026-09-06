@@ -58,7 +58,6 @@ watch_dir = ".next"
 # Assets binding for static files served by Cloudflare
 [assets]
 directory = ".open-next/assets"
-binding = "ASSETS"
 
 # ============================================================
 # Production Environment
