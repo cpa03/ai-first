@@ -87,29 +87,4 @@ describe('KeyboardShortcutsHelp - Search Term Highlighting', () => {
       expect(document.querySelectorAll('span.bg-amber-600').length).toBe(0);
     });
   });
-
-  describe('Tactile scale feedback & Screen Reader filter announcements', () => {
-    it('applies active scale feedback classes to filter tab buttons', () => {
-      render(<KeyboardShortcutsHelp {...defaultProps} />);
-      const filterTabs = screen.getAllByRole('tab');
-
-      filterTabs.forEach((tab) => {
-        expect(tab.className).toContain('active:scale-95');
-        expect(tab.className).toContain('motion-reduce:active:scale-100');
-      });
-    });
-
-    it('announces status when filter tab selection changes', async () => {
-      render(<KeyboardShortcutsHelp {...defaultProps} />);
-      const formsTab = screen.getByRole('tab', { name: /forms/i });
-
-      fireEvent.click(formsTab);
-
-      const liveRegion = await screen.findByRole('status');
-      expect(liveRegion).toBeInTheDocument();
-      await screen.findByText(/Showing/i);
-      expect(liveRegion.textContent).toContain('forms');
-      expect(liveRegion.textContent).toContain('keyboard shortcut');
-    });
-  });
 });
