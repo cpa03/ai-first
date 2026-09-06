@@ -144,11 +144,20 @@ export function validateUserResponses(responses: unknown): ValidationResult {
     });
   }
 
-  for (const [key, value] of Object.entries(responses)) {
-    if (
-      typeof key !== 'string' ||
-      key.length > VALIDATION_LIMITS_CONFIG.MAX_RESPONSE_KEY_LENGTH
-    ) {
+  // PERFORMANCE OPTIMIZATION (⚡ Bolt):
+  // Replaced Object.entries(responses) with a for...in loop using Object.prototype.hasOwnProperty.
+  // This eliminates tuple array allocations for every key-value pair.
+  const obj = responses as Record<string, unknown>;
+  const hasOwn = Object.prototype.hasOwnProperty;
+
+  for (const key in obj) {
+    if (!hasOwn.call(obj, key)) {
+      continue;
+    }
+
+    const value = obj[key];
+
+    if (key.length > VALIDATION_LIMITS_CONFIG.MAX_RESPONSE_KEY_LENGTH) {
       errors.push({
         field: 'userResponses',
         message: VALIDATION_ERROR_MESSAGES.USER_RESPONSES.INVALID_KEY(key),
