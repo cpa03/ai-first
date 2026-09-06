@@ -36,6 +36,7 @@ import {
   SHAKE,
   FADE_IN,
   SUCCESS_POP,
+  HTTP_METHODS,
 } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
@@ -53,6 +54,7 @@ import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { PLATFORM } from '@/lib/dom-utils';
 import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 import { ML_CLASSES } from '@/lib/config/spacing';
+import { HTTP_METHODS } from '@/lib/config/http';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
@@ -234,7 +236,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
       try {
         const response = await fetchWithTimeout(API_ENDPOINTS.IDEAS, {
-          method: 'POST',
+          method: HTTP_METHODS.POST,
           headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
           body: JSON.stringify({ idea }),
         });

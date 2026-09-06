@@ -28,12 +28,14 @@ import {
   BREATHE,
   REMAINING_PATTERNS,
   ANIMATION_CLASSES,
+  HTTP_METHODS,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import {
   CLARIFY_PARAGRAPH_MARGIN,
   CLARIFY_EMPTY_STATE,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { HTTP_METHODS } from '@/lib/config/http';
 
 const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
@@ -221,7 +223,7 @@ function ClarifyPageContent() {
           const response = await fetchWithTimeout(
             `${API_ROUTES.IDEAS}/${ideaId}`,
             {
-              method: 'PUT',
+              method: HTTP_METHODS.PUT,
               headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
               body: JSON.stringify({
                 status: IDEA_STATUS_CONFIG.TYPES.CLARIFIED,

@@ -54,6 +54,7 @@ import {
   SPACING_UTILITY_PATTERNS,
   RESPONSIVE_FLEX_PATTERNS,
   API_CONFIG,
+  HTTP_METHODS,
 } from '@/lib/config';
 import {
   DASHBOARD_FILTER_BAR,
@@ -69,6 +70,7 @@ import {
   SR_ONLY,
   RELATIVE,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { HTTP_METHODS } from '@/lib/config/http';
 import {
   PRIMARY_RING,
   COMPONENT_PRIMARY_PATTERNS,
@@ -328,7 +330,7 @@ export default function DashboardPage() {
       setDeletingId(id);
 
       const response = await fetchWithTimeout(`${API_ROUTES.IDEAS}/${id}`, {
-        method: 'DELETE',
+        method: HTTP_METHODS.DELETE,
       });
 
       if (!response.ok) {
