@@ -1098,6 +1098,9 @@ export {
   COPY_URL_HINT,
   NOT_FOUND_COPY_SECTION,
   NOT_FOUND_ACTIONS,
+  TABLE_BODY_DIVIDE,
+  SKELETON_BORDER_LEFT_GRAY,
+  HIDDEN_SM_BLOCK,
 } from './remaining-hardcoded-patterns';
 
 // CSS Containment Configuration

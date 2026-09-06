@@ -31,6 +31,7 @@ import {
 import {
   RESPONSIVE_WIDTH,
   FONT_MEDIUM,
+  HIDDEN_SM_BLOCK,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { SUCCESS_STATE_COLORS } from '@/lib/config/theme';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
@@ -396,7 +397,7 @@ export default function ForgotPasswordPage() {
               {isLoading ? 'Sending...' : 'Send reset link'}
             </Button>
             <p
-              className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
+              className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center ${HIDDEN_SM_BLOCK}`}
               aria-hidden="true"
             >
               Press{' '}
