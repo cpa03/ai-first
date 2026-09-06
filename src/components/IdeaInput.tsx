@@ -368,6 +368,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           minLength={MIN_IDEA_LENGTH}
           maxLength={MAX_IDEA_LENGTH}
           showCharCount={true}
+          showWordCount={true}
           clearable={true}
           error={validationError || undefined}
           required={true}

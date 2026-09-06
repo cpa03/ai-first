@@ -76,6 +76,7 @@ export interface InputWithValidationProps extends React.InputHTMLAttributes<
   error?: string;
   helpText?: string;
   showCharCount?: boolean;
+  showWordCount?: boolean;
   minLength?: number;
   maxLength?: number;
   multiline?: boolean;
@@ -149,6 +150,7 @@ const InputWithValidationComponent = forwardRef<
       error,
       helpText,
       showCharCount = false,
+      showWordCount = false,
       minLength: _minLength,
       maxLength,
       multiline = false,
@@ -178,6 +180,8 @@ const InputWithValidationComponent = forwardRef<
     const prefersReducedMotion = usePrefersReducedMotion();
     const currentValue = typeof value === 'string' ? value : '';
     const charCount = currentValue.length;
+    const wordCount =
+      currentValue.trim() === '' ? 0 : currentValue.trim().split(/\s+/).length;
     const isValid = !error && touched;
     const isInvalid = !!error && touched;
 
@@ -775,6 +779,15 @@ const InputWithValidationComponent = forwardRef<
                     }}
                   />
                 </div>
+              )}
+              {showWordCount && wordCount > 0 && (
+                <span
+                  className={`${TYPOGRAPHY_CLASSES.SM_MEDIUM} ${TEXT_COLOR_CLASSES.MUTED}`}
+                  aria-live="polite"
+                  aria-atomic="true"
+                >
+                  {wordCount} {wordCount === 1 ? 'word' : 'words'}
+                </span>
               )}
               <span
                 className={`${TYPOGRAPHY_CLASSES.SM_MEDIUM} transition-colors ${DURATION_TAILWIND[300]} ease-out ${
