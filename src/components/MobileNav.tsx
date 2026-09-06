@@ -35,6 +35,7 @@ import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { HAMBURGER_SIZES } from '@/lib/config/icon-sizes';
 import { MOBILE_NAV_LABELS } from '@/lib/config/component-labels';
+import StatusAnnouncer from '@/components/StatusAnnouncer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -46,6 +47,7 @@ function MobileNavComponent() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [hintsVisible, setHintsVisible] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const firstMenuItemRef = useRef<HTMLAnchorElement>(null);
@@ -198,12 +200,21 @@ function MobileNavComponent() {
 
   const closeMenu = useCallback(() => {
     setIsOpen(false);
+    setAnnouncement(MOBILE_NAV_LABELS.MENU_CLOSED_ANNOUNCEMENT);
     buttonRef.current?.focus();
   }, []);
 
   const toggleMenu = useCallback(() => {
     triggerHapticFeedback();
-    setIsOpen((prev) => !prev);
+    setIsOpen((prev) => {
+      const nextState = !prev;
+      setAnnouncement(
+        nextState
+          ? MOBILE_NAV_LABELS.MENU_OPENED_ANNOUNCEMENT
+          : MOBILE_NAV_LABELS.MENU_CLOSED_ANNOUNCEMENT
+      );
+      return nextState;
+    });
   }, []);
 
   if (!isMobile) {
@@ -221,7 +232,7 @@ function MobileNavComponent() {
                     ${TRANSITION_CLASSES.SLOW} ease-out
                     border-b-2                     ${active ? COMPONENT_PRIMARY_PATTERNS.NAV_ACTIVE_LINK : `border-transparent ${GRAY_CLASSES.TEXT_800} ${COMPONENT_PRIMARY_PATTERNS.NAV_HOVER}`}
                     ${FOCUS_RING_PATTERNS.DEFAULT} rounded-t-md ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} inline-flex items-center
-                    ${active ? COMPONENT_PRIMARY_PATTERNS.NAV_ACTIVE_BG : `${GRAY_CLASSES.HOVER_BG_50}`}
+                    ${active ? COMPONENT_PRIMARY_PATTERNS.NAV_ACTIVE_BG : `${GRAY_CLASSES.HOVER_BG_50}`} active:scale-[0.98] motion-reduce:active:scale-100
                   `}
                   aria-label={link.ariaLabel}
                   aria-current={active ? 'page' : undefined}
@@ -232,6 +243,7 @@ function MobileNavComponent() {
             );
           })}
         </ul>
+        <StatusAnnouncer message={announcement} />
       </nav>
     );
   }
@@ -241,7 +253,7 @@ function MobileNavComponent() {
       <button
         ref={buttonRef}
         onClick={toggleMenu}
-        className={`${GRAY_CLASSES.TEXT_700} ${GRAY_CLASSES.HOVER_TEXT_900} ${FOCUS_RING_PATTERNS.DEFAULT} rounded-md p-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} ${TRANSITION_CLASSES.DEFAULT}`}
+        className={`${GRAY_CLASSES.TEXT_700} ${GRAY_CLASSES.HOVER_TEXT_900} ${FOCUS_RING_PATTERNS.DEFAULT} rounded-md p-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} ${TRANSITION_CLASSES.DEFAULT} active:scale-95 motion-reduce:active:scale-100`}
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-controls="mobile-menu"
@@ -279,7 +291,7 @@ function MobileNavComponent() {
             <button
               type="button"
               onClick={closeMenu}
-              className={`absolute top-4 right-4 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MEDIUM_SIZE} flex items-center justify-center rounded-full ${BG_COLORS.DEFAULT} shadow-xl ${BORDER_COLORS.LIGHT} ${GRAY_CLASSES.TEXT_700} hover:${GRAY_CLASSES.TEXT_900} hover:${GRAY_CLASSES.HOVER_BG_50} hover:shadow-2xl hover:scale-105 active:scale-95 ${TRANSITION_CLASSES.DEFAULT} ${FOCUS_RING_PATTERNS.DEFAULT} animate-fade-in`}
+              className={`absolute top-4 right-4 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MEDIUM_SIZE} flex items-center justify-center rounded-full ${BG_COLORS.DEFAULT} shadow-xl ${BORDER_COLORS.LIGHT} ${GRAY_CLASSES.TEXT_700} hover:${GRAY_CLASSES.TEXT_900} hover:${GRAY_CLASSES.HOVER_BG_50} hover:shadow-2xl hover:scale-105 active:scale-95 motion-reduce:active:scale-100 ${TRANSITION_CLASSES.DEFAULT} ${FOCUS_RING_PATTERNS.DEFAULT} animate-fade-in`}
               aria-label={`${MOBILE_NAV_CONFIG.CLOSE_ARIA_LABEL} (Escape)`}
               title={MOBILE_NAV_LABELS.CLOSE_TITLE}
             >
@@ -341,7 +353,7 @@ function MobileNavComponent() {
                         w-full text-left px-6 py-4 text-lg font-semibold
                         ${TRANSITION_CLASSES.SLOW} ease-out rounded-md
                         border-l-[${MOBILE_NAV_TAILWIND.ACTIVE_LINK_BORDER_W}] ${active ? PRIMARY_ACTIVE_LINK : `border-transparent ${GRAY_CLASSES.TEXT_800} hover:text-primary-600 ${GRAY_CLASSES.HOVER_BG_50}`}
-                        ${FOCUS_RING_PATTERNS.DEFAULT} ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center justify-between
+                        ${FOCUS_RING_PATTERNS.DEFAULT} ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center justify-between active:scale-[0.98] motion-reduce:active:scale-100
                       `}
                       aria-label={link.ariaLabel}
                       aria-current={active ? 'page' : undefined}
@@ -381,6 +393,7 @@ function MobileNavComponent() {
           </div>
         </>
       )}
+      <StatusAnnouncer message={announcement} />
     </nav>
   );
 }

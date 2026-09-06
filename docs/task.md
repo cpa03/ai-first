@@ -12,6 +12,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ## StorX Feature Analysis & Integration Tasks
 
+### [STRENGTHEN] Strengthen MobileNav Tactile Feedback and Screen Reader Announcements
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-09-06
+- **Details**: Strengthened `MobileNav` accessibility with live screen reader announcements via `<StatusAnnouncer>` when expanding or collapsing the menu and added active tactile scale feedback (`active:scale-95`, `active:scale-[0.98]`) across navigation controls. Verified in `tests/MobileNav.test.tsx`.
+
+### [CONNECT] Connect MobileNav Announcement Labels to Central Component Configs
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-09-06
+- **Details**: Connected `MobileNav` screen reader announcements directly to `MOBILE_NAV_LABELS` in `src/lib/config/component-labels.ts`, eliminating hardcoded strings.
+
 ### [STRENGTHEN] Strengthen LoadingSpinner Accessibility and Non-Redundant Screen Reader Announcements
 - **Priority**: MEDIUM
 - **Status**: COMPLETE
