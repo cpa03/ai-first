@@ -23,6 +23,7 @@ import { FADE_IN } from '@/lib/config/animation-classes';
 import {
   SKELETON_FULL_THIRD,
   FLEX_1,
+  DELIVERABLE_ACCENT_BORDER,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
@@ -113,7 +114,7 @@ function TaskManagementSkeletonComponent() {
             }}
           >
             <div
-              className={`${CARD_PATTERNS.BASE} border-l-4 border-l-gray-200`}
+              className={`${CARD_PATTERNS.BASE} ${DELIVERABLE_ACCENT_BORDER}`}
             >
               {/* Deliverable header */}
               <div className={FLEX_PATTERNS.BETWEEN}>
