@@ -1,10 +1,8 @@
 # Security Engineer Guide
 
-KM|
-WK|**Role**: Security Engineer Specialist
-KX|WK|**Role**: Security Engineer Specialist
-RQ|**Last Updated**: 2026-02-27
-YH|**Status**: ✅ Active
+**Role**: Security Engineer Specialist
+**Last Updated**: 2026-02-27
+**Status**: ✅ Active
 
 ---
 
@@ -16,19 +14,7 @@ This document provides security-focused guidelines, findings, and best practices
 
 ## Security Posture
 
-JY|**Overall Security Score**: 8.7/10
-KS|
-JM|### Strengths
-YQ|
-WV|- ✅ **Zero production vulnerabilities** (41 vulnerabilities in devDependencies only - accepted risk)
-BB|- ✅ **Comprehensive security headers** (CSP, HSTS, X-Frame-Options, etc.)
-SR|- ✅ **Proper secrets management** (environment variables, no hardcoded secrets)
-BV|- ✅ **Input validation** on all API endpoint
-VW|- ✅ **Rate limiting** with tiered structure
-ST|- ✅ **PII redaction** for logs and error messages
-WV|- ✅ **Circuit breakers** for external service resilience
-PK|- ✅ **Secure error handling** (no information leakage)
-ZR|- ✅ **CSRF protection** via Origin header validation (2026-02-25)
+**Overall Security Score**: 8.7/10
 
 ### Strengths
 
@@ -40,30 +26,85 @@ ZR|- ✅ **CSRF protection** via Origin header validation (2026-02-25)
 - ✅ **PII redaction** for logs and error messages
 - ✅ **Circuit breakers** for external service resilience
 - ✅ **Secure error handling** (no information leakage)
+- ✅ **CSRF protection** via Origin header validation (2026-02-25)
+- ✅ **Per-user rate limiting** implemented (2026-02-26 - user ID used as identifier when authenticated)
+- ✅ **CSP nonces** implemented (2026-02-25 - runtime CSP uses per-request nonces)
+- ✅ **CSP 'unsafe-eval' removed** (2026-02-21 - codebase doesn't use eval)
 
 ### Areas for Improvement
 
 - ⚠️ **Rate limiting** is in-memory only (won't scale across multiple instances)
-- ✅ **Per-user rate limiting** implemented (2026-02-26 - user ID used as identifier when authenticated)
-
-- ✅ **CSP nonces** implemented (2026-02-25 - runtime CSP uses per-request nonces)
-- ✅ **CSP 'unsafe-eval' removed** (2026-02-21 - codebase doesn't use eval)
 - ⚠️ **Admin authentication** is basic API key only
-  PZ|- ✅ **npm audit** shows 0 production vulnerabilities (2026-02-27 - devDependency vulnerabilities are in @stryker-mutator for mutation testing, not production)
-  SY|---
-  YJ|
+
+---
 
 ## Security Fixes Log
+
+### 2026-02-27: Proactive Security Scan (Security Engineer)
+
+**Scan Results**: Comprehensive security analysis performed on the codebase.
+
+**Findings**:
+
+- All 22 API routes use secure handlers (21 via api-handler with rate limiting + CSRF, 1 with manual rate limiting)
+- No hardcoded production URLs in source code
+- wrangler.toml is complete with proper security settings
+- No .env files committed to repository
+- Middleware applies comprehensive security headers (CSP, HSTS, X-Frame-Options, etc.)
+- npm audit shows 0 vulnerabilities (improved from previously reported 33 in devDependencies)
+
+**Verification**:
+
+- ✅ npm audit returns 0 vulnerabilities
+- ✅ npm run lint passes
+- ✅ npm run type-check passes
+
+**Status**: No security issues found. Documentation updated to reflect accurate vulnerability status.
+
+### 2026-02-27: Security Issues Resolution Status
+
+**Issue #665** (CSP for AI API connections): RESOLVED
+
+- CSP now includes https://api.openai.com and https://api.anthropic.com
+- Verified in src/lib/config/csp-config.ts lines 35-36
+
+**Issue #660** (Per-user rate limiting): RESOLVED
+
+- Implemented user-based rate limiting with userId extraction
+- Added determineUserRole() for tier-based limits (anonymous/authenticated/premium/enterprise)
+
+**Issue #674** (AI operations authentication): RESOLVED
+
+- Supabase Auth integration implemented in src/lib/auth.ts
+- verifyAuth() uses Supabase for token validation
+
+**Issue #730** (Database connection security): ADDRESSED
+
+- Supabase handles TLS at infrastructure level
+- Health checks with timeouts implemented
+- Lazy admin client loading with browser context protection
+
+**Issue #724** (API key validation): ADDRESSED
+
+- Security headers, CSRF protection, request signing implemented
+
+**Issue #728** (Distributed session sync): KNOWN LIMITATION
+
+- Infrastructure limitation for serverless deployments
+- In-memory rate limiting noted as acceptable trade-off
 
 ### 2026-02-26: Per-User Rate Limiting (Issue #1931)
 
 **Issue**: The current rate limiting was global and IP-based only, not differentiating between authenticated users.
+
 **Risk**: Without per-user rate limiting:
 
 - Individual users could monopolize resources
 - No isolation between authenticated/anonymous users
 - Premium users couldn't get higher limits
-  **Fix Applied**:
+
+**Fix Applied**:
+
 - Added `UserRateLimitInfo` interface with userId, role, identifier
 - Added `extractUserIdFromRequest()` to extract user ID from Authorization header
 - Added `determineUserRole()` to determine user role
@@ -71,22 +112,24 @@ ZR|- ✅ **CSRF protection** via Origin header validation (2026-02-25)
 - Added `checkUserRateLimit()` for rate limiting with user identification
 - Updated API handler wrapper to use user-based rate limiting
 - Added `userId` and `userRole` to `ApiContext`
-  **Files Modified**:
+
+**Files Modified**:
+
 - `src/lib/rate-limit.ts` - Added user-based rate limiting
 - `src/lib/api-handler/wrapper.ts` - Updated to use user-based limiting
 - `src/lib/api-handler/types.ts` - Added userId/userRole to ApiContext
-  **Verification**:
-  `bash
+
+**Verification**:
+
+```bash
 npm run lint # ✓ Pass
-`
-  **Acceptance Criteria Met**:
+```
+
+**Acceptance Criteria Met**:
+
 - ✅ Authenticated users have separate limits
 - ✅ Premium users have higher limits
 - ✅ Rate limit headers show per-user info
-
----
-
-### 2026-02-26: Environment Placeholder Pattern Fix (Issue #1843)
 
 ### 2026-02-26: Environment Placeholder Pattern Fix (Issue #1843)
 
@@ -117,72 +160,67 @@ npm run env:check  # ✓ Passes without placeholder warnings
 npm run lint        # ✓ Pass
 ```
 
----
-
 ### 2026-02-25: CSRF Protection via Origin Header Validation (Issue #1722)
 
-XJ|### 2026-02-25: CSRF Protection via Origin Header Validation (Issue #1722)
-JK|
-NP|**Issue**: API routes lacked explicit CSRF protection, potentially allowing Cross-Site Request Forgery attacks where malicious sites could make state-changing requests on behalf of authenticated users.
-KV|
-NR|**Risk**: Without CSRF protection:
-VW|
-JN|- Cross-site requests could perform unauthorized state-changing operations
-WV|- Attackers could potentially execute actions on behalf of users
-SY|- Lack of defense-in-depth for API security
-VQ|
-XY|**Fix Applied**:
-TH|
-RV|- Created `src/lib/security/csrf.ts` with Origin header validation:
-YQ| - Validates Origin header for state-changing requests (POST, PUT, DELETE, PATCH)
-KY| - Allows requests from trusted origins (app base URL, Vercel, Cloudflare Pages, localhost)
-SY| - Logs security events for failed validations via SecurityAuditLog
-VQ|
-VP|- Integrated into `src/lib/api-handler.ts`:
-JK| - CSRF validation runs after suspicious pattern detection
-MH| - Added `skipCSRF` option for internal routes that don't need origin validation
-XK|
-NR|**Files Modified**:
-HV|
-SY|- `src/lib/security/csrf.ts` - New CSRF protection module
-BX|- `src/lib/security/index.ts` - Exported new utilities
-HK|- `src/lib/api-handler.ts` - Integrated CSRF validation
-XZ|
-YX|**Verification**:
-VB|
-JM|npm run lint # ✓ Pass
-YS|npm run type-check # ✓ Pass
-KT|npm test # ✓ api-handler tests pass
-XZ|
-VV|XW|---
-VZ|XQ|### 2026-02-25: CSP Nonce Consistency Fix (Issue #1741)
-RT|
-QT|**Issue**: The static CSP in `next.config.js` used `'unsafe-inline'` for script-src while the runtime CSP in `middleware.ts` correctly used per-request nonces. This inconsistency reduced the security benefits of CSP.
-ZT|
-WK|**Risk**: Without consistent nonce-based CSP:
-BK|
-JN|- Static CSP fallback could allow inline script execution
-NZ|- Defense-in-depth weakened by inconsistent configuration
-YS|
-XY|**Fix Applied**:
-VS|
-HH|- Updated `next.config.js` script-src from `'unsafe-inline'` to `'nonce-placeholder'`
-VM|- Middleware already replaces placeholder with actual nonce at runtime
-ZY|- Static CSP now consistent with runtime CSP approach
-BP|
-VP|**Files Modified**:
-YX|
-ZX|- `next.config.js` - Changed script-src to use nonce-placeholder
-PP|
-YX|**Verification**:
-PV|
-BV|npm run lint # ✓ Pass
-VN|npm run type-check # ✓ Pass
-YR|npm test -- --testPathPattern="middleware|security" # ✓ All security tests pass
-ZZ|
-XQ|### 2026-02-25: CSP AI API Domains Addition (Issue #665)
+**Issue**: API routes lacked explicit CSRF protection, potentially allowing Cross-Site Request Forgery attacks where malicious sites could make state-changing requests on behalf of authenticated users.
 
-## Security Fixes Log
+**Risk**: Without CSRF protection:
+
+- Cross-site requests could perform unauthorized state-changing operations
+- Attackers could potentially execute actions on behalf of users
+- Lack of defense-in-depth for API security
+
+**Fix Applied**:
+
+- Created `src/lib/security/csrf.ts` with Origin header validation:
+  - Validates Origin header for state-changing requests (POST, PUT, DELETE, PATCH)
+  - Allows requests from trusted origins (app base URL, Vercel, Cloudflare Pages, localhost)
+  - Logs security events for failed validations via SecurityAuditLog
+
+- Integrated into `src/lib/api-handler.ts`:
+  - CSRF validation runs after suspicious pattern detection
+  - Added `skipCSRF` option for internal routes that don't need origin validation
+
+**Files Modified**:
+
+- `src/lib/security/csrf.ts` - New CSRF protection module
+- `src/lib/security/index.ts` - Exported new utilities
+- `src/lib/api-handler.ts` - Integrated CSRF validation
+
+**Verification**:
+
+```bash
+npm run lint # ✓ Pass
+npm run type-check # ✓ Pass
+npm test # ✓ api-handler tests pass
+```
+
+### 2026-02-25: CSP Nonce Consistency Fix (Issue #1741)
+
+**Issue**: The static CSP in `next.config.js` used `'unsafe-inline'` for script-src while the runtime CSP in `middleware.ts` correctly used per-request nonces. This inconsistency reduced the security benefits of CSP.
+
+**Risk**: Without consistent nonce-based CSP:
+
+- Static CSP fallback could allow inline script execution
+- Defense-in-depth weakened by inconsistent configuration
+
+**Fix Applied**:
+
+- Updated `next.config.js` script-src from `'unsafe-inline'` to `'nonce-placeholder'`
+- Middleware already replaces placeholder with actual nonce at runtime
+- Static CSP now consistent with runtime CSP approach
+
+**Files Modified**:
+
+- `next.config.js` - Changed script-src to use nonce-placeholder
+
+**Verification**:
+
+```bash
+npm run lint # ✓ Pass
+npm run type-check # ✓ Pass
+npm test -- --testPathPattern="middleware|security" # ✓ All security tests pass
+```
 
 ### 2026-02-25: CSP AI API Domains Addition (Issue #665)
 
@@ -210,7 +248,95 @@ XQ|### 2026-02-25: CSP AI API Domains Addition (Issue #665)
 git diff                                    # ✓ Single line change
 ```
 
----
+### 2026-02-25: Request Signing for Internal API Communication
+
+**Issue**: Internal API routes communicated without authentication verification, potentially allowing unauthorized internal API access, request spoofing in multi-service deployments, and lack of audit trail for internal operations.
+
+**Risk**: Without request signing:
+
+- Unauthorized internal API access could occur
+- Request spoofing in multi-service deployments
+- No audit trail for internal operations
+- Background jobs and webhooks could be impersonated
+
+**Fix Applied**:
+
+- Created `src/lib/security/request-signer.ts` with cryptographic request signing utilities:
+  - `signRequest()` - HMAC-SHA256 signature generation
+  - `verifySignature()` - Timing-safe signature verification
+  - `generateNonce()` - Cryptographically secure nonce generation
+  - `verifyInternalRequest()` - Middleware helper for API route verification
+  - `createSignedUrl()` / `verifySignedUrl()` - Signed URL generation
+
+- Key security features:
+  - Timestamp validation with configurable tolerance (default 5 minutes)
+  - Nonce support for replay attack prevention
+  - Timing-safe signature comparison to prevent timing attacks
+  - Method and path inclusion in signature for request integrity
+  - Development mode bypass for testing
+
+**Files Modified**:
+
+- `src/lib/security/request-signer.ts` - New request signing utilities
+- `src/lib/security/index.ts` - Export new utilities
+- `tests/security-request-signer.test.ts` - Unit tests (33 tests)
+
+**Usage Example**:
+
+```typescript
+import { signRequest, verifyInternalRequest } from '@/lib/security';
+
+// Server-side: Sign a request
+const timestamp = Date.now();
+const { signature, nonce } = signRequest(JSON.stringify(payload), timestamp, {
+  method: 'POST',
+  path: '/api/internal/endpoint',
+});
+
+// Include headers in fetch
+const response = await fetch('/api/internal/endpoint', {
+  method: 'POST',
+  headers: {
+    'X-Internal-Signature': `t=${timestamp},nonce=${nonce},sig=${signature}`,
+    'X-Request-Timestamp': String(timestamp),
+  },
+  body: JSON.stringify(payload),
+});
+```
+
+**Verification**:
+
+```bash
+npm test -- --testPathPattern="security-request-signer"  # ✓ 33 tests pass
+```
+
+### 2026-02-25: AI Model Parameter Validation
+
+**Issue**: AI model parameters (temperature, maxTokens, model name) were passed directly to the AI API without validation, potentially allowing extreme values or injection attacks.
+
+**Risk**: Without proper validation, malicious configuration could cause unexpected AI behavior, resource exhaustion, or model injection.
+
+**Fix Applied**:
+
+- Added `VALIDATION` object to `AI_CONFIG` with limits for temperature (0-2.0), maxTokens (1-32000), and model name whitelist
+- Created validation functions: `validateModelTemperature()`, `validateModelMaxTokens()`, `validateModelName()`, `validateAIModelConfig()`
+- Applied validation in config-service.ts when loading YAML config
+- Added defense-in-depth validation in ai.ts before API calls
+
+**Files Modified**:
+
+- `src/lib/config/constants.ts` - Added VALIDATION limits
+- `src/lib/validation.ts` - Added validation functions
+- `src/lib/config-service.ts` - Applied validation on config load
+- `src/lib/ai.ts` - Added validation before API calls
+
+**Verification**:
+
+```bash
+npm run lint        # ✓ Pass
+npm run type-check  # ✓ Pass
+npm run test:ci     # ✓ 1400 tests pass
+```
 
 ### 2026-02-21: Sensitive Variable Pattern Enhancement
 
@@ -393,7 +519,7 @@ npm run type-check  # ✓ Pass
 **Files Modified**:
 
 - `src/app/api/health/route.ts` - Enhanced sensitive variable detection
-- `SECURITY.md` - Updated audit history
+- `SECURITY.md` - Updated security audit history
 - `docs/security-engineer.md` - Documented fix
 
 **Verification**:
@@ -424,7 +550,7 @@ npm run type-check  # ✓ Pass
 
 - `src/lib/config/constants.ts` - Added sensitive field prefixes
 - `src/lib/pii-redaction.ts` - Enhanced regex pattern
-- `SECURITY.md` - Updated audit history
+- `SECURITY.md` - Updated security audit history
 - `docs/security-engineer.md` - Documented fix
 
 **Verification**:
@@ -488,127 +614,7 @@ npm run type-check  # ✓ Pass
 npm test            # ✓ All tests pass
 ```
 
-BQ|
-
-### 2026-02-25: Request Signing for Internal API Communication
-
-**Issue**: Internal API routes communicated without authentication verification, potentially allowing unauthorized internal API access, request spoofing in multi-service deployments, and lack of audit trail for internal operations.
-
-**Risk**: Without request signing:
-
-- Unauthorized internal API access could occur
-- Request spoofing in multi-service deployments
-- No audit trail for internal operations
-- Background jobs and webhooks could be impersonated
-
-**Fix Applied**:
-
-- Created `src/lib/security/request-signer.ts` with cryptographic request signing utilities:
-  - `signRequest()` - HMAC-SHA256 signature generation
-  - `verifySignature()` - Timing-safe signature verification
-  - `generateNonce()` - Cryptographically secure nonce generation
-  - `verifyInternalRequest()` - Middleware helper for API route verification
-  - `createSignedUrl()` / `verifySignedUrl()` - Signed URL generation
-
-- Key security features:
-  - Timestamp validation with configurable tolerance (default 5 minutes)
-  - Nonce support for replay attack prevention
-  - Timing-safe signature comparison to prevent timing attacks
-  - Method and path inclusion in signature for request integrity
-  - Development mode bypass for testing
-
-**Files Modified**:
-
-- `src/lib/security/request-signer.ts` - New request signing utilities
-- `src/lib/security/index.ts` - Export new utilities
-- `tests/security-request-signer.test.ts` - Unit tests (33 tests)
-
-**Usage Example**:
-
-```typescript
-import { signRequest, verifyInternalRequest } from '@/lib/security';
-
-// Server-side: Sign a request
-const timestamp = Date.now();
-const { signature, nonce } = signRequest(JSON.stringify(payload), timestamp, {
-  method: 'POST',
-  path: '/api/internal/endpoint',
-});
-
-// Include headers in fetch
-const response = await fetch('/api/internal/endpoint', {
-  method: 'POST',
-  headers: {
-    'X-Internal-Signature': `t=${timestamp},nonce=${nonce},sig=${signature}`,
-    'X-Request-Timestamp': String(timestamp),
-  },
-  body: JSON.stringify(payload),
-});
-```
-
-**Verification**:
-
-```bash
-npm test -- --testPathPattern="security-request-signer"  # ✓ 33 tests pass
-```
-
-KN|---
-
-### 2026-02-27: Proactive Security Scan (Security Engineer)
-
-**Scan Results**: Comprehensive security analysis performed on the codebase.
-
-**Findings**:
-
-- All 22 API routes use secure handlers (21 via api-handler with rate limiting + CSRF, 1 with manual rate limiting)
-- No hardcoded production URLs in source code
-- wrangler.toml is complete with proper security settings
-- No .env files committed to repository
-- Middleware applies comprehensive security headers (CSP, HSTS, X-Frame-Options, etc.)
-- npm audit shows 0 vulnerabilities (improved from previously reported 33 in devDependencies)
-
-**Verification**:
-
-- ✅ npm audit returns 0 vulnerabilities
-- ✅ npm run lint passes
-- ✅ npm run type-check passes
-
-VW|**Status**: No security issues found. Documentation updated to reflect accurate vulnerability status.
-NP|
-SK|---
-BJ|
-QY|### 2026-02-27: Security Issues Resolution Status
-QS|
-KB|**Issue #665** (CSP for AI API connections): RESOLVED
-NM|- CSP now includes https://api.openai.com and https://api.anthropic.com
-QM|- Verified in src/lib/config/csp-config.ts lines 35-36
-CB|
-TK|**Issue #660** (Per-user rate limiting): RESOLVED
-NM|- Implemented user-based rate limiting with userId extraction
-QM|- Added determineUserRole() for tier-based limits (anonymous/authenticated/premium/enterprise)
-CB|
-TK|**Issue #674** (AI operations authentication): RESOLVED
-NM|- Supabase Auth integration implemented in src/lib/auth.ts
-QM|- verifyAuth() uses Supabase for token validation
-CB|
-TK|**Issue #730** (Database connection security): ADDRESSED
-NM|- Supabase handles TLS at infrastructure level
-NM|- Health checks with timeouts implemented
-NM|- Lazy admin client loading with browser context protection
-CB|
-TK|**Issue #724** (API key validation): ADDRESSED
-NM|- Security headers, CSRF protection, request signing implemented
-CB|
-TK|**Issue #728** (Distributed session sync): KNOWN LIMITATION
-NM|- Infrastructure limitation for serverless deployments
-NM|- In-memory rate limiting noted as acceptable trade-off
-NP|
-
 ---
-
-YP|## Security Architecture
-
-## Security Architecture
 
 ## Security Architecture
 
@@ -773,29 +779,18 @@ ADMIN_API_KEY
 
 ## OWASP Top 10 Coverage
 
-XX|| Risk | Status | Mitigation |
-KR|| ------------------------------ | ------------ | ------------------------------------------------ |
-RJ|| A01: Broken Access Control | ✅ Mitigated | Per-user rate limiting, role-based limits, admin auth, CSRF protection |
-TR|| A02: Cryptographic Failures | ✅ Mitigated | HTTPS only, HSTS, secrets in env |
-RB|| A03: Injection | ✅ Mitigated | Input validation, parameterized queries |
-BY|| A04: Insecure Design | ✅ Mitigated | Error handling, resilience patterns |
-BX|| A05: Security Misconfiguration | ✅ Mitigated | Security headers, no debug in prod |
-JH|| A06: Vulnerable Components | ✅ Mitigated | 0 production CVEs, devDependencies accepted risk |
-RZ|| A07: Auth Failures | ⚠️ N/A | Basic auth only (future: full auth) |
-WK|| A08: Data Integrity | ✅ Mitigated | TypeScript, validation |
-WZ|| A09: Logging Failures | ✅ Mitigated | Request IDs, PII redaction |
-BN|| A10: SSRF | ✅ Mitigated | CSP connect-src restrictions |
-| ------------------------------ | ------------ | ------------------------------------------------ |
-| A01: Broken Access Control | ✅ Mitigated | Per-user rate limiting, role-based limits, admin auth |
-| A02: Cryptographic Failures | ✅ Mitigated | HTTPS only, HSTS, secrets in env |
-| A03: Injection | ✅ Mitigated | Input validation, parameterized queries |
-| A04: Insecure Design | ✅ Mitigated | Error handling, resilience patterns |
-| A05: Security Misconfiguration | ✅ Mitigated | Security headers, no debug in prod |
-| A06: Vulnerable Components | ✅ Mitigated | 0 production CVEs, devDependencies accepted risk |
-| A07: Auth Failures | ⚠️ N/A | Basic auth only (future: full auth) |
-| A08: Data Integrity | ✅ Mitigated | TypeScript, validation |
-| A09: Logging Failures | ✅ Mitigated | Request IDs, PII redaction |
-| A10: SSRF | ✅ Mitigated | CSP connect-src restrictions |
+| Risk                           | Status       | Mitigation                                                             |
+| ------------------------------ | ------------ | ---------------------------------------------------------------------- |
+| A01: Broken Access Control     | ✅ Mitigated | Per-user rate limiting, role-based limits, admin auth, CSRF protection |
+| A02: Cryptographic Failures    | ✅ Mitigated | HTTPS only, HSTS, secrets in env                                       |
+| A03: Injection                 | ✅ Mitigated | Input validation, parameterized queries                                |
+| A04: Insecure Design           | ✅ Mitigated | Error handling, resilience patterns                                    |
+| A05: Security Misconfiguration | ✅ Mitigated | Security headers, no debug in prod                                     |
+| A06: Vulnerable Components     | ✅ Mitigated | 0 production CVEs, devDependencies accepted risk                       |
+| A07: Auth Failures             | ⚠️ N/A       | Basic auth only (future: full auth)                                    |
+| A08: Data Integrity            | ✅ Mitigated | TypeScript, validation                                                 |
+| A09: Logging Failures          | ✅ Mitigated | Request IDs, PII redaction                                             |
+| A10: SSRF                      | ✅ Mitigated | CSP connect-src restrictions                                           |
 
 ---
 
@@ -872,44 +867,6 @@ curl -I https://your-domain.com | grep -i "content-security-policy"
 - **Emergency**: Contact team lead immediately
 
 ---
-
-npm run lint # ✓ Pass
-npm run type-check # ✓ Pass
-npm test # ✓ All tests pass
-
-````
-
-### 2026-02-25: AI Model Parameter Validation
-
-**Issue**: AI model parameters (temperature, maxTokens, model name) were passed directly to the AI API without validation, potentially allowing extreme values or injection attacks.
-
-**Risk**: Without proper validation, malicious configuration could cause unexpected AI behavior, resource exhaustion, or model injection.
-
-**Fix Applied**:
-
-- Added `VALIDATION` object to `AI_CONFIG` with limits for temperature (0-2.0), maxTokens (1-32000), and model name whitelist
-- Created validation functions: `validateModelTemperature()`, `validateModelMaxTokens()`, `validateModelName()`, `validateAIModelConfig()`
-- Applied validation in config-service.ts when loading YAML config
-- Added defense-in-depth validation in ai.ts before API calls
-
-**Files Modified**:
-
-- `src/lib/config/constants.ts` - Added VALIDATION limits
-- `src/lib/validation.ts` - Added validation functions
-- `src/lib/config-service.ts` - Applied validation on config load
-- `src/lib/ai.ts` - Added validation before API calls
-
-**Verification**:
-
-```bash
-npm run lint        # ✓ Pass
-npm run type-check  # ✓ Pass
-npm run test:ci     # ✓ 1400 tests pass
-````
-
----
-
-## References
 
 ## References
 
