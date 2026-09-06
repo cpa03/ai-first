@@ -203,7 +203,7 @@ function FeatureGridComponent() {
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             →
           </kbd>
-          <span>{FEATURE_GRID_LABELS.KEYBOARD_NAV_HINT}</span>
+          <span>Use arrow keys to navigate between steps</span>
         </span>
         <span className={`${TEXT_COLORS.MUTED_LIGHT}`} aria-hidden="true">
           ·

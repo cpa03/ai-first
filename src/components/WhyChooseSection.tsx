@@ -95,7 +95,7 @@ function WhyChooseSectionComponent() {
             data-article-id={article.id}
             role="listitem"
             tabIndex={0}
-            aria-label={`${article.TITLE}: ${article.DESCRIPTION}`}
+            aria-label={`${article.TITLE}${article.DESCRIPTION}`}
             onFocus={() => handleFocus(index)}
             onBlur={handleBlur}
             onClick={() => handleClick(article.TITLE)}
@@ -145,7 +145,7 @@ function WhyChooseSectionComponent() {
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             →
           </kbd>
-          <span>{WHY_CHOOSE_SECTION_LABELS.KEYBOARD_NAV_HINT}</span>
+          <span>Navigate with arrow keys</span>
         </span>
         <span className={`${TEXT_COLOR_CLASSES.MUTED}`} aria-hidden="true">
           ·
