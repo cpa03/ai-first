@@ -68,6 +68,9 @@ import {
   MARGIN_TOP_4,
   SR_ONLY,
   RELATIVE,
+  FLOAT_ANIMATION,
+  TABLE_ROW_HOVER_LIFT,
+  TEXT_ALIGNMENT,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   PRIMARY_RING,
@@ -972,7 +975,7 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }}
                 >
                   <div
-                    className={`${DASHBOARD_PATTERNS.STEP_ICON} ${BG_COLORS.WARNING_LIGHTER} ${BORDER_COLORS.WARNING_LIGHT} ${prefersReducedMotion ? '' : 'animate-float'}`}
+                    className={`${DASHBOARD_PATTERNS.STEP_ICON} ${BG_COLORS.WARNING_LIGHTER} ${BORDER_COLORS.WARNING_LIGHT} ${prefersReducedMotion ? '' : FLOAT_ANIMATION}`}
                   >
                     <svg
                       className={`${DASHBOARD_PATTERNS.STEP_ICON_SIZE} ${TEXT_COLORS.WARNING_MEDIUM}`}
@@ -1131,8 +1134,8 @@ export default function DashboardPage() {
                   <th
                     scope="col"
                     className={TABLE_PATTERNS.header.cell.replace(
-                      'text-left',
-                      'text-right'
+                      TEXT_ALIGNMENT.LEFT,
+                      TEXT_ALIGNMENT.RIGHT
                     )}
                   >
                     {DASHBOARD_PAGE_CONTENT.TABLE.ACTIONS_HEADER}
@@ -1150,7 +1153,7 @@ export default function DashboardPage() {
                     tabIndex={selectedRowIndex === index ? 0 : -1}
                     aria-selected={selectedRowIndex === index}
                     onClick={(e) => handleRowClick(e, idea)}
-                    className={`${TABLE_PATTERNS.row.hover} table-row-lift transition-colors cursor-pointer ${
+                    className={`${TABLE_PATTERNS.row.hover} ${TABLE_ROW_HOVER_LIFT} transition-colors cursor-pointer ${
                       removingId === idea.id
                         ? 'animate-dashboard-row-remove'
                         : `animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)}`

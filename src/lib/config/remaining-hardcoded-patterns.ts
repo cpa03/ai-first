@@ -582,6 +582,34 @@ export const SKIP_LINK = 'skip-link';
 export const PEER_SR_ONLY = 'peer sr-only';
 
 /**
+ * Float animation class
+ * Used in: Dashboard page step icons
+ */
+export const FLOAT_ANIMATION = 'animate-float';
+
+/**
+ * Table row hover lift effect
+ * Used in: Dashboard page table rows
+ */
+export const TABLE_ROW_HOVER_LIFT = 'table-row-lift';
+
+/**
+ * Text alignment classes for string replacement operations
+ * Used in: DashboardSkeleton, Dashboard page table headers
+ */
+export const TEXT_ALIGNMENT = {
+  LEFT: 'text-left',
+  RIGHT: 'text-right',
+  CENTER: 'text-center',
+} as const;
+
+/**
+ * Disabled state with cursor
+ * Used in: Login page checkbox, form elements
+ */
+export const DISABLED_CURSOR = 'opacity-50 cursor-not-allowed';
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -654,4 +682,8 @@ export const REMAINING_PATTERNS = {
   GRID_COL_SPAN,
   SKIP_LINK,
   PEER_SR_ONLY,
+  FLOAT_ANIMATION,
+  TABLE_ROW_HOVER_LIFT,
+  TEXT_ALIGNMENT,
+  DISABLED_CURSOR,
 } as const;
