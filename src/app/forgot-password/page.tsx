@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
@@ -37,6 +38,11 @@ import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+
+// Micro-UX: Lazy load CopyButton for code splitting
+const CopyButton = dynamic(() => import('@/components/CopyButton'), {
+  ssr: false,
+});
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -255,7 +261,19 @@ export default function ForgotPasswordPage() {
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
             >
               We&apos;ve sent a password reset link to{' '}
-              <span className={FONT_MEDIUM}>{email}</span>
+              <span
+                className={`inline-flex items-center gap-1.5 ${FONT_MEDIUM}`}
+              >
+                {email}
+                <CopyButton
+                  textToCopy={email}
+                  variant="icon-only"
+                  label="Copy email"
+                  successLabel="Email copied!"
+                  ariaLabel="Copy email address to clipboard"
+                  showToast={false}
+                />
+              </span>
             </p>
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
