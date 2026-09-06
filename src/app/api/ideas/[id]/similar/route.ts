@@ -49,7 +49,9 @@ async function handleGet(context: ApiContext) {
     throw new ValidationError([
       {
         field: 'limit',
-        message: `Limit must be at least ${APP_CONFIG.PAGINATION.MIN_LIMIT}`,
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.LIMIT_MUST_BE_AT_LEAST(
+          APP_CONFIG.PAGINATION.MIN_LIMIT
+        ),
       },
     ]);
   }
@@ -57,7 +59,9 @@ async function handleGet(context: ApiContext) {
     throw new ValidationError([
       {
         field: 'limit',
-        message: `Limit cannot exceed ${APP_CONFIG.PAGINATION.MAX_LIMIT}`,
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.LIMIT_CANNOT_EXCEED(
+          APP_CONFIG.PAGINATION.MAX_LIMIT
+        ),
       },
     ]);
   }
@@ -78,7 +82,10 @@ async function handleGet(context: ApiContext) {
     throw new ValidationError([
       {
         field: 'threshold',
-        message: `Threshold must be between ${SIMILARITY_CONFIG.MIN_THRESHOLD} and ${SIMILARITY_CONFIG.MAX_THRESHOLD}`,
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.THRESHOLD_MUST_BE_BETWEEN(
+          SIMILARITY_CONFIG.MIN_THRESHOLD,
+          SIMILARITY_CONFIG.MAX_THRESHOLD
+        ),
       },
     ]);
   }

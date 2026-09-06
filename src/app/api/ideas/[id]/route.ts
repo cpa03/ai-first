@@ -9,6 +9,7 @@ import { validateIdeaId, sanitizeHtml } from '@/lib/validation';
 import { dbService, Idea } from '@/lib/db';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { IDEA_CONFIG, IDEA_STATUS_CONFIG, STATUS_CODES } from '@/lib/config';
+import { RESOURCE_TYPES } from '@/lib/config/modular-constants';
 
 // Type guard for valid idea status values
 function isValidStatus(status: string): status is Idea['status'] {
@@ -43,7 +44,7 @@ async function handleGet(context: ApiContext) {
   }
 
   // Verify ownership
-  verifyResourceOwnership(user.id, idea.user_id, 'idea');
+  verifyResourceOwnership(user.id, idea.user_id, RESOURCE_TYPES.IDEA);
 
   return standardSuccessResponse(
     idea,
@@ -94,7 +95,7 @@ async function handlePut(context: ApiContext) {
   }
 
   // Verify ownership
-  verifyResourceOwnership(user.id, existingIdea.user_id, 'idea');
+  verifyResourceOwnership(user.id, existingIdea.user_id, RESOURCE_TYPES.IDEA);
 
   const updates: {
     title?: string;
@@ -160,7 +161,7 @@ async function handleDelete(context: ApiContext) {
   }
 
   // Verify ownership
-  verifyResourceOwnership(user.id, existingIdea.user_id, 'idea');
+  verifyResourceOwnership(user.id, existingIdea.user_id, RESOURCE_TYPES.IDEA);
 
   await dbService.softDeleteIdea(ideaId!);
 
