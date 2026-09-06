@@ -176,9 +176,11 @@ function AutoSaveIndicatorComponent({
     const seconds = Math.floor(diff / TIME_CONVERSIONS.MS_PER_SECOND);
 
     if (seconds < 10) return AUTO_SAVE_INDICATOR_LABELS.JUST_NOW;
-    if (seconds < TIME_CONVERSIONS.SECONDS_PER_MINUTE) return `${seconds}s ago`;
+    if (seconds < TIME_CONVERSIONS.SECONDS_PER_MINUTE)
+      return AUTO_SAVE_INDICATOR_LABELS.SECONDS_AGO(seconds);
     const minutes = Math.floor(seconds / TIME_CONVERSIONS.SECONDS_PER_MINUTE);
-    if (minutes < 60) return `${minutes}m ago`;
+    if (minutes < 60)
+      return AUTO_SAVE_INDICATOR_LABELS.MINUTES_AGO(minutes);
     return timeFormatter.format(date);
   };
 
