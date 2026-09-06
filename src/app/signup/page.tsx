@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
@@ -12,6 +13,11 @@ import { useCapsLock } from '@/hooks/useCapsLock';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
+
+const CopyButton = dynamic(() => import('@/components/CopyButton'), {
+  ssr: false,
+});
+
 import {
   OAUTH_PROVIDER_COLORS,
   PASSWORD_VALIDATION_CONFIG,
@@ -636,6 +642,17 @@ export default function SignupPage() {
             <strong>{email}</strong>.{' '}
             {SIGNUP_PAGE_CONTENT.SUCCESS.MESSAGE_SUFFIX}
           </p>
+          <div
+            className={`flex items-center justify-center gap-2 ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
+          >
+            <CopyButton
+              textToCopy={email}
+              label="Copy email"
+              successLabel="Copied!"
+              ariaLabel={`Copy email address ${email}`}
+              variant="subtle"
+            />
+          </div>
           <Link
             href={ROUTES.LOGIN}
             className={`inline-block font-medium ${PRIMARY_COMBINATIONS.LINK_HOVER_LIGHT} ${PRIMARY_FOCUS_RING} rounded ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
