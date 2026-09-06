@@ -17,7 +17,6 @@ import {
 } from '@/lib/config/theme';
 import { ERROR_ELEMENT_IDS, ARIA_HEADING_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
-import { TEXT_SIZE_CLASSES } from '@/lib/config/ui-text-sizes';
 import { CONTAINER_WIDTHS } from '@/lib/config/page-layout';
 import { ROUTES } from '@/lib/config/routes';
 import { useClipboard } from '@/hooks/useClipboard';
@@ -29,6 +28,7 @@ import {
   FLEX_PATTERNS,
   TEXT_FORMAT_PATTERNS,
   MB_CLASSES,
+  REMAINING_PATTERNS,
 } from '@/lib/config';
 import { ERROR_BOUNDARY_ACTION_GROUP } from '@/lib/config/remaining-hardcoded-patterns';
 import {
@@ -238,7 +238,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                       aria-hidden="true"
                     >
                       <kbd
-                        className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
+                        className={`${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE_BORDERED} ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} ${TEXT_COLORS.SECONDARY}`}
                       >
                         Enter
                       </kbd>
@@ -259,7 +259,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                       aria-hidden="true"
                     >
                       <kbd
-                        className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
+                        className={`${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE_BORDERED} ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} ${TEXT_COLORS.SECONDARY}`}
                       >
                         Esc
                       </kbd>

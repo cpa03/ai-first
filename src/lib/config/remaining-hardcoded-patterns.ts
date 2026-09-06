@@ -582,6 +582,36 @@ export const SKIP_LINK = 'skip-link';
 export const PEER_SR_ONLY = 'peer sr-only';
 
 /**
+ * Keyboard shortcut badge pattern
+ * Used in: Auth callback, Login, Signup, Forgot password, ClarificationFlow, KeyboardShortcutHint, FooterNav
+ * Consistent styling for keyboard shortcut indicators (e.g., ⌘K, Ctrl+V)
+ */
+export const KEYBOARD_SHORTCUT_BADGE =
+  'px-1.5 py-0.5 rounded text-xs font-mono';
+
+/**
+ * Keyboard shortcut badge with border pattern
+ * Used in: LayoutErrorFallback, ErrorBoundary
+ * Badge with border for version info or status indicators
+ */
+export const KEYBOARD_SHORTCUT_BADGE_BORDERED =
+  'inline-flex items-center px-1.5 py-0.5 rounded text-xs font-sans font-medium';
+
+/**
+ * Info card container pattern
+ * Used in: HomePageClient
+ * Consistent styling for information display cards with border and padding
+ */
+export const INFO_CARD_CONTAINER = 'rounded-lg p-6 border';
+
+/**
+ * Warning card container pattern
+ * Used in: Auth callback page
+ * Consistent styling for warning display cards with border and padding
+ */
+export const WARNING_CARD_CONTAINER = 'rounded-lg p-4 border';
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -654,4 +684,8 @@ export const REMAINING_PATTERNS = {
   GRID_COL_SPAN,
   SKIP_LINK,
   PEER_SR_ONLY,
+  KEYBOARD_SHORTCUT_BADGE,
+  KEYBOARD_SHORTCUT_BADGE_BORDERED,
+  INFO_CARD_CONTAINER,
+  WARNING_CARD_CONTAINER,
 } as const;
