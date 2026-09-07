@@ -167,11 +167,15 @@ export default function DashboardPage() {
   const [selectedRowIndex, setSelectedRowIndex] = useState<number>(-1);
   const [isFilterClearing, setIsFilterClearing] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [deletedIdea, setDeletedIdea] = useState<Idea | null>(null);
   const filterSelectRef = useRef<HTMLSelectElement>(null);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const filterClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const deleteAnimationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const undoDeleteTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { showToast } = useToast();
+
+  const UNDO_DELETE_DURATION_MS = 8000;
 
   const handleRowClick = useCallback(
     (e: React.MouseEvent<HTMLTableRowElement>, idea: Idea) => {
@@ -281,7 +285,6 @@ export default function DashboardPage() {
     }
   }, [fetchIdeas, authLoading, isAuthenticated]);
 
-  // Cleanup filter clear timeout and delete animation timeout on unmount
   useEffect(() => {
     return () => {
       if (filterClearTimeoutRef.current) {
@@ -289,6 +292,9 @@ export default function DashboardPage() {
       }
       if (deleteAnimationTimeoutRef.current) {
         clearTimeout(deleteAnimationTimeoutRef.current);
+      }
+      if (undoDeleteTimeoutRef.current) {
+        clearTimeout(undoDeleteTimeoutRef.current);
       }
     };
   }, []);
@@ -322,7 +328,7 @@ export default function DashboardPage() {
     if (!deleteModal.idea) return;
 
     const id = deleteModal.idea.id;
-    const ideaTitle = deleteModal.idea.title;
+    const deletedIdeaSnapshot = deleteModal.idea;
 
     try {
       setDeletingId(id);
@@ -345,30 +351,27 @@ export default function DashboardPage() {
 
       closeDeleteModal();
 
-      if (prefersReducedMotion) {
-        setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
-        setPagination((prev) =>
-          prev ? { ...prev, total: Math.max(0, prev.total - 1) } : null
-        );
-      } else {
-        setRemovingId(id);
-        deleteAnimationTimeoutRef.current = setTimeout(
-          () => {
-            setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
-            setPagination((prev) =>
-              prev ? { ...prev, total: Math.max(0, prev.total - 1) } : null
-            );
-            setRemovingId(null);
-          },
-          (COMPONENT_CONFIG as ComponentConfig).DASHBOARD_PAGE
-            .DELETE_ANIMATION_DELAY_MS
-        );
-      }
+      setRemovingId(id);
+      deleteAnimationTimeoutRef.current = setTimeout(
+        () => {
+          setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
+          setPagination((prev) =>
+            prev ? { ...prev, total: Math.max(0, prev.total - 1) } : null
+          );
+          setRemovingId(null);
+        },
+        (COMPONENT_CONFIG as ComponentConfig).DASHBOARD_PAGE
+          .DELETE_ANIMATION_DELAY_MS
+      );
 
-      showToast({
-        type: 'success',
-        message: `"${ideaTitle}" deleted successfully`,
-      });
+      setDeletedIdea(deletedIdeaSnapshot);
+      if (undoDeleteTimeoutRef.current) {
+        clearTimeout(undoDeleteTimeoutRef.current);
+      }
+      undoDeleteTimeoutRef.current = setTimeout(() => {
+        setDeletedIdea(null);
+        undoDeleteTimeoutRef.current = null;
+      }, UNDO_DELETE_DURATION_MS);
     } catch (err) {
       logger.error('Error deleting idea:', err);
       setError(
@@ -379,7 +382,23 @@ export default function DashboardPage() {
     } finally {
       setDeletingId(null);
     }
-  }, [deleteModal.idea, closeDeleteModal, prefersReducedMotion, showToast]);
+  }, [deleteModal.idea, closeDeleteModal]);
+
+  const handleUndoDelete = useCallback(() => {
+    if (!deletedIdea) return;
+    triggerHapticFeedback();
+    if (undoDeleteTimeoutRef.current) {
+      clearTimeout(undoDeleteTimeoutRef.current);
+      undoDeleteTimeoutRef.current = null;
+    }
+    setIdeas((prev) => [deletedIdea, ...prev]);
+    setPagination((prev) => (prev ? { ...prev, total: prev.total + 1 } : null));
+    setDeletedIdea(null);
+    showToast({
+      type: 'success',
+      message: `"${deletedIdea.title}" restored`,
+    });
+  }, [deletedIdea, showToast]);
 
   const modalRef = useRef<HTMLDivElement>(null);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
@@ -605,6 +624,13 @@ export default function DashboardPage() {
         triggerHapticFeedback();
         router.push(ROUTES.HOME);
       }
+
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        if (deletedIdea) {
+          e.preventDefault();
+          handleUndoDelete();
+        }
+      }
     };
 
     document.addEventListener('keydown', handleKeyboardShortcuts);
@@ -620,6 +646,8 @@ export default function DashboardPage() {
     handleClearFilter,
     openHelp,
     router,
+    deletedIdea,
+    handleUndoDelete,
   ]);
 
   useEffect(() => {
@@ -886,6 +914,40 @@ export default function DashboardPage() {
           {DASHBOARD_PAGE_CONTENT.RESTART_TOUR}
         </button>
       </div>
+      {deletedIdea && (
+        <div
+          className={`flex items-center justify-between gap-3 p-3 mb-4 rounded-lg border transition-all ${DURATION_TAILWIND[300]} ${BG_COLORS.WARNING_LIGHTER} ${BORDER_COLORS.WARNING_LIGHT} ${FADE_IN}`}
+          role="status"
+          aria-live="polite"
+        >
+          <div className="flex items-center gap-2 min-w-0">
+            <svg
+              className={`${ICON_SIZES.MD} flex-shrink-0 ${TEXT_COLORS.WARNING_MEDIUM}`}
+              fill="none"
+              viewBox={SVG_VIEWBOX.STANDARD}
+              stroke="currentColor"
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <span className={`text-sm ${TEXT_COLORS.SECONDARY} truncate`}>
+              &quot;{deletedIdea.title}&quot; deleted
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={handleUndoDelete}
+            className={`flex-shrink-0 text-sm font-medium ${TEXT_COLORS.BRAND} hover:underline focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded px-2 py-1 transition-colors ${DURATION_TAILWIND[200]}`}
+          >
+            Undo
+          </button>
+        </div>
+      )}
       {/* Ideas List */}
       {ideas.length === 0 ? (
         <div className={CARD_PATTERNS.CENTERED_LARGE}>
