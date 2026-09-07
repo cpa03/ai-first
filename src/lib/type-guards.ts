@@ -1,8 +1,21 @@
+/**
+ * Type Guard Utilities
+ *
+ * Provides runtime type validation and type narrowing for core data structures.
+ * Performance-optimized for high-frequency payload validation.
+ */
+
 export function isArrayOf<T>(
   value: unknown,
   itemValidator: (item: unknown) => item is T
 ): value is T[] {
-  return Array.isArray(value) && value.every(itemValidator);
+  if (!Array.isArray(value)) return false;
+  // PERFORMANCE: Fast for-loop avoids callback allocations and iterator overhead of Array.prototype.every
+  const len = value.length;
+  for (let i = 0; i < len; i++) {
+    if (!itemValidator(value[i])) return false;
+  }
+  return true;
 }
 
 export function isObject(value: unknown): value is Record<string, unknown> {
@@ -21,7 +34,7 @@ export function hasProperty<K extends string>(
 }
 
 export function isNumber(value: unknown): value is number {
-  return typeof value === 'number' && !isNaN(value);
+  return typeof value === 'number' && !Number.isNaN(value);
 }
 
 export function isBoolean(value: unknown): value is boolean {
@@ -36,16 +49,21 @@ export function isClarifierQuestion(data: unknown): data is {
   required: boolean;
 } {
   if (!isObject(data)) return false;
-  if (!hasProperty(data, 'id') || !isString(data.id)) return false;
-  if (!hasProperty(data, 'question') || !isString(data.question)) return false;
-  if (!hasProperty(data, 'type') || !isString(data.type)) return false;
-  const typeValues = ['open', 'multiple_choice', 'yes_no'];
-  if (!typeValues.includes((data as Record<string, unknown>).type as string))
-    return false;
-  if (hasProperty(data, 'options') && !isArrayOf(data.options, isString)) {
+  // PERFORMANCE: Once isObject is verified, direct 'in' operator checks avoid repeating isObject inside hasProperty
+  if (!('id' in data) || typeof data.id !== 'string') return false;
+  if (!('question' in data) || typeof data.question !== 'string') return false;
+  if (!('type' in data) || typeof data.type !== 'string') return false;
+
+  // PERFORMANCE: Inline equality checks eliminate per-invocation array allocations (['open', 'multiple_choice', 'yes_no'])
+  const type = data.type;
+  if (type !== 'open' && type !== 'multiple_choice' && type !== 'yes_no') {
     return false;
   }
-  if (!hasProperty(data, 'required') || !isBoolean(data.required)) {
+
+  if ('options' in data && !isArrayOf(data.options, isString)) {
+    return false;
+  }
+  if (!('required' in data) || typeof data.required !== 'boolean') {
     return false;
   }
   return true;
@@ -59,14 +77,24 @@ export function isTask(data: unknown): data is {
   complexity: number;
 } {
   if (!isObject(data)) return false;
-  if (!hasProperty(data, 'id') || !isString(data.id)) return false;
-  if (!hasProperty(data, 'title') || !isString(data.title)) return false;
-  if (!hasProperty(data, 'description') || !isString(data.description))
-    return false;
-  if (!hasProperty(data, 'estimatedHours') || !isNumber(data.estimatedHours)) {
+  // PERFORMANCE: Direct property access & type check avoids redundant isObject calls
+  if (!('id' in data) || typeof data.id !== 'string') return false;
+  if (!('title' in data) || typeof data.title !== 'string') return false;
+  if (!('description' in data) || typeof data.description !== 'string') {
     return false;
   }
-  if (!hasProperty(data, 'complexity') || !isNumber(data.complexity)) {
+  if (
+    !('estimatedHours' in data) ||
+    typeof data.estimatedHours !== 'number' ||
+    Number.isNaN(data.estimatedHours)
+  ) {
+    return false;
+  }
+  if (
+    !('complexity' in data) ||
+    typeof data.complexity !== 'number' ||
+    Number.isNaN(data.complexity)
+  ) {
     return false;
   }
   return true;
@@ -100,29 +128,20 @@ export function isIdeaAnalysis(data: unknown): data is {
   overallConfidence: number;
 } {
   if (!isObject(data)) return false;
-  if (
-    !hasProperty(data, 'objectives') ||
-    !isArrayOf(data.objectives, isObject)
-  ) {
+  // PERFORMANCE: Direct property check avoids redundant isObject evaluations
+  if (!('objectives' in data) || !isArrayOf(data.objectives, isObject)) {
+    return false;
+  }
+  if (!('deliverables' in data) || !isArrayOf(data.deliverables, isObject)) {
+    return false;
+  }
+  if (!('complexity' in data) || !isObject(data.complexity)) return false;
+  if (!('scope' in data) || !isObject(data.scope)) return false;
+  if (!('riskFactors' in data) || !isArrayOf(data.riskFactors, isObject)) {
     return false;
   }
   if (
-    !hasProperty(data, 'deliverables') ||
-    !isArrayOf(data.deliverables, isObject)
-  ) {
-    return false;
-  }
-  if (!hasProperty(data, 'complexity') || !isObject(data.complexity))
-    return false;
-  if (!hasProperty(data, 'scope') || !isObject(data.scope)) return false;
-  if (
-    !hasProperty(data, 'riskFactors') ||
-    !isArrayOf(data.riskFactors, isObject)
-  ) {
-    return false;
-  }
-  if (
-    !hasProperty(data, 'successCriteria') ||
+    !('successCriteria' in data) ||
     !isArrayOf(data.successCriteria, isString)
   ) {
     return false;
