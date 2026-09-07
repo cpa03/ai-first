@@ -37,7 +37,7 @@ type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 interface TooltipProps {
   children: React.ReactNode;
   content: React.ReactNode;
-  /** Optional keyboard shortcut keys to display in the tooltip (e.g. ['⌘', 'C']) */
+  /** Optional keyboard shortcut keys to display in the tooltip (e.g. ['⌘', 'C'] or ['Ctrl', 'C']) */
   shortcut?: string[];
   position?: TooltipPosition;
   delay?: number;
@@ -274,6 +274,16 @@ function TooltipComponent({
       : {}),
   };
 
+  const formatKeySymbol = useCallback(
+    (key: string) => {
+      if (key === '⌘' || key === 'Ctrl') {
+        return isMac ? '⌘' : 'Ctrl';
+      }
+      return key;
+    },
+    [isMac]
+  );
+
   return (
     <div
       ref={triggerRef}
@@ -322,7 +332,7 @@ function TooltipComponent({
                       <kbd
                         className={`${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_DARK} ${TEXT_SIZE_CLASSES.XS}`}
                       >
-                        {key === '⌘' ? (isMac ? '⌘' : 'Ctrl') : key}
+                        {formatKeySymbol(key)}
                       </kbd>
                       {i < shortcut.length - 1 && (
                         <span
