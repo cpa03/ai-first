@@ -17,7 +17,7 @@ const consoleLogs = [];
 const errors = [];
 const warnings = [];
 
-async function scanPage(page, url) {
+async function scanPage(page, url, retries = 3) {
   const pageErrors = [];
   const pageWarnings = [];
 
@@ -94,41 +94,60 @@ async function scanPage(page, url) {
     errors.push(logEntry);
   });
 
-  // Navigate to page and wait for load
-  try {
-    await page.goto(`${BASE_URL}${url}`, {
-      waitUntil: 'domcontentloaded',
-      timeout: NAVIGATION_TIMEOUT,
-    });
+  let lastError;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      await page.goto(`${BASE_URL}${url}`, {
+        waitUntil: 'domcontentloaded',
+        timeout: NAVIGATION_TIMEOUT,
+      });
 
-    // Wait a bit for any async errors
-    await page.waitForTimeout(ASYNC_WAIT_MS);
+      await page.waitForTimeout(ASYNC_WAIT_MS);
 
-    console.log(
-      `✓ Scanned ${url}: ${pageErrors.length} errors, ${pageWarnings.length} warnings`
-    );
-
-    return { pageErrors, pageWarnings };
-  } catch (err) {
-    const logEntry = {
-      type: 'navigation-error',
-      text: err.message,
-      url,
-    };
-    errors.push(logEntry);
-    console.error(`✗ Failed to scan ${url}: ${err.message}`);
-
-    // Provide helpful debugging info
-    if (err.message.includes('ERR_CONNECTION_REFUSED')) {
-      console.error(`  → Make sure the dev server is running on ${BASE_URL}`);
-    } else if (err.message.includes('timeout')) {
-      console.error(
-        `  → Page took too long to load (timeout: ${NAVIGATION_TIMEOUT}ms)`
+      console.log(
+        `✓ Scanned ${url}: ${pageErrors.length} errors, ${pageWarnings.length} warnings`
       );
-    }
 
-    return { pageErrors: [logEntry], pageWarnings: [] };
+      return { pageErrors, pageWarnings };
+    } catch (err) {
+      lastError = err;
+
+      if (err.message.includes('ERR_CONNECTION_REFUSED') && attempt < retries) {
+        console.log(
+          `  → Connection refused, retrying in 2 seconds (attempt ${attempt}/${retries})...`
+        );
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        continue;
+      }
+
+      const logEntry = {
+        type: 'navigation-error',
+        text: err.message,
+        url,
+      };
+      errors.push(logEntry);
+      console.error(`✗ Failed to scan ${url}: ${err.message}`);
+
+      if (err.message.includes('ERR_CONNECTION_REFUSED')) {
+        console.error(`  → Make sure the dev server is running on ${BASE_URL}`);
+        console.error(`  → Tried ${retries} times, all failed`);
+      } else if (err.message.includes('timeout')) {
+        console.error(
+          `  → Page took too long to load (timeout: ${NAVIGATION_TIMEOUT}ms)`
+        );
+      }
+
+      return { pageErrors: [logEntry], pageWarnings: [] };
+    }
   }
+
+  const fallbackLogEntry = {
+    type: 'navigation-error',
+    text: lastError?.message || 'Unknown error after retries',
+    url,
+  };
+  errors.push(fallbackLogEntry);
+  return { pageErrors: [fallbackLogEntry], pageWarnings: [] };
 }
 
 async function main() {
