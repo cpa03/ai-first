@@ -66,6 +66,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 - **Date**: 2026-08-16
 - **Details**: Connected platform-aware keyboard shortcut representations for `CopyButton` directly to `COPY_BUTTON_LABELS.KEYBOARD_SHORTCUT` in `src/lib/config/component-labels.ts`.
 
+### [STRENGTHEN] Strengthen Tooltip Component Platform Shortcut Normalization & Keyboard Accessibility
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-09-07
+- **Details**: Strengthened `Tooltip` component by adding automatic platform-aware key symbol normalization for shortcut badges (`⌘` vs `Ctrl`), keyboard dismissal via `Escape`, touch interaction press timers, and verified reduced motion compliance in `tests/Tooltip.test.tsx`.
+
+### [CONNECT] Connect Tooltip Shortcuts to Centralized Platform & Label Configurations
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-09-07
+- **Details**: Connected `Tooltip` shortcut formatting logic to `PLATFORM.isMac()` and `TOOLTIP_LABELS` in central configurations, maintaining consistent component architecture across all interactive elements.
+
 ---
 
 ## Quick Stats
