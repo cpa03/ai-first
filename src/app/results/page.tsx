@@ -1053,11 +1053,11 @@ function ResultsContent() {
                 {RESULTS_PAGE_CONTENT.SUCCESS_MESSAGE}
                 <span className={RESULTS_SHARE_BUTTON_CONTAINER}>
                   <ShareButton
-                    shareTitle="Check out my project blueprint on IdeaFlow!"
-                    shareText="I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!"
-                    label="Share your blueprint"
-                    successLabel="Shared!"
-                    ariaLabel="Share your project blueprint"
+                    shareTitle={RESULTS_PAGE_CONTENT.SHARE.TITLE}
+                    shareText={RESULTS_PAGE_CONTENT.SHARE.TEXT}
+                    label={RESULTS_PAGE_CONTENT.SHARE.LABEL}
+                    successLabel={RESULTS_PAGE_CONTENT.SHARE.SUCCESS_LABEL}
+                    ariaLabel={RESULTS_PAGE_CONTENT.SHARE.ARIA_LABEL}
                     onShare={() => {
                       trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE, {
                         share_platform: 'web_share',
@@ -1112,11 +1112,11 @@ function ResultsContent() {
             }
           >
             <ShareButton
-              shareTitle={`Check out my project blueprint on IdeaFlow!`}
-              shareText={`I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!`}
+              shareTitle={RESULTS_PAGE_CONTENT.SHARE.TITLE}
+              shareText={RESULTS_PAGE_CONTENT.SHARE.TEXT}
               label={RESULTS_PAGE_CONTENT.SHARE_BUTTON_LABEL}
               successLabel={RESULTS_PAGE_CONTENT.SHARE_BUTTON_SUCCESS_LABEL}
-              ariaLabel="Share your project blueprint"
+              ariaLabel={RESULTS_PAGE_CONTENT.SHARE.ARIA_LABEL}
               onShare={() => {
                 // Growth: Track social share event
                 trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE, {

@@ -424,6 +424,13 @@ export const RESULTS_PAGE_CONTENT = {
     BUTTON: 'Start New Idea',
     ARIA_LABEL: 'Start a new idea and create another project blueprint',
   },
+  SHARE: {
+    TITLE: 'Check out my project blueprint on IdeaFlow!',
+    TEXT: "I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!",
+    LABEL: 'Share your blueprint',
+    SUCCESS_LABEL: 'Shared!',
+    ARIA_LABEL: 'Share your project blueprint',
+  },
 } as const;
 
 /**
@@ -602,6 +609,20 @@ export const NOT_FOUND_LABELS = {
   GO_BACK_TOOLTIP: 'Navigate to previous page',
   GO_HOME_TOOLTIP: 'Return to the home page',
   GO_DASHBOARD_TOOLTIP: 'Go to dashboard',
+  NAVIGATION: {
+    HOME: {
+      LABEL: 'Home',
+      DESCRIPTION: 'Go to homepage',
+    },
+    DASHBOARD: {
+      LABEL: 'Dashboard',
+      DESCRIPTION: 'View your ideas',
+    },
+    SIGNUP: {
+      LABEL: 'Sign up',
+      DESCRIPTION: 'Create an account',
+    },
+  },
 } as const;
 
 export const PAGE_CONFIG = {

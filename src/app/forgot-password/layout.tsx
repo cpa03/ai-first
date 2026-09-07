@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import LayoutErrorFallback from '@/components/LayoutErrorFallback';
+import { COMPREHENSIVE_UI_STRINGS } from '@/lib/config';
 
 export const metadata: Metadata = {
   title: 'Forgot Password - IdeaFlow',
@@ -17,8 +18,8 @@ export default function ForgotPasswordLayout({
     <ErrorBoundary
       fallback={
         <LayoutErrorFallback
-          title="Something went wrong"
-          message="We encountered an error loading this page. Please try again."
+          title={COMPREHENSIVE_UI_STRINGS.ERRORS.SERVER_ERROR}
+          message={`${COMPREHENSIVE_UI_STRINGS.ERRORS.UNKNOWN_ERROR}. ${COMPREHENSIVE_UI_STRINGS.ERRORS.TRY_AGAIN}`}
         />
       }
     >

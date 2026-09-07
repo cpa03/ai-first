@@ -67,12 +67,7 @@ const jsonLd = {
     name: 'IdeaFlow',
     url: APP_CONFIG.URLS.BASE,
   },
-  featureList: [
-    'AI-powered idea clarification',
-    'Automatic task breakdown',
-    'Project roadmap generation',
-    'Export to popular tools',
-  ],
+  featureList: APP_CONFIG.FEATURES.MAIN,
 };
 
 const inter = Inter({
