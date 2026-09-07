@@ -8,6 +8,7 @@ import {
   TYPING_INDICATOR_DOT_PATTERN,
   INLINE_FLEX_PATTERNS,
   TYPING_DOT,
+  TYPING_INDICATOR_LABELS,
 } from '@/lib/config';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
@@ -89,6 +90,7 @@ function TypingIndicatorComponent({
       className={`${INLINE_FLEX_PATTERNS.GAP_SM} ${className}`}
       role="status"
       aria-live="polite"
+      aria-atomic="true"
     >
       {/* Animated dots - hidden from screen readers */}
       <span className={INLINE_FLEX_PATTERNS.GAP_SM} aria-hidden="true">
@@ -107,7 +109,7 @@ function TypingIndicatorComponent({
         ))}
       </span>
       {/* Screen reader text for accessibility */}
-      <span className={SR_ONLY}>Typing...</span>
+      <span className={SR_ONLY}>{TYPING_INDICATOR_LABELS.SR_TEXT}</span>
     </div>
   );
 }
