@@ -49,6 +49,7 @@ export default function ForgotPasswordPage() {
   const [resendSuccess, setResendSuccess] = useState(false);
   const emailInputRef = useRef<HTMLInputElement>(null);
   const cooldownTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const successTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { openHelp } = useKeyboardShortcuts();
 
   const isFormValid = useMemo(() => {
@@ -69,11 +70,14 @@ export default function ForgotPasswordPage() {
     }
   }, [error]);
 
-  // Cooldown timer cleanup on unmount
+  // Cooldown timer and success timer cleanup on unmount
   useEffect(() => {
     return () => {
       if (cooldownTimerRef.current) {
         clearInterval(cooldownTimerRef.current);
+      }
+      if (successTimerRef.current) {
+        clearTimeout(successTimerRef.current);
       }
     };
   }, []);
@@ -184,15 +188,17 @@ export default function ForgotPasswordPage() {
       if (resetError) {
         throw resetError;
       }
-
       triggerHapticFeedback();
       setResendSuccess(true);
+
       setResendCooldown(
         COMPONENT_CONFIG.FORGOT_PASSWORD.RESEND_COOLDOWN_SECONDS
       );
 
-      // Auto-clear success message after a brief moment
-      setTimeout(
+      if (successTimerRef.current) {
+        clearTimeout(successTimerRef.current);
+      }
+      successTimerRef.current = setTimeout(
         () => setResendSuccess(false),
         COMPONENT_CONFIG.FORGOT_PASSWORD.SUCCESS_MESSAGE_DURATION_MS
       );
