@@ -25,6 +25,9 @@ import {
   DELIVERABLE_COMPLETE,
   SUCCESS_POP,
   EXPAND_CONTENT,
+  UI_CONFIG,
+  TRANSITION_CLASSES,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import {
   TASK_CARD_VERTICAL_MARGIN,
@@ -72,6 +75,9 @@ function DeliverableCardComponent({
   const prefersReducedMotion = usePrefersReducedMotion();
   const [animatedProgress, setAnimatedProgress] = useState(0);
   const [showCompletionCelebration, setShowCompletionCelebration] =
+    useState(false);
+  // Micro-UX: Track hover/focus state to show keyboard shortcut hint on the header button
+  const [isHeaderHoveredOrFocused, setIsHeaderHoveredOrFocused] =
     useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const prevExpandedRef = useRef(isExpanded);
@@ -176,17 +182,27 @@ function DeliverableCardComponent({
     >
       <button
         onClick={handleToggleExpand}
+        onMouseEnter={() => setIsHeaderHoveredOrFocused(true)}
+        onMouseLeave={() => setIsHeaderHoveredOrFocused(false)}
+        onFocus={() => setIsHeaderHoveredOrFocused(true)}
+        onBlur={() => setIsHeaderHoveredOrFocused(false)}
         aria-expanded={isExpanded}
         aria-controls={
           isExpanded ? `deliverable-tasks-${deliverable.id}` : undefined
         }
-        className={DELIVERABLE_CARD_STYLES.HEADER.BASE}
+        className={`${DELIVERABLE_CARD_STYLES.HEADER.BASE} group`}
       >
         <div className={FLEX_1}>
           <div className={FLEX_PATTERNS.GAP_MD}>
             <h3 className={DELIVERABLE_CARD_STYLES.HEADER.TITLE}>
               {deliverable.title}
             </h3>
+            <span
+              className={`hidden sm:inline-flex items-center ${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_MINI} ${TRANSITION_CLASSES.DEFAULT} ${isHeaderHoveredOrFocused ? 'opacity-60' : 'opacity-0'} ${GRAY_CLASSES.TEXT_500}`}
+              aria-hidden="true"
+            >
+              Enter
+            </span>
             {isCompleted && (
               <span
                 className={`inline-flex items-center gap-1 px-2 py-0.5 ${TYPOGRAPHY_CLASSES.XS_SEMIBOLD} rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} ${showCompletionCelebration && !prefersReducedMotion ? SUCCESS_POP : ''}`}
