@@ -5,5 +5,9 @@ set -e
 # Apply patch-package patches
 npx patch-package 2>/dev/null || true
 
+# Ensure static CSS output directories exist to prevent OpenNext tracing ENOENT errors
+mkdir -p .next/static/css
+mkdir -p .next/standalone/.next/static/css
+
 # Run the Cloudflare build
 npx @opennextjs/cloudflare build
