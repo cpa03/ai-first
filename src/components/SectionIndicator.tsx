@@ -236,11 +236,30 @@ function SectionIndicatorComponent({
         })}
       </div>
       <div
-        className={`hidden sm:flex items-center justify-center gap-1.5 mt-2 text-xs ${TEXT_COLORS.MUTED}`}
+        className={`hidden sm:flex items-center justify-center gap-3 mt-2 text-xs ${TEXT_COLORS.MUTED}`}
         aria-hidden="true"
       >
-        <span>↑</span>
-        <span>↓</span>
+        <span className="inline-flex items-center gap-1">
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+            ↑↓
+          </kbd>
+          <span>navigate</span>
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+            Home
+          </kbd>
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+            End
+          </kbd>
+          <span>first/last</span>
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+            ?
+          </kbd>
+          <span>help</span>
+        </span>
       </div>
       <div
         role="status"
