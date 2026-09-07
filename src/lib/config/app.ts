@@ -146,6 +146,28 @@ export const APP_CONFIG = {
     /** Radix for idea ID generation (2-36) - Default: 36 */
     IDEA_ID_RANDOM_RADIX: EnvLoader.number('STRING_ID_RANDOM_RADIX', 36, 2, 36),
   },
+
+  /**
+   * Features configuration
+   * Centralizes feature lists used in SEO structured data and marketing content
+   * Eliminates hardcoded feature strings in layout.tsx and other pages
+   */
+  FEATURES: {
+    /** Main feature list for JSON-LD structured data */
+    MAIN: [
+      'AI-powered idea clarification',
+      'Automatic task breakdown',
+      'Project roadmap generation',
+      'Export to popular tools',
+    ],
+    /** Feature descriptions for landing page */
+    DESCRIPTIONS: {
+      IDEA_CLARIFICATION: 'AI-powered idea clarification',
+      TASK_BREAKDOWN: 'Automatic task breakdown',
+      ROADMAP_GENERATION: 'Project roadmap generation',
+      EXPORT_TOOLS: 'Export to popular tools',
+    },
+  },
 } as const;
 
 export type AppConfig = typeof APP_CONFIG;
