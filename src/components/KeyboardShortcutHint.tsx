@@ -21,6 +21,7 @@ import {
   FLEX_GROW_PATTERNS,
   TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
+import { HORIZONTAL_CENTER } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface KeyboardShortcutHintProps {
   storageKey?: string;
@@ -98,7 +99,7 @@ function KeyboardShortcutHintComponent({
 
   return (
     <div
-      className={`fixed bottom-24 left-1/2 -translate-x-1/2 z-[${Z_INDEX_LAYERS.TOAST}] max-w-sm w-full mx-4`}
+      className={`fixed bottom-24 ${HORIZONTAL_CENTER} z-[${Z_INDEX_LAYERS.TOAST}] max-w-sm w-full mx-4`}
       role="status"
       aria-live="polite"
       aria-atomic="true"
