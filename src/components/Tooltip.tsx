@@ -31,6 +31,10 @@ const TRIGGER_SPACING = TOOLTIP_CONFIG.TRIGGER_SPACING;
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { PLATFORM } from '@/lib/dom-utils';
 import { RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  VERTICAL_CENTER,
+  HORIZONTAL_CENTER,
+} from '@/lib/config/remaining-hardcoded-patterns';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -247,17 +251,17 @@ function TooltipComponent({
   }, [isVisible, hideTooltip]);
 
   const positionClasses = {
-    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
-    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
-    left: 'right-full top-1/2 -translate-y-1/2 mr-2',
-    right: 'left-full top-1/2 -translate-y-1/2 ml-2',
+    top: `bottom-full ${HORIZONTAL_CENTER} mb-2`,
+    bottom: `top-full ${HORIZONTAL_CENTER} mt-2`,
+    left: `right-full ${VERTICAL_CENTER} mr-2`,
+    right: `left-full ${VERTICAL_CENTER} ml-2`,
   };
 
   const arrowClasses = {
-    top: `top-full left-1/2 -translate-x-1/2 -mt-1 border-t-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
-    bottom: `bottom-full left-1/2 -translate-x-1/2 -mb-1 border-b-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
-    left: `left-full top-1/2 -translate-y-1/2 -ml-1 border-l-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
-    right: `right-full top-1/2 -translate-y-1/2 -mr-1 border-r-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
+    top: `top-full ${HORIZONTAL_CENTER} -mt-1 border-t-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
+    bottom: `bottom-full ${HORIZONTAL_CENTER} -mb-1 border-b-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
+    left: `left-full ${VERTICAL_CENTER} -ml-1 border-l-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
+    right: `right-full ${VERTICAL_CENTER} -mr-1 border-r-${TOOLTIP_CONFIG.ARROW.BORDER_COLOR_NAME}`,
   };
 
   const arrowBorderClasses = {
