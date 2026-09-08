@@ -759,6 +759,15 @@ export const KEYBOARD_SHORTCUT_HINT_LABELS = {
 } as const;
 
 /**
+ * SuccessCelebration Labels
+ * Eliminates hardcoded strings in SuccessCelebration component
+ */
+export const SUCCESS_CELEBRATION_LABELS = {
+  /** Screen reader announcement when success celebration triggers */
+  ANNOUNCEMENT: 'Action completed successfully!',
+} as const;
+
+/**
  * Component Labels - Combined export
  * Provides all component labels in a single object
  */
@@ -782,6 +791,7 @@ export const COMPONENT_LABELS = {
   TASK_MANAGEMENT: TASK_MANAGEMENT_LABELS,
   IDEA_READY_INDICATOR: IDEA_READY_INDICATOR_LABELS,
   STEP_CELEBRATION: STEP_CELEBRATION_LABELS,
+  SUCCESS_CELEBRATION: SUCCESS_CELEBRATION_LABELS,
   USER_ONBOARDING_COMPLETION: USER_ONBOARDING_COMPLETION_LABELS,
   CLARIFICATION_FLOW: CLARIFICATION_FLOW_LABELS,
   FEATURE_GRID: FEATURE_GRID_LABELS,
@@ -824,4 +834,5 @@ export type WhyChooseSectionLabels = typeof WHY_CHOOSE_SECTION_LABELS;
 export type ScrollProgressLabels = typeof SCROLL_PROGRESS_LABELS;
 export type PasswordRequirementsLabels = typeof PASSWORD_REQUIREMENTS_LABELS;
 export type CapsLockWarningLabels = typeof CAPS_LOCK_WARNING_LABELS;
+export type SuccessCelebrationLabels = typeof SUCCESS_CELEBRATION_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;

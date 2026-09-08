@@ -12,6 +12,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ## StorX Feature Analysis & Integration Tasks
 
+### [STRENGTHEN] Strengthen SuccessCelebration Accessibility and Screen Reader Announcements
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-09-08
+- **Details**: Integrated `<StatusAnnouncer>` into `SuccessCelebration.tsx` to announce success events to screen reader users via live status updates when celebrations trigger, while keeping visual element containers `aria-hidden="true"`. Verified in `tests/SuccessCelebration.test.tsx`.
+
+### [CONNECT] Connect SuccessCelebration Labels to Central Component Configurations
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-09-08
+- **Details**: Added `SUCCESS_CELEBRATION_LABELS` to `src/lib/config/component-labels.ts` to centralize screen reader live announcement strings and maintain zero hardcoded strings.
+
 ### [STRENGTHEN] Strengthen LoadingSpinner Accessibility and Non-Redundant Screen Reader Announcements
 - **Priority**: MEDIUM
 - **Status**: COMPLETE
