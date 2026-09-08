@@ -55,6 +55,7 @@ function IdeaReadyIndicatorComponent({
       } ${className}`}
       role="status"
       aria-live="polite"
+      aria-atomic="true"
     >
       <div
         className={`
