@@ -15,6 +15,7 @@ import {
   ANIMATION_CONFIG,
   COMPONENT_CONFIG,
   HTTP_HEADERS,
+  HTTP_METHODS,
   TRANSITION_CLASSES,
   TEXT_COLOR_CLASSES,
   PROGRESS_BAR_A11Y,
@@ -234,7 +235,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
       try {
         const response = await fetchWithTimeout(API_ENDPOINTS.IDEAS, {
-          method: 'POST',
+          method: HTTP_METHODS.POST,
           headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
           body: JSON.stringify({ idea }),
         });
