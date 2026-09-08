@@ -417,12 +417,28 @@ const MAX_REQUESTS_PER_IDENTIFIER =
 
 /**
  * Binary search to find the first index where requests[index] >= windowStart
- * PERFORMANCE: O(log N) complexity compared to O(N) linear scan.
- * This provides significant scaling guarantees for large request histories.
+ * PERFORMANCE: O(1) fast-paths for common boundary cases:
+ * 1. Empty array -> -1
+ * 2. First element is valid (entire window is valid) -> 0
+ * 3. Last element is expired (entire window is expired) -> -1
+ * Bypasses O(log N) loop execution for the overwhelming majority of high-rate limit checks.
  */
 function findFirstValidIndex(requests: number[], windowStart: number): number {
+  const len = requests.length;
+  if (len === 0) {
+    return -1;
+  }
+  // Fast-path: all timestamps in the array are valid
+  if (requests[0] >= windowStart) {
+    return 0;
+  }
+  // Fast-path: all timestamps in the array are expired
+  if (requests[len - 1] < windowStart) {
+    return -1;
+  }
+
   let low = 0;
-  let high = requests.length - 1;
+  let high = len - 1;
   let result = -1;
 
   while (low <= high) {
