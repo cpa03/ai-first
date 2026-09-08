@@ -803,13 +803,13 @@ export function rateLimitResponse(
 
   const headers: Record<string, string> = {
     [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.APPLICATION_JSON,
-    'Retry-After': String(
+    [HTTP_HEADERS.RETRY_AFTER]: String(
       Math.ceil((resetTime - Date.now()) / TIME_CONVERSIONS.MS_PER_SECOND)
     ),
-    'X-RateLimit-Limit': String(rateLimitInfo.limit),
-    'X-RateLimit-Remaining': String(rateLimitInfo.remaining),
-    'X-RateLimit-Reset': String(new Date(resetTime).toISOString()),
-    'X-Request-ID': responseBody.requestId,
+    [HTTP_HEADERS.X_RATELIMIT_LIMIT]: String(rateLimitInfo.limit),
+    [HTTP_HEADERS.X_RATELIMIT_REMAINING]: String(rateLimitInfo.remaining),
+    [HTTP_HEADERS.X_RATELIMIT_RESET]: String(new Date(resetTime).toISOString()),
+    [HTTP_HEADERS.X_REQUEST_ID]: responseBody.requestId,
     'X-Error-Code': ERROR_CONFIG.RATE_LIMIT.ERROR_CODE,
     'X-Retryable': 'true',
   };

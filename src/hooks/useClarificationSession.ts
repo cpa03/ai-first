@@ -11,6 +11,7 @@ import {
   ANIMATION_CONFIG,
   API_ENDPOINTS,
   HTTP_HEADERS,
+  HTTP_METHODS,
   PROGRESS_PERCENTAGE,
   CLARIFICATION_TIMER_CONFIG,
 } from '@/lib/config';
@@ -284,7 +285,7 @@ export function useClarificationSession(
         const response = await fetchWithTimeout(
           API_ENDPOINTS.CLARIFY,
           {
-            method: 'POST',
+            method: HTTP_METHODS.POST,
             headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
             body: JSON.stringify({ idea, ideaId }),
           },
