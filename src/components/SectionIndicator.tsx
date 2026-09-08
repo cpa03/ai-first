@@ -239,8 +239,13 @@ function SectionIndicatorComponent({
         className={`hidden sm:flex items-center justify-center gap-1.5 mt-2 text-xs ${TEXT_COLORS.MUTED}`}
         aria-hidden="true"
       >
-        <span>↑</span>
-        <span>↓</span>
+        <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+          ↑
+        </kbd>
+        <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+          ↓
+        </kbd>
+        <span>{SECTION_INDICATOR_LABELS.KEYBOARD_NAV_HINT}</span>
       </div>
       <div
         role="status"
