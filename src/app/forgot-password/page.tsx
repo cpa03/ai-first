@@ -6,11 +6,15 @@ import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
+import StatusAnnouncer from '@/components/StatusAnnouncer';
+import Tooltip from '@/components/Tooltip';
+import { useClipboard } from '@/hooks/useClipboard';
 import { ROUTES } from '@/lib/config';
 import {
   PAGE_LAYOUT_CLASSES,
   CONTAINER_WIDTHS,
   TEXT_COLOR_CLASSES,
+  TEXT_COLORS,
   TYPOGRAPHY_CLASSES,
   SPACING_CLASSES,
   LAYOUT_CLASSES,
@@ -27,6 +31,9 @@ import {
   KBD_HINT_STYLE,
   ICON_SIZES,
   COMPONENT_CONFIG,
+  TRANSITION_CLASSES,
+  SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
 } from '@/lib/config';
 import {
   RESPONSIVE_WIDTH,
@@ -50,6 +57,9 @@ export default function ForgotPasswordPage() {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const cooldownTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { openHelp } = useKeyboardShortcuts();
+  const { copy: copyEmail, hasCopied } = useClipboard({
+    duration: COMPONENT_CONFIG.FORGOT_PASSWORD.RESEND_COOLDOWN_SECONDS * 1000,
+  });
 
   const isFormValid = useMemo(() => {
     const trimmedEmail = email.trim();
@@ -257,6 +267,65 @@ export default function ForgotPasswordPage() {
               We&apos;ve sent a password reset link to{' '}
               <span className={FONT_MEDIUM}>{email}</span>
             </p>
+
+            {/* Micro-UX: Copy email button for easy clipboard access */}
+            {/* Helps users who need to check another inbox or share the email address */}
+            <div
+              className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+            >
+              <StatusAnnouncer
+                message="Email copied to clipboard"
+                triggered={hasCopied}
+              />
+              <Tooltip
+                content={hasCopied ? 'Copied!' : 'Copy email to clipboard'}
+                shortcut={isMac ? ['⌘', 'C'] : ['Ctrl', 'C']}
+                position="top"
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    copyEmail(email);
+                  }}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md ${TRANSITION_CLASSES.DEFAULT} ${FORM_PATTERNS.AUTH_LINK} ${hasCopied ? TEXT_COLORS.SUCCESS_DARK : ''}`}
+                  aria-label={
+                    hasCopied
+                      ? 'Email copied to clipboard'
+                      : `Copy email address ${email} to clipboard`
+                  }
+                >
+                  {hasCopied ? (
+                    <svg
+                      className={`${ICON_SIZES.SM} ${TEXT_COLORS.SUCCESS_DARK}`}
+                      fill="none"
+                      viewBox={SVG_VIEWBOX.STANDARD}
+                      stroke="currentColor"
+                      strokeWidth={SVG_STROKE_WIDTHS.THICK}
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className={ICON_SIZES.SM}
+                      fill="none"
+                      viewBox={SVG_VIEWBOX.STANDARD}
+                      stroke="currentColor"
+                      strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                      aria-hidden="true"
+                    >
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                    </svg>
+                  )}
+                  {hasCopied ? 'Copied!' : 'Copy email'}
+                </button>
+              </Tooltip>
+            </div>
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
             >
