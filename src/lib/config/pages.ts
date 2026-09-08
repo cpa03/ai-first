@@ -216,6 +216,58 @@ export const FORGOT_PASSWORD_PAGE_CONFIG = {
 } as const;
 
 /**
+ * Forgot password page content configuration
+ * Eliminates hardcoded UI strings in forgot-password page
+ */
+export const FORGOT_PASSWORD_PAGE_CONTENT = {
+  /** Success state heading */
+  SUCCESS_HEADING: 'Check your email',
+  /** Success state message */
+  SUCCESS_MESSAGE: (email: string) =>
+    `We've sent a password reset link to ${email}`,
+  /** Success state hint */
+  SUCCESS_HINT:
+    "Didn't receive the email? Check your spam folder or resend below.",
+  /** Error alert title */
+  ERROR_TITLE: 'Error',
+  /** Resend success message */
+  RESEND_SUCCESS: 'Reset email resent successfully!',
+  /** Resend button loading text */
+  RESEND_LOADING: 'Sending...',
+  /** Resend button text when cooldown active */
+  RESEND_COOLDOWN: (seconds: number) => `Resend in ${seconds}s`,
+  /** Resend button text when ready */
+  RESEND_READY: 'Resend email',
+  /** Back to sign in link */
+  BACK_TO_SIGN_IN: 'Back to sign in',
+  /** Skip link text */
+  SKIP_LINK: 'Skip to forgot password form',
+  /** Loading overlay text */
+  LOADING_TEXT: 'Sending reset link...',
+  /** Main heading */
+  HEADING: 'Forgot your password?',
+  /** Subheading */
+  SUBHEADING:
+    "Enter your email address and we'll send you a link to reset your password.",
+  /** Email input label */
+  EMAIL_LABEL: 'Email address',
+  /** Submit button loading text */
+  SUBMIT_LOADING: 'Sending...',
+  /** Submit button text */
+  SUBMIT_BUTTON: 'Send reset link',
+  /** Keyboard shortcut hint text */
+  KEYBOARD_HINT_TEXT: 'to submit',
+  /** Remember password text */
+  REMEMBER_PASSWORD: 'Remember your password?',
+  /** Sign in link text */
+  SIGN_IN: 'Sign in',
+  /** Shortcuts label */
+  SHORTCUTS_LABEL: 'Shortcuts',
+  /** View all button text */
+  VIEW_ALL: 'View all',
+} as const;
+
+/**
  * Auth callback page metadata configuration
  */
 export const AUTH_CALLBACK_PAGE_CONFIG = {
