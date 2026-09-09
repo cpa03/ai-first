@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { STATUS_CODES } from '@/lib/config/http';
+import { STATUS_CODES, HTTP_HEADERS } from '@/lib/config/http';
 import { APP_CONFIG } from '@/lib/config/app';
 import { API_CONFIG } from '@/lib/config/modular-constants';
 import type { RateLimitInfo } from '@/lib/rate-limit';
@@ -58,20 +58,26 @@ export function standardErrorResponse(
 
   const response = NextResponse.json(errorResponse, { status: statusCode });
 
-  response.headers.set('X-Request-ID', requestId);
-  response.headers.set('X-Error-Code', code);
+  response.headers.set(HTTP_HEADERS.X_REQUEST_ID, requestId);
+  response.headers.set(HTTP_HEADERS.X_ERROR_CODE, code);
   response.headers.set('X-Error-Fingerprint', fingerprint);
-  response.headers.set('X-Retryable', String(errorResponse.retryable));
-  response.headers.set('X-API-Version', API_VERSION);
+  response.headers.set(
+    HTTP_HEADERS.X_RETRYABLE,
+    String(errorResponse.retryable)
+  );
+  response.headers.set(HTTP_HEADERS.X_API_VERSION, API_VERSION);
 
   if (options.rateLimit) {
-    response.headers.set('X-RateLimit-Limit', String(options.rateLimit.limit));
     response.headers.set(
-      'X-RateLimit-Remaining',
+      HTTP_HEADERS.X_RATELIMIT_LIMIT,
+      String(options.rateLimit.limit)
+    );
+    response.headers.set(
+      HTTP_HEADERS.X_RATELIMIT_REMAINING,
       String(options.rateLimit.remaining)
     );
     response.headers.set(
-      'X-RateLimit-Reset',
+      HTTP_HEADERS.X_RATELIMIT_RESET,
       String(new Date(options.rateLimit.reset).toISOString())
     );
   }
