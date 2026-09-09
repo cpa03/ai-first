@@ -37,6 +37,7 @@ import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+import { CountdownProgress } from '@/components/CountdownProgress';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -48,6 +49,8 @@ export default function ForgotPasswordPage() {
   const [isResending, setIsResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
   const emailInputRef = useRef<HTMLInputElement>(null);
+  const totalResendCooldown =
+    COMPONENT_CONFIG.FORGOT_PASSWORD.RESEND_COOLDOWN_SECONDS;
   const cooldownTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { openHelp } = useKeyboardShortcuts();
 
@@ -285,20 +288,29 @@ export default function ForgotPasswordPage() {
             <div
               className={`${SPACING_CLASSES.TOP} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
             >
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={handleResend}
-                disabled={resendCooldown > 0 || isResending}
-                loading={isResending}
-                loadingText="Sending..."
-                className={RESPONSIVE_WIDTH}
-                size="md"
-              >
-                {resendCooldown > 0
-                  ? `Resend in ${resendCooldown}s`
-                  : 'Resend email'}
-              </Button>
+              <div className="flex items-center justify-center gap-3">
+                {resendCooldown > 0 && (
+                  <CountdownProgress
+                    seconds={resendCooldown}
+                    totalSeconds={totalResendCooldown}
+                    size="sm"
+                  />
+                )}
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handleResend}
+                  disabled={resendCooldown > 0 || isResending}
+                  loading={isResending}
+                  loadingText="Sending..."
+                  className={RESPONSIVE_WIDTH}
+                  size="md"
+                >
+                  {resendCooldown > 0
+                    ? `Resend in ${resendCooldown}s`
+                    : 'Resend email'}
+                </Button>
+              </div>
             </div>
 
             <div
