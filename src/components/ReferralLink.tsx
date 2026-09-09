@@ -31,6 +31,7 @@ import {
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { PLATFORM } from '@/lib/dom-utils';
 import { RESPONSIVE_FLEX_BETWEEN_GAP } from '@/lib/config/remaining-hardcoded-patterns';
 import {
   PRIMARY_BORDER,
@@ -99,6 +100,7 @@ function ReferralLinkComponent({
     }
   };
 
+  const isMac = useMemo(() => PLATFORM.isMac(), []);
   const [isSelected, setIsSelected] = useState(false);
   const selectionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -175,7 +177,7 @@ function ReferralLinkComponent({
             <Tooltip
               content={
                 isSelected
-                  ? REFERRAL_LINK_LABELS.CODE_SELECTED_TITLE
+                  ? REFERRAL_LINK_LABELS.CODE_SELECTED_TITLE(isMac)
                   : REFERRAL_LINK_LABELS.CODE_TITLE
               }
               position="top"
@@ -188,7 +190,7 @@ function ReferralLinkComponent({
                 tabIndex={0}
                 role="button"
                 aria-label={`${referralUrl}. Press Space or Enter to select the link.`}
-                className={`w-full min-w-0 px-3 py-2 ${WHITE_BG_PATTERNS.DEFAULT} border ${PRIMARY_BORDER._200} rounded-md text-sm ${PRIMARY_TEXT._800} truncate font-mono cursor-pointer ${GRAY_CLASSES.HOVER_BG_50} transition-all ${DURATION_TAILWIND[200]} outline-none ${FOCUS_RING_PATTERNS.DEFAULT}`}
+                className={`w-full min-w-0 px-3 py-2 ${WHITE_BG_PATTERNS.DEFAULT} border ${PRIMARY_BORDER._200} rounded-md text-sm ${PRIMARY_TEXT._800} truncate font-mono cursor-pointer ${GRAY_CLASSES.HOVER_BG_50} transition-all active:scale-[0.98] motion-reduce:active:scale-100 ${DURATION_TAILWIND[200]} outline-none ${FOCUS_RING_PATTERNS.DEFAULT}`}
               >
                 {referralUrl}
               </code>

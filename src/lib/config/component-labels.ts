@@ -299,7 +299,8 @@ export const REFERRAL_LINK_LABELS = {
   /** Code element title attribute */
   CODE_TITLE: 'Click or press Enter/Space to select all',
   /** Code element title attribute when selected */
-  CODE_SELECTED_TITLE: 'Selected! Press Ctrl+C to copy',
+  CODE_SELECTED_TITLE: (isMac: boolean) =>
+    `Selected! Press ${isMac ? '⌘' : 'Ctrl'}+C to copy`,
 } as const;
 
 /**
