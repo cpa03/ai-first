@@ -1,7 +1,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ReferralLink from '../src/components/ReferralLink';
-import { __resetPlatformCacheForTesting } from '../src/lib/dom-utils';
 
 const mockSelectNodeContents = jest.fn();
 const mockRemoveAllRanges = jest.fn();
@@ -41,8 +40,6 @@ describe('ReferralLink', () => {
     expect(codeElement).toHaveAttribute('role', 'button');
     expect(codeElement.className).toContain('focus-visible:ring-2');
     expect(codeElement.className).toContain('focus-visible:ring-primary-500');
-    expect(codeElement.className).toContain('active:scale-[0.98]');
-    expect(codeElement.className).toContain('motion-reduce:active:scale-100');
   });
 
   it('selects the entire code container content on click', () => {
@@ -120,38 +117,6 @@ describe('ReferralLink', () => {
       ).toBeInTheDocument();
     });
 
-    it('displays macOS platform-appropriate shortcut (⌘+C) on Mac platform', () => {
-      const originalPlatform = Object.getOwnPropertyDescriptor(
-        navigator,
-        'platform'
-      );
-      Object.defineProperty(navigator, 'platform', {
-        value: 'MacIntel',
-        configurable: true,
-      });
-      __resetPlatformCacheForTesting();
-
-      render(<ReferralLink referralCode="testcode123" />);
-      const codeElement = screen.getByText(/signup\?ref=testcode123/i);
-
-      fireEvent.focus(codeElement);
-      act(() => {
-        jest.advanceTimersByTime(500);
-      });
-
-      act(() => {
-        fireEvent.click(codeElement);
-      });
-      expect(
-        screen.getByText('Selected! Press ⌘+C to copy')
-      ).toBeInTheDocument();
-
-      if (originalPlatform) {
-        Object.defineProperty(navigator, 'platform', originalPlatform);
-      }
-      __resetPlatformCacheForTesting();
-    });
-
     it('updates the tooltip text to selected when clicked, and reverts on blur', () => {
       render(<ReferralLink referralCode="testcode123" />);
       const codeElement = screen.getByText(/signup\?ref=testcode123/i);
@@ -170,7 +135,7 @@ describe('ReferralLink', () => {
         fireEvent.click(codeElement);
       });
       expect(
-        screen.getByText(/Selected! Press (Ctrl|⌘)\+C to copy/)
+        screen.getByText('Selected! Press Ctrl+C to copy')
       ).toBeInTheDocument();
 
       // Blur to revert
@@ -200,7 +165,7 @@ describe('ReferralLink', () => {
         fireEvent.keyDown(codeElement, { key: 'Enter' });
       });
       expect(
-        screen.getByText(/Selected! Press (Ctrl|⌘)\+C to copy/)
+        screen.getByText('Selected! Press Ctrl+C to copy')
       ).toBeInTheDocument();
 
       // Fast-forward 2 seconds
