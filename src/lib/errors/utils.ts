@@ -65,22 +65,22 @@ export function toErrorResponse(
     'X-Content-Type-Options': SECURITY_CONFIG.X_CONTENT_TYPE_OPTIONS,
     'X-Frame-Options': SECURITY_CONFIG.X_FRAME_OPTIONS,
     'Referrer-Policy': SECURITY_CONFIG.REFERRER_POLICY,
-    'X-Request-ID': errorResponse.requestId || '',
-    'X-Error-Code': appError.code,
+    [HTTP_HEADERS.X_REQUEST_ID]: errorResponse.requestId || '',
+    [HTTP_HEADERS.X_ERROR_CODE]: appError.code,
     'X-Error-Fingerprint': appError.fingerprint,
-    'X-Retryable': String(appError.retryable),
-    'X-API-Version': API_VERSION,
+    [HTTP_HEADERS.X_RETRYABLE]: String(appError.retryable),
+    [HTTP_HEADERS.X_API_VERSION]: API_VERSION,
   };
 
   if (responseTimeMs !== undefined) {
-    headers['X-Response-Time'] = `${responseTimeMs}ms`;
+    headers[HTTP_HEADERS.X_RESPONSE_TIME] = `${responseTimeMs}ms`;
   }
 
   if (appError instanceof RateLimitError) {
-    headers['Retry-After'] = String(appError.retryAfter);
-    headers['X-RateLimit-Limit'] = String(appError.limit);
-    headers['X-RateLimit-Remaining'] = String(appError.remaining);
-    headers['X-RateLimit-Reset'] = String(
+    headers[HTTP_HEADERS.RETRY_AFTER] = String(appError.retryAfter);
+    headers[HTTP_HEADERS.X_RATELIMIT_LIMIT] = String(appError.limit);
+    headers[HTTP_HEADERS.X_RATELIMIT_REMAINING] = String(appError.remaining);
+    headers[HTTP_HEADERS.X_RATELIMIT_RESET] = String(
       Math.ceil(Date.now() / TIME_CONVERSIONS.MS_PER_SECOND) +
         appError.retryAfter
     );
