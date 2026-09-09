@@ -455,25 +455,14 @@ async function withStoreGlobalLock<T>(
 }
 
 /**
- * Core rate limit check with atomic operations.
- * This function is called within a lock to prevent race conditions.
+ * Synchronous core logic for rate limit check.
  */
-async function checkRateLimitInternal(
+function checkRateLimitCore(
   identifier: string,
   config: RateLimitConfig,
-  now: number
-): Promise<{ allowed: boolean; info: RateLimitInfo }> {
-  const windowStart = now - config.windowMs;
-
-  if (rateLimitStore.size >= RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE) {
-    await cleanupOldestEntries(
-      Math.floor(
-        RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE *
-          RATE_LIMIT_STORE_CONFIG.CLEANUP_PERCENTAGE
-      )
-    );
-  }
-
+  now: number,
+  windowStart: number
+): { allowed: boolean; info: RateLimitInfo } {
   const existingRequests = rateLimitStore.get(identifier);
   const requests = existingRequests || [];
 
@@ -518,6 +507,34 @@ async function checkRateLimitInternal(
       reset: now + config.windowMs,
     },
   };
+}
+
+/**
+ * Core rate limit check with atomic operations.
+ * Returns synchronously when store capacity allows, avoiding Promise allocation.
+ */
+function checkRateLimitInternal(
+  identifier: string,
+  config: RateLimitConfig,
+  now: number
+):
+  | { allowed: boolean; info: RateLimitInfo }
+  | Promise<{ allowed: boolean; info: RateLimitInfo }> {
+  const windowStart = now - config.windowMs;
+
+  if (rateLimitStore.size >= RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE) {
+    return (async () => {
+      await cleanupOldestEntries(
+        Math.floor(
+          RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE *
+            RATE_LIMIT_STORE_CONFIG.CLEANUP_PERCENTAGE
+        )
+      );
+      return checkRateLimitCore(identifier, config, now, windowStart);
+    })();
+  }
+
+  return checkRateLimitCore(identifier, config, now, windowStart);
 }
 
 /**
