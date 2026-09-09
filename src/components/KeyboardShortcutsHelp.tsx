@@ -246,6 +246,16 @@ const keyboardShortcuts: KeyboardShortcut[] = [
     context: 'form',
   },
   {
+    keys: ['⌘', '1'],
+    description: SHORTCUT_DESCRIPTIONS.SIGN_IN_GOOGLE,
+    context: 'form',
+  },
+  {
+    keys: ['⌘', '2'],
+    description: SHORTCUT_DESCRIPTIONS.SIGN_IN_GITHUB,
+    context: 'form',
+  },
+  {
     keys: ['s'],
     description: SHORTCUT_DESCRIPTIONS.SNOOZE_ALERT,
     context: 'modal',

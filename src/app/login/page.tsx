@@ -250,7 +250,7 @@ export default function LoginPage() {
   );
 
   // Micro-UX: Cmd/Ctrl+Enter keyboard shortcut for form submission
-  // Matches the pattern of IdeaInput (⌘Enter) and ClarificationFlow (⌘Enter)
+  // Matches the pattern of IdeaInput (⌘Enter), ClarificationFlow (⌘Enter) and LoginPage (⌘Enter)
   // Provides quick keyboard access for power users without needing to click the submit button
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -270,6 +270,28 @@ export default function LoginPage() {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [submitForm]);
+
+  // Micro-UX: Cmd/Ctrl+1 and Cmd/Ctrl+2 keyboard shortcuts for OAuth buttons
+  // Provides quick keyboard access to Google (⌘1) and GitHub (⌘2) sign-in
+  // Matches the pattern of mobile nav number shortcuts for consistency
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey) {
+        if (e.key === '1') {
+          e.preventDefault();
+          triggerHapticFeedback();
+          handleOAuthSignIn('google');
+        } else if (e.key === '2') {
+          e.preventDefault();
+          triggerHapticFeedback();
+          handleOAuthSignIn('github');
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleOAuthSignIn]);
 
   return (
     <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
