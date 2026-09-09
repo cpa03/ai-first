@@ -12,6 +12,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ## StorX Feature Analysis & Integration Tasks
 
+### [STRENGTHEN] Strengthen DashboardSkeleton Reduced Motion Animation Delay Optimization
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-18
+- **Details**: Integrated `usePrefersReducedMotion` into `DashboardSkeleton` to conditionally omit staggered animation delays on skeleton table rows when prefers-reduced-motion is enabled, respecting accessibility settings while preserving polite live status announcements. Verified in `tests/DashboardSkeleton.test.tsx`.
+
+### [CONNECT] Connect DashboardSkeleton Labels to Central Component Configurations
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-08-18
+- **Details**: Verified that `DashboardSkeleton` labels, table headers, and skeleton row counts are connected directly to centralized configurations in `src/lib/config/`, maintaining zero hardcoded values and consistent system architecture.
+
 ### [STRENGTHEN] Strengthen LoadingSpinner Accessibility and Non-Redundant Screen Reader Announcements
 - **Priority**: MEDIUM
 - **Status**: COMPLETE

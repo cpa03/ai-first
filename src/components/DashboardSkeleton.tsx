@@ -2,6 +2,7 @@
 
 import { memo } from 'react';
 import Skeleton from '@/components/Skeleton';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
   CARD_PATTERNS,
   TABLE_PATTERNS,
@@ -22,6 +23,8 @@ import { FADE_IN } from '@/lib/config/animation-classes';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
 function DashboardSkeletonComponent() {
+  const prefersReducedMotion = usePrefersReducedMotion();
+
   return (
     <div
       className={FADE_IN}
@@ -93,7 +96,9 @@ function DashboardSkeletonComponent() {
                   key={index}
                   className={`${FADE_IN}`}
                   style={{
-                    animationDelay: `${index * ANIMATION_DELAYS.MICRO}ms`,
+                    animationDelay: prefersReducedMotion
+                      ? undefined
+                      : `${index * ANIMATION_DELAYS.MICRO}ms`,
                   }}
                 >
                   <td className={TABLE_PATTERNS.cell.padding}>
