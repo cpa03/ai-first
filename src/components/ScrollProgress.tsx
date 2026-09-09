@@ -21,6 +21,7 @@ import {
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
+import { COORDINATE_POSITION_PATTERNS } from '@/lib/config/positioning';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 /**
@@ -304,7 +305,7 @@ function ScrollProgressComponent() {
       />
       {showPercentage && (
         <div
-          className={`absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 ${FADE_IN} ${
+          className={`${COORDINATE_POSITION_PATTERNS.CENTER_VERTICAL} right-2 flex items-center gap-1 ${FADE_IN} ${
             isHovered || isDragging ? 'opacity-100' : 'opacity-0'
           } ${prefersReducedMotion ? '' : `transition-opacity ${DURATION_TAILWIND[150]}`}`}
           aria-hidden="true"

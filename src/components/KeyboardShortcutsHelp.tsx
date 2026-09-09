@@ -38,6 +38,7 @@ import {
 } from '@/lib/config';
 import { MT_CLASSES, MB_CLASSES } from '@/lib/config/spacing';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
+import { COORDINATE_POSITION_PATTERNS } from '@/lib/config/positioning';
 import {
   KEYBOARD_SHORTCUTS_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -741,7 +742,7 @@ function KeyboardShortcutsHelpComponent({
         >
           <div className={RELATIVE}>
             <svg
-              className={`absolute left-3 top-1/2 -translate-y-1/2 ${ICON_SIZES.MD} ${TEXT_COLORS.SECONDARY}`}
+              className={`${COORDINATE_POSITION_PATTERNS.CENTER_VERTICAL} left-3 ${ICON_SIZES.MD} ${TEXT_COLORS.SECONDARY}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -773,7 +774,7 @@ function KeyboardShortcutsHelpComponent({
                   setSelectedIndex(0);
                   searchInputRef.current?.focus();
                 }}
-                className={`absolute right-3 top-1/2 -translate-y-1/2 p-0.5 ${TEXT_COLORS.SECONDARY} ${GRAY_CLASSES.HOVER_TEXT_700} rounded-full ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.COLOR} focus:outline-none focus:ring-2 focus:ring-primary-500 ${FOCUS_RING_OFFSET_PATTERNS.COMPACT.split(' ').pop()}`}
+                className={`${COORDINATE_POSITION_PATTERNS.CENTER_VERTICAL} right-3 p-0.5 ${TEXT_COLORS.SECONDARY} ${GRAY_CLASSES.HOVER_TEXT_700} rounded-full ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.COLOR} focus:outline-none focus:ring-2 focus:ring-primary-500 ${FOCUS_RING_OFFSET_PATTERNS.COMPACT.split(' ').pop()}`}
                 aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CLEAR_SEARCH_LABEL}
               >
                 <svg

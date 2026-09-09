@@ -168,6 +168,8 @@ export const COORDINATE_POSITION_PATTERNS = {
   RIGHT_CENTER: 'absolute right-3 top-1/2 -translate-y-1/2',
   /** absolute top-4 right-16 */
   TOP_RIGHT_LG: 'absolute top-4 right-16',
+  /** absolute top-1/2 -translate-y-1/2 - for vertical centering */
+  CENTER_VERTICAL: 'absolute top-1/2 -translate-y-1/2',
 } as const;
 
 export type TopClasses = typeof TOP_CLASSES;

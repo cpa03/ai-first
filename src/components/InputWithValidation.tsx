@@ -49,7 +49,11 @@ import {
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { COMPONENT_CONFIG } from '@/lib/config';
-import { RIGHT_CLASSES, TOP_CLASSES } from '@/lib/config/positioning';
+import {
+  RIGHT_CLASSES,
+  TOP_CLASSES,
+  COORDINATE_POSITION_PATTERNS,
+} from '@/lib/config/positioning';
 import {
   INPUT_BUTTON_SIZES,
   PROGRESS_BAR_SIZES,
@@ -470,7 +474,7 @@ const InputWithValidationComponent = forwardRef<
 
           {isValid && charCount > 0 && (
             <div
-              className={`absolute ${RIGHT_CLASSES.LG} ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
+              className={`${COORDINATE_POSITION_PATTERNS.CENTER} ${RIGHT_CLASSES.LG} ${multiline ? TOP_CLASSES.LG : COORDINATE_POSITION_PATTERNS.CENTER_VERTICAL} pointer-events-none`}
             >
               <Tooltip
                 content={`${label} is valid`}
@@ -503,7 +507,7 @@ const InputWithValidationComponent = forwardRef<
 
           {isInvalid && (
             <div
-              className={`absolute ${RIGHT_CLASSES.LG} ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
+              className={`${COORDINATE_POSITION_PATTERNS.CENTER} ${RIGHT_CLASSES.LG} ${multiline ? TOP_CLASSES.LG : COORDINATE_POSITION_PATTERNS.CENTER_VERTICAL} pointer-events-none`}
             >
               <Tooltip
                 content={INPUT_VALIDATION_LABELS.FIX_ERROR_TOOLTIP}
@@ -532,7 +536,7 @@ const InputWithValidationComponent = forwardRef<
 
           {showClearButton && (
             <div
-              className={`absolute ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} ${hasIcon || showPasswordToggle ? RIGHT_CLASSES.XXXXL : RIGHT_CLASSES.LG}`}
+              className={`${multiline ? TOP_CLASSES.LG : COORDINATE_POSITION_PATTERNS.CENTER_VERTICAL} ${hasIcon || showPasswordToggle ? RIGHT_CLASSES.XXXXL : RIGHT_CLASSES.LG}`}
             >
               <Tooltip
                 content={`Clear ${label}`}
@@ -572,7 +576,7 @@ const InputWithValidationComponent = forwardRef<
               />
               {passwordVisible && currentValue && (
                 <div
-                  className={`absolute ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} ${hasIcon || showClearButton ? RIGHT_CLASSES.XXXXXL_XL : RIGHT_CLASSES.XXXXXL_LG}`}
+                  className={`${multiline ? TOP_CLASSES.LG : COORDINATE_POSITION_PATTERNS.CENTER_VERTICAL} ${hasIcon || showClearButton ? RIGHT_CLASSES.XXXXXL_XL : RIGHT_CLASSES.XXXXXL_LG}`}
                 >
                   <Tooltip
                     content={INPUT_VALIDATION_LABELS.COPY_PASSWORD_TOOLTIP}
@@ -632,7 +636,7 @@ const InputWithValidationComponent = forwardRef<
                 </div>
               )}
               <div
-                className={`absolute ${multiline ? TOP_CLASSES.LG : 'top-1/2 -translate-y-1/2'} ${hasIcon || showClearButton ? RIGHT_CLASSES.XXXXXL_MD : RIGHT_CLASSES.XXXXL_SM}`}
+                className={`${multiline ? TOP_CLASSES.LG : COORDINATE_POSITION_PATTERNS.CENTER_VERTICAL} ${hasIcon || showClearButton ? RIGHT_CLASSES.XXXXXL_MD : RIGHT_CLASSES.XXXXL_SM}`}
               >
                 <Tooltip
                   content={

@@ -19,6 +19,7 @@ import {
 import { SECTION_INDICATOR_LABELS } from '@/lib/config/component-labels';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { SECTION_INDICATOR_COLORS } from '@/lib/config/theme';
+import { COORDINATE_POSITION_PATTERNS } from '@/lib/config/positioning';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
@@ -169,7 +170,7 @@ function SectionIndicatorComponent({
 
   return (
     <nav
-      className={`fixed left-4 top-1/2 -translate-y-1/2 z-${Z_INDEX_LAYERS.TOAST} ${className}`}
+      className={`fixed left-4 ${COORDINATE_POSITION_PATTERNS.CENTER_VERTICAL} z-${Z_INDEX_LAYERS.TOAST} ${className}`}
       aria-label={SECTION_INDICATOR_LABELS.NAV_ARIA_LABEL}
       aria-hidden={!isVisible}
       style={{
