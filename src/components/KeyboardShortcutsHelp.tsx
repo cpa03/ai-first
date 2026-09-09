@@ -569,6 +569,55 @@ function KeyboardShortcutsHelpComponent({
     };
   }, [isOpen, handleClose, searchQuery]);
 
+  // Micro-UX: Number key shortcuts (1-6) to quickly jump between category filter chips
+  // Mirrors the mobile nav pattern (1-5) for consistency and discoverability
+  // 1=All, 2=Global, 3=Command, 4=Navigation, 5=Form, 6=Modal
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const CATEGORY_MAP: Record<string, KeyboardShortcut['context'] | 'all'> = {
+      '1': 'all',
+      '2': contextOrder[0],
+      '3': contextOrder[1],
+      '4': contextOrder[2],
+      '5': contextOrder[3],
+      '6': contextOrder[4],
+    };
+
+    const handleCategoryKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInput =
+        target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
+
+      // Allow number keys to work in search input for regular typing,
+      // but allow Ctrl/⌘ + number to work even in inputs
+      if (isInput && !e.ctrlKey && !e.metaKey) return;
+
+      const category = CATEGORY_MAP[e.key];
+      if (!category) return;
+
+      e.preventDefault();
+      triggerHapticFeedback();
+      setSelectedContext(category);
+      setSelectedIndex(0);
+
+      // Focus the corresponding filter chip button after state update
+      requestAnimationFrame(() => {
+        const buttons = document.querySelectorAll(
+          '[role="tab"]'
+        ) as NodeListOf<HTMLElement>;
+        const index =
+          category === 'all' ? 0 : contextOrder.indexOf(category) + 1;
+        if (buttons[index]) {
+          buttons[index].focus();
+        }
+      });
+    };
+
+    document.addEventListener('keydown', handleCategoryKey);
+    return () => document.removeEventListener('keydown', handleCategoryKey);
+  }, [isOpen]);
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -836,6 +885,7 @@ function KeyboardShortcutsHelpComponent({
             type="button"
             role="tab"
             aria-selected={selectedContext === 'all'}
+            aria-keyshortcuts="1"
             onClick={() => {
               setSelectedContext('all');
               setSelectedIndex(0);
@@ -847,9 +897,12 @@ function KeyboardShortcutsHelpComponent({
                 : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
             } ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
           >
+            <span className="opacity-60 mr-0.5" aria-hidden="true">
+              1.
+            </span>
             All
           </button>
-          {contextOrder.map((context) => {
+          {contextOrder.map((context, index) => {
             const count = keyboardShortcuts.filter(
               (s) => s.context === context
             ).length;
@@ -859,6 +912,7 @@ function KeyboardShortcutsHelpComponent({
                 type="button"
                 role="tab"
                 aria-selected={selectedContext === context}
+                aria-keyshortcuts={String(index + 2)}
                 onClick={() => {
                   setSelectedContext(
                     selectedContext === context ? 'all' : context
@@ -872,6 +926,9 @@ function KeyboardShortcutsHelpComponent({
                     : `${BG_COLORS.LIGHTER} ${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY}`
                 } ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
               >
+                <span className="opacity-60 mr-0.5" aria-hidden="true">
+                  {index + 2}.
+                </span>
                 {contextLabels[context]}{' '}
                 <span
                   className={
