@@ -3,6 +3,16 @@ import { Deliverable, Task } from '../db/service';
 import { API_ERROR_MESSAGES } from '../config/error-messages';
 import { IDEA_STATUS_CONFIG } from '../config';
 
+/**
+ * Sanitizes table cell content by replacing line breaks with spaces and escaping pipe characters.
+ * SECURITY: Prevents Markdown table injection attacks where user/LLM content breaks out of table cells or injects new table rows.
+ */
+function sanitizeTableCell(value: unknown): string {
+  if (value === null || value === undefined) return '';
+  const str = String(value);
+  return str.replace(/[\r\n]+/g, ' ').replace(/\|/g, '\\|');
+}
+
 export class MarkdownExporter extends ExportConnector {
   readonly type = 'markdown';
   readonly name = 'Markdown';
@@ -94,7 +104,13 @@ export class MarkdownExporter extends ExportConnector {
           deliverables: string[];
         }>
       ).forEach((phase) => {
-        markdown += `| ${phase.phase} | ${phase.start} | ${phase.end} | ${phase.deliverables.join(', ')} |\n`;
+        const p = sanitizeTableCell(phase.phase);
+        const s = sanitizeTableCell(phase.start);
+        const e = sanitizeTableCell(phase.end);
+        const d = Array.isArray(phase.deliverables)
+          ? phase.deliverables.map(sanitizeTableCell).join(', ')
+          : sanitizeTableCell(phase.deliverables);
+        markdown += `| ${p} | ${s} | ${e} | ${d} |\n`;
       });
     }
 
