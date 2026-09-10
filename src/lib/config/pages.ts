@@ -597,7 +597,7 @@ export const NOT_FOUND_PAGE_CONFIG = {
 export const NOT_FOUND_LABELS = {
   COPY_URL_BUTTON: 'Copy page URL',
   COPY_URL_SUCCESS: 'URL copied!',
-  COPY_URL_ARIA_LABEL: 'Copy broken page URL to clipboard for reporting',
+  COPY_URL_ARIA_LABEL: 'Copy page URL',
   COPY_URL_HINT: 'copy URL',
   GO_BACK_TOOLTIP: 'Navigate to previous page',
   GO_HOME_TOOLTIP: 'Return to the home page',
