@@ -40,10 +40,16 @@ function SectionIndicatorComponent({
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState('');
   const [isVisible, setIsVisible] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
   const observerRef = useRef<IntersectionObserver | null>(null);
   const sectionsRef = useRef<Map<string, Element>>(new Map());
   const { openHelp } = useKeyboardShortcuts();
+
+  // Micro-UX: Compute the active section label for display
+  const activeSectionLabel = sections.find(
+    (s) => s.id === activeSection
+  )?.label;
 
   useEffect(() => {
     if (sections.length === 0) return;
@@ -172,6 +178,10 @@ function SectionIndicatorComponent({
       className={`fixed left-4 top-1/2 -translate-y-1/2 z-${Z_INDEX_LAYERS.TOAST} ${className}`}
       aria-label={SECTION_INDICATOR_LABELS.NAV_ARIA_LABEL}
       aria-hidden={!isVisible}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={() => setIsHovered(false)}
       style={{
         opacity: isVisible ? 1 : 0,
         transform: isVisible
@@ -183,31 +193,32 @@ function SectionIndicatorComponent({
           : 'opacity 0.3s ease, transform 0.3s ease',
       }}
     >
-      <div
-        className={`
-          flex flex-col gap-2
-          ${BG_COLORS.DEFAULT} ${SHADOW_CLASSES.DEFAULT}
-          rounded-full
-          border ${BORDER_COLORS.LIGHT}
-          p-2
-          ${prefersReducedMotion ? '' : 'transition-all ' + DURATION_TAILWIND[300]}
-        `}
-      >
-        {sections.map((section, index) => {
-          const isActive = activeSection === section.id;
-          return (
-            <Tooltip
-              key={section.id}
-              content={section.label}
-              shortcut={section.shortcut ? [section.shortcut] : undefined}
-              position="right"
-            >
-              <button
-                type="button"
-                data-section-dot
-                data-section-id={section.id}
-                onClick={() => scrollToSection(section.id)}
-                className={`
+      <div className="relative">
+        <div
+          className={`
+            flex flex-col gap-2
+            ${BG_COLORS.DEFAULT} ${SHADOW_CLASSES.DEFAULT}
+            rounded-full
+            border ${BORDER_COLORS.LIGHT}
+            p-2
+            ${prefersReducedMotion ? '' : 'transition-all ' + DURATION_TAILWIND[300]}
+          `}
+        >
+          {sections.map((section, index) => {
+            const isActive = activeSection === section.id;
+            return (
+              <Tooltip
+                key={section.id}
+                content={section.label}
+                shortcut={section.shortcut ? [section.shortcut] : undefined}
+                position="right"
+              >
+                <button
+                  type="button"
+                  data-section-dot
+                  data-section-id={section.id}
+                  onClick={() => scrollToSection(section.id)}
+                  className={`
                   relative
                   ${ICON_SIZES.SM}
                   rounded-full
@@ -219,21 +230,43 @@ function SectionIndicatorComponent({
                       : `${SECTION_INDICATOR_COLORS.INACTIVE_BG} ${SECTION_INDICATOR_COLORS.INACTIVE_HOVER_BG} hover:scale-110 focus-visible:scale-125`
                   }
                 `}
-                aria-label={SECTION_INDICATOR_LABELS.SECTION_ARIA_LABEL(
-                  section.label
-                )}
-                aria-current={isActive ? 'true' : undefined}
-              >
-                {isActive && !prefersReducedMotion && (
-                  <span
-                    className={`absolute inset-0 rounded-full ${SECTION_INDICATOR_COLORS.ACTIVE_PING} animate-ping opacity-75`}
-                    aria-hidden="true"
-                  />
-                )}
-              </button>
-            </Tooltip>
-          );
-        })}
+                  aria-label={SECTION_INDICATOR_LABELS.SECTION_ARIA_LABEL(
+                    section.label
+                  )}
+                  aria-current={isActive ? 'true' : undefined}
+                >
+                  {isActive && !prefersReducedMotion && (
+                    <span
+                      className={`absolute inset-0 rounded-full ${SECTION_INDICATOR_COLORS.ACTIVE_PING} animate-ping opacity-75`}
+                      aria-hidden="true"
+                    />
+                  )}
+                </button>
+              </Tooltip>
+            );
+          })}
+        </div>
+        {/* Micro-UX: Active section label that appears on hover for discoverability */}
+        {/* Shows the current section name to help users understand where they are */}
+        <div
+          className={`absolute left-full ml-3 top-1/2 -translate-y-1/2 whitespace-nowrap ${
+            isHovered && activeSectionLabel
+              ? 'opacity-100 translate-x-0'
+              : 'opacity-0 -translate-x-1 pointer-events-none'
+          } ${prefersReducedMotion ? '' : 'transition-all ' + DURATION_TAILWIND[200]}`}
+        >
+          <span
+            className={`
+              inline-flex items-center px-2.5 py-1
+              text-xs font-medium rounded-md
+            ${BG_COLORS.DEFAULT} ${SHADOW_CLASSES.DEFAULT}
+            border ${BORDER_COLORS.LIGHT}
+            ${TEXT_COLORS.PRIMARY}
+            `}
+          >
+            {activeSectionLabel}
+          </span>
+        </div>
       </div>
       <div
         className={`hidden sm:flex items-center justify-center gap-1.5 mt-2 text-xs ${TEXT_COLORS.MUTED}`}
