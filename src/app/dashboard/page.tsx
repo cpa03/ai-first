@@ -167,6 +167,7 @@ export default function DashboardPage() {
   const [selectedRowIndex, setSelectedRowIndex] = useState<number>(-1);
   const [isFilterClearing, setIsFilterClearing] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [restartTourModal, setRestartTourModal] = useState(false);
   const filterSelectRef = useRef<HTMLSelectElement>(null);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const filterClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -875,10 +876,7 @@ export default function DashboardPage() {
         <button
           type="button"
           onClick={() => {
-            localStorage.removeItem(LOCAL_STORAGE_KEYS.ONBOARDING_COMPLETED);
-            if (typeof window !== 'undefined') {
-              window.location.reload();
-            }
+            setRestartTourModal(true);
           }}
           className={`ml-2 ${DASHBOARD_PATTERNS.ACTION_LINK} cursor-pointer`}
           aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.RESTART_ONBOARDING}
@@ -1478,6 +1476,83 @@ export default function DashboardPage() {
                   {DASHBOARD_PAGE_CONTENT.DELETE_MODAL.TITLE}
                 </Button>
               </Tooltip>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Restart Tour Confirmation Modal */}
+      {restartTourModal && (
+        <div
+          className={MODAL_PATTERNS.overlay}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={DASHBOARD_ELEMENT_IDS.RESTART_TOUR_MODAL_TITLE}
+          aria-describedby={
+            DASHBOARD_ELEMENT_IDS.RESTART_TOUR_MODAL_DESCRIPTION
+          }
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setRestartTourModal(false);
+          }}
+          onTouchEnd={(e) => {
+            if (e.target === e.currentTarget) setRestartTourModal(false);
+          }}
+        >
+          <div
+            className={`${MODAL_PATTERNS.content.container} ${MODAL_PATTERNS.content.transition}`}
+          >
+            <div className={MODAL_PATTERNS.header.container}>
+              <div className={MODAL_PATTERNS.dangerIcon.container}>
+                <svg
+                  className={MODAL_PATTERNS.dangerIcon.icon}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox={SVG_VIEWBOX.STANDARD}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
+                </svg>
+              </div>
+              <h3
+                id={DASHBOARD_ELEMENT_IDS.RESTART_TOUR_MODAL_TITLE}
+                className={MODAL_PATTERNS.header.title}
+              >
+                {DASHBOARD_PAGE_CONTENT.RESTART_TOUR_MODAL.TITLE}
+              </h3>
+            </div>
+
+            <p
+              id={DASHBOARD_ELEMENT_IDS.RESTART_TOUR_MODAL_DESCRIPTION}
+              className={MODAL_PATTERNS.header.description}
+            >
+              {DASHBOARD_PAGE_CONTENT.RESTART_TOUR_MODAL.CONFIRM}
+            </p>
+
+            <div className={MODAL_PATTERNS.footer.container}>
+              <Button
+                variant="outline"
+                onClick={() => setRestartTourModal(false)}
+              >
+                {DASHBOARD_PAGE_CONTENT.RESTART_TOUR_MODAL.CANCEL}
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  localStorage.removeItem(
+                    LOCAL_STORAGE_KEYS.ONBOARDING_COMPLETED
+                  );
+                  setRestartTourModal(false);
+                  if (typeof window !== 'undefined') {
+                    window.location.reload();
+                  }
+                }}
+              >
+                {DASHBOARD_PAGE_CONTENT.RESTART_TOUR_MODAL.RESTART}
+              </Button>
             </div>
           </div>
         </div>
