@@ -51,7 +51,7 @@ describe('TaskManagementSkeleton', () => {
 
     const { container } = render(<TaskManagementSkeleton />);
 
-    const cardContainers = container.querySelectorAll('.animate-fade-in');
+    const cardContainers = container.querySelectorAll<HTMLElement>('.animate-fade-in');
     expect(cardContainers.length).toBeGreaterThan(1);
     expect(cardContainers[1].style.animationDelay).toBe('');
     expect(cardContainers[2].style.animationDelay).toBe('');
