@@ -2,6 +2,7 @@
 
 import { memo } from 'react';
 import Skeleton from '@/components/Skeleton';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
   CARD_PATTERNS,
   SVG_STROKE_WIDTHS,
@@ -41,6 +42,8 @@ import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
  * This follows the same pattern as DashboardSkeleton but adapted for task management.
  */
 function TaskManagementSkeletonComponent() {
+  const prefersReducedMotion = usePrefersReducedMotion();
+
   return (
     <div
       className={FADE_IN}
@@ -109,7 +112,9 @@ function TaskManagementSkeletonComponent() {
             key={index}
             className={FADE_IN}
             style={{
-              animationDelay: `${index * ANIMATION_CONFIG.DASHBOARD_STAGGER_DELAY}ms`,
+              animationDelay: prefersReducedMotion
+                ? undefined
+                : `${index * ANIMATION_CONFIG.DASHBOARD_STAGGER_DELAY}ms`,
             }}
           >
             <div
