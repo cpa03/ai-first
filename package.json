@@ -15,6 +15,7 @@
     "dev": "next dev",
     "dev:check": "npm run env:check && npm run dev",
     "build": "next build",
+    "postbuild": "mkdir -p .next/static/css && mkdir -p .next/standalone/.next/static/css",
     "build:check": "npm run env:check && npm run build",
     "start": "next start",
     "lint": "eslint src tests --max-warnings=0",
