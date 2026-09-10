@@ -366,17 +366,23 @@ const AlertComponent = function Alert({
                 )}
               </span>
             )}
-            <button
-              onClick={handleSnooze}
-              className={`${TYPOGRAPHY_CLASSES.XS_MEDIUM} opacity-50 hover:opacity-100 transition-opacity p-0.5 rounded ${FOCUS_RING_OFFSET_PATTERNS.SUBTLE}`}
-              aria-label={ALERT_LABELS.SNOOZE_ARIA_LABEL}
-              type="button"
+            <Tooltip
+              content={ALERT_LABELS.SNOOZE_TOOLTIP}
+              shortcut={['s']}
+              position="top"
             >
-              +
-              {COMPONENT_CONFIG.ALERT.SNOOZE_DURATION_MS /
-                TIME_CONVERSIONS.MS_PER_SECOND}
-              s
-            </button>
+              <button
+                onClick={handleSnooze}
+                className={`${TYPOGRAPHY_CLASSES.XS_MEDIUM} opacity-50 hover:opacity-100 transition-opacity p-0.5 rounded ${FOCUS_RING_OFFSET_PATTERNS.SUBTLE}`}
+                aria-label={ALERT_LABELS.SNOOZE_ARIA_LABEL}
+                type="button"
+              >
+                +
+                {COMPONENT_CONFIG.ALERT.SNOOZE_DURATION_MS /
+                  TIME_CONVERSIONS.MS_PER_SECOND}
+                s
+              </button>
+            </Tooltip>
           </div>
         </>
       )}
