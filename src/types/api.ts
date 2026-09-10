@@ -59,6 +59,11 @@ export interface PaginatedResponse<T> {
   };
 }
 
+/**
+ * Standard API request headers
+ * Note: 'Content-Type' and 'application/json' values should match HTTP_HEADERS constants
+ * from @/lib/config/http.ts for consistency
+ */
 export interface ApiRequestHeaders {
   'Content-Type': 'application/json';
   Authorization?: string;
