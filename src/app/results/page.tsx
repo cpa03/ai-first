@@ -1057,7 +1057,7 @@ function ResultsContent() {
                     shareText="I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!"
                     label="Share your blueprint"
                     successLabel="Shared!"
-                    ariaLabel="Share your project blueprint"
+                    ariaLabel="Share your blueprint"
                     onShare={() => {
                       trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE, {
                         share_platform: 'web_share',
@@ -1116,7 +1116,7 @@ function ResultsContent() {
               shareText={`I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!`}
               label={RESULTS_PAGE_CONTENT.SHARE_BUTTON_LABEL}
               successLabel={RESULTS_PAGE_CONTENT.SHARE_BUTTON_SUCCESS_LABEL}
-              ariaLabel="Share your project blueprint"
+              ariaLabel={RESULTS_PAGE_CONTENT.SHARE_BUTTON_LABEL}
               onShare={() => {
                 // Growth: Track social share event
                 trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE, {
