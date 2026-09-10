@@ -110,6 +110,12 @@ export const DASHBOARD_ELEMENT_IDS = {
 
   /** Delete confirm hint ID */
   DELETE_CONFIRM_HINT: 'delete-confirm-hint',
+
+  /** Restart tour modal title ID */
+  RESTART_TOUR_MODAL_TITLE: 'restart-tour-modal-title',
+
+  /** Restart tour modal description ID */
+  RESTART_TOUR_MODAL_DESCRIPTION: 'restart-tour-modal-description',
 } as const;
 
 /**

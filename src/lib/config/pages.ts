@@ -484,6 +484,13 @@ export const DASHBOARD_PAGE_CONTENT = {
     DELETE: 'Delete',
     DELETING: 'Deleting...',
   },
+  RESTART_TOUR_MODAL: {
+    TITLE: 'Restart Onboarding Tour',
+    CONFIRM:
+      'Are you sure you want to restart the onboarding tour? This will reset your progress and show the tour again.',
+    CANCEL: 'Cancel',
+    RESTART: 'Restart Tour',
+  },
   KEYBOARD_SHORTCUTS: {
     NAVIGATE: 'navigate',
     OPEN: 'open',
