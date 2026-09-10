@@ -4,6 +4,7 @@ import { STATUS_CODES } from '@/lib/config';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { SECURITY_CONFIG } from '@/lib/config/security-config';
+import { HTTP_HEADERS } from '@/lib/config/http';
 
 const logger = createLogger('CSPReport');
 
@@ -42,13 +43,14 @@ async function handleCSPReport(context: ApiContext): Promise<Response> {
   const { request } = context;
 
   try {
-    const contentType = request.headers.get('content-type') || '';
+    const contentType =
+      request.headers.get(HTTP_HEADERS.CONTENT_TYPE.toLowerCase()) || '';
     let reportData: CSPReportBody | null = null;
 
     try {
       if (
-        contentType.includes('application/json') ||
-        contentType.includes('application/csp-report')
+        contentType.includes(HTTP_HEADERS.APPLICATION_JSON) ||
+        contentType.includes(HTTP_HEADERS.APPLICATION_CSP_REPORT)
       ) {
         reportData = await request.json();
       } else {
