@@ -15,6 +15,7 @@ import { AIService, AIModelConfig } from '@/lib/ai';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import { MOCK_SECRETS } from './utils/test-secrets';
+import { RESILIENCE_CONFIG } from '@/lib/config/resilience-config';
 
 jest.mock('openai', () => {
   return jest.fn();
@@ -124,7 +125,7 @@ describe('AIService', () => {
     it('should initialize OpenAI client when API key is provided', () => {
       expect(OpenAI).toHaveBeenCalledWith({
         apiKey: MOCK_SECRETS.OPENAI_API_KEY,
-        timeout: 60000,
+        timeout: RESILIENCE_CONFIG.TIMEOUTS.OPENAI,
       });
     });
 
