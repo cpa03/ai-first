@@ -375,6 +375,10 @@ export const IDEA_INPUT_LABELS = {
   SUBMIT_TOOLTIP: 'Submit your idea',
   /** Submit button tooltip keyboard shortcut */
   SUBMIT_SHORTCUT: ['⌘', 'Enter'],
+  /** Disabled submit button tooltip - shown when idea is empty */
+  SUBMIT_DISABLED_EMPTY: 'Type at least 10 characters to continue',
+  /** Disabled submit button tooltip - shown when there are validation errors */
+  SUBMIT_DISABLED_INVALID: 'Fix the errors above to continue',
 } as const;
 
 /**

@@ -599,6 +599,13 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 loading={isSubmitting}
                 loadingText={MESSAGES.IDEA_INPUT.PROCESSING_BUTTON}
                 disabled={!idea.trim() || !!validationError}
+                disabledTooltip={
+                  !idea.trim()
+                    ? IDEA_INPUT_LABELS.SUBMIT_DISABLED_EMPTY
+                    : validationError
+                      ? IDEA_INPUT_LABELS.SUBMIT_DISABLED_INVALID
+                      : undefined
+                }
                 attention={!!idea.trim() && !validationError && !isSubmitting}
                 enableTransition
               >
