@@ -174,7 +174,7 @@ const nextConfig = {
       'react-dom',
       'next',
     ],
-    optimizeCss: true,
+    optimizeCss: false,
   },
   compiler: {
     removeConsole:
@@ -184,6 +184,22 @@ const nextConfig = {
     // Target modern browsers to reduce legacy JavaScript transpilation
     // Aligns with browserslist: last 2 versions of Chrome, Firefox, Safari, Edge
     styledComponents: false,
+  },
+  turbopack: {},
+  webpack: (config) => {
+    const fs = require('fs');
+    const path = require('path');
+    config.plugins.push({
+      apply: (compiler) => {
+        compiler.hooks.done.tap('OpenNextCssDirPlugin', () => {
+          try {
+            fs.mkdirSync(path.join(process.cwd(), '.next', 'static', 'css'), { recursive: true });
+            fs.mkdirSync(path.join(process.cwd(), '.next', 'standalone', '.next', 'static', 'css'), { recursive: true });
+          } catch (_) {}
+        });
+      },
+    });
+    return config;
   },
 };
 

@@ -136,6 +136,7 @@ function ScrollToTopButtonComponent() {
         ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} rounded-md
         inline-flex items-center gap-1.5
         group
+        active:scale-95 motion-reduce:active:scale-100
         ${hasAppeared && !prefersReducedMotion ? SCROLL_TO_TOP_APPEAR : ''}
       `}
       aria-label={SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}
@@ -183,7 +184,7 @@ function ScrollToTopButtonComponent() {
   const shortcut = isMac ? ['⌘', '↑'] : ['Ctrl', 'Home'];
 
   return (
-    <Tooltip content="Scroll to top" shortcut={shortcut} position="top">
+    <Tooltip content={SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT} shortcut={shortcut} position="top">
       {buttonElement}
     </Tooltip>
   );

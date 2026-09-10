@@ -66,6 +66,18 @@ This file contains only **active tasks** that are currently in progress or pendi
 - **Date**: 2026-08-16
 - **Details**: Connected platform-aware keyboard shortcut representations for `CopyButton` directly to `COPY_BUTTON_LABELS.KEYBOARD_SHORTCUT` in `src/lib/config/component-labels.ts`.
 
+### [STRENGTHEN] Strengthen ScrollToTopButton Micro-UX and Touch Responsiveness
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-09-10
+- **Details**: Strengthened `ScrollToTopButton` interactive state feedback with active tactile scaling (`active:scale-95 motion-reduce:active:scale-100`) to provide instant physical feedback during touch and click interactions while respecting reduced motion settings.
+
+### [CONNECT] Connect ScrollToTopButton Tooltip Labels to Central Component Configs
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-09-10
+- **Details**: Connected `ScrollToTopButton` tooltip content directly to `SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT` in `src/lib/config/component-labels.ts`, eliminating inline hardcoded text.
+
 ---
 
 ## Quick Stats
