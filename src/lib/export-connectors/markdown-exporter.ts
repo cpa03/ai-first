@@ -42,6 +42,17 @@ export class MarkdownExporter extends ExportConnector {
     throw new Error(API_ERROR_MESSAGES.PAGE.MARKDOWN_EXPORT_NO_AUTH);
   }
 
+  /**
+   * Sanitizes table cell content to prevent Markdown table syntax injection.
+   * Escapes pipe characters (|) and flattens newlines into spaces.
+   */
+  private sanitizeTableCell(value: string): string {
+    if (!value) return '';
+    return String(value)
+      .replace(/\|/g, '\\|')
+      .replace(/[\r\n]+/g, ' ');
+  }
+
   private generateMarkdown(
     data: ExportData,
     options?: Record<string, unknown>
@@ -94,7 +105,13 @@ export class MarkdownExporter extends ExportConnector {
           deliverables: string[];
         }>
       ).forEach((phase) => {
-        markdown += `| ${phase.phase} | ${phase.start} | ${phase.end} | ${phase.deliverables.join(', ')} |\n`;
+        const p = this.sanitizeTableCell(phase.phase);
+        const s = this.sanitizeTableCell(phase.start);
+        const e = this.sanitizeTableCell(phase.end);
+        const d = Array.isArray(phase.deliverables)
+          ? phase.deliverables.map((item) => this.sanitizeTableCell(item)).join(', ')
+          : this.sanitizeTableCell(phase.deliverables);
+        markdown += `| ${p} | ${s} | ${e} | ${d} |\n`;
       });
     }
 
