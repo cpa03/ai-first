@@ -13,6 +13,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { TEST_CONFIG } from './config/test-config';
 
 jest.mock('@/lib/db', () => ({
   dbService: {
@@ -194,7 +195,7 @@ describe('Integration Tests - User Workflows', () => {
             'idea-123'
           );
         },
-        { timeout: 5000 }
+        { timeout: TEST_CONFIG.DEFAULT_TIMEOUT }
       );
 
       // Step 2: Clarification flow - Simplified to just verify component renders
@@ -218,7 +219,7 @@ describe('Integration Tests - User Workflows', () => {
             screen.getByText(/Who is your target audience/i)
           ).toBeInTheDocument();
         },
-        { timeout: 3000 }
+        { timeout: TEST_CONFIG.SHORT_TIMEOUT }
       );
 
       // Step 3: Blueprint display and export - Simplified to verify component renders
@@ -237,7 +238,7 @@ describe('Integration Tests - User Workflows', () => {
           const elements = screen.getAllByText(/Generating your blueprint/i);
           expect(elements.length).toBeGreaterThan(0);
         },
-        { timeout: 5000 }
+        { timeout: TEST_CONFIG.DEFAULT_TIMEOUT }
       );
 
       // Verify complete workflow succeeded
@@ -481,7 +482,7 @@ describe('Integration Tests - User Workflows', () => {
           const elements = screen.getAllByText('Generating your blueprint');
           expect(elements.length).toBeGreaterThan(0);
         },
-        { timeout: 5000 }
+        { timeout: TEST_CONFIG.DEFAULT_TIMEOUT }
       );
 
       const endTime = performance.now();
