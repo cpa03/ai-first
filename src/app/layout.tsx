@@ -5,6 +5,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import MobileNav from '@/components/MobileNav';
 import ToastContainer from '@/components/ToastContainer';
+import OfflineBanner from '@/components/OfflineBanner';
 import ScrollToTop from '@/components/ScrollToTop';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
 import ScrollShadow from '@/components/ScrollShadow';
@@ -168,6 +169,7 @@ export default async function RootLayout({
       >
         <ErrorBoundary>
           <GlobalErrorHandler />
+          <OfflineBanner />
           <ScrollShadow />
           <KeyboardShortcutsProvider>
             <a href="#main-content" className={SKIP_LINK}>
