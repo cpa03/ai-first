@@ -12,6 +12,8 @@ export type {
   ApiHandlerOptions,
 } from '@/lib/api-handler';
 
+import { HTTP_HEADERS } from '@/lib/config/http';
+
 export type HttpStatus =
   200 | 201 | 204 | 400 | 401 | 403 | 404 | 409 | 429 | 500 | 502 | 503 | 504;
 
@@ -60,7 +62,7 @@ export interface PaginatedResponse<T> {
 }
 
 export interface ApiRequestHeaders {
-  'Content-Type': 'application/json';
+  'Content-Type': typeof HTTP_HEADERS.APPLICATION_JSON;
   Authorization?: string;
   'X-Request-ID'?: string;
   'X-Correlation-ID'?: string;
