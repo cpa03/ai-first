@@ -3,6 +3,13 @@ import { Deliverable, Task } from '../db/service';
 import { API_ERROR_MESSAGES } from '../config/error-messages';
 import { IDEA_STATUS_CONFIG } from '../config';
 
+function sanitizeTableCell(cell: string): string {
+  if (typeof cell !== 'string') {
+    return String(cell ?? '');
+  }
+  return cell.replace(/\|/g, '\\|').replace(/\r?\n/g, ' ');
+}
+
 export class MarkdownExporter extends ExportConnector {
   readonly type = 'markdown';
   readonly name = 'Markdown';
@@ -94,7 +101,13 @@ export class MarkdownExporter extends ExportConnector {
           deliverables: string[];
         }>
       ).forEach((phase) => {
-        markdown += `| ${phase.phase} | ${phase.start} | ${phase.end} | ${phase.deliverables.join(', ')} |\n`;
+        const sanitizedPhase = sanitizeTableCell(phase.phase);
+        const sanitizedStart = sanitizeTableCell(phase.start);
+        const sanitizedEnd = sanitizeTableCell(phase.end);
+        const sanitizedDeliverables = (phase.deliverables || [])
+          .map((d) => sanitizeTableCell(d))
+          .join(', ');
+        markdown += `| ${sanitizedPhase} | ${sanitizedStart} | ${sanitizedEnd} | ${sanitizedDeliverables} |\n`;
       });
     }
 
