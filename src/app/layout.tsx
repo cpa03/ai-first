@@ -46,6 +46,7 @@ import {
   GRID_COL_SPAN,
 } from '@/lib/config/remaining-hardcoded-patterns';
 import { PRIMARY_COMBINATIONS } from '@/lib/config/primary-colors';
+import RouteAnnouncer from '@/components/RouteAnnouncer';
 
 // JSON-LD Structured Data for SEO - Growth: Better search visibility
 const jsonLd = {
@@ -194,6 +195,7 @@ export default async function RootLayout({
                 </kbd>
               </span>
             </a>
+            <RouteAnnouncer />
             <div className={REMAINING_PATTERNS.MAIN_CONTENT}>
               <ToastContainer />
               <header
