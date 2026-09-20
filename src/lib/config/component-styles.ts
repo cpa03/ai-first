@@ -26,6 +26,7 @@ import {
 import { UI_CONFIG } from './ui';
 import { TEXT_SIZE_CLASSES } from './ui-text-sizes';
 import { GRAY_CLASSES } from './remaining-styles';
+import { MIN_SIZE_CLASSES } from './ui-dimensions';
 
 /**
  * Pulse dot indicator styles
@@ -50,7 +51,7 @@ export const KBD_HINT_STYLE = `px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} f
  * Toast clear all button styles
  * Used in: ToastContainer
  */
-export const TOAST_CLEAR_ALL_BUTTON = `self-end mb-1 px-3 py-1.5 text-xs font-medium ${TEXT_COLORS.MUTED} ${BG_COLORS.DEFAULT} ${BORDER_COLORS.LIGHT} rounded-md shadow-sm hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 transition-all duration-200 animate-fade-in`;
+export const TOAST_CLEAR_ALL_BUTTON = `self-end mb-1 px-3 py-1.5 text-xs font-medium ${TEXT_COLORS.MUTED} ${BG_COLORS.DEFAULT} ${BORDER_COLORS.LIGHT} rounded-md shadow-sm hover:${BG_COLORS.LIGHT} hover:${TEXT_COLORS.PRIMARY} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 transition-all duration-200 animate-fade-in ${MIN_SIZE_CLASSES.TOAST_BUTTON}`;
 
 /**
  * Progress bar track styles
@@ -327,8 +328,9 @@ export const CLARIFICATION_FLOW_INFO_TEXT = `text-sm mt-4`;
 /**
  * Clarification flow keyboard hint text styles
  * Used in: ClarificationFlow
+ * Stacked on mobile, inline on desktop
  */
-export const CLARIFICATION_FLOW_KEYBOARD_HINT = `hidden sm:flex items-center gap-3 text-xs ${TEXT_COLORS.SECONDARY} mr-4`;
+export const CLARIFICATION_FLOW_KEYBOARD_HINT = `flex flex-col sm:flex-row items-center gap-3 text-xs ${TEXT_COLORS.SECONDARY} mr-4 sm:mr-0`;
 
 /**
  * Clarification flow step indicator container styles
@@ -497,9 +499,9 @@ export const PROGRESS_STEPPER_STYLES = {
   DESKTOP_STEP_LABEL_TEXT: 'text-sm font-medium',
   /** Desktop step count */
   DESKTOP_STEP_COUNT: 'text-xs font-medium tabular-nums',
-  /** Keyboard navigation hint */
+  /** Keyboard navigation hint - stacked on mobile, inline on desktop */
   KEYBOARD_HINT:
-    'hidden sm:flex items-center justify-center gap-2 mt-2 text-xs',
+    'flex flex-col sm:flex-row items-center justify-center gap-2 mt-2 text-xs sm:gap-4',
 } as const;
 
 /**

@@ -75,11 +75,13 @@ const jsonLd = {
   ],
 };
 
+// Inter font with preload for optimal LCP
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
   weight: ['400', '500', '600', '700'],
+  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -127,6 +129,13 @@ export const metadata: Metadata = {
     shortcut: '/favicon.ico',
   },
   manifest: '/manifest.json',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    viewportFit: 'cover',
+    userScalable: true,
+    maximumScale: 5,
+  },
   other: {
     'mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'default',
@@ -164,7 +173,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${LAYOUT_CLASSES.MIN_HEIGHT_SCREEN} ${BG_COLOR_CLASSES.PAGE} font-sans`}
+        className={`${LAYOUT_CLASSES.MIN_HEIGHT_SCREEN} ${BG_COLOR_CLASSES.PAGE} font-sans safe-area-inset`}
       >
         <ErrorBoundary>
           <GlobalErrorHandler />
@@ -197,7 +206,7 @@ export default async function RootLayout({
             <div className={REMAINING_PATTERNS.MAIN_CONTENT}>
               <ToastContainer />
               <header
-                className={`${BG_COLOR_CLASSES.CARD} ${SHADOW_CLASSES.SMALL} ${BORDER_COLOR_CLASSES.TOP} sticky top-0 z-[${Z_INDEX_LAYERS.OVERLAY}]`}
+                className={`${BG_COLOR_CLASSES.CARD} ${SHADOW_CLASSES.SMALL} ${BORDER_COLOR_CLASSES.TOP} sticky top-0 z-[${Z_INDEX_LAYERS.OVERLAY}] pt-safe`}
               >
                 <div className={PAGE_LAYOUT_CLASSES.CONTAINER_XL}>
                   <div className={REMAINING_PATTERNS.HEADER}>

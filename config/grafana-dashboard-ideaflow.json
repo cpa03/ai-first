@@ -1,0 +1,329 @@
+{
+  "dashboard": {
+    "title": "IdeaFlow - Application Monitoring",
+    "uid": "ideaflow-app",
+    "tags": ["ideaflow", "nextjs", "application"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "HTTP Request Rate",
+        "type": "timeseries",
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "rate(http_requests_total[5m])",
+            "legendFormat": "{{method}} {{route}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "color": { "mode": "palette-classic" }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "HTTP Request Duration (p50, p95, p99)",
+        "type": "timeseries",
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, route))",
+            "legendFormat": "p50 {{route}}",
+            "refId": "A"
+          },
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, route))",
+            "legendFormat": "p95 {{route}}",
+            "refId": "B"
+          },
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, route))",
+            "legendFormat": "p99 {{route}}",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": null, "color": "green" },
+                { "value": 1, "color": "yellow" },
+                { "value": 3, "color": "red" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "HTTP Error Rate",
+        "type": "timeseries",
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "rate(http_request_errors_total[5m])",
+            "legendFormat": "{{method}} {{route}} ({{status_code}})",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": null, "color": "green" },
+                { "value": 0.01, "color": "yellow" },
+                { "value": 0.1, "color": "red" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "Error Rate by Status Code",
+        "type": "piechart",
+        "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "sum(rate(http_request_errors_total[5m])) by (status_code)",
+            "legendFormat": "{{status_code}}",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Circuit Breaker States",
+        "type": "stat",
+        "gridPos": { "x": 0, "y": 16, "w": 6, "h": 4 },
+        "targets": [
+          {
+            "expr": "circuit_breaker_state",
+            "legendFormat": "{{name}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              { "type": "value", "options": { "0": { "text": "Closed", "color": "green" } } },
+              { "type": "value", "options": { "1": { "text": "Half-Open", "color": "yellow" } } },
+              { "type": "value", "options": { "2": { "text": "Open", "color": "red" } } }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": null, "color": "green" },
+                { "value": 1, "color": "yellow" },
+                { "value": 2, "color": "red" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "Rate Limiter Hits",
+        "type": "timeseries",
+        "gridPos": { "x": 6, "y": 16, "w": 18, "h": 8 },
+        "targets": [
+          {
+            "expr": "rate(rate_limiter_hits_total[5m])",
+            "legendFormat": "{{method}} {{route}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        }
+      },
+      {
+        "id": 7,
+        "title": "Memory Usage (Heap)",
+        "type": "timeseries",
+        "gridPos": { "x": 0, "y": 24, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "process_resident_memory_bytes / 1024 / 1024",
+            "legendFormat": "RSS (MB)",
+            "refId": "A"
+          },
+          {
+            "expr": "process_heap_bytes / 1024 / 1024",
+            "legendFormat": "Heap (MB)",
+            "refId": "B"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "MB"
+          }
+        }
+      },
+      {
+        "id": 8,
+        "title": "Node.js Event Loop Lag",
+        "type": "timeseries",
+        "gridPos": { "x": 12, "y": 24, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "nodejs_eventloop_lag_seconds",
+            "legendFormat": "Lag (s)",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": null, "color": "green" },
+                { "value": 0.01, "color": "yellow" },
+                { "value": 0.1, "color": "red" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 9,
+        "title": "Database Connections",
+        "type": "timeseries",
+        "gridPos": { "x": 0, "y": 32, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "supabase_database_connections_active",
+            "legendFormat": "Active",
+            "refId": "A"
+          },
+          {
+            "expr": "supabase_database_connections_idle",
+            "legendFormat": "Idle",
+            "refId": "B"
+          },
+          {
+            "expr": "supabase_database_connections_max",
+            "legendFormat": "Max",
+            "refId": "C"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      },
+      {
+        "id": 10,
+        "title": "AI API Cost (Daily)",
+        "type": "stat",
+        "gridPos": { "x": 12, "y": 32, "w": 6, "h": 4 },
+        "targets": [
+          {
+            "expr": "ai_daily_cost_usd",
+            "legendFormat": "Cost",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "currencyUSD",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                { "value": null, "color": "green" },
+                { "value": 5, "color": "yellow" },
+                { "value": 10, "color": "red" }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 11,
+        "title": "AI API Requests by Provider",
+        "type": "timeseries",
+        "gridPos": { "x": 18, "y": 32, "w": 6, "h": 8 },
+        "targets": [
+          {
+            "expr": "rate(ai_requests_total[5m])",
+            "legendFormat": "{{provider}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        }
+      },
+      {
+        "id": 12,
+        "title": "Build & Deployment Status",
+        "type": "table",
+        "gridPos": { "x": 0, "y": 40, "w": 24, "h": 8 },
+        "targets": [
+          {
+            "expr": "deployment_status",
+            "format": "table",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "align": "center"
+            }
+          }
+        }
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "environment",
+          "type": "query",
+          "query": "label_values(http_requests_total, environment)",
+          "default": "production",
+          "refresh": 1
+        },
+        {
+          "name": "service",
+          "type": "query",
+          "query": "label_values(http_requests_total, service)",
+          "default": "ideaflow",
+          "refresh": 1
+        }
+      ]
+    },
+    "annotations": {
+      "list": [
+        {
+          "name": "Deployments",
+          "type": "dashboard",
+          "builtIn": 1,
+          "hide": false,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "enable": true
+        }
+      ]
+    }
+  },
+  "overwrite": true
+}

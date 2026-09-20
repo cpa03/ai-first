@@ -183,8 +183,8 @@ export function withApiHandler(
 
       // 4. Suspicious Pattern Detection (Regex-based, most expensive)
       // Only runs if the request hasn't been blocked by rate limiting or size validation.
-      const suspiciousResult = detectSuspiciousPatterns(request, {
-        scanBody: false,
+      const suspiciousResult = await detectSuspiciousPatterns(request, {
+        scanBody: true,
         minSeverity: 2,
         logDetected: true,
         requestId,

@@ -255,8 +255,15 @@ export const ENV_ACCESSORS = {
       EnvLoader.boolean(LOGGING_ENV_KEYS.SUPPRESS_BUILD_LOGS, false),
     ENABLE_DEBUG_LOGS: () =>
       EnvLoader.boolean(LOGGING_ENV_KEYS.ENABLE_DEBUG_LOGS, false),
-    STRUCTURED_LOGGING: () =>
-      EnvLoader.boolean(LOGGING_ENV_KEYS.STRUCTURED_LOGGING, false),
+    STRUCTURED_LOGGING: () => {
+      // Explicit env value always wins (any of true/1/yes/on or false/0/no/off).
+      if (process.env[LOGGING_ENV_KEYS.STRUCTURED_LOGGING] !== undefined) {
+        return EnvLoader.boolean(LOGGING_ENV_KEYS.STRUCTURED_LOGGING, false);
+      }
+      // Default: structured JSON logging ON in production (log aggregation),
+      // OFF in development/test (human-readable format).
+      return process.env.NODE_ENV === 'production';
+    },
   },
 
   /** Application keys */

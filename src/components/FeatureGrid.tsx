@@ -192,7 +192,7 @@ function FeatureGridComponent() {
         ))}
       </ul>
       <div
-        className={`hidden sm:flex items-center justify-center gap-2 mt-6 text-xs ${TEXT_COLORS.MUTED}`}
+        className={`flex flex-col sm:flex-row items-center justify-center gap-2 mt-6 text-xs ${TEXT_COLORS.MUTED} sm:gap-4`}
         role="group"
         aria-label={FEATURE_GRID_LABELS.KEYBOARD_NAV_HINT}
       >

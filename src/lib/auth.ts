@@ -192,3 +192,45 @@ export function verifyResourceOwnership(
     );
   }
 }
+
+/**
+ * Optional authentication - returns user if authenticated, null if not
+ * Used for guest mode where we allow anonymous access but track user if logged in
+ */
+export async function optionalAuth(
+  request: Request
+): Promise<AuthenticatedUser | null> {
+  return verifyAuth(request);
+}
+
+/**
+ * Check if request has guest mode header (for API routes that support guest access)
+ */
+export function isGuestRequest(request: Request): boolean {
+  return request.headers.get('x-guest-mode') === 'true';
+}
+
+/**
+ * Get user ID from request - supports both authenticated and guest users
+ * For guest users, returns a special guest identifier
+ */
+export async function getUserIdOrGuest(
+  request: Request
+): Promise<{ userId: string; isGuest: boolean }> {
+  const user = await verifyAuth(request);
+  if (user) {
+    return { userId: user.id, isGuest: false };
+  }
+  
+  // Check for guest session ID in header
+  const guestSessionId = request.headers.get('x-guest-session-id');
+  if (guestSessionId) {
+    return { userId: `guest_${guestSessionId}`, isGuest: true };
+  }
+  
+  throw new AppError(
+    API_ERROR_MESSAGES.AUTH.UNAUTHORIZED_TOKEN,
+    ErrorCode.AUTHENTICATION_ERROR,
+    STATUS_CODES.UNAUTHORIZED
+  );
+}

@@ -21,7 +21,7 @@ export function hasProperty<K extends string>(
 }
 
 export function isNumber(value: unknown): value is number {
-  return typeof value === 'number' && !isNaN(value);
+  return typeof value === 'number' && Number.isFinite(value);
 }
 
 export function isBoolean(value: unknown): value is boolean {
@@ -69,6 +69,10 @@ export function isTask(data: unknown): data is {
   if (!hasProperty(data, 'complexity') || !isNumber(data.complexity)) {
     return false;
   }
+  const estimatedHours = data.estimatedHours as number;
+  const complexity = data.complexity as number;
+  if (estimatedHours < 0 || estimatedHours > 10000) return false;
+  if (complexity < 0 || complexity > 10) return false;
   return true;
 }
 
@@ -127,5 +131,9 @@ export function isIdeaAnalysis(data: unknown): data is {
   ) {
     return false;
   }
+  if (!hasProperty(data, 'overallConfidence') || !isNumber(data.overallConfidence))
+    return false;
+  const overallConfidence = data.overallConfidence as number;
+  if (overallConfidence < 0 || overallConfidence > 1) return false;
   return true;
 }

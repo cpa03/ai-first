@@ -236,7 +236,7 @@ function SectionIndicatorComponent({
         })}
       </div>
       <div
-        className={`hidden sm:flex items-center justify-center gap-1.5 mt-2 text-xs ${TEXT_COLORS.MUTED}`}
+        className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 mt-2 text-xs ${TEXT_COLORS.MUTED}`}
         aria-hidden="true"
       >
         <span>↑</span>

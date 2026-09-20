@@ -52,6 +52,7 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
+        export PATH="$HOME/.opencode/bin:$PATH"
 
         echo "📦 Installing OpenCode CLI..."
         echo "   Version: ${{ inputs.version }}"

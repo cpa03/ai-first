@@ -17,23 +17,23 @@ describe('Suspicious Pattern Detection Improvements', () => {
   };
 
   describe('SQL Injection', () => {
-    it('should detect string-based tautologies without numbers', () => {
+    it('should detect string-based tautologies without numbers', async () => {
       const request = createMockRequest(
         "https://example.com/api/test?id=' OR 'a'='a"
       );
-      const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(request, { minSeverity: 1 });
       expect(result.detected).toBe(true);
       expect(result.patterns.some((p) => p.category === 'sql_injection')).toBe(
         true
       );
     });
 
-    it('should detect system table access attempts even without keywords', () => {
+    it('should detect system table access attempts even without keywords', async () => {
       // Current patterns might miss this if they only look for SELECT ... FROM
       const request = createMockRequest(
         'https://example.com/api/test?table=information_schema.columns'
       );
-      const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(request, { minSeverity: 1 });
       expect(result.detected).toBe(true);
       expect(result.patterns.some((p) => p.category === 'sql_injection')).toBe(
         true
@@ -42,51 +42,51 @@ describe('Suspicious Pattern Detection Improvements', () => {
   });
 
   describe('XSS', () => {
-    it('should detect srcdoc attribute injection', () => {
+    it('should detect srcdoc attribute injection', async () => {
       // Existing patterns might miss srcdoc if it doesn't contain <script>
       const request = createMockRequest(
         'https://example.com/api/test?attr=<div srcdoc="onclick=alert(1)">'
       );
-      const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(request, { minSeverity: 1 });
       expect(result.detected).toBe(true);
       expect(result.patterns.some((p) => p.category === 'xss')).toBe(true);
     });
 
-    it('should detect vbscript: protocol', () => {
+    it('should detect vbscript: protocol', async () => {
       const requestVb = createMockRequest(
         'https://example.com/api/test?url=vbscript:msgbox("hello")'
       );
-      const result = detectSuspiciousPatterns(requestVb, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(requestVb, { minSeverity: 1 });
       expect(result.detected).toBe(true);
       expect(result.patterns.some((p) => p.category === 'xss')).toBe(true);
     });
   });
 
   describe('Command Injection', () => {
-    it('should detect environment variable dumping (env/printenv)', () => {
+    it('should detect environment variable dumping (env/printenv)', async () => {
       // Existing patterns miss env/printenv
       const requestEnv = createMockRequest(
         'https://example.com/api/test?cmd=printenv'
       );
-      const result = detectSuspiciousPatterns(requestEnv, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(requestEnv, { minSeverity: 1 });
       expect(result.detected).toBe(true);
       expect(
         result.patterns.some((p) => p.category === 'command_injection')
       ).toBe(true);
     });
 
-    it('should detect Node.js specific injection attempts', () => {
+    it('should detect Node.js specific injection attempts', async () => {
       const request = createMockRequest(
         'https://example.com/api/test?code=process.version'
       );
-      const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(request, { minSeverity: 1 });
       expect(result.detected).toBe(true);
       expect(
         result.patterns.some((p) => p.category === 'command_injection')
       ).toBe(true);
     });
 
-    it('should detect reconnaissance commands with separators', () => {
+    it('should detect reconnaissance commands with separators', async () => {
       const commands = ['whoami', 'id', 'hostname', 'uname'];
       for (const cmd of commands) {
         // Test with different separators
@@ -99,7 +99,7 @@ describe('Suspicious Pattern Detection Improvements', () => {
           const request = createMockRequest(
             `https://example.com/api/test?cmd=${payload}`
           );
-          const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+          const result = await detectSuspiciousPatterns(request, { minSeverity: 3 });
           expect(result.detected).toBe(true);
           expect(result.maxSeverity).toBe(3);
           expect(
@@ -109,13 +109,13 @@ describe('Suspicious Pattern Detection Improvements', () => {
       }
     });
 
-    it('should NOT detect standalone reconnaissance commands as parameters', () => {
+    it('should NOT detect standalone reconnaissance commands as parameters', async () => {
       const commands = ['whoami', 'id', 'hostname', 'uname'];
       for (const cmd of commands) {
         const request = createMockRequest(
           `https://example.com/api/test?${cmd}=test-value`
         );
-        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        const result = await detectSuspiciousPatterns(request, { minSeverity: 3 });
         // Should not be detected at severity 3
         expect(result.detected).toBe(false);
       }
