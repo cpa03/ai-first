@@ -1,13 +1,5 @@
-import {
-  VALIDATION_LIMITS_CONFIG,
-  VALIDATION_LIMITS,
-  STATUS_CODES,
-  HTTP_HEADERS,
-  API_ERROR_MESSAGES,
-} from '../config';
-import { isString } from '../type-guards';
+import { VALIDATION_LIMITS } from '../config';
 import { CACHE_CONFIG } from '../config/cache';
-import { VALIDATION_ERROR_MESSAGES } from '../config/validation-error-messages';
 
 export interface ValidationError {
   field: string;
@@ -77,10 +69,11 @@ const HTML_ESCAPE_REGEX = new RegExp(
 /**
  * Fast-path trigger regex to identify strings that likely need no sanitization.
  * Checks for: <, >, &, ", ', / or any common event handler pattern (on...),
- * or dangerous protocols (javascript:, data:text/html) including obfuscated versions.
+ * or dangerous protocols (javascript:, vbscript:, livescript:, data:text/html, data:image/svg+xml)
+ * including obfuscated versions with whitespace/control characters.
  */
 const NEEDS_SANITIZATION_REGEX =
-  /[<>&"'/`]|\bon\w+\s*=|[\s/]*style\s*=|(?:\b|[^a-z0-9])(?:j[\s\x00-\x1F]*a[\s\x00-\x1F]*v[\s\x00-\x1F]*a[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t|v[\s\x00-\x1F]*b[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t|l[\s\x00-\x1F]*i[\s\x00-\x1F]*v[\s\x00-\x1F]*e[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t)[\s\x00-\x1F]*:|d[\s\x00-\x1F]*a[\s\x00-\x1F]*t[\s\x00-\x1F]*a[\s\x00-\x1F]*:[\s\x00-\x1F]*(?:text\/html|image\/svg\+xml)/i;
+  /[<>&"'/`]|(?:^|[^a-z0-9_-])on\w+\s*=|[\s/]*style\s*=|(?:\b|[^a-z0-9])(?:j[\s\x00-\x1F]*a[\s\x00-\x1F]*v[\s\x00-\x1F]*a[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t|v[\s\x00-\x1F]*b[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t|l[\s\x00-\x1F]*i[\s\x00-\x1F]*v[\s\x00-\x1F]*e[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t)[\s\x00-\x1F]*:|d[\s\x00-\x1F]*a[\s\x00-\x1F]*t[\s\x00-\x1F]*a[\s\x00-\x1F]*:[\s\x00-\x1F]*(?:text\/html|image\/svg\+xml)/i;
 
 /**
  * Sanitizes HTML content by removing script tags and escaping HTML entities
@@ -125,24 +118,41 @@ export function sanitizeHtml(input: string): string {
   }
 
   // Remove script tags and their contents
-  let sanitized = trimmed.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  let sanitized = trimmed.replace(
+    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+    ''
+  );
 
-  // Remove event handlers (onload, onclick, etc.)
-  sanitized = sanitized.replace(/\son\w+\s*=\s*["'][^"']*["']/gi, '');
-
-  // Redact potentially dangerous protocols
+  // Remove event handlers (onload, onclick, etc.) - handles quoted, unquoted, and no preceding space
   sanitized = sanitized.replace(
-    /javascript\s*:/gi,
+    /(?:^|[^a-z0-9_-])on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'>]+)/gi,
+    ''
+  );
+
+  // Redact potentially dangerous protocols (javascript:, vbscript:, livescript:) with whitespace/control char handling
+  sanitized = sanitized.replace(
+    /j[\s\x00-\x1F]*a[\s\x00-\x1F]*v[\s\x00-\x1F]*a[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t[\s\x00-\x1F]*:/gi,
     '[REDACTED_PROTOCOL]'
   );
   sanitized = sanitized.replace(
-    /data\s*:\s*text\/html/gi,
+    /v[\s\x00-\x1F]*b[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t[\s\x00-\x1F]*:/gi,
+    '[REDACTED_PROTOCOL]'
+  );
+  sanitized = sanitized.replace(
+    /l[\s\x00-\x1F]*i[\s\x00-\x1F]*v[\s\x00-\x1F]*e[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t[\s\x00-\x1F]*:/gi,
+    '[REDACTED_PROTOCOL]'
+  );
+
+  // Redact potentially dangerous data: URIs (text/html, image/svg+xml) with whitespace/control char handling
+  sanitized = sanitized.replace(
+    /d[\s\x00-\x1F]*a[\s\x00-\x1F]*t[\s\x00-\x1F]*a[\s\x00-\x1F]*:[\s\x00-\x1F]*(?:text\/html|image\/svg\+xml)/gi,
     '[REDACTED_DATA_URI]'
   );
 
-  // Redact potentially dangerous style attributes
+  // Redact potentially dangerous style attributes (quoted and unquoted)
+  // Handles: style="...", style='...', style=..., /style="...", /style='...', /style=...
   sanitized = sanitized.replace(
-    /\sstyle\s*=\s*["'][^"']*["']/gi,
+    /(?:\s|\/)style\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'>]+)/gi,
     ' [REDACTED_STYLE]'
   );
 

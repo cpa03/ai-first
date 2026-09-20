@@ -21,7 +21,9 @@ describe('Suspicious Pattern Detection Improvements', () => {
       const request = createMockRequest(
         "https://example.com/api/test?id=' OR 'a'='a"
       );
-      const result = await detectSuspiciousPatterns(request, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(request, {
+        minSeverity: 1,
+      });
       expect(result.detected).toBe(true);
       expect(result.patterns.some((p) => p.category === 'sql_injection')).toBe(
         true
@@ -33,7 +35,9 @@ describe('Suspicious Pattern Detection Improvements', () => {
       const request = createMockRequest(
         'https://example.com/api/test?table=information_schema.columns'
       );
-      const result = await detectSuspiciousPatterns(request, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(request, {
+        minSeverity: 1,
+      });
       expect(result.detected).toBe(true);
       expect(result.patterns.some((p) => p.category === 'sql_injection')).toBe(
         true
@@ -47,7 +51,9 @@ describe('Suspicious Pattern Detection Improvements', () => {
       const request = createMockRequest(
         'https://example.com/api/test?attr=<div srcdoc="onclick=alert(1)">'
       );
-      const result = await detectSuspiciousPatterns(request, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(request, {
+        minSeverity: 1,
+      });
       expect(result.detected).toBe(true);
       expect(result.patterns.some((p) => p.category === 'xss')).toBe(true);
     });
@@ -56,7 +62,9 @@ describe('Suspicious Pattern Detection Improvements', () => {
       const requestVb = createMockRequest(
         'https://example.com/api/test?url=vbscript:msgbox("hello")'
       );
-      const result = await detectSuspiciousPatterns(requestVb, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(requestVb, {
+        minSeverity: 1,
+      });
       expect(result.detected).toBe(true);
       expect(result.patterns.some((p) => p.category === 'xss')).toBe(true);
     });
@@ -68,7 +76,9 @@ describe('Suspicious Pattern Detection Improvements', () => {
       const requestEnv = createMockRequest(
         'https://example.com/api/test?cmd=printenv'
       );
-      const result = await detectSuspiciousPatterns(requestEnv, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(requestEnv, {
+        minSeverity: 1,
+      });
       expect(result.detected).toBe(true);
       expect(
         result.patterns.some((p) => p.category === 'command_injection')
@@ -79,7 +89,9 @@ describe('Suspicious Pattern Detection Improvements', () => {
       const request = createMockRequest(
         'https://example.com/api/test?code=process.version'
       );
-      const result = await detectSuspiciousPatterns(request, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(request, {
+        minSeverity: 1,
+      });
       expect(result.detected).toBe(true);
       expect(
         result.patterns.some((p) => p.category === 'command_injection')
@@ -99,7 +111,9 @@ describe('Suspicious Pattern Detection Improvements', () => {
           const request = createMockRequest(
             `https://example.com/api/test?cmd=${payload}`
           );
-          const result = await detectSuspiciousPatterns(request, { minSeverity: 3 });
+          const result = await detectSuspiciousPatterns(request, {
+            minSeverity: 3,
+          });
           expect(result.detected).toBe(true);
           expect(result.maxSeverity).toBe(3);
           expect(
@@ -115,7 +129,9 @@ describe('Suspicious Pattern Detection Improvements', () => {
         const request = createMockRequest(
           `https://example.com/api/test?${cmd}=test-value`
         );
-        const result = await detectSuspiciousPatterns(request, { minSeverity: 3 });
+        const result = await detectSuspiciousPatterns(request, {
+          minSeverity: 3,
+        });
         // Should not be detected at severity 3
         expect(result.detected).toBe(false);
       }
@@ -123,13 +139,15 @@ describe('Suspicious Pattern Detection Improvements', () => {
   });
 
   describe('New Enhanced Patterns', () => {
-    it('should detect error/time-based SQL functions', () => {
+    it('should detect error/time-based SQL functions', async () => {
       const functions = ['extractvalue', 'updatexml', 'pg_sleep', 'sleep'];
       for (const fn of functions) {
         const request = createMockRequest(
           `https://example.com/api/test?q=${fn}(1)`
         );
-        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        const result = await detectSuspiciousPatterns(request, {
+          minSeverity: 3,
+        });
         expect(result.detected).toBe(true);
         expect(result.maxSeverity).toBe(3);
         expect(
@@ -138,7 +156,7 @@ describe('Suspicious Pattern Detection Improvements', () => {
       }
     });
 
-    it('should detect quoted bracket notation prototype pollution attempts', () => {
+    it('should detect quoted bracket notation prototype pollution attempts', async () => {
       const payloads = [
         "constructor['prototype']",
         'constructor["prototype"]',
@@ -149,7 +167,9 @@ describe('Suspicious Pattern Detection Improvements', () => {
         const request = createMockRequest(
           `https://example.com/api/test?q=${encodeURIComponent(payload)}`
         );
-        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        const result = await detectSuspiciousPatterns(request, {
+          minSeverity: 3,
+        });
         expect(result.detected).toBe(true);
         expect(result.maxSeverity).toBe(3);
         expect(
@@ -158,7 +178,7 @@ describe('Suspicious Pattern Detection Improvements', () => {
       }
     });
 
-    it('should detect Windows sensitive paths', () => {
+    it('should detect Windows sensitive paths', async () => {
       const paths = [
         'C:\\Windows\\System32',
         'C:\\winnt\\system32',
@@ -169,7 +189,9 @@ describe('Suspicious Pattern Detection Improvements', () => {
         const request = createMockRequest(
           `https://example.com/api/test?file=${path}`
         );
-        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        const result = await detectSuspiciousPatterns(request, {
+          minSeverity: 3,
+        });
         expect(result.detected).toBe(true);
         expect(result.maxSeverity).toBe(3);
         expect(
@@ -178,7 +200,7 @@ describe('Suspicious Pattern Detection Improvements', () => {
       }
     });
 
-    it('should detect expanded SSRF cloud metadata and link-local access', () => {
+    it('should detect expanded SSRF cloud metadata and link-local access', async () => {
       const targets = [
         'metadata.google.internal',
         'instance-data',
@@ -192,20 +214,24 @@ describe('Suspicious Pattern Detection Improvements', () => {
         const request = createMockRequest(
           `https://example.com/api/test?url=http://${target}`
         );
-        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        const result = await detectSuspiciousPatterns(request, {
+          minSeverity: 3,
+        });
         expect(result.detected).toBe(true);
         expect(result.maxSeverity).toBe(3);
         expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
       }
     });
 
-    it('should detect sensitive config file access', () => {
+    it('should detect sensitive config file access', async () => {
       const files = ['.env', '.git/config', '.ssh/id_rsa', '.bash_history'];
       for (const file of files) {
         const request = createMockRequest(
           `https://example.com/api/test?path=/home/user/${file}`
         );
-        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        const result = await detectSuspiciousPatterns(request, {
+          minSeverity: 3,
+        });
         expect(result.detected).toBe(true);
         expect(result.maxSeverity).toBe(3);
         expect(
@@ -214,13 +240,15 @@ describe('Suspicious Pattern Detection Improvements', () => {
       }
     });
 
-    it('should detect Windows system files', () => {
+    it('should detect Windows system files', async () => {
       const files = ['config.sys', 'autoexec.bat'];
       for (const file of files) {
         const request = createMockRequest(
           `https://example.com/api/test?file=C:\\${file}`
         );
-        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        const result = await detectSuspiciousPatterns(request, {
+          minSeverity: 3,
+        });
         expect(result.detected).toBe(true);
         expect(result.maxSeverity).toBe(3);
         expect(
@@ -229,7 +257,7 @@ describe('Suspicious Pattern Detection Improvements', () => {
       }
     });
 
-    it('should detect advanced Windows and recon commands', () => {
+    it('should detect advanced Windows and recon commands', async () => {
       const commands = [
         'powershell',
         'cmd.exe',
@@ -241,7 +269,9 @@ describe('Suspicious Pattern Detection Improvements', () => {
         const request = createMockRequest(
           `https://example.com/api/test?cmd=;${cmd}`
         );
-        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        const result = await detectSuspiciousPatterns(request, {
+          minSeverity: 3,
+        });
         expect(result.detected).toBe(true);
         expect(result.maxSeverity).toBe(3);
         expect(
@@ -250,13 +280,15 @@ describe('Suspicious Pattern Detection Improvements', () => {
       }
     });
 
-    it('should detect new NoSQL injection operators', () => {
+    it('should detect new NoSQL injection operators', async () => {
       const operators = ['$accumulator', '$function'];
       for (const op of operators) {
         const request = createMockRequest(
           `https://example.com/api/test?q={"${op}":"..."}`
         );
-        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        const result = await detectSuspiciousPatterns(request, {
+          minSeverity: 3,
+        });
         expect(result.detected).toBe(true);
         expect(result.maxSeverity).toBe(3);
         expect(
@@ -265,13 +297,15 @@ describe('Suspicious Pattern Detection Improvements', () => {
       }
     });
 
-    it('should detect internal method prototype pollution', () => {
+    it('should detect internal method prototype pollution', async () => {
       const methods = ['__defineGetter__', '__lookupSetter__'];
       for (const method of methods) {
         const request = createMockRequest(
           `https://example.com/api/test?pollute=obj.${method}("foo", ...)`
         );
-        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        const result = await detectSuspiciousPatterns(request, {
+          minSeverity: 3,
+        });
         expect(result.detected).toBe(true);
         expect(result.maxSeverity).toBe(3);
         expect(
@@ -281,12 +315,14 @@ describe('Suspicious Pattern Detection Improvements', () => {
     });
 
     describe('Log Injection', () => {
-      it('should detect ANSI terminal escape sequences in query parameters or headers', () => {
+      it('should detect ANSI terminal escape sequences in query parameters or headers', async () => {
         // ANSI escape sequence: \x1b[31m (red text) or \x1b[2J (clear screen)
         const requestQuery = createMockRequest(
           'https://example.com/api/test?msg=\x1b[31mRED_ALERT\x1b[0m'
         );
-        const resultQuery = detectSuspiciousPatterns(requestQuery, { minSeverity: 2 });
+        const resultQuery = await detectSuspiciousPatterns(requestQuery, {
+          minSeverity: 2,
+        });
         expect(resultQuery.detected).toBe(true);
         expect(
           resultQuery.patterns.some((p) => p.category === 'log_injection')
@@ -296,7 +332,9 @@ describe('Suspicious Pattern Detection Improvements', () => {
           'https://example.com/api/test',
           { 'X-Custom-Header': '\x1b[2J\x1b[H' }
         );
-        const resultHeader = detectSuspiciousPatterns(requestHeader, { minSeverity: 2 });
+        const resultHeader = await detectSuspiciousPatterns(requestHeader, {
+          minSeverity: 2,
+        });
         expect(resultHeader.detected).toBe(true);
         expect(
           resultHeader.patterns.some((p) => p.category === 'log_injection')
@@ -305,10 +343,10 @@ describe('Suspicious Pattern Detection Improvements', () => {
     });
 
     describe('Complex Regex Correctness (Bolt Optimization)', () => {
-      it('should correctly detect patterns with backreferences', () => {
+      it('should correctly detect patterns with backreferences', async () => {
         // SQL OR tautology uses backreferences: /(\bor\b\s+['"]?([^'"]+)['"]?\s*=\s*['"]?\2['"]?)/is
         const input = "1' OR '1'='1";
-        const result = detectSuspiciousPatterns(
+        const result = await detectSuspiciousPatterns(
           new NextRequest(
             new URL(
               `https://example.com/api/test?q=${encodeURIComponent(input)}`
@@ -322,11 +360,11 @@ describe('Suspicious Pattern Detection Improvements', () => {
         ).toBe(true);
       });
 
-      it('should correctly detect multiline patterns', () => {
+      it('should correctly detect multiline patterns', async () => {
         // Path traversal with multiple lines
         const input =
           'GET /api/test HTTP/1.1\nHost: example.com\n\n../../etc/passwd';
-        const result = detectSuspiciousPatterns(
+        const result = await detectSuspiciousPatterns(
           new NextRequest(
             new URL(
               `https://example.com/api/test?q=${encodeURIComponent(input)}`

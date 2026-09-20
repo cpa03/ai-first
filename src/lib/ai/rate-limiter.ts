@@ -1,6 +1,10 @@
-import { ResilienceManager, defaultResilienceConfigs, ServiceResilienceConfig } from '../resilience';
+import {
+  resilienceManager,
+  defaultResilienceConfigs,
+  ServiceResilienceConfig,
+} from '../resilience';
 import type { AIModelConfig } from './types';
-import { AI_CONFIG, AI_HEALTH_CHECK_CONFIG, DEFAULT_TIMEOUTS, RESILIENCE_CONFIG } from '../config';
+import { AI_HEALTH_CHECK_CONFIG } from '../config/modular-constants';
 
 /**
  * Rate limiter configuration for AI providers
@@ -15,10 +19,10 @@ export interface AIRateLimitConfig {
  * Extracted from AIService to follow Single Responsibility Principle.
  */
 export class AIRateLimiter {
-  private resilienceManager: ResilienceManager;
+  private resilienceManager: typeof resilienceManager;
 
-  constructor(resilienceManager?: ResilienceManager) {
-    this.resilienceManager = resilienceManager || new ResilienceManager();
+  constructor(customResilienceManager?: typeof resilienceManager) {
+    this.resilienceManager = customResilienceManager || resilienceManager;
   }
 
   /**
@@ -47,8 +51,8 @@ export class AIRateLimiter {
       config.provider === 'openai'
         ? 'openai'
         : config.provider === 'anthropic'
-        ? 'anthropic'
-        : 'default';
+          ? 'anthropic'
+          : 'default';
 
     try {
       return await this.resilienceManager.execute(
@@ -60,12 +64,9 @@ export class AIRateLimiter {
         ),
         `ai-${config.provider}-${config.model}`
       );
-    } catch (error) {
+    } catch (_error) {
       // Wrap non-Error errors for consistency
-      if (!(error instanceof Error)) {
-        throw new Error(String(error));
-      }
-      throw error;
+      throw _error instanceof Error ? _error : new Error(String(_error));
     }
   }
 
@@ -73,8 +74,9 @@ export class AIRateLimiter {
    * Health check for AI providers
    */
   async healthCheck(
-    openai: any,
-    anthropic: any
+    openai: { models?: { list: () => Promise<unknown> } } | null | undefined,
+    anthropic:
+      { messages?: { create: () => Promise<unknown> } } | null | undefined
   ): Promise<{
     status: string;
     providers: string[];
@@ -93,7 +95,7 @@ export class AIRateLimiter {
       try {
         await openai.models.list();
         providers.push('openai');
-      } catch (error) {
+      } catch {
         // OpenAI health check failed
       }
     }
@@ -106,12 +108,12 @@ export class AIRateLimiter {
           messages: [{ role: 'user', content: 'ping' }],
         });
         providers.push('anthropic');
-      } catch (error) {
+      } catch {
         // Anthropic health check failed
       }
     }
 
-    const circuitBreakers = this.resilienceManager.getAllCircuitBreakerStatuses();
+    const circuitBreakers = this.resilienceManager.getCircuitBreakerStates();
 
     return {
       status: providers.length > 0 ? 'healthy' : 'unhealthy',
@@ -123,7 +125,7 @@ export class AIRateLimiter {
   /**
    * Get the resilience manager instance (for advanced usage)
    */
-  getResilienceManager(): ResilienceManager {
+  getResilienceManager(): typeof resilienceManager {
     return this.resilienceManager;
   }
 
@@ -131,7 +133,7 @@ export class AIRateLimiter {
    * Factory function for creating AIRateLimiter instances.
    * Enables dependency injection for testing.
    */
-  static create(resilienceManager?: ResilienceManager): AIRateLimiter {
+  static create(resilienceManager?: typeof resilienceManager): AIRateLimiter {
     return new AIRateLimiter(resilienceManager);
   }
 }

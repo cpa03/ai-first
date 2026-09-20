@@ -41,6 +41,13 @@ export interface ApiHandlerOptions {
    */
   timeoutMs?: number;
   skipCSRF?: boolean;
+  /**
+   * Skip suspicious pattern detection (security scanning)
+   * Use for endpoints that receive legitimate security-related content
+   * (e.g., CSP violation reports, security audit logs)
+   * @default false
+   */
+  skipSuspiciousPatterns?: boolean;
 }
 
 /**

@@ -9,6 +9,10 @@ jest.mock('@/lib/auth', () => ({
   requireAuth: jest
     .fn()
     .mockResolvedValue({ id: 'test-user-id', email: 'test@example.com' }),
+  isGuestRequest: jest.fn().mockReturnValue(false),
+  getUserIdOrGuest: jest
+    .fn()
+    .mockResolvedValue({ userId: 'test-user-id', isGuest: false }),
 }));
 
 jest.mock('@/lib/embedding-service', () => ({

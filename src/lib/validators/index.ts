@@ -1,6 +1,6 @@
 /**
  * Validators Module - Modular validation utilities
- * 
+ *
  * This module provides separated concerns for validation:
  * - input-sanitizer: String, HTML, and object sanitization
  * - schema-validator: Structured data validation (ideas, user responses, etc.)
@@ -20,20 +20,14 @@ export * from './pii-detector';
 // XSS Sanitizer
 export * from './xss-sanitizer';
 
+// AI Validator
+export * from './ai-validator';
+
 // Type exports for convenience
-export type {
-  ValidationError,
-  ValidationResult,
-} from './input-sanitizer';
+export type { ValidationError, ValidationResult } from './input-sanitizer';
 
-export type {
-  UserStoryValidationResult,
-} from './schema-validator';
+export type { UserStoryValidationResult } from './schema-validator';
 
-export type {
-  PIIDetectionResult,
-} from './pii-detector';
+export type { PIIDetectionResult } from './pii-detector';
 
-export type {
-  XSSSanitizeOptions,
-} from './xss-sanitizer';
+export type { XSSSanitizeOptions } from './xss-sanitizer';

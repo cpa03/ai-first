@@ -1,8 +1,7 @@
 import { Cache } from '../cache';
-import { AI_CONFIG, AI_SERVICE_LIMITS, API_ERROR_MESSAGES, AI_ENV_KEYS } from '../config';
-import { createLogger } from '../logger';
-
-const logger = createLogger('AICostTracker');
+import { AI_CONFIG, AI_SERVICE_LIMITS } from '../config/constants';
+import { API_ERROR_MESSAGES } from '../config';
+import { AI_ENV_KEYS } from '../config/env-keys';
 
 /**
  * Cost tracking entry
@@ -24,10 +23,12 @@ export class AICostTracker {
   private cleanupIntervalId: ReturnType<typeof setInterval> | null = null;
 
   constructor(costCache?: Cache<number>) {
-    this.todayCostCache = costCache || new Cache<number>({
-      ttl: AI_CONFIG.COST_CACHE_TTL_MS,
-      maxSize: AI_CONFIG.COST_CACHE_MAX_SIZE,
-    });
+    this.todayCostCache =
+      costCache ||
+      new Cache<number>({
+        ttl: AI_CONFIG.COST_CACHE_TTL_MS,
+        maxSize: AI_CONFIG.COST_CACHE_MAX_SIZE,
+      });
 
     // Start cleanup interval in production only
     this.startCleanupInterval();
@@ -60,7 +61,8 @@ export class AICostTracker {
     // Memory leak prevention: If array exceeds max size, remove oldest 20% of entries
     if (this.costTrackers.length > AI_SERVICE_LIMITS.MAX_COST_TRACKERS) {
       const entriesToRemove = Math.floor(
-        AI_SERVICE_LIMITS.MAX_COST_TRACKERS * AI_SERVICE_LIMITS.CLEANUP_PERCENTAGE
+        AI_SERVICE_LIMITS.MAX_COST_TRACKERS *
+          AI_SERVICE_LIMITS.CLEANUP_PERCENTAGE
       );
       this.costTrackers.splice(0, entriesToRemove);
     }

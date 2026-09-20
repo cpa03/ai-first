@@ -1,7 +1,8 @@
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 import type { AIModelConfig } from './types';
-import { AI_ENV_KEYS, DEFAULT_TIMEOUTS } from '../config';
+import { AI_ENV_KEYS } from '../config/env-keys';
+import { DEFAULT_TIMEOUTS } from '../config/resilience-config';
 
 /**
  * Interface for AI provider clients
@@ -37,7 +38,7 @@ export class AIProviderRegistry {
     if (process.env[AI_ENV_KEYS.ANTHROPIC_API_KEY]) {
       this.anthropic = new Anthropic({
         apiKey: process.env[AI_ENV_KEYS.ANTHROPIC_API_KEY],
-        timeout: DEFAULT_TIMEOUTS.openai,
+        timeout: DEFAULT_TIMEOUTS.anthropic,
       });
     }
   }
@@ -60,7 +61,9 @@ export class AIProviderRegistry {
    * Check if a provider is available
    */
   isProviderAvailable(provider: 'openai' | 'anthropic'): boolean {
-    return provider === 'openai' ? this.openai !== null : this.anthropic !== null;
+    return provider === 'openai'
+      ? this.openai !== null
+      : this.anthropic !== null;
   }
 
   /**
@@ -68,10 +71,14 @@ export class AIProviderRegistry {
    */
   validateProviderConfig(config: AIModelConfig): void {
     if (config.provider === 'openai' && !this.openai) {
-      throw new Error('OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.');
+      throw new Error(
+        'OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.'
+      );
     }
     if (config.provider === 'anthropic' && !this.anthropic) {
-      throw new Error('Anthropic API key not configured. Please set ANTHROPIC_API_KEY environment variable.');
+      throw new Error(
+        'Anthropic API key not configured. Please set ANTHROPIC_API_KEY environment variable.'
+      );
     }
   }
 

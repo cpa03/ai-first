@@ -12,6 +12,9 @@ Object.assign(process.env, mockEnvVars);
 // Mock OpenAI shims first
 import 'openai/shims/node';
 
+// Mock window to be undefined (server-side) - required for AIService security checks
+delete (global as Record<string, unknown>).window;
+
 // Mock external dependencies BEFORE importing any modules that use them
 jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn(),
@@ -21,7 +24,7 @@ jest.mock('openai', () => {
   return jest.fn();
 });
 
-import { aiService, AIService } from '../src/lib/ai';
+import { aiService, AIService, defaultProviderRegistry } from '../src/lib/ai';
 import { dbService } from '../src/lib/db';
 import { exportManager, type ExportData } from '../src/lib/export-connectors';
 
@@ -106,6 +109,8 @@ describe('Backend Services', () => {
 
       // Remove API key to test error handling
       delete process.env.OPENAI_API_KEY;
+      // Reset provider registry to pick up the removed API key
+      defaultProviderRegistry.reset();
 
       const testService = new AIService();
       const config = {
@@ -122,6 +127,7 @@ describe('Backend Services', () => {
 
       // Restore env var
       process.env.OPENAI_API_KEY = originalKey;
+      defaultProviderRegistry.reset();
     });
   });
 

@@ -1,5 +1,15 @@
 import { RETRY_CONFIG } from './retry-config';
 import { EnvLoader } from './environment';
+import { TIMEOUT_CONFIG } from './timeout-config';
+
+/**
+ * Default timeouts for AI providers
+ * Uses TIMEOUT_CONFIG.LONG (30s) for AI requests which can take time
+ */
+export const DEFAULT_TIMEOUTS = {
+  openai: TIMEOUT_CONFIG.LONG,
+  anthropic: TIMEOUT_CONFIG.LONG,
+} as const;
 
 /**
  * Resilience configuration defaults
