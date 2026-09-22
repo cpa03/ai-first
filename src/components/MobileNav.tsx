@@ -269,7 +269,7 @@ function MobileNavComponent() {
         <>
           {/* Backdrop overlay with close button */}
           <div
-            className={`fixed inset-0 top-16 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm z-[${Z_INDEX_LAYERS.MOBILE_OVERLAY}] fade-in`}
+            className={`fixed inset-0 top-16 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm z-[${Z_INDEX_LAYERS.MOBILE_OVERLAY}] fade-in pb-safe`}
             onClick={closeMenu}
             onTouchEnd={closeMenu}
             aria-hidden="true"
@@ -311,7 +311,7 @@ function MobileNavComponent() {
           <div
             ref={menuRef}
             id={PAGE_ELEMENT_IDS.MOBILE_MENU}
-            className={`fixed top-16 left-0 right-0 ${BG_COLORS.DEFAULT} border-b ${BORDER_COLORS.LIGHT} shadow-2xl z-[${Z_INDEX_LAYERS.MOBILE_MENU}] animate-slide-down`}
+            className={`fixed top-16 left-0 right-0 ${BG_COLORS.DEFAULT} border-b ${BORDER_COLORS.LIGHT} shadow-2xl z-[${Z_INDEX_LAYERS.MOBILE_MENU}] animate-slide-down pb-safe`}
           >
             <ul
               className={`${CONTAINER_WIDTHS.XL} mx-auto ${RESPONSIVE_PADDING.CLASS} py-8 ${SPACE_Y_PATTERNS.SM} ${BG_COLORS.DEFAULT}`}

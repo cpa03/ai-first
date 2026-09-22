@@ -156,3 +156,6 @@ docs/reports/
 docs/stale-branches-report.md
 reports/
 .worktrees
+
+# Agent Memory (orchestrator state, jangan commit)
+.agent_memory/

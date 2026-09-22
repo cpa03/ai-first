@@ -366,9 +366,23 @@ const BROWSER_SCANNER_CONFIG = {
   ),
 
   /**
-   * Audit thresholds for performance checks
+   * Mobile emulation settings
+   * Env: MOBILE_EMULATION (default: false)
+   * When true, uses mobile viewport and user agent for testing
    */
-  AUDIT_THRESHOLDS: {
+  MOBILE_EMULATION: getEnvString('MOBILE_EMULATION', 'false') === 'true',
+
+  /**
+   * Mobile viewport settings for emulation
+   * Env: MOBILE_VIEWPORT_WIDTH, MOBILE_VIEWPORT_HEIGHT, MOBILE_DEVICE_SCALE_FACTOR
+   */
+  MOBILE_VIEWPORT: {
+    WIDTH: getEnvNumber('MOBILE_VIEWPORT_WIDTH', 375, 320, 768),
+    HEIGHT: getEnvNumber('MOBILE_VIEWPORT_HEIGHT', 667, 480, 1024),
+    DEVICE_SCALE_FACTOR: getEnvNumber('MOBILE_DEVICE_SCALE_FACTOR', 2, 1, 4),
+    IS_MOBILE: true,
+    HAS_TOUCH: true,
+  },
     /**
      * Maximum DOM size before warning
      * Env: AUDIT_MAX_DOM_SIZE (default: 1500)

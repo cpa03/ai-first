@@ -12,12 +12,22 @@ export class DeliverableService {
 
   /**
    * Create a single deliverable
+   *
+   * Application-layer NOT NULL guard: `deliverables.idea_id` is nullable at
+   * the DB level, so reject orphan rows here with a clear message.
    */
   async createDeliverable(
     deliverable: Omit<Deliverable, 'id' | 'created_at'>
   ): Promise<Deliverable> {
     const client = this.clientProvider.getClient();
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
+
+    if (!deliverable.idea_id || !String(deliverable.idea_id).trim()) {
+      throw new Error('createDeliverable: idea_id is required (must be non-empty)');
+    }
+    if (!deliverable.title || !deliverable.title.trim()) {
+      throw new Error('createDeliverable: title is required (must be non-empty)');
+    }
 
     const { data, error } = await client
       .from(DB_TABLES.DELIVERABLES)
@@ -31,12 +41,24 @@ export class DeliverableService {
 
   /**
    * Create multiple deliverables in a single query
+   *
+   * Validates every row's required FK (idea_id) and title before insert so a
+   * single orphan row cannot poison a batch.
    */
   async createDeliverables(
     deliverables: Omit<Deliverable, 'id' | 'created_at'>[]
   ): Promise<Deliverable[]> {
     const client = this.clientProvider.getClient();
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
+
+    deliverables.forEach((d, i) => {
+      if (!d.idea_id || !String(d.idea_id).trim()) {
+        throw new Error(`createDeliverables: idea_id is required (row index ${i})`);
+      }
+      if (!d.title || !d.title.trim()) {
+        throw new Error(`createDeliverables: title is required (row index ${i})`);
+      }
+    });
 
     const { data, error } = await client
       .from(DB_TABLES.DELIVERABLES)

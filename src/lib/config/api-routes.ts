@@ -110,6 +110,22 @@ export const API_ROUTES = {
     'API_ROUTE_ADMIN_RATE_LIMIT',
     '/api/admin/rate-limit'
   ),
+  ADMIN_USERS: EnvLoader.string(
+    'API_ROUTE_ADMIN_USERS',
+    '/api/admin/users'
+  ),
+  ADMIN_USERS_ACTION: EnvLoader.string(
+    'API_ROUTE_ADMIN_USERS_ACTION',
+    '/api/admin/users/action'
+  ),
+  ADMIN_AUDIT_LOGS: EnvLoader.string(
+    'API_ROUTE_ADMIN_AUDIT_LOGS',
+    '/api/admin/audit-logs'
+  ),
+  ADMIN_SYSTEM_HEALTH: EnvLoader.string(
+    'API_ROUTE_ADMIN_SYSTEM_HEALTH',
+    '/api/admin/system-health'
+  ),
 
   /** Export endpoints */
   EXPORT_NOTION: EnvLoader.string(

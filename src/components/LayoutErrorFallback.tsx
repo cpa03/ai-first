@@ -71,7 +71,7 @@ function LayoutErrorFallbackComponent({
                 {LAYOUT_ERROR_LABELS.RETRY_BUTTON}
               </Button>
               <span
-                className={`hidden sm:flex ${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM} text-xs ${TEXT_COLORS.MUTED}`}
+                className={`flex ${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM} text-xs ${TEXT_COLORS.MUTED} sm:justify-center`}
                 aria-hidden="true"
               >
                 <kbd
@@ -87,7 +87,7 @@ function LayoutErrorFallbackComponent({
                 <Button variant="secondary">{homeLabel}</Button>
               </Link>
               <span
-                className={`hidden sm:flex ${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM} text-xs ${TEXT_COLORS.MUTED}`}
+                className={`flex ${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM} text-xs ${TEXT_COLORS.MUTED} sm:justify-center`}
                 aria-hidden="true"
               >
                 <kbd

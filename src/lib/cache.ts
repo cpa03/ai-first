@@ -330,3 +330,20 @@ export class Cache<T = unknown> {
     };
   }
 }
+
+/**
+ * Factory function for creating Cache instances.
+ * Enables dependency injection for testing and avoids singleton pattern.
+ * 
+ * @param options - Cache configuration options
+ * @returns A new Cache instance
+ */
+export function createCache<T = unknown>(options: CacheOptions = {}): Cache<T> {
+  return new Cache<T>(options);
+}
+
+/**
+ * Default cache instance for backward compatibility.
+ * @deprecated Use createCache() for new code to enable dependency injection.
+ */
+export const defaultCache = createCache();

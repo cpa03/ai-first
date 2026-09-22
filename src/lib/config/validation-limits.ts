@@ -17,6 +17,21 @@
  */
 
 export const VALIDATION_LIMITS = {
+  // Idea limits (matches validation-config.ts defaults)
+  IDEA: {
+    MIN_LENGTH: 10,
+    MAX_LENGTH: 10000,
+    MAX_ID_LENGTH: 100,
+  },
+
+  // Answer limits for clarification flow (matches validation-config.ts defaults)
+  ANSWER: {
+    MIN_LENGTH: 5,
+    MAX_LENGTH: 500,
+    MIN_SHORT_LENGTH: 2,
+    MAX_SHORT_LENGTH: 100,
+  },
+
   // Title limits
   TITLE: {
     MIN_LENGTH: 1,

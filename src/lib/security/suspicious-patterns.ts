@@ -279,13 +279,32 @@ function scanString(
 }
 
 /**
+ * Extract all string values from a JSON object recursively
+ * Used for scanning JSON body content
+ */
+function extractJsonValues(obj: unknown, values: string[] = []): string[] {
+  if (typeof obj === 'string') {
+    values.push(obj);
+  } else if (Array.isArray(obj)) {
+    for (const item of obj) {
+      extractJsonValues(item, values);
+    }
+  } else if (obj && typeof obj === 'object') {
+    for (const value of Object.values(obj)) {
+      extractJsonValues(value, values);
+    }
+  }
+  return values;
+}
+
+/**
  * Detect suspicious patterns in an HTTP request
  *
  * @param request - The HTTP request to analyze
  * @param options - Detection options
  * @returns Detection result with details
  */
-export function detectSuspiciousPatterns(
+export async function detectSuspiciousPatterns(
   request: Request,
   options: {
     /** Scan request body (default: false for performance) */
@@ -297,7 +316,7 @@ export function detectSuspiciousPatterns(
     /** Request ID for tracing */
     requestId?: string;
   } = {}
-): SuspiciousPatternResult {
+): Promise<SuspiciousPatternResult> {
   const {
     scanBody = false,
     minSeverity = 2,
@@ -341,10 +360,58 @@ export function detectSuspiciousPatterns(
     }
   }
 
-  // NOTE: Body scanning is currently not implemented to avoid consuming the stream
-  // which can only be read once in many environments (like Cloudflare Workers).
+  // Scan request body if enabled
   if (scanBody) {
-    logger.warn('Body scanning requested but not yet implemented');
+    try {
+      // SECURITY & ARCHITECTURE: Clone the request to avoid premature stream consumption
+      // In Edge/Workers environments, request body can only be read once
+      const clonedRequest = request.clone();
+      const contentType = clonedRequest.headers.get('content-type') || '';
+      let body = '';
+      
+      // Parse body based on content type
+      if (contentType.includes('application/json')) {
+        body = await clonedRequest.text();
+        // Also parse and scan individual JSON values
+        try {
+          const parsed = JSON.parse(body);
+          const jsonValues = extractJsonValues(parsed);
+          for (const value of jsonValues) {
+            if (typeof value === 'string') {
+              const bodyFindings = scanString(value, 'body', minSeverity, 'json-value');
+              patterns.push(...bodyFindings);
+            }
+          }
+        } catch {
+          // If JSON parsing fails, scan raw body
+          const bodyFindings = scanString(body, 'body', minSeverity);
+          patterns.push(...bodyFindings);
+        }
+      } else if (contentType.includes('application/x-www-form-urlencoded')) {
+        body = await clonedRequest.text();
+        const params = new URLSearchParams(body);
+        for (const [key, value] of params.entries()) {
+          const keyFindings = scanString(key, 'body', minSeverity, key);
+          patterns.push(...keyFindings);
+          const valueFindings = scanString(value, 'body', minSeverity, key);
+          patterns.push(...valueFindings);
+        }
+      } else if (contentType.includes('multipart/form-data')) {
+        // For multipart, we can only scan the raw body
+        body = await clonedRequest.text();
+        const bodyFindings = scanString(body, 'body', minSeverity);
+        patterns.push(...bodyFindings);
+      } else {
+        // Default: scan raw body for text types
+        body = await clonedRequest.text();
+        if (body) {
+          const bodyFindings = scanString(body, 'body', minSeverity);
+          patterns.push(...bodyFindings);
+        }
+      }
+    } catch (error) {
+      logger.warn('Body scanning failed', { error: error instanceof Error ? error.message : 'Unknown error' });
+    }
   }
 
   // Scan headers safely - handle cases where headers.entries() might not exist (test mocks)
@@ -432,15 +499,16 @@ export function detectSuspiciousPatterns(
  * @param minSeverity - Minimum severity to consider (default: 2)
  * @returns True if suspicious patterns detected
  */
-export function hasSuspiciousPatterns(
+export async function hasSuspiciousPatterns(
   request: Request,
   minSeverity: 0 | 1 | 2 | 3 = 2
-): boolean {
-  return detectSuspiciousPatterns(request, {
+): Promise<boolean> {
+  const result = await detectSuspiciousPatterns(request, {
     minSeverity,
     scanBody: false,
     logDetected: true,
-  }).detected;
+  });
+  return result.detected;
 }
 
 /**

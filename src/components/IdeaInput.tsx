@@ -66,7 +66,7 @@ import { useConfetti } from '@/hooks/useConfetti';
 import { RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
 
 interface IdeaInputProps {
-  onSubmit: (_idea: string, _ideaId: string) => void;
+  onSubmit: (_idea: string, _ideaId: string, _isGuest?: boolean) => void;
 }
 
 // PERFORMANCE: Memoize IdeaInput to prevent re-renders when parent components update
@@ -214,7 +214,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
   // PERFORMANCE: Define handleSubmit first so it can be referenced in handleKeyDown
   const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
+    async (e: React.FormEvent, isGuestMode?: boolean) => {
       e.preventDefault();
 
       const validationError = validateIdeaToMessage(idea);
@@ -233,19 +233,27 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
       setError(null);
 
       try {
-        const response = await fetchWithTimeout(API_ENDPOINTS.IDEAS, {
-          method: 'POST',
-          headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
-          body: JSON.stringify({ idea }),
-        });
+        let ideaId: string;
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || MESSAGES.ERRORS.FAILED_SAVE_IDEA);
+        if (isGuestMode) {
+          // Guest mode: generate temporary ideaId locally without API call
+          ideaId = `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        } else {
+          // Authenticated mode: save to server
+          const response = await fetchWithTimeout(API_ENDPOINTS.IDEAS, {
+            method: 'POST',
+            headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
+            body: JSON.stringify({ idea }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || MESSAGES.ERRORS.FAILED_SAVE_IDEA);
+          }
+
+          const data = await response.json();
+          ideaId = data.data.id;
         }
-
-        const data = await response.json();
-        const ideaId = data.data.id;
 
         setSubmittedIdeaData({ idea: idea.trim(), ideaId });
         setShowCelebration(true);
@@ -299,7 +307,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         !validationError
       ) {
         e.preventDefault();
-        handleSubmit(e as unknown as React.FormEvent);
+        handleSubmit(e as unknown as React.FormEvent, false);
       }
       // Clear input on Escape - common pattern in modern forms
       // Only if input has content and not currently submitting

@@ -1,349 +1,394 @@
-name: iterate
+name: Iterate - Main CI Pipeline
 
 on:
   push:
-    branches:
-      - main # Architect runs on main changes
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
   schedule:
-    - cron: "0 */4 * * *" # Routine check every 4 hours
+    # Run every 4 hours for proactive issue detection
+    - cron: '0 */4 * * *'
   workflow_dispatch:
+    inputs:
+      agent:
+        description: 'Specific agent to run (repo-keeper, pallet, flexy, broc)'
+        required: false
+        type: string
 
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
-  actions: write
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+env:
+  NODE_VERSION: '20'
+  NPM_VERSION: '9'
 
 jobs:
-  # ------------------------------------------------------------------
-  # STAGE 1: THE BRAIN (Architect & Manager)
-  # ------------------------------------------------------------------
-  architect:
-    name: "Architect: Strategy & Triage"
-    runs-on: ubuntu-24.04-arm
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}    
+  # =============================================================================
+  # QUALITY CHECKS (lint, type-check, test)
+  # =============================================================================
+  quality:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup Cache
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.opencode
-            ~/.npm
-          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
-          restore-keys: |
-            opencode-${{ runner.os }}-v1
-            opencode-${{ runner.os }}-
-      - name: Configure Git
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-      - name: Install Node.js
-        continue-on-error: true
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-      - name: Install Dependencies
-        continue-on-error: true
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
         run: npm ci
-      - name: Install OpenCode CLI
-        run: |
-          curl -fsSL https://opencode.ai/install | bash
-          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
-      - name: arsitek
-        timeout-minutes: 20
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          max_retries=2
-          retry_count=0
-          echo "🏗️ Starting Architect Intelligence Cycle"
-          while [ $retry_count -lt $max_retries ]; do
-            echo "Attempt $((retry_count + 1)) of $max_retries"
-            if opencode run /ulw-loop "Anda adalah RepoKeeper. Tugas anda adalah menjaga repositori tetap efisien, teratur dan terorganisir, bersih dari file/folder redundant, file/folder sementara dan file/folder yang tidak digunakan lagi. Jaga dokumentasi tetap up to date dan sesuai dengan code. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
-              --agent RepoKeeper \
-              --model opencode/mimo-v2.5-free \
-              --share false; then
-              echo "✅ Architect work completed successfully"
-              break
-            else
-              retry_count=$((retry_count + 1))
-              echo "❌ Architect execution failed, retrying in 30 seconds..."
-              sleep 30
-              if [ $retry_count -eq $max_retries ]; then
-                echo "❌ All retry attempts failed"
-                exit 1
-              fi
-            fi
-          done
-  bugfix:
-    name: "BugFixer"
-    runs-on: ubuntu-24.04-arm
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}    
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run type-check
+        run: npm run type-check
+
+      - name: Run tests (CI mode)
+        run: npm run test:ci
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          files: ./coverage/lcov.info
+          fail_ci_if_error: false
+
+  # =============================================================================
+  # SECURITY SCAN
+  # =============================================================================
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup Cache
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.opencode
-            ~/.npm
-          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
-          restore-keys: |
-            opencode-${{ runner.os }}-v1
-            opencode-${{ runner.os }}-
-      - name: Configure Git
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-      - name: Install Node.js
-        continue-on-error: true
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-      - name: Install Dependencies
-        continue-on-error: true
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
         run: npm ci
-      - name: Install OpenCode CLI
-        run: |
-          curl -fsSL https://opencode.ai/install | bash
-          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
-      - name: BugFixer
-        timeout-minutes: 20
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          max_retries=2
-          retry_count=0
-          echo "🏗️ Starting Architect Intelligence Cycle"
-          while [ $retry_count -lt $max_retries ]; do
-            echo "Attempt $((retry_count + 1)) of $max_retries"
-            if opencode run /ulw-loop "Anda adalah BugFixer. Tugas anda adalah menjaga repositori bebas bug atau error. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
-              --agent RepoKeeper \
-              --model opencode/mimo-v2.5-free \
-              --share false; then
-              echo "✅ Architect work completed successfully"
-              break
-            else
-              retry_count=$((retry_count + 1))
-              echo "❌ Architect execution failed, retrying in 30 seconds..."
-              sleep 30
-              if [ $retry_count -eq $max_retries ]; then
-                echo "❌ All retry attempts failed"
-                exit 1
-              fi
-            fi
-          done
-  Palette:
-    name: "Palette"
-    runs-on: ubuntu-24.04-arm
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}    
+
+      - name: Run security check script
+        run: npm run security:check
+
+      - name: Run npm audit
+        run: npm run audit:ci
+
+  # =============================================================================
+  # BUILD CHECKS
+  # =============================================================================
+  build:
+    name: Build Verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [quality, security]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup Cache
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.opencode
-            ~/.npm
-          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
-          restore-keys: |
-            opencode-${{ runner.os }}-v1
-            opencode-${{ runner.os }}-
-      - name: Configure Git
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-      - name: Install Node.js
-        continue-on-error: true
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-      - name: Install Dependencies
-        continue-on-error: true
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
         run: npm ci
-      - name: Install OpenCode CLI
+
+      - name: Build for production (Next.js)
+        run: npm run build
+
+      - name: Build for Cloudflare
+        run: npm run build:cloudflare
+
+      - name: Verify build outputs exist
         run: |
-          curl -fsSL https://opencode.ai/install | bash
-          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
-      - name: Palette
-        timeout-minutes: 20
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          max_retries=2
-          retry_count=0
-          echo "🏗️ Starting Architect Intelligence Cycle"
-          while [ $retry_count -lt $max_retries ]; do
-            echo "Attempt $((retry_count + 1)) of $max_retries"
-            if opencode run /ulw-loop "Act as **Pallete**. You are "Palette" 🎨 - a UX-focused agent who adds small touches of delight and accessibility to the user interface. Your mission is to find and implement ONE micro-UX improvement that makes the interface more intuitive, accessible, or pleasant to use. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
-              --agent RepoKeeper \
-              --model opencode/mimo-v2.5-free \
-              --share false; then
-              echo "✅ Architect work completed successfully"
-              break
-            else
-              retry_count=$((retry_count + 1))
-              echo "❌ Architect execution failed, retrying in 30 seconds..."
-              sleep 30
-              if [ $retry_count -eq $max_retries ]; then
-                echo "❌ All retry attempts failed"
-                exit 1
-              fi
-            fi
-          done
-  Flexy:
-    name: "Flexy"
-    runs-on: ubuntu-24.04-arm
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}    
+          test -d .next && echo "✅ .next exists"
+          test -d .open-next && echo "✅ .open-next exists"
+          test -f .open-next/worker.js && echo "✅ worker.js exists"
+
+  # =============================================================================
+  # ENVIRONMENT VALIDATION
+  # =============================================================================
+  env-validation:
+    name: Environment Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup Cache
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.opencode
-            ~/.npm
-          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
-          restore-keys: |
-            opencode-${{ runner.os }}-v1
-            opencode-${{ runner.os }}-
-      - name: Configure Git
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-      - name: Install Node.js
-        continue-on-error: true
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-      - name: Install Dependencies
-        continue-on-error: true
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
         run: npm ci
-      - name: Install OpenCode CLI
-        run: |
-          curl -fsSL https://opencode.ai/install | bash
-          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
-      - name: Flexy
-        timeout-minutes: 20
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          max_retries=2
-          retry_count=0
-          echo "🏗️ Starting Architect Intelligence Cycle"
-          while [ $retry_count -lt $max_retries ]; do
-            echo "Attempt $((retry_count + 1)) of $max_retries"
-            if opencode run /ulw-loop "Act as **Flexy**. **Flexy** love modularity and hate hardcoded. **Flexy** mission is to eliminate hardcoded and make modular system. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
-              --agent RepoKeeper \
-              --model opencode/mimo-v2.5-free \
-              --share false; then
-              echo "✅ Architect work completed successfully"
-              break
-            else
-              retry_count=$((retry_count + 1))
-              echo "❌ Architect execution failed, retrying in 30 seconds..."
-              sleep 30
-              if [ $retry_count -eq $max_retries ]; then
-                echo "❌ All retry attempts failed"
-                exit 1
-              fi
-            fi
-          done
-  Brocula:
-    name: "Brocula"
-    runs-on: ubuntu-24.04-arm
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}    
+
+      - name: Validate environment (CI mode)
+        run: npm run env:check -- --ci
+
+  # =============================================================================
+  # CONSOLE SCAN (BroCula)
+  # =============================================================================
+  console-scan:
+    name: Console Scan (BroCula)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup Cache
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.opencode
-            ~/.npm
-          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
-          restore-keys: |
-            opencode-${{ runner.os }}-v1
-            opencode-${{ runner.os }}-
-      - name: Configure Git
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-      - name: Install Node.js
-        continue-on-error: true
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-      - name: Install Dependencies
-        continue-on-error: true
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
         run: npm ci
-      - name: Install OpenCode CLI
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run console scan
+        run: npm run scan:console
+
+  # =============================================================================
+  # LIGHTHOUSE AUDIT
+  # =============================================================================
+  lighthouse:
+    name: Lighthouse Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chrome
         run: |
-          curl -fsSL https://opencode.ai/install | bash
-          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
-      - name: Brocula
-        timeout-minutes: 20
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: Run Lighthouse audit
+        run: npm run audit:lighthouse
+
+  # =============================================================================
+  # PARALLEL CHECK (Superpowers)
+  # =============================================================================
+  parallel-check:
+    name: Parallel Quality Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [quality, security, build, env-validation]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run parallel check
+        run: npm run check:parallel
+
+  # =============================================================================
+  # AGENT EXECUTION (OhMyOpenCode)
+  # =============================================================================
+  repo-keeper:
+    name: RepoKeeper - Strategy & Triage
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: [quality, security, build, env-validation]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run RepoKeeper agent
         run: |
-          max_retries=2
-          retry_count=0
-          echo "🏗️ Starting Architect Intelligence Cycle"
-          while [ $retry_count -lt $max_retries ]; do
-            echo "Attempt $((retry_count + 1)) of $max_retries"
-            if opencode run /ulw-loop "Act as **BroCula**. BroCula love to work on browser console using mcp tool 'playwright' or 'chrome devtools'. He work on strict workflows: 1. find browser console errors/warnings, fix immediately. 2. find lighthouse optimization oportunity, optimize code based on it. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
-              --agent RepoKeeper \
-              --model opencode/mimo-v2.5-free \
-              --share false; then
-              echo "✅ Architect work completed successfully"
-              break
-            else
-              retry_count=$((retry_count + 1))
-              echo "❌ Architect execution failed, retrying in 30 seconds..."
-              sleep 30
-              if [ $retry_count -eq $max_retries ]; then
-                echo "❌ All retry attempts failed"
-                exit 1
-              fi
-            fi
-          done
+          npx oh-my-opencode agent RepoKeeper \
+            --task "Analyze repository health, triage issues, create maintenance plan" \
+            --output-format json
+
+  pallet:
+    name: Pallet - UX Improvements
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: [quality, security, build, env-validation]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Pallet agent
+        run: |
+          npx oh-my-opencode agent Pallet \
+            --task "Identify and implement UX improvements" \
+            --output-format json
+
+  flexy:
+    name: Flexy - Modularity Improvements
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: [quality, security, build, env-validation]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Flexy agent
+        run: |
+          npx oh-my-opencode agent Flexy \
+            --task "Identify and improve modularity, reduce coupling" \
+            --output-format json
+
+  broc:
+    name: Broc - Browser Console Fixes
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: [quality, security, build, env-validation, console-scan]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Broc agent
+        run: |
+          npx oh-my-opencode agent Broc \
+            --task "Fix browser console errors and warnings" \
+            --output-format json
+
+  # =============================================================================
+  # SUMMARY
+  # =============================================================================
+  summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs:
+      - quality
+      - security
+      - build
+      - env-validation
+      - console-scan
+      - lighthouse
+      - parallel-check
+      - repo-keeper
+      - pallet
+      - flexy
+      - broc
+    if: always()
+    steps:
+      - name: Print workflow summary
+        run: |
+          echo "=== Iterate CI Pipeline Summary ==="
+          echo "Quality: ${{ needs.quality.result }}"
+          echo "Security: ${{ needs.security.result }}"
+          echo "Build: ${{ needs.build.result }}"
+          echo "Env Validation: ${{ needs.env-validation.result }}"
+          echo "Console Scan: ${{ needs.console-scan.result }}"
+          echo "Lighthouse: ${{ needs.lighthouse.result }}"
+          echo "Parallel Check: ${{ needs.parallel-check.result }}"
+          echo "RepoKeeper: ${{ needs.repo-keeper.result }}"
+          echo "Pallet: ${{ needs.pallet.result }}"
+          echo "Flexy: ${{ needs.flexy.result }}"
+          echo "Broc: ${{ needs.broc.result }}"
+          
+          # Fail if any required job failed
+          if [[ "${{ needs.quality.result }}" != "success" ]] || \
+             [[ "${{ needs.security.result }}" != "success" ]] || \
+             [[ "${{ needs.build.result }}" != "success" ]] || \
+             [[ "${{ needs.env-validation.result }}" != "success" ]]; then
+            echo "❌ Required checks failed"
+            exit 1
+          fi
+          
+          echo "✅ All required checks passed"

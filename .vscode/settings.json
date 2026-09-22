@@ -102,5 +102,6 @@
       "fileMatch": [".vscode/settings.json"],
       "url": "https://json.schemastore.org/vscode-settings.json"
     }
-  ]
+  ],
+  "testing.automaticallyOpenTestResults": "openOnTestFailure"
 }

@@ -15,8 +15,8 @@ const nextConfig = {
   },
   compress: true,
   poweredByHeader: false,
-  // Enable source maps for better debugging and Lighthouse insights
-  productionBrowserSourceMaps: true,
+  // Disable source maps in production for better performance and smaller bundle
+  productionBrowserSourceMaps: false,
   // Suppress build-time logs that cause Lighthouse best-practices issues
   env: {
     SUPPRESS_BUILD_LOGS: 'true',
@@ -75,15 +75,17 @@ const nextConfig = {
         value: 'same-origin-allow-popups',
       },
       // Content Security Policy - comprehensive protection against XSS
+      // Using strict-dynamic with nonce-based approach for scripts (nonce injected via middleware)
+      // Styles: self only (Tailwind uses classes, not inline styles in production)
       {
         key: 'Content-Security-Policy',
         value: [
           "default-src 'self'",
-          // In development, React requires eval() for debugging features like reconstructing callstacks
-          // In production, eval() is never used by React
-          `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
-          // Styles: self + inline (needed for Tailwind/CSS-in-JS)
-          "style-src 'self' 'unsafe-inline'",
+          // Scripts: self + strict-dynamic (allows trusted scripts via nonce/hash)
+          // In development, React requires eval() for debugging
+          `script-src 'self' 'strict-dynamic'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
+          // Styles: self only (Tailwind uses utility classes, not inline styles)
+          "style-src 'self'",
           // Images: self + data URIs + HTTPS sources
           "img-src 'self' data: https: blob:",
           // Fonts: self + data URIs
@@ -160,7 +162,7 @@ const nextConfig = {
       },
     ],
     formats: ['image/webp', 'image/avif'],
-    minimumCacheTTL: 60,
+    minimumCacheTTL: 31536000,
   },
   experimental: {
     optimizePackageImports: [

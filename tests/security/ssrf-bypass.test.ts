@@ -11,43 +11,43 @@ describe('Suspicious Pattern Detection Bypasses', () => {
     });
   };
 
-  it('should detect SSRF with hex-encoded IP', () => {
+  it('should detect SSRF with hex-encoded IP', async () => {
     const request = createMockRequest(
       'https://example.com/api/test?url=http://0x7f000001'
     );
-    const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+    const result = await detectSuspiciousPatterns(request, { minSeverity: 1 });
     expect(result.detected).toBe(true);
     expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
   });
 
-  it('should detect SSRF with decimal-encoded IP', () => {
+  it('should detect SSRF with decimal-encoded IP', async () => {
     const request = createMockRequest(
       'https://example.com/api/test?url=http://2130706433'
     );
-    const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+    const result = await detectSuspiciousPatterns(request, { minSeverity: 1 });
     expect(result.detected).toBe(true);
     expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
   });
 
-  it('should detect SSRF with octal-encoded IP', () => {
+  it('should detect SSRF with octal-encoded IP', async () => {
     const request = createMockRequest(
       'https://example.com/api/test?url=http://017700000001'
     );
-    const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+    const result = await detectSuspiciousPatterns(request, { minSeverity: 1 });
     expect(result.detected).toBe(true);
     expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
   });
 
-  it('should detect SSRF with IPv6-mapped IPv4', () => {
+  it('should detect SSRF with IPv6-mapped IPv4', async () => {
     const request = createMockRequest(
       'https://example.com/api/test?url=http://[::ffff:127.0.0.1]'
     );
-    const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+    const result = await detectSuspiciousPatterns(request, { minSeverity: 1 });
     expect(result.detected).toBe(true);
     expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
   });
 
-  it('should detect SSRF with shorthand loopback IPs', () => {
+  it('should detect SSRF with shorthand loopback IPs', async () => {
     const cases = [
       'https://example.com/api/test?url=http://127.1',
       'https://example.com/api/test?url=http://127.0.1',
@@ -55,13 +55,15 @@ describe('Suspicious Pattern Detection Bypasses', () => {
     ];
     for (const url of cases) {
       const request = createMockRequest(url);
-      const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(request, {
+        minSeverity: 1,
+      });
       expect(result.detected).toBe(true);
       expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
     }
   });
 
-  it('should detect SSRF with protocol-relative or optional non-standard IP encodings', () => {
+  it('should detect SSRF with protocol-relative or optional non-standard IP encodings', async () => {
     const cases = [
       'https://example.com/api/test?url=//0x7f000001',
       'https://example.com/api/test?url=//2130706433',
@@ -70,13 +72,15 @@ describe('Suspicious Pattern Detection Bypasses', () => {
     ];
     for (const url of cases) {
       const request = createMockRequest(url);
-      const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(request, {
+        minSeverity: 1,
+      });
       expect(result.detected).toBe(true);
       expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
     }
   });
 
-  it('should detect SSRF with non-standard encodings of cloud metadata IP', () => {
+  it('should detect SSRF with non-standard encodings of cloud metadata IP', async () => {
     const cases = [
       'https://example.com/api/test?url=http://2851972862', // Decimal 169.254.169.254
       'https://example.com/api/test?url=http://0xa9feaffe', // Hex 169.254.169.254
@@ -84,13 +88,15 @@ describe('Suspicious Pattern Detection Bypasses', () => {
     ];
     for (const url of cases) {
       const request = createMockRequest(url);
-      const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(request, {
+        minSeverity: 1,
+      });
       expect(result.detected).toBe(true);
       expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
     }
   });
 
-  it('should detect SSRF with advanced IPv6 loopback and unspecified addresses', () => {
+  it('should detect SSRF with advanced IPv6 loopback and unspecified addresses', async () => {
     const cases = [
       'https://example.com/api/test?url=http://[0:0:0:0:0:0:0:1]',
       'https://example.com/api/test?url=http://[0000:0000:0000:0000:0000:0000:0000:0001]',
@@ -101,13 +107,15 @@ describe('Suspicious Pattern Detection Bypasses', () => {
     ];
     for (const url of cases) {
       const request = createMockRequest(url);
-      const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(request, {
+        minSeverity: 1,
+      });
       expect(result.detected).toBe(true);
       expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
     }
   });
 
-  it('should detect SSRF with other IPv6-mapped loopback subnets and shorthands (enhanced security checks)', () => {
+  it('should detect SSRF with other IPv6-mapped loopback subnets and shorthands (enhanced security checks)', async () => {
     const cases = [
       'https://example.com/api/test?url=http://[::ffff:127.0.0.2]',
       'https://example.com/api/test?url=http://[::ffff:127.12.34.56]',
@@ -116,7 +124,9 @@ describe('Suspicious Pattern Detection Bypasses', () => {
     ];
     for (const url of cases) {
       const request = createMockRequest(url);
-      const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+      const result = await detectSuspiciousPatterns(request, {
+        minSeverity: 1,
+      });
       expect(result.detected).toBe(true);
       expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
     }

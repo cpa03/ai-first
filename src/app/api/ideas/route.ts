@@ -6,7 +6,7 @@ import {
   standardSuccessResponse,
   ApiContext,
 } from '@/lib/api-handler';
-import { requireAuth } from '@/lib/auth';
+import { requireAuth, optionalAuth, isGuestRequest, getUserIdOrGuest } from '@/lib/auth';
 import { APP_CONFIG } from '@/lib/config/app';
 import { STATUS_CODES } from '@/lib/config/http';
 import { IDEA_STATUS_CONFIG } from '@/lib/config';
@@ -21,7 +21,7 @@ const logger = createLogger('IdeasAPI');
  * GET /api/ideas
  *
  * Retrieves paginated ideas for the authenticated user.
- * Uses database-level pagination and filtering for optimal performance.
+ * Supports guest mode for anonymous users with a valid guest session.
  *
  * Query Parameters:
  * - status: Filter by status ('draft', 'clarified', 'breakdown', 'completed', 'all')
@@ -82,6 +82,28 @@ async function handleGet(context: ApiContext) {
     ]);
   }
 
+  // Check if this is a guest request
+  const guestMode = isGuestRequest(request);
+  
+  if (guestMode) {
+    // For guest mode, return empty list (guests don't have persistent ideas list)
+    // They access individual ideas via /api/ideas/[id]
+    return standardSuccessResponse(
+      {
+        ideas: [],
+        pagination: {
+          total: 0,
+          page: 1,
+          limit,
+          hasMore: false,
+        },
+      },
+      context.requestId,
+      STATUS_CODES.OK,
+      rateLimit
+    );
+  }
+
   // Authenticate user
   const user = await requireAuth(request);
   const userId = user.id;
@@ -125,16 +147,28 @@ async function handleGet(context: ApiContext) {
 /**
  * POST /api/ideas
  *
- * Creates a new idea for the authenticated user.
+ * Creates a new idea for the authenticated user or guest user.
  * Also generates and stores vector embedding for similarity search.
+ * Supports guest mode via x-guest-mode header.
  */
 async function handlePost(context: ApiContext) {
   const { request } = context;
   const { idea } = await request.json();
 
-  // Authenticate user
-  const user = await requireAuth(request);
-  const userId = user.id;
+  // Check if this is a guest request
+  const guestMode = isGuestRequest(request);
+  const guestSessionId = request.headers.get('x-guest-session-id');
+  
+  let userId: string;
+  
+  if (guestMode && guestSessionId) {
+    // Guest user - use guest session ID as user identifier
+    userId = `guest_${guestSessionId}`;
+  } else {
+    // Authenticated user
+    const user = await requireAuth(request);
+    userId = user.id;
+  }
 
   const ideaValidation = validateIdea(idea);
   if (!ideaValidation.valid) {
@@ -185,6 +219,7 @@ async function handlePost(context: ApiContext) {
       title: savedIdea.title,
       status: savedIdea.status,
       createdAt: savedIdea.created_at,
+      isGuest: guestMode,
     },
     context.requestId,
     STATUS_CODES.CREATED,

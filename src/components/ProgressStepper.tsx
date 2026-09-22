@@ -246,7 +246,7 @@ const ProgressStepperComponent = function ProgressStepper({
         </div>
       </div>
 
-      <ol className={`${FLEX_PATTERNS.BETWEEN} hidden sm:flex`}>
+      <ol className={`${FLEX_PATTERNS.BETWEEN} flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0`}>
         {steps.map((step, index) => {
           const isLast = index === steps.length - 1;
           const isClickable = onStepClick && index !== currentStep;

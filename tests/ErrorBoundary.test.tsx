@@ -54,7 +54,7 @@ describe('ErrorBoundary', () => {
       expect(screen.getByText('to go home')).toBeInTheDocument();
     });
 
-    it('keyboard hints are hidden on mobile (hidden sm:flex)', () => {
+    it('keyboard hints are visible on mobile (flex) and centered on desktop (sm:justify-center)', () => {
       render(
         <ErrorBoundary>
           <ThrowingComponent />
@@ -64,7 +64,8 @@ describe('ErrorBoundary', () => {
       const hints = screen.getAllByText(/^(Enter|Esc)$/);
       hints.forEach((hint) => {
         const parentSpan = hint.closest('span');
-        expect(parentSpan?.className).toContain('hidden sm:flex');
+        expect(parentSpan?.className).toContain('flex');
+        expect(parentSpan?.className).toContain('sm:justify-center');
       });
     });
   });
