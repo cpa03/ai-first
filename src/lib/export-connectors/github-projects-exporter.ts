@@ -265,11 +265,7 @@ export class GitHubProjectsExporter extends ExportConnector {
       'get-authenticated-user'
     );
 
-    if (!response.ok) {
-      throw new Error(
-        `Failed to get authenticated user: ${response.statusText}`
-      );
-    }
+    this.throwIfNotOk(response, 'get-authenticated-user');
 
     return response.json();
   }
@@ -314,11 +310,7 @@ export class GitHubProjectsExporter extends ExportConnector {
       'get-repository'
     );
 
-    if (!getResponse.ok) {
-      throw new Error(
-        `Failed to create or get repository: ${getResponse.statusText}`
-      );
-    }
+    this.throwIfNotOk(getResponse, 'get-repository');
 
     return getResponse.json();
   }
@@ -346,11 +338,7 @@ export class GitHubProjectsExporter extends ExportConnector {
       'create-project'
     );
 
-    if (!response.ok) {
-      throw new Error(
-        `Failed to create GitHub project: ${response.statusText}`
-      );
-    }
+    this.throwIfNotOk(response, 'create-project');
 
     return response.json();
   }
@@ -376,11 +364,7 @@ export class GitHubProjectsExporter extends ExportConnector {
       'create-project-column'
     );
 
-    if (!response.ok) {
-      throw new Error(
-        `Failed to create project column: ${response.statusText}`
-      );
-    }
+    this.throwIfNotOk(response, 'create-project-column');
 
     return response.json();
   }
@@ -429,9 +413,7 @@ export class GitHubProjectsExporter extends ExportConnector {
       'create-issue'
     );
 
-    if (!response.ok) {
-      throw new Error(`Failed to create issue: ${response.statusText}`);
-    }
+    this.throwIfNotOk(response, 'create-issue');
 
     return response.json();
   }
