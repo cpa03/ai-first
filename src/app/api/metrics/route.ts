@@ -1,12 +1,20 @@
 import { register } from '@/lib/metrics';
 import { withApiHandler, ApiContext } from '@/lib/api-handler';
-import { AppError, ErrorCode } from '@/lib/errors';
 import { STATUS_CODES, HTTP_HEADERS } from '@/lib/config/http';
 import { createLogger } from '@/lib/logger';
 import { requireAdminAuth } from '@/lib/auth';
-import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 const logger = createLogger('MetricsAPI');
+
+// Minimal valid Prometheus exposition payload returned when the registry is a
+// no-op/empty (Edge runtime has no prom-client registry). Returning 200 with
+// `#` comment lines keeps scrapes from failing closed; never throw 500 here.
+const EMPTY_REGISTRY_PAYLOAD =
+  '# Metrics registry unavailable in this runtime (Edge/no-op register).\n' +
+  '# Full prom-client metrics are only collected in the Node.js runtime.\n' +
+  '# HELP app_up Application scrape target reachability.\n' +
+  '# TYPE app_up gauge\n' +
+  'app_up 1\n';
 
 async function handleGet(context: ApiContext) {
   // SECURITY: Always require admin authentication.
@@ -20,14 +28,21 @@ async function handleGet(context: ApiContext) {
     contentType: register.contentType,
   });
 
-  if (!metrics) {
-    throw new AppError(
-      API_ERROR_MESSAGES.METRICS.FAILED_TO_GENERATE,
-      ErrorCode.INTERNAL_ERROR,
-      STATUS_CODES.INTERNAL_ERROR,
-      undefined,
-      false
-    );
+  if (!metrics || metrics.trim().length === 0) {
+    return new Response(EMPTY_REGISTRY_PAYLOAD, {
+      status: STATUS_CODES.OK,
+      headers: {
+        [HTTP_HEADERS.CONTENT_TYPE]: register.contentType,
+        [HTTP_HEADERS.X_REQUEST_ID]: context.requestId,
+        [HTTP_HEADERS.X_RATELIMIT_LIMIT]: String(context.rateLimit.limit),
+        [HTTP_HEADERS.X_RATELIMIT_REMAINING]: String(
+          context.rateLimit.remaining
+        ),
+        [HTTP_HEADERS.X_RATELIMIT_RESET]: String(
+          new Date(context.rateLimit.reset).toISOString()
+        ),
+      },
+    });
   }
 
   return new Response(metrics, {
