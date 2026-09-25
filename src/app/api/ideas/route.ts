@@ -1,6 +1,6 @@
 import { dbService } from '@/lib/db';
 import { validateIdea, sanitizeHtml } from '@/lib/validation';
-import { ValidationError } from '@/lib/errors';
+import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
 import {
   withApiHandler,
   standardSuccessResponse,
@@ -158,12 +158,31 @@ async function handlePost(context: ApiContext) {
   // Check if this is a guest request
   const guestMode = isGuestRequest(request);
   const guestSessionId = request.headers.get('x-guest-session-id');
-  
+
   let userId: string;
-  
+
   if (guestMode && guestSessionId) {
-    // Guest user - use guest session ID as user identifier
-    userId = `guest_${guestSessionId}`;
+    // Guest user - validate the untrusted session ID (UUIDv4, max-length);
+    // malformed values are rejected with 401 instead of trusted verbatim.
+    const bare = guestSessionId.startsWith('guest_')
+      ? guestSessionId.slice('guest_'.length)
+      : guestSessionId;
+    const valid =
+      guestSessionId.length > 0 &&
+      guestSessionId.length <= 128 &&
+      // eslint-disable-next-line no-control-regex
+      !/[\x00-\x1f\x7f]/.test(guestSessionId) &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        bare
+      );
+    if (!valid) {
+      throw new AppError(
+        API_ERROR_MESSAGES.AUTH.UNAUTHORIZED_TOKEN,
+        ErrorCode.AUTHENTICATION_ERROR,
+        STATUS_CODES.UNAUTHORIZED
+      );
+    }
+    userId = `guest_${bare}`;
   } else {
     // Authenticated user
     const user = await requireAuth(request);

@@ -12,6 +12,7 @@ import {
 } from '../external-rate-limit';
 import { createLogger } from '../logger';
 import { Idea, Deliverable, Task } from '../db/service';
+import { AppError, ErrorCode, STATUS_CODES } from '../errors';
 
 function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
   return {
@@ -181,5 +182,44 @@ export abstract class ExportConnector {
     }
 
     return result;
+  }
+
+  /**
+   * Check HTTP response and throw AppError with proper retryable classification
+   * if the response indicates an error.
+   * 
+   * Retryable status codes: 429, 500, 502, 503, 504
+   * Non-retryable: 400, 401, 403, 404, etc.
+   */
+  protected throwIfNotOk(response: Response, context: string): void {
+    if (!response.ok) {
+      const status = response.status;
+      // Retryable: 429 (rate limit), 500, 502, 503, 504 (server errors)
+      const retryableStatuses = [429, 500, 502, 503, 504];
+      const isRetryable = retryableStatuses.includes(status);
+      
+      let errorCode: ErrorCode;
+      if (isRetryable) {
+        errorCode = ErrorCode.EXTERNAL_SERVICE_ERROR;
+      } else if (status === 401) {
+        errorCode = ErrorCode.AUTHENTICATION_ERROR;
+      } else if (status === 403) {
+        errorCode = ErrorCode.AUTHORIZATION_ERROR;
+      } else if (status === 404) {
+        errorCode = ErrorCode.NOT_FOUND;
+      } else if (status >= 400 && status < 500) {
+        errorCode = ErrorCode.BAD_REQUEST;
+      } else {
+        errorCode = ErrorCode.INTERNAL_ERROR;
+      }
+
+      throw new AppError(
+        `${context} failed: ${status} ${response.statusText}`,
+        errorCode,
+        status,
+        undefined,
+        isRetryable
+      );
+    }
   }
 }

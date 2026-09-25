@@ -24,7 +24,7 @@
  * 3. Update this header with the new pattern category
  */
 
-import { EnvLoader } from './env-loader';
+import { EnvLoader } from './environment';
 
 /**
  * Retryable Error Patterns
@@ -58,6 +58,9 @@ export const RETRYABLE_PATTERNS = {
 
   /** HTTP 503 Service Unavailable */
   HTTP_503: EnvLoader.string('ERROR_PATTERN_HTTP_503', '503'),
+
+  /** HTTP 504 Gateway Timeout */
+  HTTP_504: EnvLoader.string('ERROR_PATTERN_HTTP_504', '504'),
 
   /** HTTP 429 Too Many Requests */
   HTTP_429: EnvLoader.string('ERROR_PATTERN_HTTP_429', '429'),

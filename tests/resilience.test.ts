@@ -415,10 +415,27 @@ describe('resilienceManager', () => {
 
   describe('circuit breaker trip and reset with retry integration', () => {
     it('should trip circuit breaker after threshold failures through retry manager', async () => {
-      const failingOp = jest.fn().mockRejectedValue(new Error('server error 500'));
+      const failingOp = jest.fn().mockRejectedValue(new Error('timeout'));
       const context = 'trip-test-service';
 
       // Execute with retry config that includes circuit breaker
+      // Each call to execute() is one logical operation (with retries internal)
+      // Circuit breaker sees the final result after all retries
+      // Need multiple execute() calls to trip the breaker
+      await expect(
+        resilienceManager.execute(
+          failingOp,
+          { failureThreshold: 3, maxRetries: 2 },
+          context
+        )
+      ).rejects.toThrow();
+      await expect(
+        resilienceManager.execute(
+          failingOp,
+          { failureThreshold: 3, maxRetries: 2 },
+          context
+        )
+      ).rejects.toThrow();
       await expect(
         resilienceManager.execute(
           failingOp,

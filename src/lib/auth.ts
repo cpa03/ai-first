@@ -211,8 +211,31 @@ export function isGuestRequest(request: Request): boolean {
 }
 
 /**
+ * Guest session header constraints (mirrors src/lib/auth/guest.ts; kept local
+ * so this server module never imports the 'use client' guest bundle).
+ */
+const GUEST_ID_PREFIX = 'guest_';
+const GUEST_SESSION_ID_MAX_LENGTH = 128;
+const UUID_V4_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function parseGuestSessionId(value: string): string | null {
+  if (value.length === 0 || value.length > GUEST_SESSION_ID_MAX_LENGTH) {
+    return null;
+  }
+  // Reject control characters / CRLF injection outright.
+  // eslint-disable-next-line no-control-regex
+  if (/[\x00-\x1f\x7f]/.test(value)) return null;
+  const bare = value.startsWith(GUEST_ID_PREFIX)
+    ? value.slice(GUEST_ID_PREFIX.length)
+    : value;
+  return UUID_V4_REGEX.test(bare) ? bare : null;
+}
+
+/**
  * Get user ID from request - supports both authenticated and guest users
- * For guest users, returns a special guest identifier
+ * For guest users, returns a special guest identifier.
+ * The guest session header is untrusted: malformed values yield 401.
  */
 export async function getUserIdOrGuest(
   request: Request
@@ -221,13 +244,21 @@ export async function getUserIdOrGuest(
   if (user) {
     return { userId: user.id, isGuest: false };
   }
-  
+
   // Check for guest session ID in header
   const guestSessionId = request.headers.get('x-guest-session-id');
   if (guestSessionId) {
-    return { userId: `guest_${guestSessionId}`, isGuest: true };
+    const normalized = parseGuestSessionId(guestSessionId);
+    if (!normalized) {
+      throw new AppError(
+        API_ERROR_MESSAGES.AUTH.UNAUTHORIZED_TOKEN,
+        ErrorCode.AUTHENTICATION_ERROR,
+        STATUS_CODES.UNAUTHORIZED
+      );
+    }
+    return { userId: `guest_${normalized}`, isGuest: true };
   }
-  
+
   throw new AppError(
     API_ERROR_MESSAGES.AUTH.UNAUTHORIZED_TOKEN,
     ErrorCode.AUTHENTICATION_ERROR,
