@@ -260,6 +260,26 @@ describe('Export Services', () => {
       expect(markdown).toContain('## Roadmap');
     });
 
+    it('should sanitize table cell content in roadmap to prevent table injection', async () => {
+      const testData = createMockIdea();
+
+      const result = await exporter.export(testData, {
+        roadmap: [
+          {
+            phase: 'Phase 1 | Injected Cell\nNext Row',
+            start: '2024-01-01\r\n2024-01-02',
+            end: '2024-01-31',
+            deliverables: ['Deliverable | A', 'Deliverable\nB'],
+          },
+        ],
+      });
+
+      expect(result.success).toBe(true);
+      const markdown = decodeURIComponent(result.url!.split(',')[1]);
+
+      expect(markdown).toContain('| Phase 1 \\| Injected Cell Next Row | 2024-01-01 2024-01-02 | 2024-01-31 | Deliverable \\| A, Deliverable B |');
+    });
+
     it('should throw error for auth methods', async () => {
       await expect(exporter.getAuthUrl()).rejects.toThrow(
         'Markdown export does not require authentication'
