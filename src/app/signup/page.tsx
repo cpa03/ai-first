@@ -599,6 +599,28 @@ export default function SignupPage() {
     []
   );
 
+  // Micro-UX: Cmd/Ctrl+1 and Cmd/Ctrl+2 keyboard shortcuts for OAuth buttons
+  // Provides quick keyboard access to Google (⌘1) and GitHub (⌘2) sign-up
+  // Matches the pattern of mobile nav number shortcuts for consistency
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey) {
+        if (e.key === '1') {
+          e.preventDefault();
+          triggerHapticFeedback();
+          handleOAuthSignUp('google');
+        } else if (e.key === '2') {
+          e.preventDefault();
+          triggerHapticFeedback();
+          handleOAuthSignUp('github');
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleOAuthSignUp]);
+
   if (success) {
     return (
       <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>

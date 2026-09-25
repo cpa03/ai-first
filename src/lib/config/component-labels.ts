@@ -250,6 +250,8 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
     PASTE_FROM_CLIPBOARD: 'Paste from clipboard into empty input',
     SNOOZE_ALERT: 'Snooze auto-dismissing alert',
     DISMISS_ALERT: 'Dismiss alert',
+    SIGN_IN_GOOGLE: 'Sign in with Google',
+    SIGN_IN_GITHUB: 'Sign in with GitHub',
   } as const,
 } as const;
 
