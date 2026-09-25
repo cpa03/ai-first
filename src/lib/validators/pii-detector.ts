@@ -20,7 +20,8 @@ const PII_PATTERNS = {
   // URLs that might contain sensitive data
   URL_WITH_CREDENTIALS: /https?:\/\/[^:\/\s]+:[^@\/\s]+@[^\/]+\/?/gi,
   // API keys (common patterns)
-  API_KEY: /\b(?:api[_-]?key|apikey|secret[_-]?key|access[_-]?token)\s*[:=]\s*[a-zA-Z0-9_-]{20,}\b/gi,
+  API_KEY:
+    /\b(?:api[_-]?key|apikey|secret[_-]?key|access[_-]?token)\s*[:=]\s*[a-zA-Z0-9_-]{20,}\b/gi,
   // JWT tokens
   JWT: /eyJ[A-Za-z0-9_-]*\.eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*/g,
   // AWS keys
@@ -74,6 +75,9 @@ export function hasPII(text: string): boolean {
   }
 
   for (const pattern of Object.values(PII_PATTERNS)) {
+    // Patterns carry the /g flag for use with .match()/.replace(); .test()
+    // on a /g regex is stateful via lastIndex, so reset it for a stable result.
+    pattern.lastIndex = 0;
     if (pattern.test(text)) {
       return true;
     }
@@ -99,7 +103,10 @@ export function redactPII(text: string): string {
 /**
  * Validate that a string doesn't contain PII
  */
-export function validateNoPII(text: unknown, fieldName: string = 'input'): ValidationResult {
+export function validateNoPII(
+  text: unknown,
+  fieldName: string = 'input'
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!text || typeof text !== 'string') {
@@ -130,7 +137,7 @@ export function redactPIIInObject<T>(obj: T): T {
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(item => redactPIIInObject(item)) as unknown as T;
+    return obj.map((item) => redactPIIInObject(item)) as unknown as T;
   }
 
   if (typeof obj === 'object' && obj.constructor === Object) {
