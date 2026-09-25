@@ -71,7 +71,6 @@ Complete index of all IdeaFlow documentation.
 - [Architecture](./architecture.md) - Technical architecture and system design
 - [Blueprint](./blueprint.md) - Complete project blueprint and specifications
 - [API Reference](./api.md) - Complete API documentation with examples
-- [Agent Guidelines](./agent-guidelines.md) - AI agent behavior rules and guidelines
 - [Database Schema](./database-schema.md) - Database schema documentation with ERD diagram
 - [Database Service Decomposition Status](./database/db-service-decomposition-status.md) - Current status of database service decomposition
 
@@ -81,13 +80,10 @@ Complete index of all IdeaFlow documentation.
 - [Health Monitoring](./health-monitoring.md) - Health check and monitoring guide
 - [Deployment](./deploy.md) - Production deployment instructions
 - [Troubleshooting](./troubleshooting.md) - Common issues and solutions
-- [Integration Hardening](./integration-hardening.md) - Resilience patterns and best practices
 - [Environment Setup](./environment-setup.md) - Development environment setup
 - [FAQ](./faq.md) - Frequently asked questions
 - [Database Migrations](./database-migrations.md) - Database migration guide and conventions
 - [Events System](./events.md) - Event-driven architecture documentation
-- [CI Parallel Tests](./ci-parallel-tests-implementation.md) - Parallel test execution in CI
-- [Skipped Tests Inventory](./skipped-tests-inventory.md) - Complete inventory of skipped tests with investigation status
 
 ## Specialist Guides
 
@@ -102,6 +98,12 @@ Complete index of all IdeaFlow documentation.
 - [API Specialist](./api-specialist.md) - API design and implementation
 - [AI Agent Engineer](./ai-agent-engineer.md) - AI agent engineering and configuration
 - [Platform Engineer](./platform-engineer.md) - Platform architecture and infrastructure
+- [Integration Hardening](./integration-hardening.md) - Resilience patterns and best practices
+- [CI Parallel Tests](./ci-parallel-tests-implementation.md) - Parallel test execution in CI
+- [Skipped Tests Inventory](./skipped-tests-inventory.md) - Complete inventory of skipped tests with investigation status
+- [Agent Guidelines](./agent-guidelines.md) - AI agent behavior rules and guidelines
+- [Product Architect](./Product-Architect.md) - Product architecture and design decisions
+- [Research & Development](./RnD.md) - R&D documentation and experiments
 
 ### Quality & Security
 
@@ -118,6 +120,8 @@ Complete index of all IdeaFlow documentation.
 - [Performance Optimization](./performance-optimization.md) - Detailed optimization guide
 - [Reliability Engineer](./reliability-engineer.md) - System reliability patterns
 - [Memory Management](./memory-management.md) - Memory leak prevention and bounded cache configurations
+- [Code Reviewer](./code-reviewer.md) - Code review guidelines
+- [User Story Engineer](./user-story-engineer.md) - User story writing best practices
 
 ### Design & UX
 
@@ -132,16 +136,12 @@ Complete index of all IdeaFlow documentation.
 - [Launch Readiness Checklist](./launch-readiness-checklist.md) - MVP launch go/no-go criteria
 
 - [Breakdown Engine Architecture](./breakdown-engine-architecture.md) - Breakdown system design
-- [User Story Engineer](./user-story-engineer.md) - User story writing best practices
 - [User Personas](./user-stories/personas.md) - Primary user personas for writing user stories
-- [Product Architect](./Product-Architect.md) - Product architecture and design decisions
 - [Growth & Innovation Strategist](./Growth-Innovation-Strategist.md) - Growth strategy and innovation
-- [Research & Development](./RnD.md) - R&D documentation and experiments
 
 ## Operations
 
 - [Cloudflare Deployment](./cloudflare-deploy.md) - Cloudflare-specific deployment
-- [Code Reviewer](./code-reviewer.md) - Code review guidelines
 - [Disaster Recovery](./disaster-recovery.md) - Disaster recovery procedures and backup strategies
 - [Backup Procedures](./backup-procedures.md) - Automated backup and recovery procedures
 - [Browser Console Audit](./browser-console-audit.md) - Browser console optimization guide
