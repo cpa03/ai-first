@@ -7,7 +7,7 @@
  * This configuration was extracted from constants.ts as part of the
  * modularity improvement effort (Issue #1740)
  */
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const USER_STORY_CONFIG = {
   /**

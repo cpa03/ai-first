@@ -3,7 +3,7 @@
  * Centralizes all app metadata, branding, environment variables, and constants
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 import { PLATFORM_ENV_VARS } from './constants';
 
 export const APP_CONFIG = {

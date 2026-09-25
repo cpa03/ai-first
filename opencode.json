@@ -26,6 +26,14 @@
     ]
   },
   "snapshot": false,
+  "indexing": {
+    "enabled": true,
+    "provider": "openai-compatible",
+    "openai-compatible": {
+      "baseUrl": "https://sabila01-router.hf.space/v1",
+      "apiKey": "${OPENCODE_API_KEY}"
+    }
+  },
   "mcp": {
     "playwright": {
       "enabled": true

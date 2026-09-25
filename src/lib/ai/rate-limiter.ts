@@ -5,6 +5,19 @@ import {
 } from '../resilience';
 import type { AIModelConfig } from './types';
 import { AI_HEALTH_CHECK_CONFIG } from '../config/modular-constants';
+import { AI_CONFIG } from '../config/constants';
+
+/**
+ * Type for the resilience manager to avoid circular reference
+ */
+type ResilienceManagerType = {
+  execute<T>(operation: () => Promise<T>, config: ServiceResilienceConfig, context?: string): Promise<T>;
+  getCircuitBreaker(name: string): unknown;
+  getCircuitBreakerStates(): Record<string, unknown>;
+  resetCircuitBreaker(name: string): void;
+  resetAllCircuitBreakers(): void;
+  getCircuitBreakerNames(): string[];
+};
 
 /**
  * Rate limiter configuration for AI providers
@@ -19,9 +32,9 @@ export interface AIRateLimitConfig {
  * Extracted from AIService to follow Single Responsibility Principle.
  */
 export class AIRateLimiter {
-  private resilienceManager: typeof resilienceManager;
+  private resilienceManager: ResilienceManagerType;
 
-  constructor(customResilienceManager?: typeof resilienceManager) {
+  constructor(customResilienceManager?: ResilienceManagerType) {
     this.resilienceManager = customResilienceManager || resilienceManager;
   }
 
@@ -76,7 +89,9 @@ export class AIRateLimiter {
   async healthCheck(
     openai: { models?: { list: () => Promise<unknown> } } | null | undefined,
     anthropic:
-      { messages?: { create: () => Promise<unknown> } } | null | undefined
+      | { messages?: { create: (params: unknown) => Promise<unknown> } }
+      | null
+      | undefined
   ): Promise<{
     status: string;
     providers: string[];
@@ -100,10 +115,10 @@ export class AIRateLimiter {
       }
     }
 
-    if (anthropic) {
+    if (anthropic?.messages) {
       try {
         await anthropic.messages.create({
-          model: AI_HEALTH_CHECK_CONFIG.HEALTH_CHECK_MODEL,
+          model: AI_CONFIG.DEFAULT_MAX_TOKENS > 0 ? 'claude-3-haiku-20240307' : 'claude-3-haiku-20240307',
           max_tokens: 1,
           messages: [{ role: 'user', content: 'ping' }],
         });
@@ -113,7 +128,25 @@ export class AIRateLimiter {
       }
     }
 
-    const circuitBreakers = this.resilienceManager.getCircuitBreakerStates();
+    const circuitBreakersRaw = this.resilienceManager.getCircuitBreakerStates();
+    // Type the circuit breakers properly
+    const circuitBreakers: Record<
+      string,
+      {
+        state: 'closed' | 'open' | 'half-open';
+        failures: number;
+        nextAttemptTime?: string;
+      }
+    > = {};
+    for (const [key, value] of Object.entries(circuitBreakersRaw)) {
+      if (value && typeof value === 'object' && 'state' in value) {
+        circuitBreakers[key] = value as {
+          state: 'closed' | 'open' | 'half-open';
+          failures: number;
+          nextAttemptTime?: string;
+        };
+      }
+    }
 
     return {
       status: providers.length > 0 ? 'healthy' : 'unhealthy',
@@ -125,7 +158,7 @@ export class AIRateLimiter {
   /**
    * Get the resilience manager instance (for advanced usage)
    */
-  getResilienceManager(): typeof resilienceManager {
+  getResilienceManager(): ResilienceManagerType {
     return this.resilienceManager;
   }
 
@@ -133,7 +166,7 @@ export class AIRateLimiter {
    * Factory function for creating AIRateLimiter instances.
    * Enables dependency injection for testing.
    */
-  static create(resilienceManager?: typeof resilienceManager): AIRateLimiter {
+  static create(resilienceManager?: ResilienceManagerType): AIRateLimiter {
     return new AIRateLimiter(resilienceManager);
   }
 }

@@ -1,5 +1,5 @@
 import { RETRY_CONFIG } from './retry-config';
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 import { TIMEOUT_CONFIG } from './timeout-config';
 
 /**

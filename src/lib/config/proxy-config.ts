@@ -3,7 +3,7 @@
  * Configuration values for Next.js proxy (middleware)
  * Addresses hardcoded values in proxy.ts
  */
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const PROXY_CONFIG = {
   /**

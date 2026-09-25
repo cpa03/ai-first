@@ -4,7 +4,7 @@
  * Eliminates hardcoded strings from components
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 import { BG_COLORS, TEXT_COLORS, LANDING_PAGE_COLORS } from './theme';
 
 /**

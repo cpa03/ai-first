@@ -4,7 +4,7 @@
  * Supports environment variable overrides for tuning agent behavior
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const CLARIFIER_CONFIG = {
   FALLBACK_QUESTIONS: [

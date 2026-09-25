@@ -4,7 +4,7 @@
  * Follows the "Flexy" principle: eliminate hardcoded values
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 import { PLATFORM } from '@/lib/dom-utils';
 
 /**

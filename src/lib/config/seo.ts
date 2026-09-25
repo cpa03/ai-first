@@ -5,7 +5,7 @@
  */
 
 import { APP_CONFIG } from './app';
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const SEO_CONFIG = {
   METADATA: {

@@ -24,7 +24,7 @@ import {
   COMPONENT_STATE_COLORS,
   GRAY_CLASSES,
   ICON_SIZES,
-  PAGE_ELEMENT_IDS,
+  PAGE_ELEMENT_IDS as _PAGE_ELEMENT_IDS,
   COMMON_SPACING_PATTERNS,
   COORDINATE_POSITION_PATTERNS,
   SUCCESS_POP,
@@ -35,7 +35,8 @@ import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { MX_CLASSES } from '@/lib/config/spacing';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
+import { useCountUp } from '@/hooks/useCountUp';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
 import Tooltip from './Tooltip';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
@@ -57,7 +58,8 @@ function ScrollToTopComponent({
   const [hasReachedEnd, setHasReachedEnd] = useState(false);
   const [showReachedEndCelebration, setShowReachedEndCelebration] =
     useState(false);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { scrollToTop, scrollToBottom, prefersReducedMotion } =
+    useScrollToTop({ smooth });
   const rafRef = useRef<number | null>(null);
   const prevHasReachedEndRef = useRef(false);
 
@@ -67,9 +69,10 @@ function ScrollToTopComponent({
     isVisibleRef.current = isVisible;
   }, [isVisible]);
 
-  const animatedPercentage = useAnimatedCounter(Math.round(scrollProgress), {
-    duration: UI_DURATIONS.ANIMATED_COUNTER,
-  });
+  const { displayValue: animatedPercentage } = useCountUp(
+    Math.round(scrollProgress),
+    { duration: UI_DURATIONS.ANIMATED_COUNTER }
+  );
 
   // PERFORMANCE: High-performance scroll handler gated by requestAnimationFrame.
   // This executes at most once per animation frame, completely eliminating
@@ -143,35 +146,6 @@ function ScrollToTopComponent({
       }
     };
   }, [handleScroll]);
-
-  const scrollToTop = useCallback(() => {
-    triggerHapticFeedback();
-    if (prefersReducedMotion) {
-      window.scrollTo(0, 0);
-    } else {
-      window.scrollTo({
-        top: 0,
-        behavior: smooth ? 'smooth' : 'auto',
-      });
-    }
-
-    const mainContent = document.getElementById(PAGE_ELEMENT_IDS.MAIN_CONTENT);
-    if (mainContent) {
-      mainContent.focus({ preventScroll: true });
-    }
-  }, [smooth, prefersReducedMotion]);
-
-  const scrollToBottom = useCallback(() => {
-    triggerHapticFeedback();
-    if (prefersReducedMotion) {
-      window.scrollTo(0, document.documentElement.scrollHeight);
-    } else {
-      window.scrollTo({
-        top: document.documentElement.scrollHeight,
-        behavior: smooth ? 'smooth' : 'auto',
-      });
-    }
-  }, [smooth, prefersReducedMotion]);
 
   // Micro-UX: Three-phase color progression for scroll depth indicator
   // Phase 1 (0-40%): Gray - neutral, user is near the top

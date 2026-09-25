@@ -569,7 +569,11 @@ class AIService {
       }
     >;
   }> {
-    return this.rateLimiter.healthCheck(this.openai, this.anthropic);
+    // Cast Anthropic client to match expected health check interface
+    const anthropicForHealthCheck = this.anthropic
+      ? { messages: this.anthropic.messages }
+      : null;
+    return this.rateLimiter.healthCheck(this.openai, anthropicForHealthCheck);
   }
 
   // Agent action logging
