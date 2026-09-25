@@ -315,6 +315,8 @@ export const ALERT_LABELS = {
   PAUSED_LABEL: 'Paused',
   /** Snooze button aria-label */
   SNOOZE_ARIA_LABEL: 'Extend alert by 5 seconds',
+  /** Tooltip content for snooze button */
+  SNOOZE_TOOLTIP: 'Pause auto-dismiss',
   /** Keyboard shortcut hint for snooze */
   SNOOZE_SHORTCUT_HINT: 'Press s to snooze',
   /** Keyboard shortcut hint for dismiss */
