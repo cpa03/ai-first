@@ -10,7 +10,7 @@
  * @module lib/config/external-api-domains
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * External API Domains Configuration

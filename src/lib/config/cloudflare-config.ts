@@ -9,7 +9,7 @@
  * Supports environment variable overrides for flexible deployment.
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Cloudflare cache TTL presets for common use cases

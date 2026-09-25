@@ -34,7 +34,7 @@
     "provider": "openai-compatible",
     "openai-compatible": {
       "baseUrl": "https://sabila01-router.hf.space/v1",
-      "apiKey": "sk-45b3bd7e381fbdbc-jpe9b9-71c1cbff"
+      "apiKey": "${OPENCODE_API_KEY}"
     }
   },
   "mcp": {
@@ -57,7 +57,7 @@
       "package": "@opencode/ai/providers/openai-compatible",
       "settings": {
         "baseURL": "https://sabila01-router.hf.space/v1",
-        "apiKey": "sk-45b3bd7e381fbdbc-jpe9b9-71c1cbff"
+        "apiKey": "${OPENCODE_API_KEY}"
       },
       "models": {
         "cmz": {

@@ -7,7 +7,7 @@
  * @see https://developers.cloudflare.com/cache/about/cache-control/
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Cache-Control header configuration for API routes

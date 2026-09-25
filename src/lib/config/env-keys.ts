@@ -11,7 +11,7 @@
  * 4. Document environment variable usage
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * AI Provider Environment Keys

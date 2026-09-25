@@ -4,7 +4,7 @@
  * Supports environment variable overrides for validation limits
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const VALIDATION_CONFIG = {
   IDEA_ID: {

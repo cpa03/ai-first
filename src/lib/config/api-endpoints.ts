@@ -10,7 +10,7 @@
  * const response = await fetch(API_ENDPOINTS.IDEA_TASKS(ideaId));
  * ```
  */
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Base API path prefix

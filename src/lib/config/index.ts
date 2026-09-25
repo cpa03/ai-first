@@ -935,7 +935,18 @@ export {
   FLEX_GROW_PATTERNS,
 } from './spacing';
 
-export { PX_CLASSES } from './component-spacing';
+export { 
+  PX_CLASSES,
+  SPACE_X_CLASSES,
+  SPACE_Y_CLASSES,
+  MB_CLASSES as COMPONENT_MB_CLASSES,
+  MT_CLASSES as COMPONENT_MT_CLASSES,
+  ML_CLASSES as COMPONENT_ML_CLASSES,
+  MR_CLASSES as COMPONENT_MR_CLASSES,
+  P_CLASSES as COMPONENT_P_CLASSES,
+  PY_CLASSES as COMPONENT_PY_CLASSES,
+  GAP_CLASSES as COMPONENT_GAP_CLASSES,
+} from './component-spacing';
 
 // Centralizes all hardcoded icon size values (w-N h-N patterns)
 export {

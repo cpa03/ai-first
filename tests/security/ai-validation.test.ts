@@ -107,9 +107,9 @@ describe('AI Config Security Validation', () => {
     });
 
     it('should fail on invalid types', () => {
-      expect(validateModelTemperature('0.7').valid).toBe(false);
+      expect(validateModelTemperature('0.7' as unknown as number).valid).toBe(false);
       expect(validateModelTemperature(NaN).valid).toBe(false);
-      expect(validateModelTemperature({}).valid).toBe(false);
+      expect(validateModelTemperature({} as unknown as number).valid).toBe(false);
     });
 
     it('should allow undefined or null to fallback to default', () => {
@@ -137,7 +137,7 @@ describe('AI Config Security Validation', () => {
     });
 
     it('should fail on invalid types', () => {
-      expect(validateModelMaxTokens('4000').valid).toBe(false);
+      expect(validateModelMaxTokens('4000' as unknown as number).valid).toBe(false);
       expect(validateModelMaxTokens(NaN).valid).toBe(false);
     });
   });

@@ -11,7 +11,7 @@
  * All values support environment variable overrides via EnvLoader.
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Embedding service configuration

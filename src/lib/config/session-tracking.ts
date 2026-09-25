@@ -6,7 +6,8 @@
  * and can be overridden via environment variables.
  */
 
-import { EnvLoader, isTest } from './environment';
+import { isTest } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Configuration for session duration tracking

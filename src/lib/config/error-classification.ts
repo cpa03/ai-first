@@ -24,7 +24,7 @@
  * 3. Update this header with the new pattern category
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Retryable Error Patterns

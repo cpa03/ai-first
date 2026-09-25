@@ -37,7 +37,7 @@
  * const timeout = TIMEOUT_CONFIG.DEFAULT;
  * ```
  */
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const TIMEOUT_CONFIG = {
   /**

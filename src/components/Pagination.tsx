@@ -8,7 +8,6 @@ import {
   SVG_STROKE_WIDTHS,
   BUTTON_STYLES,
   FLEX_PATTERNS,
-  SPACE_X_PATTERNS,
   ROUNDED_CLASSES,
   TRANSITION_CLASSES,
   SHADOW_CLASSES,
@@ -16,8 +15,12 @@ import {
   BG_COLOR_CLASSES,
   BORDER_COLOR_CLASSES,
   TYPOGRAPHY_CLASSES,
-  COMMON_SPACING_PATTERNS,
   RING_COLORS,
+  MT_CLASSES,
+  PX_CLASSES,
+  PY_CLASSES,
+  ML_CLASSES,
+  SPACE_X_CLASSES,
 } from '@/lib/config';
 import { SR_ONLY } from '@/lib/config/remaining-hardcoded-patterns';
 
@@ -49,15 +52,15 @@ function PaginationComponent({
 
   return (
     <nav
-      className={`${FLEX_PATTERNS.CENTER} ${SPACE_X_PATTERNS.SM} ${COMMON_SPACING_PATTERNS.MT_LG}`}
-      aria-label={DASHBOARD_LABELS.PAGINATION_LABEL}
+      className={`${FLEX_PATTERNS.CENTER} ${SPACE_X_CLASSES.SM} ${MT_CLASSES.LG}`}
+      aria-label="Pagination"
     >
       {/* Previous Button */}
       <button
         type="button"
         onClick={() => handlePageClick(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`${BUTTON_STYLES.PAGINATION} ${FLEX_PATTERNS.CENTER} ${COMMON_SPACING_PATTERNS.PX_MD} ${COMMON_SPACING_PATTERNS.PY_SM} ${ROUNDED_CLASSES.MD} ${TRANSITION_CLASSES.FAST} ${SHADOW_CLASSES.SM} ${currentPage === 1 ? `${TEXT_COLOR_CLASSES.MUTED} ${BG_COLOR_CLASSES.SUBTLE} cursor-not-allowed` : `${TEXT_COLOR_CLASSES.BODY} ${BG_COLOR_CLASSES.CARD} ${BORDER_COLOR_CLASSES.LIGHT} hover:${BG_COLOR_CLASSES.SUBTLE} focus:${RING_COLORS.PRIMARY}`}`}
+        className={`${BUTTON_STYLES.VARIANTS.outline} ${FLEX_PATTERNS.CENTER} ${PX_CLASSES.MD} ${PY_CLASSES.SM} ${ROUNDED_CLASSES.MEDIUM} ${TRANSITION_CLASSES.FAST} ${SHADOW_CLASSES.SMALL} ${currentPage === 1 ? `${TEXT_COLOR_CLASSES.MUTED} ${BG_COLOR_CLASSES.SUBTLE} cursor-not-allowed` : `${TEXT_COLOR_CLASSES.BODY} ${BG_COLOR_CLASSES.CARD} ${BORDER_COLOR_CLASSES.LIGHT} hover:${BG_COLOR_CLASSES.SUBTLE} focus:${RING_COLORS.PRIMARY}`}`}
         aria-label="Previous page"
         aria-disabled={currentPage === 1}
       >
@@ -80,7 +83,7 @@ function PaginationComponent({
 
       {/* Page Numbers */}
       <div
-        className={`${FLEX_PATTERNS.CENTER} ${SPACE_X_PATTERNS.XS}`}
+        className={`${FLEX_PATTERNS.CENTER} ${SPACE_X_CLASSES.XS}`}
         role="navigation"
         aria-label="Pagination"
       >
@@ -92,7 +95,7 @@ function PaginationComponent({
             <span key={page} className={FLEX_PATTERNS.CENTER}>
               {showEllipsis && (
                 <span
-                  className={`${COMMON_SPACING_PATTERNS.PX_SM} ${TYPOGRAPHY_CLASSES.CAPTION} ${TEXT_COLOR_CLASSES.MUTED}`}
+                  className={`${PX_CLASSES.SM} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.MUTED}`}
                   aria-hidden="true"
                 >
                   …
@@ -101,9 +104,9 @@ function PaginationComponent({
               <button
                 type="button"
                 onClick={() => handlePageClick(page)}
-                className={`${BUTTON_STYLES.PAGINATION} ${FLEX_PATTERNS.CENTER} ${COMMON_SPACING_PATTERNS.PX_MD} ${COMMON_SPACING_PATTERNS.PY_SM} ${ROUNDED_CLASSES.MD} ${TRANSITION_CLASSES.FAST} ${SHADOW_CLASSES.SM} ${
+                className={`${BUTTON_STYLES.VARIANTS.outline} ${FLEX_PATTERNS.CENTER} ${PX_CLASSES.MD} ${PY_CLASSES.SM} ${ROUNDED_CLASSES.MEDIUM} ${TRANSITION_CLASSES.FAST} ${SHADOW_CLASSES.SMALL} ${
                   page === currentPage
-                    ? `${TEXT_COLOR_CLASSES.INVERSE} ${BG_COLOR_CLASSES.BRAND} ${BORDER_COLOR_CLASSES.PRIMARY}`
+                    ? `${TEXT_COLOR_CLASSES.INVERSE} ${BG_COLOR_CLASSES.BRAND} ${BORDER_COLOR_CLASSES.FOCUS}`
                     : `${TEXT_COLOR_CLASSES.BODY} ${BG_COLOR_CLASSES.CARD} ${BORDER_COLOR_CLASSES.LIGHT} hover:${BG_COLOR_CLASSES.SUBTLE} focus:${RING_COLORS.PRIMARY}`
                 }`}
                 aria-label={`Page ${page}`}
@@ -121,7 +124,7 @@ function PaginationComponent({
         type="button"
         onClick={() => handlePageClick(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`${BUTTON_STYLES.PAGINATION} ${FLEX_PATTERNS.CENTER} ${COMMON_SPACING_PATTERNS.PX_MD} ${COMMON_SPACING_PATTERNS.PY_SM} ${ROUNDED_CLASSES.MD} ${TRANSITION_CLASSES.FAST} ${SHADOW_CLASSES.SM} ${currentPage === totalPages ? `${TEXT_COLOR_CLASSES.MUTED} ${BG_COLOR_CLASSES.SUBTLE} cursor-not-allowed` : `${TEXT_COLOR_CLASSES.BODY} ${BG_COLOR_CLASSES.CARD} ${BORDER_COLOR_CLASSES.LIGHT} hover:${BG_COLOR_CLASSES.SUBTLE} focus:${RING_COLORS.PRIMARY}`}`}
+        className={`${BUTTON_STYLES.VARIANTS.outline} ${FLEX_PATTERNS.CENTER} ${PX_CLASSES.MD} ${PY_CLASSES.SM} ${ROUNDED_CLASSES.MEDIUM} ${TRANSITION_CLASSES.FAST} ${SHADOW_CLASSES.SMALL} ${currentPage === totalPages ? `${TEXT_COLOR_CLASSES.MUTED} ${BG_COLOR_CLASSES.SUBTLE} cursor-not-allowed` : `${TEXT_COLOR_CLASSES.BODY} ${BG_COLOR_CLASSES.CARD} ${BORDER_COLOR_CLASSES.LIGHT} hover:${BG_COLOR_CLASSES.SUBTLE} focus:${RING_COLORS.PRIMARY}`}`}
         aria-label="Next page"
         aria-disabled={currentPage === totalPages}
       >
@@ -140,7 +143,7 @@ function PaginationComponent({
 
       {/* Page Info */}
       <div
-        className={`${COMMON_SPACING_PATTERNS.PL_MD} ${TYPOGRAPHY_CLASSES.CAPTION} ${TEXT_COLOR_CLASSES.MUTED}`}
+        className={`${ML_CLASSES.MD} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.MUTED}`}
         aria-live="polite"
       >
         {DASHBOARD_PAGE_CONTENT.IDEA_COUNT.TOTAL} {currentPage}{' '}

@@ -4,7 +4,7 @@
  * Supports environment variable overrides for fine-tuning
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const ANIMATION_CONFIG = {
   /**

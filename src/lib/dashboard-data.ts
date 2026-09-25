@@ -16,6 +16,8 @@ interface Pagination {
   total: number;
   limit: number;
   offset: number;
+  page: number;
+  pageSize: number;
   hasMore: boolean;
 }
 
@@ -57,6 +59,8 @@ export const getDashboardData = unstable_cache(
         total: result.total,
         page: result.page,
         limit: result.pageSize,
+        offset: (result.page - 1) * result.pageSize,
+        pageSize: result.pageSize,
         hasMore: result.hasMore,
       },
     };
