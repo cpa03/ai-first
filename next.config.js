@@ -174,7 +174,7 @@ const nextConfig = {
       'react-dom',
       'next',
     ],
-    optimizeCss: false,
+    optimizeCss: true,
   },
   compiler: {
     removeConsole:
