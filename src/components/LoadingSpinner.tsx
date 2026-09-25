@@ -12,6 +12,7 @@ import {
   BORDER_COLORS,
   REMAINING_PATTERNS,
   CSS_POSITIONING,
+  GAP_CLASSES,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { LOADING_SPINNER_ELAPSED_TEXT } from '@/lib/config/remaining-hardcoded-patterns';
@@ -148,7 +149,7 @@ function LoadingSpinnerComponent({
 
   return (
     <div
-      className={`flex justify-center items-center gap-2.5 ${className} ${
+      className={`flex justify-center items-center ${GAP_CLASSES.MD_LG} ${className} ${
         !prefersReducedMotion && !hasAppeared
           ? 'opacity-0 scale-90'
           : `opacity-100 scale-100 ${TRANSITION_CLASSES.SLOW_EASE_OUT}`

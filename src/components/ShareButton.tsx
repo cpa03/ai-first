@@ -16,6 +16,9 @@ import {
   BG_COLORS,
   CONFETTI_DOT,
   SHARE_SUCCESS_GLOW,
+  P_CLASSES,
+  PX_CLASSES,
+  PY_CLASSES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -207,14 +210,14 @@ const ShareButtonComponent = function ShareButton({
 
   const variantClasses = {
     default: `
-      px-3 py-1.5 text-sm
+      ${PX_CLASSES.MD} ${PY_CLASSES.MD_SM} text-sm
       ${BG_COLORS.BRAND} text-white ${BG_COLORS.BRAND_HOVER}
       ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.DEFAULT_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-md
       ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.DEFAULT}
     `,
     'icon-only': `
-      p-1.5
+      ${P_CLASSES.MD_SM}
       ${TEXT_COLORS.MUTED} ${PRIMARY_COMBINATIONS.INTERACTIVE_HOVER}
       ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.ICON_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-full
