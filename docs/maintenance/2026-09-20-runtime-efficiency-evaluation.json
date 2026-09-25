@@ -1,0 +1,21 @@
+{
+  "agen_penilai": "Runtime Efficiency Agent",
+  "indikator": "Efisiensi Algoritma & Performa Waktu",
+  "skor_saat_ini": 82,
+  "status": "BUTUH_PERBAIKAN",
+  "temuan_kunci": [
+    "TaskManagement.tsx:69-78 - O(N*M) nested loop in useMemo flattening deliverables/tasks on every data change (allTasks recomputation)",
+    "TaskManagement.tsx:110-118 - filteredDeliverables creates new array/object references on every statusFilter change via map+filter (O(N) allocations)",
+    "TaskManagement.tsx:144-146 - O(N*M) nested find+some in scrollToNextIncomplete for locating task's deliverable",
+    "useTaskManagement.ts:267-269 - O(N*M) flatMap+find in findTask for locating task by ID on every toggle",
+    "useTaskManagement.ts:167-169 - O(N*M) findIndex+some in applyTaskStatusUpdate for locating deliverable containing task",
+    "src/lib/prompt-service.ts:48-54 - Template chunk cache eviction uses keys().next().value (O(1) but not true LRU, arbitrary eviction)",
+    "src/lib/validators/input-sanitizer.ts:120-150 - 6 sequential .replace() calls with complex regexes per sanitization (multiple string scans)",
+    "src/lib/pii-redaction.ts:135-212 - 10+ sequential .replace() passes over string for PII redaction (O(K*N) where K=pattern count)",
+    "src/lib/ai.ts:370-393 - generateCacheKey computes SHA-256 hash on every callModel invocation (crypto.subtle.digest is async + CPU)",
+    "src/app/api/ideas/route.ts:108, src/app/api/ideas/[id]/route.ts:61,74 - Multiple await requireAuth(request) calls per request (redundant auth checks)",
+    "src/lib/cache.ts:184-205 - evictExpiredEntries assumes Map chronological order; sliding expiration threshold logic complex and may skip evictions",
+    "src/lib/similarity-service.ts:101-109 - RPC match_vectors fetches limit+1 then slices (minor over-fetch, extra vector comparison)",
+    "src/lib/db/ideas.ts:343-378 - getIdeaStats RPC fallback does 2 queries (deliverables + tasks) instead of single aggregation query"
+  ],
+  "rekomendasi_tindakan": "1. Move allTasks computation to useTaskManagement hook with useMemo keyed by data.deliverables (returns flat array + Map<taskId, deliverableId> for O(1) lookups). 2. Replace filteredDeliverables with derived state using useMemo with stable references; avoid creating new objects. 3. Add taskId->deliverableId index in hook data structure to eliminate O(N*M) searches in scrollToNextIncomplete, findTask, applyTaskStatusUpdate. 4. Combine input-sanitizer regexes into single pass with alternation groups; use pre-compiled combined regex. 5. Combine PII redaction regexes into single combined regex with capture groups and replacement function (1 pass instead of 10+). 6. Cache generateCacheKey results with WeakMap keyed by messages array reference + config object. 7. Create shared auth middleware/context in API handlers to avoid duplicate requireAuth calls. 8. Implement true LRU cache with doubly-linked list + Map for prompt-service template chunks. 9. Optimize cache evictExpiredEntries with explicit sorted structure or accept approximate LRU. 10. Add database RPC get_user_idea_stats_v2 returning all aggregates in single query. 11. Add query batching for similarity service to combine embedding fetch + match_vectors in single RPC call."

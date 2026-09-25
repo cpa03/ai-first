@@ -1,0 +1,18 @@
+{
+  "agen_penilai": "Data & Database Agent",
+  "indikator": "Integritas Data & Query Database",
+  "skor_saat_ini": 78,
+  "status": "BUTUH_PERBAIKAN",
+  "temuan_kunci": [
+    "Missing RPC function 'get_user_idea_stats' referenced in src/lib/db/ideas.ts:343 but not defined in any migration",
+    "No explicit transaction management for multi-table operations (breakdown engine does sequential writes without atomicity at src/lib/agents/breakdown-engine.ts:109-200)",
+    "Vector embedding stored as string '[...]' format instead of native vector type at src/lib/db/vectors.ts:185",
+    "Idea stats fallback path uses 3 separate queries instead of single optimized query at src/lib/db/ideas.ts:356-377",
+    "RLS policies use correlated subqueries that may not leverage indexes efficiently (e.g., tasks policy at supabase/schema.sql:309-315)",
+    "No foreign key constraint on vectors.idea_id (uses REFERENCES but missing ON DELETE CASCADE at supabase/schema.sql:114)",
+    "Task dependencies table missing CHECK constraint to prevent self-referencing cycles at supabase/schema.sql:132-142",
+    "Admin client initialization lacks connection pooling configuration for serverless environments at src/lib/db/service.ts:95-100",
+    "Multiple count queries in getAgentLogsPaginated and getVectorsPaginated use count:'exact' which can be slow on large tables at src/lib/db/clarification.ts:140, vectors.ts:86",
+    "Soft delete pattern inconsistently applied - some tables have deleted_at but RLS policies don't always filter it"
+  ],
+  "rekomendasi_tindakan": "1. Create missing RPC function 'get_user_idea_stats' in new migration for atomic stats aggregation. 2. Implement transaction-like patterns using Supabase Edge Functions or database functions for multi-table operations in breakdown engine. 3. Fix vector embedding storage to use native vector type with proper casting. 4. Add ON DELETE CASCADE to vectors.idea_id FK. 5. Add self-reference prevention CHECK constraint on task_dependencies. 6. Optimize RLS policies to use EXISTS with direct FK joins instead of correlated subqueries. 7. Replace count:'exact' with estimated counts for large tables or implement materialized views. 8. Add connection pooling config for admin client. 9. Ensure all RLS policies consistently filter deleted_at IS NULL."

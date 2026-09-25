@@ -12,34 +12,46 @@ type CircuitBreakerInternalState = {
 
 const logger = createLogger('CircuitBreaker');
 
-/**
- * Lock mechanism for circuit breaker half-open state.
- * Prevents race conditions in concurrent request environments.
- * Uses promise chaining to ensure only one request can execute in half-open state.
- */
-const halfOpenLocks = new Map<string, Promise<void>>();
-
 export class CircuitBreaker {
   private circuitState: CircuitBreakerInternalState = {
     state: 'closed',
     failures: 0,
   };
   private recentFailures: number[] = [];
+  /** Mutex for half-open state to prevent concurrent recovery probes */
+  private halfOpenLock: Promise<void> = Promise.resolve();
 
+  /**
+   * Creates a new CircuitBreaker instance.
+   *
+   * @param name - Unique identifier for this circuit breaker (used for logging and locking)
+   * @param config - Configuration options for failure threshold, reset timeout, and monitoring period
+   */
   constructor(
     private readonly name: string,
     private readonly config: CircuitBreakerOptions = DEFAULT_CIRCUIT_BREAKER_CONFIG
   ) {}
 
+  /**
+   * Executes an operation with circuit breaker protection.
+   *
+   * The circuit breaker tracks failures and transitions through states:
+   * - CLOSED: Normal operation, failures are counted
+   * - OPEN: Failure threshold exceeded, requests fail fast
+   * - HALF_OPEN: Testing recovery with a single request
+   *
+   * @param operation - Async operation to execute
+   * @returns Promise that resolves with the operation result
+   * @throws CircuitBreakerError if the circuit is open and not ready for recovery
+   * @throws Error if the operation fails (after updating failure state)
+   */
   async execute<T>(operation: () => Promise<T>): Promise<T> {
     const now = Date.now();
 
     if (this.circuitState.state === 'open') {
       if (now >= (this.circuitState.nextAttemptTime || 0)) {
-        // FIX: Race condition - acquire lock BEFORE transitioning to half-open.
-        // Without the lock, multiple concurrent requests can all see 'open' state
-        // and all transition to 'half-open' simultaneously, defeating the purpose
-        // of limiting load during recovery probes.
+        // Acquire lock before transitioning to half-open to prevent
+        // multiple concurrent requests from all transitioning simultaneously.
         return this.withHalfOpenLock(() => {
           // Double-check: Another request may have already transitioned the state
           if (this.circuitState.state === 'open') {
@@ -66,30 +78,23 @@ export class CircuitBreaker {
   }
 
   /**
-   * Acquires a lock for half-open state and executes the callback atomically.
-   * Uses promise chaining to ensure only one request can execute at a time.
+   * Executes callback with mutual exclusion for half-open state.
+   * Uses a simple promise-based mutex - each call waits for the previous to complete.
    */
   private async withHalfOpenLock<T>(callback: () => Promise<T>): Promise<T> {
-    const previousLock = halfOpenLocks.get(this.name);
+    // Create a new lock that resolves after the callback completes
+    const lock = this.halfOpenLock.then(() => callback());
 
-    const currentLock = (previousLock || Promise.resolve()).then(() => {
-      return callback();
-    });
-
-    halfOpenLocks.set(
-      this.name,
-      currentLock.then(
-        () => {},
-        () => {}
-      )
+    // Update the mutex to wait for this operation
+    this.halfOpenLock = lock.then(
+      () => {},
+      () => {} // Ignore rejections to prevent unhandled promise warnings
     );
 
     try {
-      return await currentLock;
+      return await lock;
     } finally {
-      if (halfOpenLocks.get(this.name) === currentLock) {
-        halfOpenLocks.delete(this.name);
-      }
+      // Lock is automatically released when the promise chain completes
     }
   }
 
@@ -116,50 +121,17 @@ export class CircuitBreaker {
   }
 
   /**
-   * Binary search to find the first index where failures[index] >= cutoff
-   * PERFORMANCE: O(log N) complexity compared to O(N) linear scan.
-   */
-  private findFirstValidIndex(cutoff: number): number {
-    let low = 0;
-    let high = this.recentFailures.length - 1;
-    let result = -1;
-
-    while (low <= high) {
-      const mid = (low + high) >>> 1;
-      if (this.recentFailures[mid] >= cutoff) {
-        result = mid;
-        high = mid - 1;
-      } else {
-        low = mid + 1;
-      }
-    }
-
-    return result;
-  }
-
-  /**
    * Cleanup failure timestamps that are outside the monitoring period.
-   * PERFORMANCE: Since timestamps are added chronologically, we find the
-   * first valid index in O(log N) via binary search and only allocate a new
-   * array if needed. This avoids O(N) linear scans and unnecessary allocations.
+   * Uses simple filter since failure counts are typically small (<100).
    */
   private cleanupOldFailures(now: number): void {
     const monitoringPeriod = this.config.monitoringPeriodMs;
     const cutoff = now - monitoringPeriod;
 
-    const firstValidIndex = this.findFirstValidIndex(cutoff);
-
-    if (firstValidIndex === -1) {
-      // All failures have expired
-      if (this.recentFailures.length > 0) {
-        this.recentFailures = [];
-      }
-    } else if (firstValidIndex > 0) {
-      // Some failures have expired, remove them
-      this.recentFailures = this.recentFailures.slice(firstValidIndex);
-    }
-    // If firstValidIndex is 0, all failures are still within the monitoring period.
-
+    // Filter out expired failures - O(N) but N is typically very small
+    this.recentFailures = this.recentFailures.filter(
+      (timestamp) => timestamp >= cutoff
+    );
     this.circuitState.failures = this.recentFailures.length;
   }
 
@@ -198,6 +170,11 @@ export class CircuitBreaker {
     );
   }
 
+  /**
+   * Returns the current state of the circuit breaker.
+   *
+   * @returns The current CircuitBreakerState (CLOSED, OPEN, or HALF_OPEN)
+   */
   getState(): CircuitBreakerState {
     const stateValue = this.circuitState.state;
     if (stateValue === 'closed') return CircuitBreakerState.CLOSED;
@@ -205,6 +182,10 @@ export class CircuitBreaker {
     return CircuitBreakerState.HALF_OPEN;
   }
 
+  /**
+   * Resets the circuit breaker to its initial closed state.
+   * Clears all failure counts and timing information.
+   */
   reset(): void {
     this.circuitState.failures = 0;
     this.circuitState.state = 'closed';
@@ -212,14 +193,29 @@ export class CircuitBreaker {
     this.circuitState.nextAttemptTime = 0;
   }
 
+  /**
+   * Returns the current failure count.
+   *
+   * @returns Number of failures in the current monitoring period
+   */
   getFailures(): number {
     return this.circuitState.failures;
   }
 
+  /**
+   * Returns the timestamp when the next recovery attempt is allowed.
+   *
+   * @returns Unix timestamp in milliseconds, or 0 if circuit is not open
+   */
   getNextAttemptTime(): number {
     return this.circuitState.nextAttemptTime || 0;
   }
 
+  /**
+   * Returns a detailed status object for monitoring and debugging.
+   *
+   * @returns Object containing state, failure count, and next attempt time (if open)
+   */
   getStatus(): {
     state: CircuitBreakerState;
     failures: number;

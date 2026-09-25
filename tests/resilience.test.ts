@@ -412,4 +412,103 @@ describe('resilienceManager', () => {
       );
     });
   });
+
+  describe('circuit breaker trip and reset with retry integration', () => {
+    it('should trip circuit breaker after threshold failures through retry manager', async () => {
+      const failingOp = jest.fn().mockRejectedValue(new Error('server error 500'));
+      const context = 'trip-test-service';
+
+      // Execute with retry config that includes circuit breaker
+      await expect(
+        resilienceManager.execute(
+          failingOp,
+          { failureThreshold: 3, maxRetries: 2 },
+          context
+        )
+      ).rejects.toThrow();
+
+      const status = resilienceManager.getCircuitBreakerStates() as Record<
+        string,
+        { state: CircuitBreakerState; failures: number }
+      >;
+      expect(status[context].state).toBe(CircuitBreakerState.OPEN);
+      expect(status[context].failures).toBeGreaterThanOrEqual(3);
+    });
+
+    it('should reset circuit breaker and allow successful operations', async () => {
+      const context = 'reset-test-service-2';
+
+      // First trip the breaker
+      const failingOp = jest.fn().mockRejectedValue(new Error('server error 500'));
+      await expect(
+        resilienceManager.execute(
+          failingOp,
+          { failureThreshold: 2, maxRetries: 1 },
+          context
+        )
+      ).rejects.toThrow();
+      await expect(
+        resilienceManager.execute(
+          failingOp,
+          { failureThreshold: 2, maxRetries: 1 },
+          context
+        )
+      ).rejects.toThrow();
+
+      // Verify it's open
+      let status = resilienceManager.getCircuitBreakerStates() as Record<
+        string,
+        { state: CircuitBreakerState }
+      >;
+      expect(status[context].state).toBe(CircuitBreakerState.OPEN);
+
+      // Reset the breaker
+      resilienceManager.resetCircuitBreaker(context);
+
+      // Verify it's closed
+      status = resilienceManager.getCircuitBreakerStates() as Record<
+        string,
+        { state: CircuitBreakerState }
+      >;
+      expect(status[context].state).toBe(CircuitBreakerState.CLOSED);
+
+      // Now successful operation should work
+      const successOp = jest.fn().mockResolvedValue('success');
+      const result = await resilienceManager.execute(
+        successOp,
+        { failureThreshold: 2 },
+        context
+      );
+      expect(result).toBe('success');
+    });
+
+    it('should record success on circuit breaker when operation succeeds after retries', async () => {
+      const context = 'success-retry-test';
+      let attemptCount = 0;
+      const flakyOp = jest.fn().mockImplementation(() => {
+        attemptCount++;
+        if (attemptCount < 3) {
+          return Promise.reject(new Error('temporary error 503'));
+        }
+        return Promise.resolve('success');
+      });
+
+      const result = await resilienceManager.execute(
+        flakyOp,
+        { failureThreshold: 5, maxRetries: 3, baseDelayMs: 10 },
+        context
+      );
+
+      expect(result).toBe('success');
+      expect(attemptCount).toBe(3);
+
+      // Circuit breaker should be closed with 0 failures
+      const status = resilienceManager.getCircuitBreakerStates() as Record<
+        string,
+        { state: CircuitBreakerState; failures: number }
+      >;
+      expect(status[context].state).toBe(CircuitBreakerState.CLOSED);
+      expect(status[context].failures).toBe(0);
+    });
+  });
 });

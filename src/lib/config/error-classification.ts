@@ -49,6 +49,18 @@ export const RETRYABLE_PATTERNS = {
 
   /** Host not found patterns */
   ENOTFOUND: EnvLoader.string('ERROR_PATTERN_ENOTFOUND', 'enotfound'),
+
+  /** HTTP 500 Internal Server Error */
+  HTTP_500: EnvLoader.string('ERROR_PATTERN_HTTP_500', '500'),
+
+  /** HTTP 502 Bad Gateway */
+  HTTP_502: EnvLoader.string('ERROR_PATTERN_HTTP_502', '502'),
+
+  /** HTTP 503 Service Unavailable */
+  HTTP_503: EnvLoader.string('ERROR_PATTERN_HTTP_503', '503'),
+
+  /** HTTP 429 Too Many Requests */
+  HTTP_429: EnvLoader.string('ERROR_PATTERN_HTTP_429', '429'),
 } as const;
 
 /**
