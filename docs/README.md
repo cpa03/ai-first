@@ -145,7 +145,7 @@ Complete index of all IdeaFlow documentation.
 - [Disaster Recovery](./disaster-recovery.md) - Disaster recovery procedures and backup strategies
 - [Backup Procedures](./backup-procedures.md) - Automated backup and recovery procedures
 - [Browser Console Audit](./browser-console-audit.md) - Browser console optimization guide
-- [Modularity Audit - 2026-08-14](./modularity-audit-20260814.md) - Modularity audit report (Flexy)
+- [Modularity Audit - 2026-08-14](./audit/archive/modularity-audit-20260814.md) - Modularity audit report (Flexy, archived)
 - [Modular Architecture Review](./audit/archive/flexy-modularization-audit-20260724.md) - Modular architecture analysis and recommendations
 
 ## Task Management
@@ -234,6 +234,8 @@ Complete index of all IdeaFlow documentation.
 - [Flexy Modularity Plan](./plans/2026-06-30-flexy-modularization.md) - Hardcoded values elimination (completed)
 - [Decompose Database Service](./plans/2026-05-12-decompose-database-service.md) - Database service decomposition
 - [Browser Console Audit Plan](./plans/2026-07-18-browser-console-audit.md) - Browser console audit planning
+- [Security Hardening Plan](./plans/2026-09-19-security-hardening.md) - Security score 88 to >90 implementation plan
+- [User Flow & Orientation Improvements](./plans/2026-09-19-user-flow-orientation-improvements.md) - User flow score 78 to >90 implementation plan
 
 ## Security Reports
 
@@ -246,8 +248,7 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
-- [BroCula Browser Audit - 2026-08-17](./audit/BROCULA-AUDIT-20260817.md) - BroCula browser audit (latest)
-- [BroCula Browser Audit - 2026-08-16](./audit/BROCULA-AUDIT-20260816.md) - BroCula browser audit
+- [BroCula Browser Audit - 2026-08-18](./audit/2026-08-18-brocula-browser-console-lighthouse.md) - BroCula browser audit (latest)
 - [Security Audit #1739](./audit/SECURITY-AUDIT-1739.md) - Security audit for issue #1739
 - [Issue: Large Files](./audit/ISSUE-01-large-files.md) - Files exceeding 250 LOC maintainability threshold
 - [Issue: API Test Coverage](./audit/ISSUE-02-api-test-coverage.md) - API route test coverage gaps
@@ -257,7 +258,7 @@ Complete index of all IdeaFlow documentation.
 
 ### Archived Reports
 
-Older audit reports (2026-07-08 through 2026-08-11) are archived in [audit/archive/](./audit/archive/).
+Older audit reports (2026-07-08 through 2026-08-17, incl. BROCULA-AUDIT-20260816, BROCULA-AUDIT-20260817, modularity-audit-20260814) are archived in [audit/archive/](./audit/archive/).
 
 ## Database Reports
 
@@ -266,13 +267,15 @@ Older audit reports (2026-07-08 through 2026-08-11) are archived in [audit/archi
 
 ## Product Reports
 
-- [MVP Timeline Audit - 2026-07-15](./product/mvp-timeline-audit-2026-07-15.md) - MVP timeline and feature status audit
+- [MVP Timeline Audit - 2026-07-15](./product/archive/mvp-timeline-audit-2026-07-15.md) - MVP timeline and feature status audit (archived 2026-09-25)
 
 ## Maintenance Reports
 
 ### Active Reports
 
 - [Repository Maintenance Report - 2026-08-19](./maintenance/2026-08-19-repository-maintenance-report.md) - Repository maintenance report (latest)
+- [RepoKeeper Maintenance Summary - 2026-08-23](./maintenance/2026-08-23-repokeeper-summary.md) - RepoKeeper maintenance summary
+- [Repository Maintenance Report - 2026-08-23](./maintenance/2026-08-23-repository-maintenance-report.md) - Repository maintenance report
 - [Repository Maintenance Report - 2026-08-18 (Loop)](./maintenance/2026-08-18-repository-maintenance-report-loop.md) - Repository maintenance loop report
 - [Repository Maintenance Report - 2026-08-18](./maintenance/2026-08-18-repository-maintenance-report.md) - Repository maintenance report
 - [Repository Maintenance Report - 2026-08-17](./maintenance/2026-08-17-repository-maintenance-report.md) - Repository maintenance report
