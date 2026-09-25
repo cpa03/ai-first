@@ -1,6 +1,6 @@
 import { createLogger } from '../logger';
 import { CircuitBreakerOptions, CircuitBreakerState } from './types';
-import { CircuitBreakerError } from '../errors';
+import { CircuitBreakerError, RetryExhaustedError } from '../errors';
 import { DEFAULT_CIRCUIT_BREAKER_CONFIG } from './config';
 
 type CircuitBreakerInternalState = {
@@ -107,9 +107,13 @@ export class CircuitBreaker {
       const normalizedError =
         error instanceof Error ? error : new Error(String(error));
       const errorMessage = normalizedError.message;
-      const attemptCount =
-        (normalizedError as Error & { attemptCount?: number }).attemptCount ||
-        (errorMessage?.includes('stopped due to circuit breaker') ? 0 : 1);
+      // Don't use attemptCount from RetryExhaustedError - circuit breaker should
+      // record 1 failure per execute() call, not per retry attempt
+      const isRetryExhausted = normalizedError instanceof RetryExhaustedError;
+      const attemptCount = isRetryExhausted
+        ? 1
+        : (normalizedError as Error & { attemptCount?: number }).attemptCount ||
+          (errorMessage?.includes('stopped due to circuit breaker') ? 0 : 1);
       this.onError(normalizedError, now, attemptCount);
       throw normalizedError;
     }
