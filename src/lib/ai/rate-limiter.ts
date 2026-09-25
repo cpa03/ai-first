@@ -2,6 +2,7 @@ import {
   resilienceManager,
   defaultResilienceConfigs,
   ServiceResilienceConfig,
+  ResilienceConfig,
 } from '../resilience';
 import type { AIModelConfig } from './types';
 import { AI_HEALTH_CHECK_CONFIG } from '../config/modular-constants';
@@ -10,8 +11,8 @@ import { AI_CONFIG } from '../config/constants';
 /**
  * Type for the resilience manager to avoid circular reference
  */
-type ResilienceManagerType = {
-  execute<T>(operation: () => Promise<T>, config: ServiceResilienceConfig, context?: string): Promise<T>;
+export type ResilienceManagerType = {
+  execute<T>(operation: () => Promise<T>, config: ResilienceConfig, context?: string): Promise<T>;
   getCircuitBreaker(name: string): unknown;
   getCircuitBreakerStates(): Record<string, unknown>;
   resetCircuitBreaker(name: string): void;
@@ -41,7 +42,7 @@ export class AIRateLimiter {
   /**
    * Convert AI service resilience config to core resilience config
    */
-  private toResilienceConfig(config: ServiceResilienceConfig) {
+  private toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
     return {
       timeoutMs: config.timeout.timeoutMs,
       maxRetries: config.retry.maxRetries,

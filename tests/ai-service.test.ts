@@ -20,12 +20,17 @@ import {
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import { MOCK_SECRETS } from './utils/test-secrets';
+import type { ResilienceManagerType } from '@/lib/ai/rate-limiter';
 
 // Mock resilience manager for testing
 const mockResilienceManager = {
-  execute: jest.fn(async (operation: () => Promise<unknown>) => operation()),
+  execute: jest.fn(async <T,>(operation: () => Promise<T>): Promise<T> => operation()),
   getCircuitBreakerStates: jest.fn(() => ({})),
   getAllCircuitBreakerStatuses: jest.fn(() => ({})),
+  getCircuitBreaker: jest.fn(() => undefined),
+  resetCircuitBreaker: jest.fn(),
+  resetAllCircuitBreakers: jest.fn(),
+  getCircuitBreakerNames: jest.fn(() => []),
 };
 
 jest.mock('openai', () => {
@@ -82,6 +87,10 @@ describe('AIService', () => {
     mockResilienceManager.execute.mockImplementation(async (op) => op());
     mockResilienceManager.getCircuitBreakerStates.mockReturnValue({});
     mockResilienceManager.getAllCircuitBreakerStatuses.mockReturnValue({});
+    mockResilienceManager.getCircuitBreaker.mockReturnValue(undefined);
+    mockResilienceManager.resetCircuitBreaker.mockReset();
+    mockResilienceManager.resetAllCircuitBreakers.mockReset();
+    mockResilienceManager.getCircuitBreakerNames.mockReturnValue([]);
 
     process.env.OPENAI_API_KEY = MOCK_SECRETS.OPENAI_API_KEY;
     process.env.NEXT_PUBLIC_SUPABASE_URL = MOCK_SECRETS.SUPABASE_URL;
@@ -96,7 +105,9 @@ describe('AIService', () => {
     mockOpenAIConstructor.mockImplementation(() => mockOpenAIClient);
 
     // Create AIService with mock resilience manager
-    const rateLimiter = new AIRateLimiter(mockResilienceManager);
+    const rateLimiter = new AIRateLimiter(
+      mockResilienceManager as unknown as ResilienceManagerType
+    );
     aiService = new AIService(undefined, undefined, rateLimiter);
   });
 
@@ -146,7 +157,9 @@ describe('AIService', () => {
       process.env.OPENAI_API_KEY = '';
       // Reset provider registry to pick up the removed API key
       defaultProviderRegistry.reset();
-      const rateLimiter = new AIRateLimiter(mockResilienceManager);
+      const rateLimiter = new AIRateLimiter(
+        mockResilienceManager as unknown as ResilienceManagerType
+      );
       const service = new AIService(undefined, undefined, rateLimiter);
       const config: AIModelConfig = {
         provider: 'openai',
@@ -509,7 +522,9 @@ describe('AIService', () => {
       delete process.env.OPENAI_API_KEY;
       // Reset provider registry to pick up the removed API key
       defaultProviderRegistry.reset();
-      const rateLimiter = new AIRateLimiter(mockResilienceManager);
+      const rateLimiter = new AIRateLimiter(
+        mockResilienceManager as unknown as ResilienceManagerType
+      );
       const service = new AIService(undefined, undefined, rateLimiter);
 
       const health = await service.healthCheck();

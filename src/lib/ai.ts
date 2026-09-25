@@ -571,7 +571,13 @@ class AIService {
   }> {
     // Cast Anthropic client to match expected health check interface
     const anthropicForHealthCheck = this.anthropic
-      ? { messages: this.anthropic.messages }
+      ? {
+          messages: {
+            create: async (params: unknown) => {
+              return this.anthropic!.messages.create(params as never);
+            },
+          },
+        }
       : null;
     return this.rateLimiter.healthCheck(this.openai, anthropicForHealthCheck);
   }
