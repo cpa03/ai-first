@@ -55,7 +55,8 @@ CREATE POLICY "Users can create their own vectors" ON vectors
     );
 
 -- Ensure service role can also update vectors (needed for embedding updates)
-CREATE POLICY IF NOT EXISTS "Service role can update vectors" ON vectors
+DROP POLICY IF EXISTS "Service role can update vectors" ON vectors;
+CREATE POLICY "Service role can update vectors" ON vectors
     FOR UPDATE USING (auth.role() = 'service_role')
     WITH CHECK (auth.role() = 'service_role');
 
