@@ -21,10 +21,64 @@ export const GUEST_STORAGE_KEYS = {
 } as const;
 
 /**
- * Generate a unique guest session ID
+ * Guest session ID constraints.
+ * IDs are `guest_<uuidv4>`; the header value is never trusted verbatim —
+ * see isValidGuestSessionId() and getUserIdOrGuest() in src/lib/auth.ts.
+ */
+export const GUEST_ID_PREFIX = 'guest_';
+export const GUEST_SESSION_ID_MAX_LENGTH = 128;
+
+const UUID_V4_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/**
+ * Generate a unique guest session ID using a cryptographically secure UUID.
+ * Predictable IDs (Date.now + Math.random) allow cross-guest impersonation.
  */
 export function generateGuestSessionId(): string {
-  return `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+  ) {
+    return `${GUEST_ID_PREFIX}${crypto.randomUUID()}`;
+  }
+  // Fallback for environments without crypto.randomUUID (uses CSPRNG).
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  bytes[6] = (bytes[6] & 0x0f) | 0x40; // version 4
+  bytes[8] = (bytes[8] & 0x3f) | 0x80; // variant 10
+  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join(
+    ''
+  );
+  const uuid = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  return `${GUEST_ID_PREFIX}${uuid}`;
+}
+
+/**
+ * Validate a guest session ID from an untrusted source (e.g. request header).
+ * Accepts `guest_<uuidv4>` or a bare `<uuidv4>`; rejects anything else,
+ * including overlong values (DoS/CRLF guard). Returns false for malformed.
+ */
+export function isValidGuestSessionId(value: unknown): boolean {
+  if (typeof value !== 'string') return false;
+  if (value.length === 0 || value.length > GUEST_SESSION_ID_MAX_LENGTH) {
+    return false;
+  }
+  const bare = value.startsWith(GUEST_ID_PREFIX)
+    ? value.slice(GUEST_ID_PREFIX.length)
+    : value;
+  return UUID_V4_REGEX.test(bare);
+}
+
+/**
+ * Strip the optional `guest_` prefix and return the bare UUIDv4,
+ * or null when the value is malformed.
+ */
+export function normalizeGuestSessionId(value: string): string | null {
+  if (!isValidGuestSessionId(value)) return null;
+  return value.startsWith(GUEST_ID_PREFIX)
+    ? value.slice(GUEST_ID_PREFIX.length)
+    : value;
 }
 
 /**
