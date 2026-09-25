@@ -57,15 +57,37 @@ export interface XSSSanitizeOptions {
  * Default allowed tags for basic formatting
  */
 const DEFAULT_ALLOWED_TAGS = [
-  'b', 'i', 'u', 'em', 'strong', 'p', 'br', 'ul', 'ol', 'li',
-  'blockquote', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+  'b',
+  'i',
+  'u',
+  'em',
+  'strong',
+  'p',
+  'br',
+  'ul',
+  'ol',
+  'li',
+  'blockquote',
+  'code',
+  'pre',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
 ];
 
 /**
  * Default allowed attributes
  */
 const DEFAULT_ALLOWED_ATTRIBUTES = [
-  'href', 'src', 'alt', 'title', 'class', 'id',
+  'href',
+  'src',
+  'alt',
+  'title',
+  'class',
+  'id',
 ];
 
 /**
@@ -95,13 +117,15 @@ export function sanitizeXSS(
   }
 
   // Second pass: Remove style attributes that could contain XSS
-  sanitized = sanitized.replace(
-    /\sstyle\s*=\s*["'][^"']*["']/gi,
-    ''
-  );
+  sanitized = sanitized.replace(/\sstyle\s*=\s*["'][^"']*["']/gi, '');
 
   // Third pass: Handle allowed tags and attributes
-  if (allowBasicFormatting || allowLinks || allowImages || allowedTags.length > 0) {
+  if (
+    allowBasicFormatting ||
+    allowLinks ||
+    allowImages ||
+    allowedTags.length > 0
+  ) {
     const allAllowedTags = [
       ...(allowBasicFormatting ? DEFAULT_ALLOWED_TAGS : []),
       ...(allowLinks ? ['a'] : []),
@@ -150,7 +174,9 @@ function filterAttributes(tag: string, allowedAttributes: string[]): string {
   if (!tagMatch) return tag;
 
   const [, tagName, attributesStr] = tagMatch;
-  const isVoidTag = ['br', 'hr', 'img', 'input', 'meta', 'link'].includes(tagName.toLowerCase());
+  const isVoidTag = ['br', 'hr', 'img', 'input', 'meta', 'link'].includes(
+    tagName.toLowerCase()
+  );
 
   // Parse attributes
   const attrRegex = /([a-zA-Z_:][a-zA-Z0-9_:.-]*)\s*=\s*(["'])(.*?)\2/g;
@@ -161,7 +187,10 @@ function filterAttributes(tag: string, allowedAttributes: string[]): string {
     const [, attrName, , attrValue] = match;
     if (allowedAttributes.includes(attrName.toLowerCase())) {
       // Additional validation for href/src
-      if ((attrName === 'href' || attrName === 'src') && !isSafeUrl(attrValue)) {
+      if (
+        (attrName === 'href' || attrName === 'src') &&
+        !isSafeUrl(attrValue)
+      ) {
         continue; // Skip unsafe URLs
       }
       filteredAttrs += ` ${attrName}="${escapeHtmlEntities(attrValue)}"`;
@@ -175,22 +204,35 @@ function filterAttributes(tag: string, allowedAttributes: string[]): string {
  * Check if a URL is safe (no javascript:, data:, vbscript: protocols)
  */
 function isSafeUrl(url: string): boolean {
-  const lowerUrl = url.toLowerCase().trim();
-  const dangerousProtocols = [
-    'javascript:',
-    'vbscript:',
-    'data:text/html',
-    'data:application/javascript',
-  ];
+  // Browsers strip ASCII tab/LF/CR from URLs before parsing the scheme, so
+  // an obfuscated value like 'java\tscript:' executes as 'javascript:'.
+  // Remove those characters before checking the scheme.
+  const lowerUrl = url
+    .toLowerCase()
+    .replace(/[\t\n\r]/g, '')
+    .trim();
 
-  return !dangerousProtocols.some(proto => lowerUrl.startsWith(proto));
+  const dangerousProtocols = ['javascript:', 'vbscript:'];
+
+  if (dangerousProtocols.some((proto) => lowerUrl.startsWith(proto))) {
+    return false;
+  }
+
+  // Block all data: URLs except inert bitmap images. In particular this
+  // blocks data:text/html, data:application/javascript, and
+  // data:image/svg+xml (script-capable via embedded scripts/event handlers).
+  if (lowerUrl.startsWith('data:')) {
+    return /^data:image\/(png|jpe?g|gif|webp)[;,]/.test(lowerUrl);
+  }
+
+  return true;
 }
 
 /**
  * Escape HTML entities
  */
 function escapeHtmlEntities(text: string): string {
-    const escapeMap: Record<string, string> = {
+  const escapeMap: Record<string, string> = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
@@ -200,7 +242,7 @@ function escapeHtmlEntities(text: string): string {
     '`': '&#x60;',
   };
 
-  return text.replace(/[&<>"'`/]/g, char => escapeMap[char] || char);
+  return text.replace(/[&<>"'`/]/g, (char) => escapeMap[char] || char);
 }
 
 /**
@@ -228,7 +270,10 @@ export function sanitizeXSSLenient(input: string): string {
 /**
  * Validate that input doesn't contain XSS patterns
  */
-export function validateNoXSS(input: unknown, fieldName: string = 'input'): ValidationResult {
+export function validateNoXSS(
+  input: unknown,
+  fieldName: string = 'input'
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!input || typeof input !== 'string') {
@@ -236,6 +281,10 @@ export function validateNoXSS(input: unknown, fieldName: string = 'input'): Vali
   }
 
   for (const [type, pattern] of Object.entries(XSS_PATTERNS)) {
+    // Patterns carry the /g flag for use with .replace() in sanitizeXSS;
+    // .test() on a /g regex is stateful via lastIndex, so reset it to get
+    // a stable result on every call.
+    pattern.lastIndex = 0;
     if (pattern.test(input)) {
       errors.push({
         field: fieldName,
@@ -250,7 +299,10 @@ export function validateNoXSS(input: unknown, fieldName: string = 'input'): Vali
 /**
  * Sanitize object recursively for XSS
  */
-export function sanitizeObjectXSS<T>(obj: T, options: XSSSanitizeOptions = {}): T {
+export function sanitizeObjectXSS<T>(
+  obj: T,
+  options: XSSSanitizeOptions = {}
+): T {
   if (obj === null || obj === undefined) {
     return obj;
   }
@@ -260,7 +312,7 @@ export function sanitizeObjectXSS<T>(obj: T, options: XSSSanitizeOptions = {}): 
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(item => sanitizeObjectXSS(item, options)) as unknown as T;
+    return obj.map((item) => sanitizeObjectXSS(item, options)) as unknown as T;
   }
 
   if (typeof obj === 'object' && obj.constructor === Object) {
