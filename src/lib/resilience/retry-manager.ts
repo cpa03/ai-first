@@ -51,24 +51,70 @@ export class RetryManager {
 
     const retryFn = shouldRetry || defaultShouldRetry;
 
+    // If circuit breaker is provided, wrap the entire retry logic in circuitBreaker.execute()
+    // This ensures the circuit breaker records the final success/failure after all retries
+    if (circuitBreaker) {
+      return circuitBreaker.execute(async () => {
+        let lastError: Error | undefined;
+        const errors: Error[] = [];
+
+        for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
+          try {
+            // Check circuit breaker state before retries (not on first attempt)
+            if (attempt > 1) {
+              const status = circuitBreaker.getStatus();
+              if (status.state === CircuitBreakerState.OPEN) {
+                const nextAttempt = status.nextAttemptTime;
+                throw new AppError(
+                  `Circuit breaker is OPEN for ${context || 'operation'}. Not accepting requests until ${nextAttempt || 'unknown'}`,
+                  ErrorCode.CIRCUIT_BREAKER_OPEN,
+                  STATUS_CODES.SERVICE_UNAVAILABLE,
+                  undefined,
+                  true
+                );
+              }
+            }
+            return await operation();
+          } catch (error) {
+            const normalizedError =
+              error instanceof Error ? error : new Error(String(error));
+            lastError = normalizedError;
+            errors.push(normalizedError);
+
+            if (attempt > maxRetries || !retryFn(normalizedError, attempt)) {
+              const exhaustedError = new RetryExhaustedError(
+                `Operation${context ? ` '${context}'` : ''} failed`,
+                context || 'unknown',
+                attempt,
+                normalizedError
+              );
+              (exhaustedError as Error & { attemptCount?: number }).attemptCount =
+                attempt;
+              throw exhaustedError;
+            }
+
+            // Exponential backoff with jitter
+            const delay = Math.min(
+              baseDelay * Math.pow(2, attempt - 1) +
+                Math.random() * RETRY_VALUES.JITTER_MULTIPLIER_MS,
+              maxDelay
+            );
+
+            // Wait for the calculated delay before retrying
+            await new Promise((resolve) => setTimeout(resolve, delay));
+          }
+        }
+
+        throw lastError || new Error(API_ERROR_MESSAGES.CLEANUP.RETRY_EXHAUSTED);
+      });
+    }
+
+    // No circuit breaker - original logic
     let lastError: Error | undefined;
     const errors: Error[] = [];
 
     for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
       try {
-        if (circuitBreaker && attempt > 1) {
-          const status = circuitBreaker.getStatus();
-          if (status.state === CircuitBreakerState.OPEN) {
-            const nextAttempt = status.nextAttemptTime;
-            throw new AppError(
-              `Circuit breaker is OPEN for ${context || 'operation'}. Not accepting requests until ${nextAttempt || 'unknown'}`,
-              ErrorCode.CIRCUIT_BREAKER_OPEN,
-              STATUS_CODES.SERVICE_UNAVAILABLE,
-              undefined,
-              true
-            );
-          }
-        }
         return await operation();
       } catch (error) {
         const normalizedError =

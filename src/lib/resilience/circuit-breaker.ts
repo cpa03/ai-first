@@ -244,4 +244,20 @@ export class CircuitBreaker {
           : undefined,
     };
   }
+
+  /**
+   * Record a successful operation externally (e.g., from RetryManager)
+   * Useful when the circuit breaker is not the direct executor but should track results
+   */
+  recordSuccess(now: number = Date.now()): void {
+    this.onSuccess(now);
+  }
+
+  /**
+   * Record a failed operation externally (e.g., from RetryManager)
+   * Useful when the circuit breaker is not the direct executor but should track results
+   */
+  recordFailure(error: Error, now: number = Date.now(), attemptCount: number = 1): void {
+    this.onError(error, now, attemptCount);
+  }
 }
