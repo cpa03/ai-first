@@ -4,8 +4,20 @@ import { STATUS_CODES } from '@/lib/config';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { SECURITY_CONFIG } from '@/lib/config/security-config';
+import { redactPII } from '@/lib/pii-redaction';
 
 const logger = createLogger('CSPReport');
+
+/**
+ * Sanitizes CSP report string fields by replacing CRLF/control characters
+ * to prevent log injection and redacting potential PII.
+ */
+function sanitizeReportField(val?: string | null): string | undefined {
+  if (typeof val !== 'string' || !val) return undefined;
+  // Strip CRLF and null bytes to prevent log injection
+  const cleaned = val.replace(/[\r\n\x00]/g, ' ').trim();
+  return redactPII(cleaned);
+}
 
 /**
  * CSP Violation Report Interface
@@ -88,19 +100,19 @@ async function handleCSPReport(context: ApiContext): Promise<Response> {
     const columnNumber = cspReport['column-number'];
     const scriptSample = cspReport['script-sample'];
 
-    // Log the violation via SecurityAuditLog for standardized handling
+    // Log the violation via SecurityAuditLog for standardized handling with sanitized fields
     SecurityAuditLog.logCSPViolation({
-      violatedDirective,
-      effectiveDirective,
-      blockedUri,
-      sourceFile,
+      violatedDirective: sanitizeReportField(violatedDirective) || 'unknown',
+      effectiveDirective: sanitizeReportField(effectiveDirective),
+      blockedUri: sanitizeReportField(blockedUri),
+      sourceFile: sanitizeReportField(sourceFile),
       lineNumber,
       columnNumber,
-      originalPolicy,
-      documentUri,
-      referrer,
-      scriptSample,
-      userAgent: request.headers.get('user-agent') || undefined,
+      originalPolicy: sanitizeReportField(originalPolicy),
+      documentUri: sanitizeReportField(documentUri),
+      referrer: sanitizeReportField(referrer),
+      scriptSample: sanitizeReportField(scriptSample),
+      userAgent: sanitizeReportField(request.headers.get('user-agent') || undefined),
       requestId: context.requestId,
     });
 
