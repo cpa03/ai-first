@@ -3,6 +3,27 @@
 # =============================================================================
 # This config scrapes metrics from the IdeaFlow application
 # Deploy alongside Prometheus server or use with Prometheus Operator
+#
+# REQUIRED ENV VARS (expanded by Prometheus at load time; ${VAR} / ${VAR:-default}):
+#   IDEAFLOW_APP_TARGET        - app scrape target host:port (must serve /api/metrics).
+#                                Default: ideaflow-app:3000 (Docker DNS, plain HTTP behind
+#                                TLS-terminating proxy). For a public host set e.g.
+#                                IDEAFLOW_APP_TARGET=my-app.example.com:443
+#   WORKERS_EXPORTER_TARGET    - Cloudflare Workers exporter host:port.
+#                                Default: workers-exporter:9091 (Docker DNS).
+#   SUPABASE_EXPORTER_TARGET   - Supabase exporter host:port.
+#                                Default: supabase-exporter:9090 (Docker DNS).
+#   METRICS_BEARER_TOKEN       - bearer token for /api/metrics. MUST equal the app's
+#                                ADMIN_API_KEY (see src/app/api/metrics/route.ts, which
+#                                enforces `Authorization: Bearer <ADMIN_API_KEY>` and
+#                                fails closed with 401 when unset). If this is empty,
+#                                ideaflow-app scrapes will return 401 - check the `up`
+#                                metric and set the variable.
+#   PROMETHEUS_REMOTE_WRITE_PASSWORD - password for remote_write (commented section below).
+#
+# VALIDATE AFTER EDITING:
+#   python3 -c "import yaml; yaml.safe_load(open('config/prometheus.yml'))"
+#   promtool check config config/prometheus.yml
 # =============================================================================
 
 global:
@@ -16,29 +37,60 @@ scrape_configs:
   # ---------------------------------------------------------------------------
   # IdeaFlow Application Metrics
   # ---------------------------------------------------------------------------
+  # NOTE: /api/metrics requires `Authorization: Bearer <ADMIN_API_KEY>`.
+  # Set METRICS_BEARER_TOKEN to the same value as the app's ADMIN_API_KEY.
+  # Scheme defaults to https for public targets; when scraping the in-cluster
+  # Docker DNS default (ideaflow-app:3000, plain HTTP behind a TLS-terminating
+  # proxy) set IDEAFLOW_SCRAPE_SCHEME=http.
+  # ---------------------------------------------------------------------------
   - job_name: 'ideaflow-app'
     metrics_path: '/api/metrics'
     scheme: 'https'
+    authorization:
+      type: 'Bearer'
+      credentials: '${METRICS_BEARER_TOKEN}'
+    tls_config:
+      # TODO: pin production CA/cert verification here once the serving
+      # certificate chain is finalized (e.g. ca_file / server_name).
+      # For private/internal CAs, set ca_file to the mounted bundle path.
+      insecure_skip_verify: false
     static_configs:
-      - targets: ['your-domain.com']
+      - targets: ['${IDEAFLOW_APP_TARGET:-ideaflow-app:3000}']
         labels:
           service: 'ideaflow'
           component: 'web'
-    # For local development:
-    # - targets: ['host.docker.internal:3000']
-    #   labels:
-    #     service: 'ideaflow'
-    #     component: 'web'
-    #     environment: 'development'
+    # For local development (uncomment; app serves plain HTTP locally and
+    # ADMIN_API_KEY auth is bypassed only when NODE_ENV=development):
+    # - job_name: 'ideaflow-app-local'
+    #   metrics_path: '/api/metrics'
+    #   scheme: 'http'
+    #   static_configs:
+    #     - targets: ['host.docker.internal:3000']
+    #       labels:
+    #         service: 'ideaflow'
+    #         component: 'web'
+    #         environment: 'development'
 
   # ---------------------------------------------------------------------------
   # Cloudflare Workers Metrics (via Cloudflare Workers Exporter)
   # ---------------------------------------------------------------------------
+  # TODO: configure the exporter endpoint and credentials for your deployment:
+  # set WORKERS_EXPORTER_TARGET to the exporter host:port and, if the exporter
+  # requires auth, uncomment basic_auth/authorization below and provide the
+  # credentials via env vars (e.g. WORKERS_EXPORTER_USER / WORKERS_EXPORTER_PASSWORD).
+  # ---------------------------------------------------------------------------
   - job_name: 'cloudflare-workers'
     metrics_path: '/metrics'
     scheme: 'https'
+    tls_config:
+      # TODO: set ca_file/server_name for the workers exporter endpoint.
+      insecure_skip_verify: false
+    # TODO: uncomment if the workers exporter requires authentication.
+    # basic_auth:
+    #   username: '${WORKERS_EXPORTER_USER}'
+    #   password: '${WORKERS_EXPORTER_PASSWORD}'
     static_configs:
-      - targets: ['workers-exporter.your-domain.com']
+      - targets: ['${WORKERS_EXPORTER_TARGET:-workers-exporter:9091}']
         labels:
           service: 'cloudflare'
           component: 'workers'
@@ -46,11 +98,23 @@ scrape_configs:
   # ---------------------------------------------------------------------------
   # Supabase Metrics (via Supabase Prometheus Exporter)
   # ---------------------------------------------------------------------------
+  # TODO: configure the exporter endpoint and credentials for your deployment:
+  # set SUPABASE_EXPORTER_TARGET to the exporter host:port and, if the exporter
+  # requires auth, uncomment basic_auth/authorization below and provide the
+  # credentials via env vars.
+  # ---------------------------------------------------------------------------
   - job_name: 'supabase'
     metrics_path: '/metrics'
     scheme: 'https'
+    tls_config:
+      # TODO: set ca_file/server_name for the supabase exporter endpoint.
+      insecure_skip_verify: false
+    # TODO: uncomment if the supabase exporter requires authentication.
+    # basic_auth:
+    #   username: '${SUPABASE_EXPORTER_USER}'
+    #   password: '${SUPABASE_EXPORTER_PASSWORD}'
     static_configs:
-      - targets: ['supabase-exporter.your-domain.com']
+      - targets: ['${SUPABASE_EXPORTER_TARGET:-supabase-exporter:9090}']
         labels:
           service: 'supabase'
           component: 'database'
@@ -84,8 +148,10 @@ rule_files:
 # -----------------------------------------------------------------------------
 # Remote Write (for long-term storage, e.g., Grafana Cloud, Thanos)
 # -----------------------------------------------------------------------------
+# TODO: set PROM_REMOTE_WRITE_URL (or edit the url below) and
+# PROMETHEUS_REMOTE_WRITE_PASSWORD before enabling.
 # remote_write:
-#   - url: https://prometheus-prod.your-domain.com/api/v1/write
+#   - url: https://prometheus-prod.example.com/api/v1/write
 #     basic_auth:
 #       username: 'prometheus'
 #       password: '${PROMETHEUS_REMOTE_WRITE_PASSWORD}'
