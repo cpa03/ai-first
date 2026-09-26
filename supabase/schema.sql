@@ -913,3 +913,202 @@ $$;
 -- Grant execute permission to authenticated users and service role
 GRANT EXECUTE ON FUNCTION match_vectors TO authenticated;
 GRANT EXECUTE ON FUNCTION match_vectors TO service_role;
+
+-- ============================================================================
+-- Admin RBAC + Audit Tables (concise canonical DDL)
+-- Source: supabase/migrations/20260919_add_admin_tables.sql — schema.sql is the
+-- consolidated reference. See migration for the full policy set (super-admin
+-- manage/update/delete, per-user self-view, admin insert). This reference keeps
+-- the core policies (service-role full access + admin view) with one deliberate
+-- deviation: view policies call the SECURITY DEFINER helpers to avoid RLS
+-- self-recursion (see NOTES below).
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS admin_roles (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    role TEXT NOT NULL CHECK (role IN ('admin', 'moderator', 'super_admin')),
+    granted_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    granted_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    expires_at TIMESTAMPTZ,
+    is_active BOOLEAN DEFAULT TRUE,
+    metadata JSONB DEFAULT '{}',
+    UNIQUE(user_id, role)
+);
+
+CREATE INDEX IF NOT EXISTS idx_admin_roles_user_id ON admin_roles(user_id);
+CREATE INDEX IF NOT EXISTS idx_admin_roles_role ON admin_roles(role);
+CREATE INDEX IF NOT EXISTS idx_admin_roles_active ON admin_roles(is_active) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_admin_roles_expires_at ON admin_roles(expires_at) WHERE expires_at IS NOT NULL;
+
+CREATE TABLE IF NOT EXISTS admin_audit_logs (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    -- NOTE (drift vs migration 20260919 line 33): migration declares
+    -- admin_user_id UUID NOT NULL ... ON DELETE SET NULL, which is
+    -- contradictory — deleting the referenced auth user would fail on the
+    -- NOT NULL constraint instead of NULL-ing the column, so the audit trail
+    -- would NOT survive admin deletion. schema.sql (fresh-DB reference)
+    -- intentionally declares it nullable while keeping ON DELETE SET NULL.
+    -- Do NOT edit the migration chain here; a follow-up migration should
+    -- ALTER TABLE admin_audit_logs ALTER COLUMN admin_user_id DROP NOT NULL
+    -- to align already-deployed DBs.
+    admin_user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    action TEXT NOT NULL,
+    resource_type TEXT NOT NULL,
+    resource_id UUID,
+    target_user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    details JSONB DEFAULT '{}',
+    ip_address INET,
+    user_agent TEXT,
+    request_id TEXT,
+    correlation_id TEXT,
+    severity TEXT DEFAULT 'info' CHECK (severity IN ('debug', 'info', 'warning', 'error', 'critical')),
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_admin_user_id ON admin_audit_logs(admin_user_id);
+CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_action ON admin_audit_logs(action);
+CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_resource_type ON admin_audit_logs(resource_type);
+CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_resource_id ON admin_audit_logs(resource_id);
+CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_target_user_id ON admin_audit_logs(target_user_id);
+CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_created_at ON admin_audit_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_severity ON admin_audit_logs(severity);
+CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_request_id ON admin_audit_logs(request_id);
+CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_correlation_id ON admin_audit_logs(correlation_id);
+CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_admin_created ON admin_audit_logs(admin_user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_resource_created ON admin_audit_logs(resource_type, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_admin_audit_logs_target_created ON admin_audit_logs(target_user_id, created_at DESC);
+
+ALTER TABLE admin_roles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admin_audit_logs ENABLE ROW LEVEL SECURITY;
+
+-- Helper functions are SECURITY DEFINER (inner reads bypass RLS) and must be
+-- created BEFORE the policies that call them.
+CREATE OR REPLACE FUNCTION is_admin(user_id UUID DEFAULT auth.uid())
+RETURNS BOOLEAN LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+AS $$ BEGIN RETURN EXISTS (
+    SELECT 1 FROM admin_roles
+    WHERE admin_roles.user_id = is_admin.user_id
+    AND admin_roles.role IN ('admin', 'super_admin')
+    AND admin_roles.is_active = TRUE
+    AND (admin_roles.expires_at IS NULL OR admin_roles.expires_at > NOW())
+); END; $$;
+
+CREATE OR REPLACE FUNCTION is_super_admin(user_id UUID DEFAULT auth.uid())
+RETURNS BOOLEAN LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+AS $$ BEGIN RETURN EXISTS (
+    SELECT 1 FROM admin_roles
+    WHERE admin_roles.user_id = is_super_admin.user_id
+    AND admin_roles.role = 'super_admin'
+    AND admin_roles.is_active = TRUE
+    AND (admin_roles.expires_at IS NULL OR admin_roles.expires_at > NOW())
+); END; $$;
+
+CREATE OR REPLACE FUNCTION is_moderator_or_admin(user_id UUID DEFAULT auth.uid())
+RETURNS BOOLEAN LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
+AS $$ BEGIN RETURN EXISTS (
+    SELECT 1 FROM admin_roles
+    WHERE admin_roles.user_id = is_moderator_or_admin.user_id
+    AND admin_roles.role IN ('moderator', 'admin', 'super_admin')
+    AND admin_roles.is_active = TRUE
+    AND (admin_roles.expires_at IS NULL OR admin_roles.expires_at > NOW())
+); END; $$;
+
+-- Lock down SECURITY DEFINER helpers: callable by authenticated + service_role
+-- only, never PUBLIC/anon (signatures verified against migration 20260919:
+-- each takes a single UUID arg with DEFAULT auth.uid()).
+REVOKE ALL ON FUNCTION is_admin(UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION is_admin(UUID) TO authenticated, service_role;
+REVOKE ALL ON FUNCTION is_super_admin(UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION is_super_admin(UUID) TO authenticated, service_role;
+REVOKE ALL ON FUNCTION is_moderator_or_admin(UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION is_moderator_or_admin(UUID) TO authenticated, service_role;
+
+DROP POLICY IF EXISTS "Service role full access admin_roles" ON admin_roles;
+CREATE POLICY "Service role full access admin_roles" ON admin_roles
+    FOR ALL USING (auth.role() = 'service_role')
+    WITH CHECK (auth.role() = 'service_role');
+
+DROP POLICY IF EXISTS "Admins can view admin_roles" ON admin_roles;
+-- NOTE: the canonical migration 20260919 inlines EXISTS (SELECT FROM
+-- admin_roles ...) here, which self-recurses under RLS ("infinite recursion
+-- detected in policy"). This reference calls the SECURITY DEFINER helper
+-- instead; a follow-up migration should align already-deployed DBs.
+CREATE POLICY "Admins can view admin_roles" ON admin_roles
+    FOR SELECT USING (
+        auth.role() = 'service_role' OR is_admin(auth.uid())
+    );
+
+-- Parity with migration 20260919 (names match). Bodies intentionally call the
+-- SECURITY DEFINER helpers instead of the migration's inline EXISTS on
+-- admin_roles to avoid RLS self-recursion on fresh DBs built from schema.sql.
+DROP POLICY IF EXISTS "Super admins can manage admin_roles" ON admin_roles;
+CREATE POLICY "Super admins can manage admin_roles" ON admin_roles
+    FOR INSERT WITH CHECK (
+        auth.role() = 'service_role' OR is_super_admin(auth.uid())
+    );
+
+DROP POLICY IF EXISTS "Super admins can update admin_roles" ON admin_roles;
+CREATE POLICY "Super admins can update admin_roles" ON admin_roles
+    FOR UPDATE USING (
+        auth.role() = 'service_role' OR is_super_admin(auth.uid())
+    );
+
+DROP POLICY IF EXISTS "Super admins can delete admin_roles" ON admin_roles;
+CREATE POLICY "Super admins can delete admin_roles" ON admin_roles
+    FOR DELETE USING (
+        auth.role() = 'service_role' OR is_super_admin(auth.uid())
+    );
+
+DROP POLICY IF EXISTS "Users can view own admin_roles" ON admin_roles;
+CREATE POLICY "Users can view own admin_roles" ON admin_roles
+    FOR SELECT USING (user_id = auth.uid());
+
+DROP POLICY IF EXISTS "Service role full access admin_audit_logs" ON admin_audit_logs;
+CREATE POLICY "Service role full access admin_audit_logs" ON admin_audit_logs
+    FOR ALL USING (auth.role() = 'service_role')
+    WITH CHECK (auth.role() = 'service_role');
+
+DROP POLICY IF EXISTS "Admins can view admin_audit_logs" ON admin_audit_logs;
+-- NOTE: same recursion fix as above — uses SECURITY DEFINER helper.
+CREATE POLICY "Admins can view admin_audit_logs" ON admin_audit_logs
+    FOR SELECT USING (
+        auth.role() = 'service_role' OR is_moderator_or_admin(auth.uid())
+    );
+
+-- Parity with migration 20260919 (name matches). Body uses the helper instead
+-- of inline EXISTS to avoid the same self-recursion class of issue.
+DROP POLICY IF EXISTS "Admins can insert admin_audit_logs" ON admin_audit_logs;
+CREATE POLICY "Admins can insert admin_audit_logs" ON admin_audit_logs
+    FOR INSERT WITH CHECK (
+        auth.role() = 'service_role' OR is_moderator_or_admin(auth.uid())
+    );
+
+CREATE OR REPLACE VIEW admin_user_view AS
+SELECT
+    u.id,
+    u.email,
+    u.created_at as user_created_at,
+    u.last_sign_in_at,
+    u.email_confirmed_at,
+    u.banned_until,
+    COALESCE(ARRAY_AGG(ar.role) FILTER (WHERE ar.is_active = TRUE AND (ar.expires_at IS NULL OR ar.expires_at > NOW())), '{}') as active_roles,
+    MAX(ar.expires_at) FILTER (WHERE ar.role = 'super_admin' AND ar.is_active = TRUE) as super_admin_expires,
+    MAX(ar.expires_at) FILTER (WHERE ar.role = 'admin' AND ar.is_active = TRUE) as admin_expires,
+    MAX(ar.expires_at) FILTER (WHERE ar.role = 'moderator' AND ar.is_active = TRUE) as moderator_expires
+FROM auth.users u
+LEFT JOIN admin_roles ar ON u.id = ar.user_id
+GROUP BY u.id, u.email, u.created_at, u.last_sign_in_at, u.email_confirmed_at, u.banned_until;
+
+-- NOTE: service-role-only SELECT (intentional drift vs migration 20260919,
+-- which grants to authenticated): the view reads auth.users without a row
+-- filter, so any authenticated grant would expose all users' emails under
+-- security_invoker=on. App admin routes use the getSupabaseAdmin()
+-- service-role client (see src/app/api/admin/audit-logs/route.ts:14), so
+-- service-role-only does not break the app; a follow-up migration should
+-- align already-deployed DBs.
+REVOKE SELECT ON admin_user_view FROM PUBLIC, authenticated;
+GRANT SELECT ON admin_user_view TO service_role;
+
+-- RLS on the view must be enforced as the querying role (mirrors migration 20260919).
+ALTER VIEW admin_user_view SET (security_invoker = on);

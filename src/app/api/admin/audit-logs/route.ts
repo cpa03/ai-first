@@ -7,6 +7,7 @@ import { requireAdminAuth } from '@/lib/auth';
 import { getSupabaseAdmin } from '@/lib/db';
 import { STATUS_CODES } from '@/lib/config/http';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { DB_TABLES } from '@/lib/config/database-tables';
 
 async function handleGet(context: ApiContext) {
   await requireAdminAuth(context.request);
@@ -29,7 +30,7 @@ async function handleGet(context: ApiContext) {
   const offset = (page - 1) * limit;
 
   let query = adminClient
-    .from('admin_audit_logs')
+    .from(DB_TABLES.ADMIN_AUDIT_LOGS)
     .select(
       'id, admin_user_id, action, resource_type, resource_id, target_user_id, details, ip_address, user_agent, request_id, correlation_id, severity, created_at',
       { count: 'exact' }

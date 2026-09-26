@@ -95,6 +95,18 @@ export const DB_TABLES = {
    * Env: DB_TABLE_AGENT_LOGS (default: 'agent_logs')
    */
   AGENT_LOGS: schemaName('DB_TABLE_AGENT_LOGS', 'agent_logs'),
+
+  /**
+   * Admin roles table - stores RBAC role grants (admin, moderator, super_admin)
+   * Env: DB_TABLE_ADMIN_ROLES (default: 'admin_roles')
+   */
+  ADMIN_ROLES: schemaName('DB_TABLE_ADMIN_ROLES', 'admin_roles'),
+
+  /**
+   * Admin audit logs table - stores immutable admin action audit trail
+   * Env: DB_TABLE_ADMIN_AUDIT_LOGS (default: 'admin_audit_logs')
+   */
+  ADMIN_AUDIT_LOGS: schemaName('DB_TABLE_ADMIN_AUDIT_LOGS', 'admin_audit_logs'),
 } as const;
 
 /**

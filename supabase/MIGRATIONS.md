@@ -4,9 +4,9 @@ This document catalogs the current database migrations and establishes naming co
 
 ## Current Migration Count
 
-- **Total migrations**: 18 (9 up + 9 down rollback scripts)
-- **Unique up migrations**: 9
-- **Consolidation Status**: Completed (62 → 9 up migrations, 85% reduction)
+- **Total migrations**: 23 (12 up + 11 down rollback scripts; `20260919_add_admin_tables` has no down script)
+- **Unique up migrations**: 12
+- **Consolidation Status**: Completed (62 → 9 up migrations, 85% reduction), plus 3 post-consolidation migrations (20260817, 20260818, 20260919)
 
 ### Migration Notes
 
@@ -42,6 +42,19 @@ This document catalogs the current database migrations and establishes naming co
 | `20260222_consolidate_performance_indexes.sql`         | Consolidated performance indexes        |
 | `20260223_consolidate_migrations.sql`                  | Consolidated index-only migrations      |
 | `20260226_consolidate_risk_assessments_migrations.sql` | Consolidated risk assessment migrations |
+
+#### August 2026
+
+| File                                      | Description                                                               |
+| ----------------------------------------- | ------------------------------------------------------------------------- |
+| `20260817_final_schema_consolidation.sql` | Final schema consolidation (single source of truth)                       |
+| `20260818_fix_schema_integrity.sql`       | Schema integrity fixes (missing RLS DELETE policies, updated_at triggers) |
+
+#### September 2026
+
+| File                            | Description                                                                                               |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `20260919_add_admin_tables.sql` | Admin RBAC + audit tables (`admin_roles`, `admin_audit_logs`), RLS, `is_admin` helpers, `admin_user_view` |
 
 ## Removed Migrations
 
