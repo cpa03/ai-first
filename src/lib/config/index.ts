@@ -240,8 +240,64 @@ export {
   type PreconnectUrls,
 } from './external-api-domains';
 
-// Legacy constants (backward compatibility)
-export * from './constants';
+// Legacy constants (backward compatibility) — explicit named re-exports.
+// Previously `export * from './constants'`. Wildcard re-exports are banned
+// here because they silently merge a second barrel and hide name conflicts.
+// Only names NOT already exported above are listed; conflicting names
+// (RATE_LIMIT_CONFIG, ANIMATION_CONFIG, CACHE_CONFIG, CSP_CONFIG,
+// EXTERNAL_API_VERSIONS, PROXY_CONFIG, HEALTH_CONFIG, MEMORY_CONFIG,
+// IDEA_STATUS_CONFIG, RATE_LIMIT_STORE_CONFIG, VALIDATION_CONFIG,
+// VALIDATION_LIMITS, AI_CONFIG, SECURITY_CONFIG, UI_CONFIG, dimension/text
+// sizes, PRECISION_CONFIG, ID_PREFIX_CONFIG, ERROR_CONTEXT_CONFIG,
+// SCROLL_STEP_CONFIG) resolve to the explicit exports above.
+// Actively consumed via the barrel (grep `from '@/lib/config'`):
+// TIMEOUT_CONFIG, STATUS_CODES, HTTP_HEADERS, CLARIFICATION_TIMER_CONFIG,
+// VALIDATION_LIMITS_CONFIG, PROGRESS_PERCENTAGE, TIME_CONVERSIONS,
+// SCROLL_DEPTH_THRESHOLDS. The remainder preserves backward compatibility.
+export { TIMEOUT_CONFIG, type TimeoutConfig } from './timeout-config';
+export { PII_REDACTION_CONFIG } from './pii-redaction-config';
+export {
+  ERROR_CONFIG,
+  REQUEST_ID_CONFIG,
+  RATE_LIMIT_ERROR_CONFIG,
+} from './error-config';
+export { STATUS_CODES, HTTP_HEADERS, AUTH_CONFIG } from './http';
+export { USER_STORY_CONFIG } from './user-story-config';
+export { MEMORY_UNITS } from './health';
+export {
+  SESSION_TRACKING_CONFIG,
+  CLARIFICATION_TIMER_CONFIG,
+  type SessionTrackingConfig,
+  type ClarificationTimerConfig,
+} from './session-tracking';
+export {
+  RETRY_CONFIG,
+  OPTIMISTIC_MUTATION_CONFIG,
+  RETRY_DELAY_CONFIG,
+  RETRY_VALUES,
+} from './retry-config';
+export { DEFAULT_TIMEOUTS, RESILIENCE_CONFIG } from './resilience-config';
+export {
+  RATE_LIMIT_CLEANUP_CONFIG,
+  RATE_LIMIT_STATS_CONFIG,
+  RATE_LIMIT_VALUES,
+} from './rate-limit-values';
+export {
+  VALIDATION_LIMITS_CONFIG,
+  AGENT_CONFIG,
+  CLARIFIER_VALUES,
+  TASK_VALIDATION,
+} from './validation-config';
+export { AI_SERVICE_LIMITS } from './ai-config';
+export { API_CACHE_CONFIG } from './api-cache-config';
+export { PLATFORM_ENV_VARS } from './platform-env-vars';
+export { SESSION_ANALYTICS_CONFIG } from './session-analytics-config';
+export { TABLE_CLASSES } from './ui-dimensions';
+export {
+  PROGRESS_PERCENTAGE,
+  TIME_CONVERSIONS,
+  SCROLL_DEPTH_THRESHOLDS,
+} from './modular-constants';
 
 // Configuration Validator
 export {
@@ -525,10 +581,11 @@ export {
   type TailwindArbitrary,
 } from './tailwind-arbitrary';
 
-// Comprehensive API Error Messages Configuration
-// Centralizes all hardcoded error messages used in API routes and handlers
+// API error helpers (canonical API_ERROR_MESSAGES is exported from
+// './error-messages' above; this module's own error-message constant is
+// intentionally not re-exported here to avoid a duplicate binding — import it
+// directly from './api-error-messages' if needed).
 export {
-  API_ERROR_MESSAGES as COMPREHENSIVE_API_ERROR_MESSAGES,
   getApiErrorMessage,
   createApiError,
   type ApiErrorMessages,
@@ -935,7 +992,7 @@ export {
   FLEX_GROW_PATTERNS,
 } from './spacing';
 
-export { 
+export {
   PX_CLASSES,
   SPACE_X_CLASSES,
   SPACE_Y_CLASSES,
