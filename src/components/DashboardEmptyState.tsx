@@ -15,7 +15,9 @@ import {
   FLEX_PATTERNS,
   SPACE_Y_PATTERNS,
   TYPOGRAPHY_CLASSES,
-  COMMON_SPACING_PATTERNS,
+  MB_CLASSES,
+  MT_CLASSES,
+  LAYOUT_CLASSES,
 } from '@/lib/config';
 
 interface DashboardEmptyStateProps {
@@ -40,7 +42,7 @@ function DashboardEmptyStateComponent({
     >
       <div className={`${CARD_PATTERNS.CENTERED} ${SPACE_Y_PATTERNS.XL}`}>
         <div
-          className={`${FLEX_PATTERNS.CENTER} ${COMMON_SPACING_PATTERNS.MB_LG}`}
+          className={`${FLEX_PATTERNS.CENTER} ${MB_CLASSES.LG}`}
         >
           <svg
             className={`${ICON_SIZES.XXL} ${TEXT_COLOR_CLASSES.MUTED}`}
@@ -90,12 +92,12 @@ function DashboardEmptyStateComponent({
             </>
           )}
 
-          <div className={COMMON_SPACING_PATTERNS.MT_LG}>
+          <div className={MT_CLASSES.LG}>
             <Button
               onClick={onNewIdea}
               variant="primary"
               size="lg"
-              className={`${COMMON_SPACING_PATTERNS.W_FULL} ${COMMON_SPACING_PATTERNS.SM_MAX_W_MD}`}
+              className={`${LAYOUT_CLASSES.FULL_WIDTH} ${LAYOUT_CLASSES.SM_MAX_W_MD}`}
               aria-label={
                 isFiltered
                   ? DASHBOARD_PAGE_CONTENT.EMPTY_STATE.CREATE_NEW_IDEA
@@ -112,9 +114,9 @@ function DashboardEmptyStateComponent({
                 onClick={() => router.push('/dashboard?filter=all')}
                 variant="ghost"
                 size="sm"
-                className={`${COMMON_SPACING_PATTERNS.MT_SM} ${COMMON_SPACING_PATTERNS.W_FULL} ${COMMON_SPACING_PATTERNS.SM_MAX_W_MD}`}
+                className={`${MT_CLASSES.SM} ${LAYOUT_CLASSES.FULL_WIDTH} ${LAYOUT_CLASSES.SM_MAX_W_MD}`}
               >
-                {DASHBOARD_PAGE_CONTENT.ACTIONS.CLEAR_FILTER}
+                {DASHBOARD_PAGE_CONTENT.CLEAR_FILTER}
               </Button>
             )}
           </div>

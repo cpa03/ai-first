@@ -175,7 +175,7 @@ describe('ClarifierAgent', () => {
         {
           id: 'test-vector-id',
           idea_id: 'idea-123',
-          vector_data: mockSession,
+          vector_data: JSON.parse(JSON.stringify(mockSession)),
           reference_type: 'clarification_session',
           created_at: new Date().toISOString(),
         },
@@ -232,7 +232,7 @@ describe('ClarifierAgent', () => {
 
       mockDbService.getVectors.mockResolvedValue([
         createMockVector({
-          vector_data: mockSession,
+          vector_data: JSON.parse(JSON.stringify(mockSession)),
         }),
       ]);
       mockDbService.storeVector.mockResolvedValue(createMockVector());
@@ -270,7 +270,7 @@ describe('ClarifierAgent', () => {
 
       mockDbService.getVectors.mockResolvedValue([
         createMockVector({
-          vector_data: mockSession,
+          vector_data: JSON.parse(JSON.stringify(mockSession)),
         }),
       ]);
 

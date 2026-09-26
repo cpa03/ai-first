@@ -1,6 +1,7 @@
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import type { BreakdownSession } from './types';
+import type { Json } from '@/types/database';
 import {
   TASK_CONFIG,
   IDEA_STATUS_CONFIG,
@@ -13,7 +14,7 @@ export class SessionManager {
   async storeSession(session: BreakdownSession): Promise<void> {
     await dbService.storeVector({
       idea_id: session.ideaId,
-      vector_data: session as unknown as Record<string, unknown>,
+      vector_data: session as unknown as Json,
       reference_type: DB_REFERENCE_TYPES.BREAKDOWN_SESSION,
       reference_id: session.id,
     });

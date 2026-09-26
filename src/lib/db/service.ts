@@ -16,6 +16,7 @@ import type {
   Deliverable,
   Task,
   Vector,
+  VectorMatch,
   AgentLog,
   ClarificationSessionRow,
   ClarificationAnswerRow,
@@ -664,7 +665,7 @@ export class DatabaseService implements ClientProvider {
     ideaId: string,
     queryEmbedding: number[],
     limit: number = DATABASE.DEFAULT_SEARCH_LIMIT
-  ): Promise<Vector[]> {
+  ): Promise<VectorMatch[]> {
     return this.vectors.searchSimilarVectors(ideaId, queryEmbedding, limit);
   }
 

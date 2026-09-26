@@ -10,10 +10,11 @@ import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { useGuestMode } from '@/hooks/useGuestMode';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
-  DASHBOARD_PAGE_CONFIG,
+  APP_CONFIG,
   DASHBOARD_PAGE_CONTENT,
   DASHBOARD_LABELS,
   DASHBOARD_FILTER_LABELS,
+  IDEA_STATUS_CONFIG,
   DASHBOARD_EMPTY_STATE_CTA,
   DASHBOARD_EMPTY_STATE_CTA_ROW,
   DASHBOARD_FILTER_BAR,
@@ -25,32 +26,17 @@ import {
   DASHBOARD_SPECIFIC,
   DASHBOARD_PATTERNS,
   PAGE_LAYOUT_CLASSES,
-  CONTAINER_WIDTHS,
-  RESPONSIVE_PADDING,
   ROUTES,
-  GRAY_CLASSES,
-  TEXT_COLOR_CLASSES,
-  BG_COLOR_CLASSES,
-  BORDER_COLOR_CLASSES,
-  FLEX_PATTERNS,
-  SPACE_Y_PATTERNS,
-  TYPOGRAPHY_CLASSES,
   ANIMATION_CLASSES,
   ICON_SIZES,
   SVG_VIEWBOX,
   SVG_STROKE_WIDTHS,
-  TRANSITION_CLASSES,
-  ROUNDED_CLASSES,
-  SHADOW_CLASSES,
   CARD_PATTERNS,
-  REMAINING_PATTERNS,
   ML_CLASSES,
 } from '@/lib/config';
-import { UI_CONFIG } from '@/lib/config/ui-config';
-import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
+import { PLATFORM } from '@/lib/dom-utils';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { createRouteWithParams } from '@/lib/config/routes';
-import { getRelativeTime } from '@/lib/date-utils';
 
 const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
@@ -86,6 +72,36 @@ const DashboardEmptyState = dynamic(
   }
 );
 
+/**
+ * Filter options for the dashboard idea list.
+ * Built from the centralized status config so values stay in one place.
+ */
+const DASHBOARD_FILTER_OPTIONS: ReadonlyArray<{
+  value: string;
+  label: string;
+}> = [
+  {
+    value: IDEA_STATUS_CONFIG.FILTERS.ALL,
+    label: DASHBOARD_FILTER_LABELS.ALL.LABEL,
+  },
+  {
+    value: IDEA_STATUS_CONFIG.FILTERS.DRAFT,
+    label: DASHBOARD_FILTER_LABELS.DRAFT.LABEL,
+  },
+  {
+    value: IDEA_STATUS_CONFIG.FILTERS.CLARIFIED,
+    label: DASHBOARD_FILTER_LABELS.CLARIFIED.LABEL,
+  },
+  {
+    value: IDEA_STATUS_CONFIG.FILTERS.BREAKDOWN,
+    label: DASHBOARD_FILTER_LABELS.BREAKDOWN.LABEL,
+  },
+  {
+    value: IDEA_STATUS_CONFIG.FILTERS.COMPLETED,
+    label: DASHBOARD_FILTER_LABELS.COMPLETED.LABEL,
+  },
+];
+
 function DashboardClientContent({
   initialIdeas,
   initialPagination,
@@ -98,16 +114,16 @@ function DashboardClientContent({
 }: {
   initialIdeas: Array<{
     id: string;
-    idea: string;
+    title: string;
     status: string;
     createdAt: string;
-    updatedAt: string;
+    updatedAt?: string;
   }>;
   initialPagination: {
     total: number;
     page: number;
     limit: number;
-    totalPages: number;
+    hasMore: boolean;
   } | null;
   initialLoading: boolean;
   initialError: string | null;
@@ -126,7 +142,7 @@ function DashboardClientContent({
   const [isMac, setIsMac] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
   const { isLoading: authLoading } = useAuthCheck();
-  const { isGuest, ideaId: guestIdeaId, idea: guestIdea, clearGuest } = useGuestMode();
+  const { isGuest, ideaId: guestIdeaId, clearGuest } = useGuestMode();
 
   useEffect(() => {
     setIsMac(PLATFORM.isMac());
@@ -143,7 +159,7 @@ function DashboardClientContent({
       const params = new URLSearchParams({
         filter,
         page: String(page),
-        limit: String(DASHBOARD_PAGE_CONFIG.PAGINATION.DEFAULT_LIMIT),
+        limit: String(APP_CONFIG.PAGINATION.DEFAULT_LIMIT),
       });
 
       const response = await fetchWithTimeout(
@@ -174,7 +190,11 @@ function DashboardClientContent({
               : 'Unknown error',
         },
       });
-      setError(DASHBOARD_PAGE_CONTENT.ERROR_FETCH);
+      setError(
+        err instanceof Error
+          ? err.message
+          : DASHBOARD_PAGE_CONTENT.ERRORS.FETCH_FAILED
+      );
     } finally {
       setLoading(false);
     }
@@ -213,7 +233,7 @@ function DashboardClientContent({
 
   const handleDeleteIdea = useCallback(
     async (ideaId: string) => {
-      if (!confirm(DASHBOARD_PAGE_CONTENT.DELETE_CONFIRM)) return;
+      if (!confirm(DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CONFIRM)) return;
 
       try {
         const response = await fetchWithTimeout(
@@ -248,7 +268,11 @@ function DashboardClientContent({
                 : 'Unknown error',
           },
         });
-        setError(DASHBOARD_PAGE_CONTENT.ERROR_DELETE);
+        setError(
+          err instanceof Error
+            ? err.message
+            : DASHBOARD_PAGE_CONTENT.ERRORS.DELETE_FAILED
+        );
       }
     },
     [logger, pagination]
@@ -256,6 +280,14 @@ function DashboardClientContent({
 
   // Determine if we should show guest banner
   const showGuestBanner = !isAuthenticated && isGuest && guestIdeaId;
+
+  // The API reports total + limit; derive the page count for pagination UI
+  const totalPages = pagination
+    ? Math.max(
+        1,
+        Math.ceil(pagination.total / (pagination.limit > 0 ? pagination.limit : 1))
+      )
+    : 1;
 
   // Show loading state
   if (authLoading || loading) {
@@ -306,7 +338,7 @@ function DashboardClientContent({
               variant="primary"
               className="mt-4"
             >
-              {DASHBOARD_PAGE_CONTENT.RETRY_BUTTON}
+              {DASHBOARD_PAGE_CONTENT.TRY_AGAIN}
             </Button>
           </div>
         </div>
@@ -315,23 +347,27 @@ function DashboardClientContent({
   }
 
   return (
-    <div className={DASHBOARD_SPECIFIC.CONTAINER}>
+    <div className={PAGE_LAYOUT_CLASSES.CONTAINER_LG}>
       {/* Header */}
-      <header className={DASHBOARD_SPECIFIC.HEADER}>
+      <header className={DASHBOARD_SPECIFIC.SECTION_BOTTOM_MARGIN}>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className={DASHBOARD_SPECIFIC.TITLE}>
-              {DASHBOARD_PAGE_CONTENT.TITLE}
+            <h1 className={DASHBOARD_PATTERNS.PAGE_HEADING}>
+              {DASHBOARD_PAGE_CONTENT.HEADING}
             </h1>
-            <p className={DASHBOARD_SPECIFIC.SUBTITLE}>
-              {DASHBOARD_PAGE_CONTENT.SUBTITLE}
+            <p className={DASHBOARD_PATTERNS.PAGE_SUBHEADING}>
+              {pagination?.total ?? ideas.length}{' '}
+              {(pagination?.total ?? ideas.length) === 1
+                ? DASHBOARD_PAGE_CONTENT.IDEA_COUNT.SINGULAR
+                : DASHBOARD_PAGE_CONTENT.IDEA_COUNT.PLURAL}{' '}
+              {DASHBOARD_PAGE_CONTENT.IDEA_COUNT.TOTAL}
             </p>
           </div>
           {isAuthenticated && (
             <Button
               onClick={() => router.push(ROUTES.HOME)}
               variant="secondary"
-              aria-label={DASHBOARD_LABELS.NEW_IDEA_BUTTON}
+              aria-label={DASHBOARD_PAGE_CONTENT.ACTIONS.NEW_IDEA}
             >
               <svg
                 className={`${ICON_SIZES.SM} mr-2`}
@@ -347,7 +383,7 @@ function DashboardClientContent({
                   d="M12 4v16m8-8H4"
                 />
               </svg>
-              {DASHBOARD_LABELS.NEW_IDEA_BUTTON}
+              {DASHBOARD_PAGE_CONTENT.ACTIONS.NEW_IDEA}
             </Button>
           )}
         </div>
@@ -417,9 +453,9 @@ function DashboardClientContent({
           <div
             className={DASHBOARD_FILTER_BADGE_POSITION}
             role="group"
-            aria-label={DASHBOARD_LABELS.FILTER_LABEL}
+            aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.FILTER_STATUS}
           >
-            {DASHBOARD_PAGE_CONFIG.FILTERS.map((f) => (
+            {DASHBOARD_FILTER_OPTIONS.map((f) => (
               <button
                 key={f.value}
                 onClick={() => handleFilterChange(f.value)}
@@ -442,7 +478,7 @@ function DashboardClientContent({
               onClick={() => handleFilterChange('all')}
               className={DASHBOARD_FILTER_CLEAR_CONTAINER}
             >
-              {DASHBOARD_LABELS.CLEAR_FILTER}
+              {DASHBOARD_PAGE_CONTENT.CLEAR_FILTER}
             </Button>
           )}
         </div>
@@ -460,7 +496,7 @@ function DashboardClientContent({
           <div
             className={`${DASHBOARD_PATTERNS.GRID} ${ANIMATION_CLASSES.FADE_IN}`}
             role="list"
-            aria-label={DASHBOARD_LABELS.IDEAS_LIST}
+            aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.IDEAS_LIST}
           >
             {ideas.map((ideaItem) => (
               <IdeaCard
@@ -475,14 +511,14 @@ function DashboardClientContent({
           </div>
 
           {/* Pagination */}
-          {pagination && pagination.totalPages > 1 && (
+          {pagination && totalPages > 1 && (
             <nav
               className={DASHBOARD_PAGINATION_CONTAINER}
               aria-label={DASHBOARD_LABELS.PAGINATION_LABEL}
             >
               <Pagination
                 currentPage={pagination.page}
-                totalPages={pagination.totalPages}
+                totalPages={totalPages}
                 onPageChange={handlePageChange}
               />
             </nav>
@@ -497,16 +533,16 @@ function DashboardClientContent({
 export default function DashboardClient(props: {
   initialIdeas: Array<{
     id: string;
-    idea: string;
+    title: string;
     status: string;
     createdAt: string;
-    updatedAt: string;
+    updatedAt?: string;
   }>;
   initialPagination: {
     total: number;
     page: number;
     limit: number;
-    totalPages: number;
+    hasMore: boolean;
   } | null;
   initialLoading: boolean;
   initialError: string | null;

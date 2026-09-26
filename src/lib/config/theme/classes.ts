@@ -150,6 +150,8 @@ export const LAYOUT_CLASSES = {
   GRID: 'grid grid-cols-1',
   RESPONSIVE_GRID: 'grid grid-cols-1 sm:grid-cols-2',
   FULL_WIDTH: 'w-full',
+  /** Constrain width to max-w-md (28rem) from the sm breakpoint up */
+  SM_MAX_W_MD: 'sm:max-w-md',
   FULL_HEIGHT: 'h-full',
   MIN_HEIGHT_SCREEN: 'min-h-screen',
   TEXT_CENTER: 'text-center',

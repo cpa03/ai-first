@@ -109,6 +109,8 @@ export const ML_CLASSES = {
   SM: 'ml-1',
   /** ml-2 = 8px */
   MD: 'ml-2',
+  /** ml-3 = 12px */
+  LG: 'ml-3',
   /** ml-auto */
   AUTO: 'ml-auto',
 } as const;

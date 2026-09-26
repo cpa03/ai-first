@@ -17,7 +17,8 @@ import {
   SPACE_Y_PATTERNS,
   REMAINING_PATTERNS,
   TYPOGRAPHY_CLASSES,
-  COMMON_SPACING_PATTERNS,
+  PT_CLASSES,
+  MR_CLASSES,
   OVERFLOW_PATTERNS,
 } from '@/lib/config';
 import { getRelativeTime } from '@/lib/utils';
@@ -29,10 +30,10 @@ import {
 interface IdeaCardProps {
   idea: {
     id: string;
-    idea: string;
+    title: string;
     status: string;
     createdAt: string;
-    updatedAt: string;
+    updatedAt?: string;
   };
   onClick: (ideaId: string) => void;
   onDelete?: (ideaId: string) => void;
@@ -47,8 +48,16 @@ function IdeaCardComponent({
   isMac,
   prefersReducedMotion,
 }: IdeaCardProps) {
-  const statusConfig =
-    IDEA_STATUS_CONFIG[idea.status as IdeaStatus] || IDEA_STATUS_CONFIG.draft;
+  const status = (
+    IDEA_STATUS_CONFIG.ALL_STATUSES as readonly string[]
+  ).includes(idea.status)
+    ? (idea.status as IdeaStatus)
+    : IDEA_STATUS_CONFIG.TYPES.DRAFT;
+  const statusConfig = {
+    classes: IDEA_STATUS_CONFIG.COLORS[status],
+    border: IDEA_STATUS_CONFIG.BORDER_COLORS[status],
+    label: IDEA_STATUS_CONFIG.LABELS[status],
+  };
 
   const handleClick = () => onClick(idea.id);
   const handleDelete = (e: React.MouseEvent) => {
@@ -58,7 +67,7 @@ function IdeaCardComponent({
 
   return (
     <article
-      className={`${CARD_PATTERNS.CARD} ${DASHBOARD_SPECIFIC.TABLE_BODY} ${ANIMATION_CLASSES.FADE_IN}`}
+      className={`${CARD_PATTERNS.BASE} ${DASHBOARD_SPECIFIC.TABLE_BODY} ${ANIMATION_CLASSES.FADE_IN}`}
       onClick={handleClick}
       role="listitem"
       tabIndex={0}
@@ -77,10 +86,10 @@ function IdeaCardComponent({
           <h3
             className={`${TYPOGRAPHY_CLASSES.COMPONENT_HEADING} ${TEXT_COLOR_CLASSES.HEADING} ${OVERFLOW_PATTERNS.HIDDEN} ${REMAINING_PATTERNS.LINE_CLAMP_2}`}
           >
-            {idea.idea || 'Untitled Idea'}
+            {idea.title || 'Untitled Idea'}
           </h3>
           <span
-            className={`${statusConfig.bg} ${statusConfig.text} ${statusConfig.border} ${TYPOGRAPHY_CLASSES.XS_MEDIUM} ${ROUNDED_CLASSES.FULL} px-3 py-1 ${FLEX_PATTERNS.SHRINK_0}`}
+            className={`${statusConfig.classes} ${statusConfig.border} ${TYPOGRAPHY_CLASSES.XS_MEDIUM} ${ROUNDED_CLASSES.FULL} px-3 py-1 ${FLEX_PATTERNS.SHRINK_0}`}
             aria-label={`Status: ${statusConfig.label}`}
           >
             {statusConfig.label}
@@ -97,7 +106,7 @@ function IdeaCardComponent({
           >
             {getRelativeTime(idea.createdAt)}
           </time>
-          {idea.updatedAt !== idea.createdAt && (
+          {idea.updatedAt && idea.updatedAt !== idea.createdAt && (
             <time
               dateTime={idea.updatedAt}
               aria-label={`Updated ${getRelativeTime(idea.updatedAt)}`}
@@ -109,7 +118,7 @@ function IdeaCardComponent({
 
         {/* Actions */}
         <div
-          className={`${FLEX_PATTERNS.RESPONSIVE_BETWEEN} ${COMMON_SPACING_PATTERNS.PT_SM}`}
+          className={`${FLEX_PATTERNS.RESPONSIVE_BETWEEN} ${PT_CLASSES.SM}`}
         >
           <Button
             variant="ghost"
@@ -129,7 +138,7 @@ function IdeaCardComponent({
               aria-label={DASHBOARD_PAGE_CONTENT.ACTIONS.DELETE_IDEA}
             >
               <svg
-                className={`${ICON_SIZES.SM} ${COMMON_SPACING_PATTERNS.MR_XS}`}
+                className={`${ICON_SIZES.SM} ${MR_CLASSES.XS}`}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"

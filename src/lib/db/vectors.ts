@@ -2,7 +2,7 @@ import { AGENT_CONFIG, VALIDATION_LIMITS } from '../config/constants';
 import { API_ERROR_MESSAGES } from '../config/error-messages';
 import { DB_TABLES, DB_RPC } from '../config/database-tables';
 import type { ClientProvider } from './ideas';
-import type { Vector, PaginationOptions, PaginatedResult } from './types';
+import type { Vector, VectorMatch, PaginationOptions, PaginatedResult } from './types';
 
 const { DATABASE } = AGENT_CONFIG;
 
@@ -201,7 +201,7 @@ export class VectorService {
     ideaId: string,
     queryEmbedding: number[],
     limit: number = DATABASE.DEFAULT_SEARCH_LIMIT
-  ): Promise<Vector[]> {
+  ): Promise<VectorMatch[]> {
     const client = this.clientProvider.getClient();
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
@@ -212,7 +212,7 @@ export class VectorService {
       match_threshold: DATABASE.VECTOR_SIMILARITY_THRESHOLD,
       match_count: limit,
       idea_id_filter: ideaId,
-    } as never);
+    });
 
     if (error) throw error;
     return data || [];

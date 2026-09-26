@@ -31,6 +31,7 @@ export interface Database {
           status?: 'active' | 'completed' | 'cancelled';
           updated_at?: string;
         };
+        Relationships: [];
       };
       clarification_answers: {
         Row: {
@@ -57,6 +58,7 @@ export interface Database {
           session_id?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       agent_logs: {
         Row: {
@@ -80,6 +82,7 @@ export interface Database {
           payload?: Json;
           timestamp?: string;
         };
+        Relationships: [];
       };
       deliverables: {
         Row: {
@@ -136,6 +139,20 @@ export interface Database {
           deleted_at?: string | null;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'deliverables_idea_id_fkey';
+            columns: ['idea_id'];
+            referencedRelation: 'ideas';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'deliverables_milestone_id_fkey';
+            columns: ['milestone_id'];
+            referencedRelation: 'milestones';
+            referencedColumns: ['id'];
+          }
+        ];
       };
       idea_sessions: {
         Row: {
@@ -159,6 +176,7 @@ export interface Database {
           state?: Json | null;
           updated_at?: string;
         };
+        Relationships: [];
       };
       ideas: {
         Row: {
@@ -191,6 +209,7 @@ export interface Database {
           deleted_at?: string | null;
           updated_at?: string;
         };
+        Relationships: [];
       };
       tasks: {
         Row: {
@@ -259,6 +278,20 @@ export interface Database {
           updated_at?: string;
           deleted_at?: string | null;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'tasks_deliverable_id_fkey';
+            columns: ['deliverable_id'];
+            referencedRelation: 'deliverables';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'tasks_milestone_id_fkey';
+            columns: ['milestone_id'];
+            referencedRelation: 'milestones';
+            referencedColumns: ['id'];
+          }
+        ];
       };
       task_dependencies: {
         Row: {
@@ -300,6 +333,7 @@ export interface Database {
           successor_task_id?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       milestones: {
         Row: {
@@ -335,6 +369,7 @@ export interface Database {
           title?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       task_assignments: {
         Row: {
@@ -367,6 +402,7 @@ export interface Database {
           updated_at?: string;
           user_id?: string;
         };
+        Relationships: [];
       };
       time_tracking: {
         Row: {
@@ -399,6 +435,7 @@ export interface Database {
           updated_at?: string;
           user_id?: string;
         };
+        Relationships: [];
       };
       task_comments: {
         Row: {
@@ -431,6 +468,7 @@ export interface Database {
           updated_at?: string;
           user_id?: string;
         };
+        Relationships: [];
       };
       breakdown_sessions: {
         Row: {
@@ -469,6 +507,7 @@ export interface Database {
             'analyzing' | 'decomposing' | 'scheduling' | 'completed' | 'failed';
           updated_at?: string;
         };
+        Relationships: [];
       };
       timelines: {
         Row: {
@@ -510,6 +549,7 @@ export interface Database {
           total_weeks?: number;
           updated_at?: string;
         };
+        Relationships: [];
       };
       risk_assessments: {
         Row: {
@@ -554,6 +594,7 @@ export interface Database {
           task_id?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       vectors: {
         Row: {
@@ -583,25 +624,152 @@ export interface Database {
           vector_data?: Json | null;
           embedding?: number[];
         };
+        Relationships: [];
+      };
+      admin_roles: {
+        Row: {
+          id: string;
+          user_id: string;
+          role: 'admin' | 'moderator' | 'super_admin';
+          granted_by: string | null;
+          granted_at: string;
+          expires_at: string | null;
+          is_active: boolean | null;
+          metadata: Json | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          role: 'admin' | 'moderator' | 'super_admin';
+          granted_by?: string | null;
+          granted_at?: string;
+          expires_at?: string | null;
+          is_active?: boolean | null;
+          metadata?: Json | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          role?: 'admin' | 'moderator' | 'super_admin';
+          granted_by?: string | null;
+          granted_at?: string;
+          expires_at?: string | null;
+          is_active?: boolean | null;
+          metadata?: Json | null;
+        };
+        Relationships: [];
+      };
+      admin_audit_logs: {
+        Row: {
+          id: string;
+          admin_user_id: string;
+          action: string;
+          resource_type: string;
+          resource_id: string | null;
+          target_user_id: string | null;
+          details: Json | null;
+          ip_address: string | null;
+          user_agent: string | null;
+          request_id: string | null;
+          correlation_id: string | null;
+          severity: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          admin_user_id: string;
+          action: string;
+          resource_type: string;
+          resource_id?: string | null;
+          target_user_id?: string | null;
+          details?: Json | null;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          request_id?: string | null;
+          correlation_id?: string | null;
+          severity?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          admin_user_id?: string;
+          action?: string;
+          resource_type?: string;
+          resource_id?: string | null;
+          target_user_id?: string | null;
+          details?: Json | null;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          request_id?: string | null;
+          correlation_id?: string | null;
+          severity?: string;
+          created_at?: string;
+        };
+        Relationships: [];
       };
     };
     Views: {
-      [_ in never]: never;
+      admin_user_view: {
+        Row: {
+          id: string;
+          email: string;
+          user_created_at: string;
+          last_sign_in_at: string | null;
+          email_confirmed_at: string | null;
+          banned_until: string | null;
+          active_roles: string[];
+          super_admin_expires: string | null;
+          admin_expires: string | null;
+          moderator_expires: string | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
+      pg_database_size: {
+        Args: {
+          db_name: string;
+        };
+        Returns: number;
+      };
       match_vectors: {
         Args: {
           idea_id_filter?: string | null;
           match_count?: number;
           match_threshold?: number;
-          query_embedding: number[];
+          /**
+           * PostgREST accepts the pgvector parameter either as a serialized
+           * vector string (`'[0.1,0.2,...]'`) or as a JSON number array.
+           */
+          query_embedding: string | number[];
         };
-        Returns: {
+        /**
+         * `RETURNS TABLE` from `match_vectors` (see
+         * supabase/migrations/003_vectors_pgvector_support.sql): a
+         * similarity projection, not a full `vectors` row.
+         */
+        Returns: Array<{
           id: string;
           idea_id: string;
           reference_id: string | null;
           reference_type: string;
           similarity: number;
+        }>;
+      };
+      /**
+       * Per-user idea aggregates (deliverable/task counts).
+       *
+       * The RPC is optional: `src/lib/db/ideas.ts` falls back to two count
+       * queries when the function is missing at runtime, so declaring it here
+       * only affects typing, not behaviour.
+       */
+      get_user_idea_stats: {
+        Args: {
+          p_user_id: string;
+        };
+        Returns: {
+          total_deliverables: number;
+          total_tasks: number;
         };
       };
     };

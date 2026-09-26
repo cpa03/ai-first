@@ -435,6 +435,9 @@ export const DASHBOARD_PATTERNS = {
 
   STATUS_BADGE_ACTIVE:
     'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 ring-1 ring-primary-200',
+
+  /** Responsive grid for the dashboard idea cards */
+  GRID: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4',
 } as const;
 
 /**

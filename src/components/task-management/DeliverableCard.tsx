@@ -39,7 +39,7 @@ import { CSS_POSITIONING } from '@/lib/config/css-positioning';
 interface DeliverableWithTasks {
   id: string;
   title: string;
-  description?: string;
+  description?: string | null;
   tasks: Task[];
   progress: number;
   completedCount: number;

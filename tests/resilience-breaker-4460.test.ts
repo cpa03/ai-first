@@ -339,7 +339,11 @@ describe('CircuitBreaker Integration with ResilienceManager (#4460)', () => {
 
   describe('CircuitBreaker recordSuccess/recordFailure public methods', () => {
     it('should record success via public method', () => {
-      const cb = new CircuitBreaker('test-record', { failureThreshold: 3, resetTimeoutMs: 1000 });
+      const cb = new CircuitBreaker('test-record', {
+        failureThreshold: 3,
+        resetTimeoutMs: 1000,
+        monitoringPeriodMs: 10000,
+      });
       
       // Record some failures first
       cb.recordFailure(new Error('fail'), Date.now());
@@ -353,7 +357,11 @@ describe('CircuitBreaker Integration with ResilienceManager (#4460)', () => {
     });
 
     it('should record failure via public method and trip', () => {
-      const cb = new CircuitBreaker('test-record-fail', { failureThreshold: 2, resetTimeoutMs: 1000 });
+      const cb = new CircuitBreaker('test-record-fail', {
+        failureThreshold: 2,
+        resetTimeoutMs: 1000,
+        monitoringPeriodMs: 10000,
+      });
       
       cb.recordFailure(new Error('fail'), Date.now());
       expect(cb.getState()).toBe(CircuitBreakerState.CLOSED);
