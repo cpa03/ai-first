@@ -267,6 +267,10 @@ export const API_ERROR_MESSAGES = {
       'model must contain only alphanumeric characters, dashes, and dots',
     MODEL_INVALID_PREFIX: (prefixes: string[]) =>
       `model must start with one of: ${prefixes.join(', ')}`,
+    LIMIT_MUST_BE_AT_LEAST: (min: number) => `Limit must be at least ${min}`,
+    LIMIT_CANNOT_EXCEED: (max: number) => `Limit cannot exceed ${max}`,
+    THRESHOLD_MUST_BE_BETWEEN: (min: number, max: number) =>
+      `Threshold must be between ${min} and ${max}`,
     CONFIG_MUST_BE_OBJECT: 'AI model config must be an object',
     USER_RESPONSES_MUST_BE_OBJECT: 'userResponses must be an object',
   },

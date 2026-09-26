@@ -9,6 +9,8 @@ import {
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { dbService } from '@/lib/db';
 import { IDEA_CONFIG, STATUS_CODES } from '@/lib/config';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { RESOURCE_TYPES } from '@/lib/config/modular-constants';
 
 async function handlePost(context: ApiContext) {
   const { request } = context;
@@ -37,12 +39,12 @@ async function handlePost(context: ApiContext) {
     const ideaRecord = await dbService.getIdea(finalIdeaId);
     if (!ideaRecord) {
       throw new AppError(
-        'Idea not found',
+        API_ERROR_MESSAGES.NOT_FOUND.IDEA,
         ErrorCode.NOT_FOUND,
         STATUS_CODES.NOT_FOUND
       );
     }
-    verifyResourceOwnership(user.id, ideaRecord.user_id, 'idea');
+    verifyResourceOwnership(user.id, ideaRecord.user_id, RESOURCE_TYPES.IDEA);
   } else {
     // Still require authentication even for new ideas
     await requireAuth(request);

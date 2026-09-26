@@ -13,6 +13,7 @@ import {
   PRECISION_CONFIG,
   PROGRESS_PERCENTAGE,
 } from '@/lib/config';
+import { RESOURCE_TYPES } from '@/lib/config/modular-constants';
 
 async function handleGet(context: ApiContext) {
   const { request, params } = context;
@@ -43,7 +44,7 @@ async function handleGet(context: ApiContext) {
       );
     }
 
-    verifyResourceOwnership(user.id, idea.user_id, 'idea');
+    verifyResourceOwnership(user.id, idea.user_id, RESOURCE_TYPES.IDEA);
 
     const deliverablesWithTasks =
       await dbService.getIdeaDeliverablesWithTasks(ideaId);

@@ -10,6 +10,7 @@ import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { dbService } from '@/lib/db';
 import { VALIDATION_CONFIG, STATUS_CODES } from '@/lib/config/constants';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { RESOURCE_TYPES } from '@/lib/config/modular-constants';
 
 async function handlePost(context: ApiContext) {
   const { request, rateLimit: _rateLimit } = context;
@@ -67,7 +68,7 @@ async function handlePost(context: ApiContext) {
     );
   }
 
-  verifyResourceOwnership(user.id, idea.user_id, 'idea');
+  verifyResourceOwnership(user.id, idea.user_id, RESOURCE_TYPES.IDEA);
 
   // SECURITY: Sanitize user input to prevent XSS
   const sanitizedAnswer = sanitizeHtml(trimmedAnswer);
