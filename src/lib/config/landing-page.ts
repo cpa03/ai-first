@@ -191,8 +191,8 @@ export const WHY_CHOOSE_CONFIG = {
   ARTICLE_STYLES: {
     CONTAINER:
       'flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] active:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 transition-all duration-200 ease-out motion-reduce:transition-none cursor-pointer select-none',
-    ICON_CONTAINER: `rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1 transition-all duration-300 group-hover:scale-125 ${LANDING_PAGE_COLORS.FEATURE_ICON_CONTAINER_HOVER}`,
-    ICON_SVG: 'w-4 h-4 transition-transform duration-300 group-hover:scale-110',
+    ICON_CONTAINER: `rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1 transition-all duration-300 group-hover:scale-125 motion-reduce:transform-none motion-reduce:transition-none ${LANDING_PAGE_COLORS.FEATURE_ICON_CONTAINER_HOVER}`,
+    ICON_SVG: 'w-4 h-4 transition-transform duration-300 group-hover:scale-110 motion-reduce:transform-none motion-reduce:transition-none',
     TITLE: `font-semibold ${TEXT_COLORS.PRIMARY} mb-1 ${LANDING_PAGE_COLORS.FEATURE_TITLE_HOVER} transition-colors duration-200`,
     DESCRIPTION: `${TEXT_COLORS.MUTED_DARK} text-sm`,
   },
