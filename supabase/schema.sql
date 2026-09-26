@@ -1014,10 +1014,6 @@ AS $$ BEGIN RETURN EXISTS (
     AND (admin_roles.expires_at IS NULL OR admin_roles.expires_at > NOW())
 ); END; $$;
 
-GRANT EXECUTE ON FUNCTION is_admin TO authenticated, service_role;
-GRANT EXECUTE ON FUNCTION is_super_admin TO authenticated, service_role;
-GRANT EXECUTE ON FUNCTION is_moderator_or_admin TO authenticated, service_role;
-
 -- Lock down SECURITY DEFINER helpers: callable by authenticated + service_role
 -- only, never PUBLIC/anon (signatures verified against migration 20260919:
 -- each takes a single UUID arg with DEFAULT auth.uid()).
@@ -1104,7 +1100,15 @@ FROM auth.users u
 LEFT JOIN admin_roles ar ON u.id = ar.user_id
 GROUP BY u.id, u.email, u.created_at, u.last_sign_in_at, u.email_confirmed_at, u.banned_until;
 
-GRANT SELECT ON admin_user_view TO authenticated, service_role;
+-- NOTE: service-role-only SELECT (intentional drift vs migration 20260919,
+-- which grants to authenticated): the view reads auth.users without a row
+-- filter, so any authenticated grant would expose all users' emails under
+-- security_invoker=on. App admin routes use the getSupabaseAdmin()
+-- service-role client (see src/app/api/admin/audit-logs/route.ts:14), so
+-- service-role-only does not break the app; a follow-up migration should
+-- align already-deployed DBs.
+REVOKE SELECT ON admin_user_view FROM PUBLIC, authenticated;
+GRANT SELECT ON admin_user_view TO service_role;
 
 -- RLS on the view must be enforced as the querying role (mirrors migration 20260919).
 ALTER VIEW admin_user_view SET (security_invoker = on);
