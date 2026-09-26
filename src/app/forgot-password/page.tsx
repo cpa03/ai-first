@@ -27,16 +27,25 @@ import {
   KBD_HINT_STYLE,
   ICON_SIZES,
   COMPONENT_CONFIG,
+  SUCCESS_POP,
+  CONFETTI_DOT,
 } from '@/lib/config';
 import {
   RESPONSIVE_WIDTH,
   FONT_MEDIUM,
 } from '@/lib/config/remaining-hardcoded-patterns';
-import { SUCCESS_STATE_COLORS } from '@/lib/config/theme';
+import {
+  SUCCESS_STATE_COLORS,
+  SVG_VIEWBOX,
+  SVG_STROKE_WIDTHS,
+} from '@/lib/config/theme';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+import { useConfetti } from '@/hooks/useConfetti';
+import { CSS_POSITIONING } from '@/lib/config/css-positioning';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -229,23 +238,9 @@ export default function ForgotPasswordPage() {
           className={`${CONTAINER_WIDTHS.XS} w-full ${SPACE_Y_PATTERNS.XL} relative`}
         >
           <div className={`${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE}`}>
-            <div
-              className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex ${ICON_SIZES.XXXXL} items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.NONE}`}
-            >
-              <svg
-                className={`${ICON_SIZES.XL} ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
+            {/* Micro-UX: Staggered entrance animation with confetti celebration for forgot-password success */}
+            {/* Creates a delightful moment when the reset email is sent, matching the signup success pattern */}
+            <ForgotPasswordSuccessIcon />
             <h1
               className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
             >
@@ -445,6 +440,57 @@ export default function ForgotPasswordPage() {
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ForgotPasswordSuccessIcon() {
+  const { particles, fire } = useConfetti();
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  useEffect(() => {
+    if (!prefersReducedMotion) {
+      fire();
+    }
+  }, [fire, prefersReducedMotion]);
+
+  return (
+    <div className="relative inline-block">
+      <div
+        className={`mx-auto ${SPACING_CLASSES.COMPONENT} flex ${ICON_SIZES.XXXXL} items-center justify-center rounded-full ${SUCCESS_STATE_COLORS.ICON_BG} ${SUCCESS_POP}`}
+      >
+        <svg
+          className={`${ICON_SIZES.XL} ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
+          fill="none"
+          viewBox={SVG_VIEWBOX.STANDARD}
+          stroke="currentColor"
+          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
+      </div>
+      {particles.map((particle) => (
+        <span
+          key={particle.id}
+          className={CONFETTI_DOT}
+          style={
+            {
+              ...CSS_POSITIONING.CENTER_ANIMATED,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              backgroundColor: particle.color,
+              '--confetti-x': `${particle.x}px`,
+              '--confetti-y': `${particle.y}px`,
+              animationDelay: `${particle.delay}ms`,
+            } as React.CSSProperties
+          }
+          aria-hidden="true"
+        />
+      ))}
     </div>
   );
 }
