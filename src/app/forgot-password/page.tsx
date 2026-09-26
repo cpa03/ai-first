@@ -124,7 +124,7 @@ export default function ForgotPasswordPage() {
 
       const trimmedEmail = email.trim();
       if (!trimmedEmail || !validateEmail(trimmedEmail)) {
-        setError('Please enter a valid email address');
+        setError(FORGOT_PASSWORD_PAGE_CONFIG.UI.EMAIL_INVALID_ERROR);
         return;
       }
 
@@ -132,7 +132,9 @@ export default function ForgotPasswordPage() {
 
       try {
         if (!supabaseClient) {
-          throw new Error('Authentication service is unavailable');
+          throw new Error(
+            FORGOT_PASSWORD_PAGE_CONFIG.UI.SERVICE_UNAVAILABLE_ERROR
+          );
         }
 
         const { error: resetError } =
@@ -149,7 +151,7 @@ export default function ForgotPasswordPage() {
         const errorMessage =
           err instanceof Error
             ? err.message
-            : 'Failed to send reset email. Please try again.';
+            : FORGOT_PASSWORD_PAGE_CONFIG.UI.SEND_FAILED_ERROR;
         setError(errorMessage);
       } finally {
         setIsLoading(false);
@@ -172,7 +174,9 @@ export default function ForgotPasswordPage() {
 
     try {
       if (!supabaseClient) {
-        throw new Error('Authentication service is unavailable');
+        throw new Error(
+          FORGOT_PASSWORD_PAGE_CONFIG.UI.SERVICE_UNAVAILABLE_ERROR
+        );
       }
 
       const trimmedEmail = email.trim();
@@ -200,7 +204,7 @@ export default function ForgotPasswordPage() {
       const errorMessage =
         err instanceof Error
           ? err.message
-          : 'Failed to resend email. Please try again.';
+          : FORGOT_PASSWORD_PAGE_CONFIG.UI.RESEND_FAILED_ERROR;
       setError(errorMessage);
     } finally {
       setIsResending(false);
@@ -260,13 +264,15 @@ export default function ForgotPasswordPage() {
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
             >
-              Didn&apos;t receive the email? Check your spam folder or resend
-              below.
+              {FORGOT_PASSWORD_PAGE_CONFIG.UI.SPAM_FOLDER_HINT}
             </p>
 
             {error && (
               <div className={`${SPACING_CLASSES.TOP_SMALL} ${HERO_ENTRANCE}`}>
-                <Alert type="error" title="Error">
+                <Alert
+                  type="error"
+                  title={FORGOT_PASSWORD_PAGE_CONFIG.UI.ERROR_TITLE}
+                >
                   {error}
                 </Alert>
               </div>
@@ -278,7 +284,7 @@ export default function ForgotPasswordPage() {
                 role="status"
                 aria-live="polite"
               >
-                Reset email resent successfully!
+                {FORGOT_PASSWORD_PAGE_CONFIG.UI.RESEND_SUCCESS_MESSAGE}
               </p>
             )}
 
@@ -291,13 +297,15 @@ export default function ForgotPasswordPage() {
                 onClick={handleResend}
                 disabled={resendCooldown > 0 || isResending}
                 loading={isResending}
-                loadingText="Sending..."
+                loadingText={
+                  FORGOT_PASSWORD_PAGE_CONFIG.UI.RESEND_BUTTON_LOADING
+                }
                 className={RESPONSIVE_WIDTH}
                 size="md"
               >
                 {resendCooldown > 0
-                  ? `Resend in ${resendCooldown}s`
-                  : 'Resend email'}
+                  ? `${FORGOT_PASSWORD_PAGE_CONFIG.UI.RESEND_COOLDOWN_PREFIX} ${resendCooldown}${FORGOT_PASSWORD_PAGE_CONFIG.UI.RESEND_COOLDOWN_SUFFIX}`
+                  : FORGOT_PASSWORD_PAGE_CONFIG.UI.RESEND_BUTTON_DEFAULT}
               </Button>
             </div>
 
@@ -363,7 +371,10 @@ export default function ForgotPasswordPage() {
           onSubmit={handleSubmit}
         >
           {error && (
-            <Alert type="error" title="Error">
+            <Alert
+              type="error"
+              title={FORGOT_PASSWORD_PAGE_CONFIG.UI.ERROR_TITLE}
+            >
               {error}
             </Alert>
           )}
@@ -373,7 +384,7 @@ export default function ForgotPasswordPage() {
             id="email"
             name="email"
             type="email"
-            label="Email address"
+            label={FORGOT_PASSWORD_PAGE_CONFIG.UI.EMAIL_LABEL}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isLoading}
@@ -393,7 +404,9 @@ export default function ForgotPasswordPage() {
               attention={isFormValid && !isLoading}
               shortcut={isMac ? ['⌘', 'Enter'] : ['Ctrl', 'Enter']}
             >
-              {isLoading ? 'Sending...' : 'Send reset link'}
+              {isLoading
+                ? FORGOT_PASSWORD_PAGE_CONFIG.UI.SUBMIT_BUTTON_LOADING
+                : FORGOT_PASSWORD_PAGE_CONFIG.UI.SUBMIT_BUTTON_DEFAULT}
             </Button>
             <p
               className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}

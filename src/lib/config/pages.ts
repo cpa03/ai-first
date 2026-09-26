@@ -213,6 +213,38 @@ export const FORGOT_PASSWORD_PAGE_CONFIG = {
     STEP_3: 'delay-200',
     STEP_4: 'delay-250',
   } as const,
+  /**
+   * UI strings for forgot password page
+   * Eliminates hardcoded text in forgot-password page components
+   */
+  UI: {
+    ERROR_TITLE: 'Error',
+    RESEND_BUTTON_LOADING: 'Sending...',
+    RESEND_BUTTON_DEFAULT: 'Resend email',
+    RESEND_COOLDOWN_PREFIX: 'Resend in',
+    RESEND_COOLDOWN_SUFFIX: 's',
+    RESEND_SUCCESS_MESSAGE: 'Reset email resent successfully!',
+    SPAM_FOLDER_HINT:
+      'Didn\u2019t receive the email? Check your spam folder or resend below.',
+    LOGIN_LINK_TEXT: 'Back to sign in',
+    EMAIL_LABEL: 'Email address',
+    SUBMIT_BUTTON_LOADING: 'Sending...',
+    SUBMIT_BUTTON_DEFAULT: 'Send reset link',
+    KEYBOARD_HINT_PREFIX: 'Press',
+    KEYBOARD_HINT_SUFFIX: 'to submit',
+    EMAIL_INVALID_ERROR: 'Please enter a valid email address',
+    SEND_FAILED_ERROR: 'Failed to send reset email. Please try again.',
+    RESEND_FAILED_ERROR: 'Failed to resend email. Please try again.',
+    SERVICE_UNAVAILABLE_ERROR: 'Authentication service is unavailable',
+  },
+  /**
+   * Layout error fallback strings
+   * Eliminates hardcoded strings in forgot-password layout error boundary
+   */
+  LAYOUT_ERROR: {
+    TITLE: 'Something went wrong',
+    MESSAGE: 'We encountered an error loading this page. Please try again.',
+  },
 } as const;
 
 /**
@@ -424,6 +456,7 @@ export const RESULTS_PAGE_CONTENT = {
     BUTTON: 'Start New Idea',
     ARIA_LABEL: 'Start a new idea and create another project blueprint',
   },
+  VIEW_SHORTCUTS: 'View all shortcuts',
 } as const;
 
 /**
