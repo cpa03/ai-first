@@ -68,6 +68,7 @@ jest.mock('@/lib/config/constants', () => ({
 
 jest.mock('@/lib/config', () => ({
   APP_CONFIG: { VERSION: '0.1.1' },
+  PROGRESS_PERCENTAGE: { MAX: 100, MIN: 0, COMPLETE: 100, ZERO: 0 },
 }));
 
 jest.mock('@/lib/external-rate-limit', () => ({
