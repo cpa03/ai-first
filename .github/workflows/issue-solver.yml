@@ -12,8 +12,12 @@ permissions:
   issues: write
   actions: write
 
+# Scoped per workflow + issue (#283): the previous `group: global` put every
+# run of every workflow on this trigger behind a single queue, so one long
+# run starved all others. Runs for different issues can now proceed in
+# parallel while repeats for the same issue still queue behind each other.
 concurrency:
-  group: global
+  group: ${{ github.workflow }}-${{ github.event.issue.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
