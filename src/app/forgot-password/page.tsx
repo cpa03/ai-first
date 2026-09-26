@@ -37,6 +37,8 @@ import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+import { useClipboard } from '@/hooks/useClipboard';
+import { useToast } from '@/hooks/useAnnouncement';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -50,6 +52,14 @@ export default function ForgotPasswordPage() {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const cooldownTimerRef = useRef<NodeJS.Timeout | null>(null);
   const { openHelp } = useKeyboardShortcuts();
+
+  // Micro-UX: Auto-copy email to clipboard when success page appears
+  // Helps users who need to check another device or app - they can quickly paste the email
+  const { copy: copyToClipboard, hasCopied } = useClipboard({
+    duration: 3000,
+  });
+  const { showToast } = useToast();
+  const autoCopyTriggeredRef = useRef(false);
 
   const isFormValid = useMemo(() => {
     const trimmedEmail = email.trim();
@@ -68,6 +78,23 @@ export default function ForgotPasswordPage() {
       emailInputRef.current?.focus();
     }
   }, [error]);
+
+  // Micro-UX: Auto-copy email to clipboard when success page appears
+  // Helps users who need to check another device or app
+  useEffect(() => {
+    if (success && email && !autoCopyTriggeredRef.current) {
+      autoCopyTriggeredRef.current = true;
+      const trimmedEmail = email.trim();
+      if (trimmedEmail) {
+        copyToClipboard(trimmedEmail).then(() => {
+          showToast({
+            type: 'success',
+            message: 'Email copied to clipboard',
+          });
+        });
+      }
+    }
+  }, [success, email, copyToClipboard, showToast]);
 
   // Cooldown timer cleanup on unmount
   useEffect(() => {
@@ -255,7 +282,34 @@ export default function ForgotPasswordPage() {
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
             >
               We&apos;ve sent a password reset link to{' '}
-              <span className={FONT_MEDIUM}>{email}</span>
+              <span
+                className={`${FONT_MEDIUM} inline-flex items-center gap-1.5`}
+              >
+                {email}
+                {hasCopied && (
+                  <span
+                    className={`inline-flex items-center gap-1 text-xs ${SUCCESS_STATE_COLORS.ICON_TEXT}`}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <svg
+                      className="w-3.5 h-3.5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    copied
+                  </span>
+                )}
+              </span>
             </p>
             <p
               className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.EXTRA_SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${HERO_ENTRANCE} ${FORGOT_PASSWORD_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
