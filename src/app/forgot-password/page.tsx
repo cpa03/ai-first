@@ -37,6 +37,7 @@ import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+import { REMAINING_PATTERNS } from '@/lib/config';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -401,13 +402,13 @@ export default function ForgotPasswordPage() {
             >
               Press{' '}
               <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                className={`${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE} ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600}`}
               >
                 {isMac ? '⌘' : 'Ctrl'}
               </kbd>
               {' + '}
               <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                className={`${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE} ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600}`}
               >
                 Enter
               </kbd>

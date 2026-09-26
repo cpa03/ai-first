@@ -20,6 +20,7 @@ import {
   COMMON_SPACING_PATTERNS,
   FLEX_GROW_PATTERNS,
   TYPOGRAPHY_CLASSES,
+  REMAINING_PATTERNS,
 } from '@/lib/config';
 
 interface KeyboardShortcutHintProps {
@@ -144,13 +145,13 @@ function KeyboardShortcutHintComponent({
             <p className={`text-xs ${TEXT_COLORS.SECONDARY} mt-1`}>
               Press{' '}
               <kbd
-                className={`px-1.5 py-0.5 ${BG_COLORS.LIGHT} rounded text-xs font-mono ${TEXT_COLORS.PRIMARY}`}
+                className={`${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE} ${BG_COLORS.LIGHT} ${TEXT_COLORS.PRIMARY}`}
               >
                 ?
               </kbd>{' '}
               to see all shortcuts, or{' '}
               <kbd
-                className={`px-1.5 py-0.5 ${BG_COLORS.LIGHT} rounded text-xs font-mono ${TEXT_COLORS.PRIMARY}`}
+                className={`${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE} ${BG_COLORS.LIGHT} ${TEXT_COLORS.PRIMARY}`}
               >
                 {modifierKey} Enter
               </kbd>{' '}

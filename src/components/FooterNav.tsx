@@ -15,6 +15,7 @@ import {
   BG_COLORS,
   TEXT_COLORS,
   UI_CONFIG,
+  REMAINING_PATTERNS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -205,12 +206,12 @@ function FooterNavComponent({ columns }: FooterNavProps) {
         >
           <span>Use</span>
           <kbd
-            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+            className={`${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE} ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600}`}
           >
             ←
           </kbd>
           <kbd
-            className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+            className={`${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE} ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600}`}
           >
             →
           </kbd>

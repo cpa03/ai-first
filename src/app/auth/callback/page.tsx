@@ -282,7 +282,7 @@ export default function AuthCallbackPage() {
           {/* Micro-UX: Timeout warning with retry option */}
           {hasTimedOut && (
             <div
-              className={`${BG_COLORS.WARNING_LIGHT} border ${BORDER_COLORS.WARNING} rounded-lg p-4 ${FADE_IN}`}
+              className={`${BG_COLORS.WARNING_LIGHT} border ${BORDER_COLORS.WARNING} ${REMAINING_PATTERNS.WARNING_CARD_CONTAINER} ${FADE_IN}`}
               role="alert"
               aria-live="assertive"
             >
@@ -396,7 +396,7 @@ export default function AuthCallbackPage() {
               }
             >
               <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                className={`${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE} ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600}`}
               >
                 Esc
               </kbd>
@@ -411,7 +411,7 @@ export default function AuthCallbackPage() {
                 }
               >
                 <kbd
-                  className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                  className={`${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE} ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600}`}
                 >
                   Enter
                 </kbd>

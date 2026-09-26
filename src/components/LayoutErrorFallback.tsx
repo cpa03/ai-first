@@ -13,10 +13,10 @@ import {
   BG_COLORS,
   BORDER_COLORS,
   TEXT_COLORS,
-  TEXT_SIZE_CLASSES,
   RESPONSIVE_SPACING,
   MT_CLASSES,
   COMMON_SPACING_PATTERNS,
+  REMAINING_PATTERNS,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 
@@ -75,7 +75,7 @@ function LayoutErrorFallbackComponent({
                 aria-hidden="true"
               >
                 <kbd
-                  className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
+                  className={`${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE_BORDERED} ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} ${TEXT_COLORS.SECONDARY}`}
                 >
                   Enter
                 </kbd>
@@ -91,7 +91,7 @@ function LayoutErrorFallbackComponent({
                 aria-hidden="true"
               >
                 <kbd
-                  className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
+                  className={`${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE_BORDERED} ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} ${TEXT_COLORS.SECONDARY}`}
                 >
                   Esc
                 </kbd>

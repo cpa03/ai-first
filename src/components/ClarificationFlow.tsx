@@ -63,7 +63,11 @@ import {
 } from '@/lib/config';
 import { SELECT_ICON_POSITION } from '@/lib/config/remaining-hardcoded-patterns';
 import { INLINE_FLEX_ITEMS_CENTER } from '@/lib/config/remaining-hardcoded-patterns';
-import { SR_ONLY, RELATIVE } from '@/lib/config/remaining-hardcoded-patterns';
+import {
+  SR_ONLY,
+  RELATIVE,
+  REMAINING_PATTERNS,
+} from '@/lib/config/remaining-hardcoded-patterns';
 import {
   CLARIFICATION_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -643,7 +647,7 @@ function ClarificationFlow({
             </svg>
             <span>{COMPONENT_DEFAULTS.CLARIFICATION_FLOW.REFERENCE_LABEL}</span>
             <kbd
-              className={`hidden sm:inline-flex items-center px-1.5 py-0.5 ${BG_COLOR_CLASSES.LIGHT} ${TEXT_COLOR_CLASSES.MUTED} rounded text-xs font-mono`}
+              className={`hidden sm:inline-flex items-center ${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE} ${BG_COLOR_CLASSES.LIGHT} ${TEXT_COLOR_CLASSES.MUTED}`}
               aria-hidden="true"
             >
               Alt+R
@@ -1082,7 +1086,7 @@ function ClarificationFlow({
                       {currentQuestion.options.map((_, index) => (
                         <kbd
                           key={index}
-                          className={`px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
+                          className={`${REMAINING_PATTERNS.KEYBOARD_SHORTCUT_BADGE} ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600}`}
                         >
                           {index + 1}
                         </kbd>
