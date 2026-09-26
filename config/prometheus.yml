@@ -4,7 +4,12 @@
 # This config scrapes metrics from the IdeaFlow application
 # Deploy alongside Prometheus server or use with Prometheus Operator
 #
-# REQUIRED ENV VARS (expanded by Prometheus at load time; ${VAR} / ${VAR:-default}):
+# REQUIRED ENV VARS (expanded by Prometheus at load time; $VAR / ${VAR} only):
+#   Prometheus expands only $VAR and ${VAR} shapes; it does NOT support shell-style
+#   default fallbacks. Targets below use literal Docker DNS defaults.
+#   To override, edit the target or use file_sd / set target directly;
+#   do NOT use shell default fallback syntax.
+#   METRICS_BEARER_TOKEN       - bearer token for /api/metrics. MUST equal the app's
 #   IDEAFLOW_APP_TARGET        - app scrape target host:port (must serve /api/metrics).
 #                                Default: ideaflow-app:3000 (Docker DNS, plain HTTP behind
 #                                TLS-terminating proxy). For a public host set e.g.
@@ -64,7 +69,7 @@ scrape_configs:
       # For private/internal CAs, set ca_file to the mounted bundle path.
       insecure_skip_verify: false
     static_configs:
-      - targets: ['${IDEAFLOW_APP_TARGET:-ideaflow-app:3000}']
+      - targets: ['ideaflow-app:3000']
         labels:
           service: 'ideaflow'
           component: 'web'
@@ -87,12 +92,12 @@ scrape_configs:
   # set WORKERS_EXPORTER_TARGET to the exporter host:port and, if the exporter
   # requires auth, uncomment basic_auth/authorization below and provide the
   # credentials via env vars (e.g. WORKERS_EXPORTER_USER / WORKERS_EXPORTER_PASSWORD).
-  # Scheme stays https by default; flip to http if the exporter serves plain
-  # HTTP internally.
+  # Scheme defaults to http, matching the plain-HTTP in-cluster default
+  # (workers-exporter:9091). For a public TLS endpoint, override scheme to https.
   # ---------------------------------------------------------------------------
   - job_name: 'cloudflare-workers'
     metrics_path: '/metrics'
-    scheme: 'https'
+    scheme: 'http'
     tls_config:
       # TODO: set ca_file/server_name for the workers exporter endpoint.
       insecure_skip_verify: false
@@ -101,7 +106,7 @@ scrape_configs:
     #   username: '${WORKERS_EXPORTER_USER}'
     #   password: '${WORKERS_EXPORTER_PASSWORD}'
     static_configs:
-      - targets: ['${WORKERS_EXPORTER_TARGET:-workers-exporter:9091}']
+      - targets: ['workers-exporter:9091']
         labels:
           service: 'cloudflare'
           component: 'workers'
@@ -113,12 +118,12 @@ scrape_configs:
   # set SUPABASE_EXPORTER_TARGET to the exporter host:port and, if the exporter
   # requires auth, uncomment basic_auth/authorization below and provide the
   # credentials via env vars (SUPABASE_EXPORTER_USER / SUPABASE_EXPORTER_PASSWORD).
-  # Scheme stays https by default; flip to http if the exporter serves plain
-  # HTTP internally.
+  # Scheme defaults to http, matching the plain-HTTP in-cluster default
+  # (supabase-exporter:9090). For a public TLS endpoint, override scheme to https.
   # ---------------------------------------------------------------------------
   - job_name: 'supabase'
     metrics_path: '/metrics'
-    scheme: 'https'
+    scheme: 'http'
     tls_config:
       # TODO: set ca_file/server_name for the supabase exporter endpoint.
       insecure_skip_verify: false
@@ -127,7 +132,7 @@ scrape_configs:
     #   username: '${SUPABASE_EXPORTER_USER}'
     #   password: '${SUPABASE_EXPORTER_PASSWORD}'
     static_configs:
-      - targets: ['${SUPABASE_EXPORTER_TARGET:-supabase-exporter:9090}']
+      - targets: ['supabase-exporter:9090']
         labels:
           service: 'supabase'
           component: 'database'
@@ -164,7 +169,7 @@ rule_files:
 # TODO: set PROM_REMOTE_WRITE_URL (or edit the url below) and
 # PROMETHEUS_REMOTE_WRITE_PASSWORD before enabling.
 # remote_write:
-#   - url: https://prometheus-prod.example.com/api/v1/write
+#   - url: '${PROM_REMOTE_WRITE_URL}'
 #     basic_auth:
 #       username: 'prometheus'
 #       password: '${PROMETHEUS_REMOTE_WRITE_PASSWORD}'
