@@ -12,7 +12,7 @@ function resolveMigrationsDir(): string {
   for (const c of candidates) {
     if (fs.existsSync(c)) return c;
   }
-  return MIGRATIONS_DIR;
+  throw new Error('supabase/migrations directory not found');
 }
 
 describe('#4459 migration policy idempotency', () => {

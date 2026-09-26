@@ -342,14 +342,13 @@ export class IdeaService {
     // Try to use RPC for efficient single-query aggregation
     const { data: statsData, error: statsError } = await client.rpc(
       'get_user_idea_stats',
-      { p_user_id: userId } as never
+      { p_user_id: userId }
     );
 
     if (!statsError && statsData) {
       // RPC returned result - use it
-      totalDeliverables =
-        (statsData as { total_deliverables: number }).total_deliverables ?? 0;
-      totalTasks = (statsData as { total_tasks: number }).total_tasks ?? 0;
+      totalDeliverables = statsData.total_deliverables ?? 0;
+      totalTasks = statsData.total_tasks ?? 0;
     } else {
       // Fallback: Use optimized two-query approach
       // Query 2a: Get deliverable count and IDs in single query using count + select

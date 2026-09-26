@@ -24,6 +24,20 @@
 import { EnvLoader } from './env-loader';
 
 /**
+ * Resolves a schema object name (table, view or RPC function) from its
+ * environment override, typed as its literal default name.
+ *
+ * Supabase's generated `Database` type only accepts literal relation and
+ * function names (`client.from('ideas')`, `client.rpc('match_vectors')`), so
+ * these constants must narrow to their default names for queries to type
+ * check. The environment override is still honoured at runtime, but the
+ * value it returns must match the schema declared in `src/types/database.ts`
+ * — which is exactly what the literal type enforces.
+ */
+const schemaName = <T extends string>(envKey: string, defaultName: T): T =>
+  EnvLoader.string(envKey, defaultName) as T;
+
+/**
  * Database table names
  * All Supabase table names used in the application
  */
@@ -32,37 +46,37 @@ export const DB_TABLES = {
    * Ideas table - stores user project ideas
    * Env: DB_TABLE_IDEAS (default: 'ideas')
    */
-  IDEAS: EnvLoader.string('DB_TABLE_IDEAS', 'ideas'),
+  IDEAS: schemaName('DB_TABLE_IDEAS', 'ideas'),
 
   /**
    * Idea sessions table - stores clarification sessions for ideas
    * Env: DB_TABLE_IDEA_SESSIONS (default: 'idea_sessions')
    */
-  IDEA_SESSIONS: EnvLoader.string('DB_TABLE_IDEA_SESSIONS', 'idea_sessions'),
+  IDEA_SESSIONS: schemaName('DB_TABLE_IDEA_SESSIONS', 'idea_sessions'),
 
   /**
    * Deliverables table - stores project deliverables
    * Env: DB_TABLE_DELIVERABLES (default: 'deliverables')
    */
-  DELIVERABLES: EnvLoader.string('DB_TABLE_DELIVERABLES', 'deliverables'),
+  DELIVERABLES: schemaName('DB_TABLE_DELIVERABLES', 'deliverables'),
 
   /**
    * Tasks table - stores individual tasks within deliverables
    * Env: DB_TABLE_TASKS (default: 'tasks')
    */
-  TASKS: EnvLoader.string('DB_TABLE_TASKS', 'tasks'),
+  TASKS: schemaName('DB_TABLE_TASKS', 'tasks'),
 
   /**
    * Vectors table - stores embedding vectors for similarity search
    * Env: DB_TABLE_VECTORS (default: 'vectors')
    */
-  VECTORS: EnvLoader.string('DB_TABLE_VECTORS', 'vectors'),
+  VECTORS: schemaName('DB_TABLE_VECTORS', 'vectors'),
 
   /**
    * Clarification sessions table - stores clarification flow sessions
    * Env: DB_TABLE_CLARIFICATION_SESSIONS (default: 'clarification_sessions')
    */
-  CLARIFICATION_SESSIONS: EnvLoader.string(
+  CLARIFICATION_SESSIONS: schemaName(
     'DB_TABLE_CLARIFICATION_SESSIONS',
     'clarification_sessions'
   ),
@@ -71,7 +85,7 @@ export const DB_TABLES = {
    * Clarification answers table - stores answers to clarification questions
    * Env: DB_TABLE_CLARIFICATION_ANSWERS (default: 'clarification_answers')
    */
-  CLARIFICATION_ANSWERS: EnvLoader.string(
+  CLARIFICATION_ANSWERS: schemaName(
     'DB_TABLE_CLARIFICATION_ANSWERS',
     'clarification_answers'
   ),
@@ -80,7 +94,7 @@ export const DB_TABLES = {
    * Agent logs table - stores AI agent action logs
    * Env: DB_TABLE_AGENT_LOGS (default: 'agent_logs')
    */
-  AGENT_LOGS: EnvLoader.string('DB_TABLE_AGENT_LOGS', 'agent_logs'),
+  AGENT_LOGS: schemaName('DB_TABLE_AGENT_LOGS', 'agent_logs'),
 } as const;
 
 /**
@@ -92,7 +106,7 @@ export const DB_RPC = {
    * Match vectors function - finds similar vectors using embedding similarity
    * Env: DB_RPC_MATCH_VECTORS (default: 'match_vectors')
    */
-  MATCH_VECTORS: EnvLoader.string('DB_RPC_MATCH_VECTORS', 'match_vectors'),
+  MATCH_VECTORS: schemaName('DB_RPC_MATCH_VECTORS', 'match_vectors'),
 } as const;
 
 /**

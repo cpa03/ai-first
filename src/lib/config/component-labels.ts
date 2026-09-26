@@ -566,6 +566,8 @@ export const DASHBOARD_LABELS = {
   FILTER_SHORTCUT: ['/'],
   SKELETON_ARIA_LABEL: 'Loading dashboard',
   SKELETON_SR_TEXT: 'Loading your ideas...',
+  /** Accessible name for the dashboard pagination navigation */
+  PAGINATION_LABEL: 'Pagination',
   TABLE_HEADERS: {
     TITLE: 'Title',
     STATUS: 'Status',

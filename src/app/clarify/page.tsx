@@ -29,21 +29,12 @@ import {
   BREATHE,
   REMAINING_PATTERNS,
   ANIMATION_CLASSES,
-  SPACE_Y_PATTERNS,
-  FLEX_PATTERNS,
-  TEXT_COLOR_CLASSES,
-  BG_COLOR_CLASSES,
-  TYPOGRAPHY_CLASSES,
-  ICON_SIZES,
-  SVG_STROKE_WIDTHS,
-  SVG_VIEWBOX,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import {
   CLARIFY_PARAGRAPH_MARGIN,
   CLARIFY_EMPTY_STATE,
 } from '@/lib/config/remaining-hardcoded-patterns';
-import { ProgressStepper } from '@/components/ProgressStepper';
 import { safeJsonLd } from '@/lib/security/json-ld';
 
 const Button = dynamic(() => import('@/components/Button'), {
@@ -180,13 +171,6 @@ function ClarifySuccessState({
   );
 }
 
-// Progress indicator steps for Idea Input -> Clarify transition
-const CLARIFY_PROGRESS_STEPS = [
-  { id: 'input', label: 'Enter Idea', description: 'Describe your idea' },
-  { id: 'clarify', label: 'Clarify', description: 'Answer questions' },
-  { id: 'results', label: 'Blueprint', description: 'View plan' },
-];
-
 // Inner component that uses URL search params
 function ClarifyPageContent() {
   const router = useRouter();
@@ -194,7 +178,7 @@ function ClarifyPageContent() {
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { isAuthenticated, isLoading: authLoading } = useAuthCheck();
-  const { isGuest, ideaId: guestIdeaId, setGuestIdea, setGuestAnswers, refreshGuestState } = useGuestMode();
+  const { isGuest, ideaId: guestIdeaId, setGuestIdea, setGuestAnswers } = useGuestMode();
 
   // Read URL params safely - useSearchParams returns null on initial server render
   // We use a ref to track if we've hydrated to avoid hydration mismatches
@@ -292,15 +276,6 @@ function ClarifyPageContent() {
     [effectiveIdeaId, isGuestMode, setGuestAnswers, logger]
   );
 
-  // Handle back to edit - for guest mode, just go home
-  const handleBackToEdit = useCallback(() => {
-    if (isGuestMode) {
-      router.push(ROUTES.HOME);
-    } else {
-      router.push('/');
-    }
-  }, [isGuestMode, router]);
-
   if (authLoading || !hasLoaded) {
     return (
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_SM}>
@@ -315,9 +290,6 @@ function ClarifyPageContent() {
       </div>
     );
   }
-
-  // Show progress indicator at top for visual orientation
-  const showProgress = hasLoaded && idea;
 
   if (error) {
     return (

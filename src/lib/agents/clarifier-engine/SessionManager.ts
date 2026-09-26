@@ -2,6 +2,7 @@ import { dbService, type Idea } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import { DB_REFERENCE_TYPES } from '@/lib/config';
 import type { ClarifierQuestion } from './QuestionGenerator';
+import type { Json } from '@/types/database';
 
 const logger = createLogger('ClarifierSessionManager');
 
@@ -22,7 +23,7 @@ export class SessionManager {
     try {
       await dbService.storeVector({
         idea_id: session.ideaId,
-        vector_data: session as unknown as Record<string, unknown>,
+        vector_data: session as unknown as Json,
         reference_type: DB_REFERENCE_TYPES.CLARIFICATION_SESSION,
         reference_id: session.ideaId,
       });

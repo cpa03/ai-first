@@ -582,6 +582,12 @@ export const SKIP_LINK = 'skip-link';
 export const PEER_SR_ONLY = 'peer sr-only';
 
 /**
+ * Two-line clamp for headings and card titles
+ * Used in: IdeaCard title
+ */
+export const LINE_CLAMP_2 = 'line-clamp-2';
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -654,4 +660,5 @@ export const REMAINING_PATTERNS = {
   GRID_COL_SPAN,
   SKIP_LINK,
   PEER_SR_ONLY,
+  LINE_CLAMP_2,
 } as const;

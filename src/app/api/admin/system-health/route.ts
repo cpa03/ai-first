@@ -23,7 +23,9 @@ async function handleGet(context: ApiContext) {
   // with a fallback to the Auth Admin API (listUsers) when the view is missing.
   const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-  async function countUsersSince(since?: string): Promise<number | null> {
+  const countUsersSince = async (
+    since?: string
+  ): Promise<number | null> => {
     try {
       let q = adminClient
         .from('admin_user_view')
@@ -57,7 +59,7 @@ async function handleGet(context: ApiContext) {
     } catch {
       return null;
     }
-  }
+  };
 
   const [
     totalUsers,
@@ -76,7 +78,16 @@ async function handleGet(context: ApiContext) {
       .eq('is_active', true)
       .or('expires_at.is.null,expires_at.gt.' + new Date().toISOString()),
     adminClient.from('admin_audit_logs').select('id', { count: 'exact', head: true }),
-    adminClient.rpc('pg_database_size', { db_name: 'postgres' }).catch(() => ({ data: null })),
+    (async () => {
+      try {
+        const { data } = await adminClient.rpc('pg_database_size', {
+          db_name: 'postgres',
+        });
+        return { data };
+      } catch {
+        return { data: null };
+      }
+    })(),
   ]);
 
   // Get recent activity (last 24 hours)
@@ -97,7 +108,7 @@ async function handleGet(context: ApiContext) {
   ]);
 
   // Get database size
-  const dbSize = dbStats?.data || 0;
+  const dbSize = dbStats ?? 0;
 
   // Get role distribution
   const { data: roleDistribution } = await adminClient

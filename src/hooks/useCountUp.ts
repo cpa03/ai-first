@@ -44,7 +44,7 @@ interface UseCountUpReturn {
  */
 export function useCountUp(
   target: number,
-  options?: UseCountUpOptions
+  options?: Omit<UseCountUpOptions, 'target'>
 ): UseCountUpReturn;
 
 export function useCountUp(
@@ -53,12 +53,14 @@ export function useCountUp(
 
 export function useCountUp(
   targetOrOptions: number | UseCountUpOptions,
-  options?: UseCountUpOptions
+  options?: Omit<UseCountUpOptions, 'target'>
 ): UseCountUpReturn {
   // Normalize arguments to support both call signatures
   const isObject = typeof targetOrOptions === 'object';
   const target = isObject ? targetOrOptions.target : targetOrOptions;
-  const mergedOptions = isObject ? targetOrOptions : (options ?? {});
+  const mergedOptions: UseCountUpOptions = isObject
+    ? targetOrOptions
+    : { target, ...(options ?? {}) };
 
   const {
     duration = COMPONENT_CONFIG.COUNT_UP.DEFAULT_DURATION_MS,

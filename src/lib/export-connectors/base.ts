@@ -12,7 +12,7 @@ import {
 } from '../external-rate-limit';
 import { createLogger } from '../logger';
 import { Idea, Deliverable, Task } from '../db/service';
-import { AppError, ErrorCode, STATUS_CODES } from '../errors';
+import { AppError, ErrorCode } from '../errors';
 
 function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
   return {

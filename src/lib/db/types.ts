@@ -1,4 +1,5 @@
 import type { IdeaStatus } from '@/lib/config';
+import type { Json } from '@/types/database';
 
 export interface Idea {
   id: string;
@@ -13,9 +14,9 @@ export interface Idea {
 
 export interface IdeaSession {
   idea_id: string;
-  state: Record<string, unknown>;
-  last_agent: string;
-  metadata: Record<string, unknown>;
+  state: Json;
+  last_agent: string | null;
+  metadata: Json;
   updated_at: string;
 }
 
@@ -23,14 +24,14 @@ export interface Deliverable {
   id: string;
   idea_id: string;
   title: string;
-  description?: string;
+  description?: string | null;
   priority: number;
   estimate_hours: number;
   milestone_id: string | null;
   completion_percentage: number;
   business_value: number;
   risk_factors: string[] | null;
-  acceptance_criteria: Record<string, unknown> | null;
+  acceptance_criteria: Json | null;
   deliverable_type:
     'feature' | 'documentation' | 'testing' | 'deployment' | 'research';
   created_at: string;
@@ -42,8 +43,8 @@ export interface Task {
   id: string;
   deliverable_id: string;
   title: string;
-  description?: string;
-  assignee?: string;
+  description?: string | null;
+  assignee?: string | null;
   status: 'todo' | 'in_progress' | 'completed';
   estimate: number;
   start_date: string | null;
@@ -54,7 +55,7 @@ export interface Task {
   complexity_score: number;
   risk_level: 'low' | 'medium' | 'high';
   tags: string[] | null;
-  custom_fields: Record<string, unknown> | null;
+  custom_fields: Json | null;
   milestone_id: string | null;
   created_at: string;
   updated_at?: string;
@@ -64,18 +65,30 @@ export interface Task {
 export interface Vector {
   id: string;
   idea_id: string;
-  vector_data?: Record<string, unknown>;
+  vector_data?: Json;
   reference_type: string;
-  reference_id?: string;
+  reference_id?: string | null;
   created_at: string;
   embedding?: number[];
+}
+
+/**
+ * Row returned by the `match_vectors` RPC — a similarity projection
+ * (id, reference, score) rather than a full `vectors` row.
+ */
+export interface VectorMatch {
+  id: string;
+  idea_id: string;
+  reference_type: string;
+  reference_id: string | null;
+  similarity: number;
 }
 
 export interface AgentLog {
   id: string;
   agent: string;
   action: string;
-  payload: Record<string, unknown>;
+  payload: Json;
   timestamp: string;
 }
 
