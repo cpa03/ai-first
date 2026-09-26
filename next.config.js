@@ -50,12 +50,8 @@ const nextConfig = {
         key: 'Referrer-Policy',
         value: 'strict-origin-when-cross-origin',
       },
-      // XSS Protection - explicitly disabled to follow modern security standards
-      // Modern browsers rely on CSP; legacy auditors can introduce new vulnerabilities
-      {
-        key: 'X-XSS-Protection',
-        value: '0',
-      },
+      // X-XSS-Protection header removed - modern browsers rely on CSP for XSS protection
+      // See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
       // Restrict browser features
       {
         key: 'Permissions-Policy',
