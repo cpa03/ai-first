@@ -30,6 +30,7 @@
  */
 
 import { EnvLoader } from './env-loader';
+import { RATE_LIMIT_CONFIG } from './rate-limit-config';
 
 /**
  * Hash and Numeric Constants
@@ -145,51 +146,6 @@ export const RATE_LIMIT_STORE_CONFIG = {
    */
   CLEANUP_PERCENTAGE:
     EnvLoader.number('RATE_LIMIT_CLEANUP_PERCENTAGE', 20, 5, 50) / 100,
-} as const;
-
-/**
- * External Rate Limit Configuration
- * Settings for tracking third-party API rate limits
- */
-export const EXTERNAL_RATE_LIMIT_CONFIG = {
-  /**
-   * Maximum number of services to track
-   * Env: EXTERNAL_RATE_LIMIT_MAX_SERVICES (default: 50)
-   */
-  MAX_SERVICES: EnvLoader.number(
-    'EXTERNAL_RATE_LIMIT_MAX_SERVICES',
-    50,
-    10,
-    200
-  ),
-
-  /**
-   * Maximum age of rate limit info in milliseconds (1 hour default)
-   * After this time, rate limit info is considered stale
-   * Env: EXTERNAL_RATE_LIMIT_MAX_AGE_MS (default: 3600000)
-   */
-  MAX_AGE_MS: EnvLoader.number(
-    'EXTERNAL_RATE_LIMIT_MAX_AGE_MS',
-    3600000,
-    60000,
-    86400000
-  ),
-
-  /**
-   * Default throttle threshold (0.0 - 1.0)
-   * When remaining/limit ratio is below this, requests should be throttled
-   * Env: EXTERNAL_RATE_LIMIT_THROTTLE_THRESHOLD (default: 0.2)
-   */
-  THROTTLE_THRESHOLD:
-    EnvLoader.number('EXTERNAL_RATE_LIMIT_THROTTLE_THRESHOLD', 20, 5, 50) / 100,
-
-  /**
-   * Percentage of max services to clean when store is full
-   * Prevents unbounded memory growth for external rate limit tracking
-   * Env: EXTERNAL_RATE_LIMIT_CLEANUP_PERCENTAGE (default: 20)
-   */
-  CLEANUP_PERCENTAGE:
-    EnvLoader.number('EXTERNAL_RATE_LIMIT_CLEANUP_PERCENTAGE', 20, 5, 50) / 100,
 } as const;
 
 /**
@@ -675,7 +631,7 @@ export const MODULAR_CONSTANTS = {
   TIMESTAMP: TIMESTAMP_CONFIG,
   SESSION: SESSION_CONFIG,
   RATE_LIMIT_STORE: RATE_LIMIT_STORE_CONFIG,
-  EXTERNAL_RATE_LIMIT: EXTERNAL_RATE_LIMIT_CONFIG,
+  EXTERNAL_RATE_LIMIT: RATE_LIMIT_CONFIG.EXTERNAL,
   AB_TEST,
   ANALYTICS: ANALYTICS_CONFIG,
   COST_TRACKING: COST_TRACKING_CONFIG,
