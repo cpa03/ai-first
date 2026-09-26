@@ -943,7 +943,16 @@ CREATE INDEX IF NOT EXISTS idx_admin_roles_expires_at ON admin_roles(expires_at)
 
 CREATE TABLE IF NOT EXISTS admin_audit_logs (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    admin_user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE SET NULL,
+    -- NOTE (drift vs migration 20260919 line 33): migration declares
+    -- admin_user_id UUID NOT NULL ... ON DELETE SET NULL, which is
+    -- contradictory — deleting the referenced auth user would fail on the
+    -- NOT NULL constraint instead of NULL-ing the column, so the audit trail
+    -- would NOT survive admin deletion. schema.sql (fresh-DB reference)
+    -- intentionally declares it nullable while keeping ON DELETE SET NULL.
+    -- Do NOT edit the migration chain here; a follow-up migration should
+    -- ALTER TABLE admin_audit_logs ALTER COLUMN admin_user_id DROP NOT NULL
+    -- to align already-deployed DBs.
+    admin_user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     action TEXT NOT NULL,
     resource_type TEXT NOT NULL,
     resource_id UUID,
@@ -1009,6 +1018,16 @@ GRANT EXECUTE ON FUNCTION is_admin TO authenticated, service_role;
 GRANT EXECUTE ON FUNCTION is_super_admin TO authenticated, service_role;
 GRANT EXECUTE ON FUNCTION is_moderator_or_admin TO authenticated, service_role;
 
+-- Lock down SECURITY DEFINER helpers: callable by authenticated + service_role
+-- only, never PUBLIC/anon (signatures verified against migration 20260919:
+-- each takes a single UUID arg with DEFAULT auth.uid()).
+REVOKE ALL ON FUNCTION is_admin(UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION is_admin(UUID) TO authenticated, service_role;
+REVOKE ALL ON FUNCTION is_super_admin(UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION is_super_admin(UUID) TO authenticated, service_role;
+REVOKE ALL ON FUNCTION is_moderator_or_admin(UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION is_moderator_or_admin(UUID) TO authenticated, service_role;
+
 DROP POLICY IF EXISTS "Service role full access admin_roles" ON admin_roles;
 CREATE POLICY "Service role full access admin_roles" ON admin_roles
     FOR ALL USING (auth.role() = 'service_role')
@@ -1024,6 +1043,31 @@ CREATE POLICY "Admins can view admin_roles" ON admin_roles
         auth.role() = 'service_role' OR is_admin(auth.uid())
     );
 
+-- Parity with migration 20260919 (names match). Bodies intentionally call the
+-- SECURITY DEFINER helpers instead of the migration's inline EXISTS on
+-- admin_roles to avoid RLS self-recursion on fresh DBs built from schema.sql.
+DROP POLICY IF EXISTS "Super admins can manage admin_roles" ON admin_roles;
+CREATE POLICY "Super admins can manage admin_roles" ON admin_roles
+    FOR INSERT WITH CHECK (
+        auth.role() = 'service_role' OR is_super_admin(auth.uid())
+    );
+
+DROP POLICY IF EXISTS "Super admins can update admin_roles" ON admin_roles;
+CREATE POLICY "Super admins can update admin_roles" ON admin_roles
+    FOR UPDATE USING (
+        auth.role() = 'service_role' OR is_super_admin(auth.uid())
+    );
+
+DROP POLICY IF EXISTS "Super admins can delete admin_roles" ON admin_roles;
+CREATE POLICY "Super admins can delete admin_roles" ON admin_roles
+    FOR DELETE USING (
+        auth.role() = 'service_role' OR is_super_admin(auth.uid())
+    );
+
+DROP POLICY IF EXISTS "Users can view own admin_roles" ON admin_roles;
+CREATE POLICY "Users can view own admin_roles" ON admin_roles
+    FOR SELECT USING (user_id = auth.uid());
+
 DROP POLICY IF EXISTS "Service role full access admin_audit_logs" ON admin_audit_logs;
 CREATE POLICY "Service role full access admin_audit_logs" ON admin_audit_logs
     FOR ALL USING (auth.role() = 'service_role')
@@ -1033,6 +1077,14 @@ DROP POLICY IF EXISTS "Admins can view admin_audit_logs" ON admin_audit_logs;
 -- NOTE: same recursion fix as above — uses SECURITY DEFINER helper.
 CREATE POLICY "Admins can view admin_audit_logs" ON admin_audit_logs
     FOR SELECT USING (
+        auth.role() = 'service_role' OR is_moderator_or_admin(auth.uid())
+    );
+
+-- Parity with migration 20260919 (name matches). Body uses the helper instead
+-- of inline EXISTS to avoid the same self-recursion class of issue.
+DROP POLICY IF EXISTS "Admins can insert admin_audit_logs" ON admin_audit_logs;
+CREATE POLICY "Admins can insert admin_audit_logs" ON admin_audit_logs
+    FOR INSERT WITH CHECK (
         auth.role() = 'service_role' OR is_moderator_or_admin(auth.uid())
     );
 
