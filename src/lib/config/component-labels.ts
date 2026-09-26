@@ -77,6 +77,16 @@ export const INPUT_VALIDATION_LABELS = {
 } as const;
 
 /**
+ * LoadingSpinner Labels
+ * Eliminates hardcoded strings and string templates in LoadingSpinner component
+ */
+export const LOADING_SPINNER_LABELS = {
+  /** Formats elapsed time for screen readers and visible text */
+  ELAPSED_TIME_FORMAT: (label: string, seconds: number) =>
+    `${label} (${seconds}s)`,
+} as const;
+
+/**
  * Tooltip Labels
  * Eliminates hardcoded strings in Tooltip component
  */
@@ -791,6 +801,7 @@ export const COMPONENT_LABELS = {
   SCROLL_PROGRESS: SCROLL_PROGRESS_LABELS,
   PASSWORD_REQUIREMENTS: PASSWORD_REQUIREMENTS_LABELS,
   CAPS_LOCK_WARNING: CAPS_LOCK_WARNING_LABELS,
+  LOADING_SPINNER: LOADING_SPINNER_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
@@ -824,4 +835,5 @@ export type WhyChooseSectionLabels = typeof WHY_CHOOSE_SECTION_LABELS;
 export type ScrollProgressLabels = typeof SCROLL_PROGRESS_LABELS;
 export type PasswordRequirementsLabels = typeof PASSWORD_REQUIREMENTS_LABELS;
 export type CapsLockWarningLabels = typeof CAPS_LOCK_WARNING_LABELS;
+export type LoadingSpinnerLabels = typeof LOADING_SPINNER_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;
