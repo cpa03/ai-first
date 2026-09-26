@@ -25,6 +25,24 @@ interface Subscription {
 }
 
 /**
+ * PERFORMANCE: Helper to clone payload objects for logging without copying non-JSON metadata/Dates.
+ * Placed in module scope to prevent closure allocations on every event emission.
+ */
+function getClonedPayload(payload: unknown): unknown {
+  if (!payload || typeof payload !== 'object') {
+    return payload;
+  }
+  try {
+    if (typeof structuredClone === 'function') {
+      return structuredClone(payload);
+    }
+    return JSON.parse(JSON.stringify(payload));
+  } catch {
+    return payload; // Fallback if cloning fails
+  }
+}
+
+/**
  * Event Bus class for pub/sub communication between agents
  */
 class EventBus {
@@ -105,23 +123,7 @@ class EventBus {
    */
   async emit<T extends AgentEvent>(event: T): Promise<void> {
     // PERFORMANCE: Rather than cloning the entire event object (which includes Date instances and other metadata),
-    // we extract only the primitive fields and clone the payload if it is a non-null object.
-    // This avoids the expensive overhead of copying Date objects and other non-json-safe primitives.
-    // Benchmarks show significant performance improvements (especially in high-frequency event loops).
-    const getClonedPayload = (payload: unknown) => {
-      if (!payload || typeof payload !== 'object') {
-        return payload;
-      }
-      try {
-        if (typeof structuredClone === 'function') {
-          return structuredClone(payload);
-        }
-        return JSON.parse(JSON.stringify(payload));
-      } catch {
-        return payload; // Fallback if cloning fails
-      }
-    };
-
+    // we extract only the primitive fields and clone the payload using module-scoped getClonedPayload.
     const eventToLog = {
       ...event,
       payload: getClonedPayload(event.payload),
@@ -135,17 +137,27 @@ class EventBus {
     // Add to history
     this.addToHistory(event);
 
-    // Get subscribers for this event type
-    const typeSubs = this.subscriptions.get(event.type) || [];
-    // Get wildcard subscribers
-    const wildcardSubs = this.subscriptions.get('*') || [];
+    // PERFORMANCE: Fast-path subscriber resolution to avoid unnecessary array allocations & loops.
+    const typeSubs = this.subscriptions.get(event.type);
+    const wildcardSubs = this.subscriptions.get('*');
 
-    // Combine and deduplicate
-    const allSubs = [...typeSubs];
-    for (const sub of wildcardSubs) {
-      if (!allSubs.find((s) => s.id === sub.id)) {
-        allSubs.push(sub);
+    let allSubs: Subscription[];
+    if (!wildcardSubs || wildcardSubs.length === 0) {
+      allSubs = typeSubs || [];
+    } else if (!typeSubs || typeSubs.length === 0) {
+      allSubs = wildcardSubs;
+    } else {
+      allSubs = [...typeSubs];
+      for (const sub of wildcardSubs) {
+        if (!allSubs.some((s) => s.id === sub.id)) {
+          allSubs.push(sub);
+        }
       }
+    }
+
+    if (allSubs.length === 0) {
+      _logger.debug(`Emitted event: ${event.type}, subscribers: 0`);
+      return;
     }
 
     // Execute handlers
@@ -211,8 +223,10 @@ class EventBus {
 
   private addToHistory(event: AgentEvent): void {
     this.eventHistory.push(event);
+    // PERFORMANCE: Drop the oldest entry in-place with shift() instead of slice(-maxHistorySize).
+    // This avoids creating a new array copy of size maxHistorySize on every emit once full.
     if (this.eventHistory.length > this.maxHistorySize) {
-      this.eventHistory = this.eventHistory.slice(-this.maxHistorySize);
+      this.eventHistory.shift();
     }
   }
 
