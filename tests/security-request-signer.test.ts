@@ -191,6 +191,12 @@ describe('Request Signer', () => {
       expect(result).toBeNull();
     });
 
+    it('should return null for non-numeric or infinite timestamp', () => {
+      expect(parseSignatureHeader('t=invalid,sig=def456')).toBeNull();
+      expect(parseSignatureHeader('t=NaN,sig=def456')).toBeNull();
+      expect(parseSignatureHeader('t=Infinity,sig=def456')).toBeNull();
+    });
+
     it('should return null for missing timestamp', () => {
       const header = 'nonce=abc123,sig=def456';
       const result = parseSignatureHeader(header);
