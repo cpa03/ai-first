@@ -119,4 +119,21 @@ describe('AutoSaveIndicator Component', () => {
 
     expect(container.firstChild).toBeNull();
   });
+
+  it('formats relative timestamp string labels correctly via AUTO_SAVE_INDICATOR_LABELS', async () => {
+    const { AUTO_SAVE_INDICATOR_LABELS } = await import('../src/lib/config/component-labels');
+
+    expect(AUTO_SAVE_INDICATOR_LABELS.SECONDS_AGO(15)).toBe('15s ago');
+    expect(AUTO_SAVE_INDICATOR_LABELS.MINUTES_AGO(5)).toBe('5m ago');
+    expect(AUTO_SAVE_INDICATOR_LABELS.JUST_NOW).toBe('just now');
+  });
+
+  it('includes proper accessibility live region attributes', async () => {
+    const { container } = render(<AutoSaveIndicator value="Accessibility test" />);
+    await flushMicrotasks();
+
+    const liveRegion = container.querySelector('[aria-live="polite"]');
+    expect(liveRegion).toBeInTheDocument();
+    expect(liveRegion).toHaveAttribute('aria-atomic', 'true');
+  });
 });

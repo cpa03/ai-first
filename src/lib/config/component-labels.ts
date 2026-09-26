@@ -177,6 +177,10 @@ export const AUTO_SAVE_INDICATOR_LABELS = {
   SAVED: 'Saved',
   /** Just now timestamp label */
   JUST_NOW: 'just now',
+  /** Seconds ago timestamp generator */
+  SECONDS_AGO: (seconds: number) => `${seconds}s ago`,
+  /** Minutes ago timestamp generator */
+  MINUTES_AGO: (minutes: number) => `${minutes}m ago`,
 } as const;
 
 /**
