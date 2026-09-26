@@ -582,6 +582,20 @@ export const SKIP_LINK = 'skip-link';
 export const PEER_SR_ONLY = 'peer sr-only';
 
 /**
+ * Vertical centering pattern using transform
+ * Used in: InputWithValidation, SectionIndicator, Tooltip, KeyboardShortcutsHelp
+ * Combines top-1/2 with -translate-y-1/2 for perfect vertical centering
+ */
+export const VERTICAL_CENTER = 'top-1/2 -translate-y-1/2';
+
+/**
+ * Horizontal centering pattern using transform
+ * Used in: Tooltip, KeyboardShortcutHint
+ * Combines left-1/2 with -translate-x-1/2 for perfect horizontal centering
+ */
+export const HORIZONTAL_CENTER = 'left-1/2 -translate-x-1/2';
+
+/**
  * Combined patterns object for easy access
  * Used in: Components that need multiple patterns
  */
@@ -654,4 +668,6 @@ export const REMAINING_PATTERNS = {
   GRID_COL_SPAN,
   SKIP_LINK,
   PEER_SR_ONLY,
+  VERTICAL_CENTER,
+  HORIZONTAL_CENTER,
 } as const;
