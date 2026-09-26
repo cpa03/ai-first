@@ -18,20 +18,24 @@ const customJestConfig = {
     '!src/app/sitemap.ts',
     '!src/middleware.ts',
   ],
-  // Coverage gate roadmap (target: 85% global). NOT enforced yet on purpose:
-  // current global coverage is ~1% and the default suite is red (24 failed
-  // suites pre-existing, incl. timing-sensitive perf tests), so any numeric
-  // gate would break `test:ci` today. Graduation plan: once the suite is
-  // green, uncomment the block below in stages (e.g. 20% -> 50% -> 85%)
-  // ratcheting upward as coverage improves.
-  // coverageThreshold: {
-  //   global: {
-  //     statements: 85,
-  //     branches: 85,
-  //     functions: 85,
-  //     lines: 85,
-  //   },
-  // },
+  // Coverage gate (ENFORCED, ratcheting floor). Roadmap target: 85% global.
+  // The floor below (1%) is a regression tripwire, NOT the goal: it passes
+  // today (verified 2026-09-26: a single test file,
+  // tests/security/metrics-auth.test.ts, under the default
+  // collectCoverageFrom already yields ~11% stmts / ~3.6% branch+funcs /
+  // ~12% lines, so the full suite clears 1% with wide margin) but fails
+  // loudly if coverage collection silently breaks or collapses toward 0%.
+  // Ratchet upward as coverage improves (e.g. 20% -> 50% -> 85%) by raising
+  // these four numbers; do NOT jump to 85% while the default suite is red
+  // (24 pre-existing failed suites, incl. timing-sensitive perf tests).
+  coverageThreshold: {
+    global: {
+      statements: 1,
+      branches: 1,
+      functions: 1,
+      lines: 1,
+    },
+  },
   testMatch: [
     '<rootDir>/tests/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
@@ -44,9 +48,15 @@ const customJestConfig = {
     // (clarify*, ideas*, ideas-id-tasks, health-detailed) fail pre-existing
     // with HTTP 500 from route handlers (verified identical under
     // jest.config.api.js), and including them would break `test:ci`.
-    // Unification roadmap: fix those suites, then drop this line so the
-    // default `test:ci` run covers tests/api and `test:api` remains only
-    // for targeted runs.
+    // UNIFICATION CRITERION: fix those 8 suites to green under
+    // `npm run test:api` (jest.config.api.js), then drop this ignore line
+    // so the default `test:ci` run covers tests/api. Until then, tests/api
+    // is tracked SEPARATELY via `npm run test:api` -- do not consider the
+    // default suite "full" without it.
+    // Optional CI-snippet suggestion (for .github/workflows/
+    // test-unified-workflow.yml, NOT applied here): add a parallel job
+    // `- run: npm run test:api` alongside `test:ci` so both gates are
+    // visible until unification removes the need for the split.
     '<rootDir>/tests/api/',
     // tests/utils/ and tests/config/ contain helper modules only (no .test
     // files); excluded per-file below instead of per-directory.
