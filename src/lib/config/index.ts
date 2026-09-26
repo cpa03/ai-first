@@ -425,6 +425,7 @@ export {
   DASHBOARD_LABELS,
   BLUEPRINT_DISPLAY_LABELS,
   WHY_CHOOSE_SECTION_LABELS,
+  TYPING_INDICATOR_LABELS,
   type ShareButtonLabels,
   type CopyButtonLabels,
   type InputValidationLabels,
@@ -448,6 +449,7 @@ export {
   type ClarificationFlowLabels,
   type FeatureGridLabels,
   type WhyChooseSectionLabels,
+  type TypingIndicatorLabels,
 } from './component-labels';
 
 // Embedding Configuration
