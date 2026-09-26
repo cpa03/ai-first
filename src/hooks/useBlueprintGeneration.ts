@@ -14,20 +14,14 @@ const logger = createLogger('useBlueprintGeneration');
  * Return type for the useBlueprintGeneration hook
  */
 export interface UseBlueprintGenerationReturn {
-  /** Whether the blueprint is currently being generated */
   readonly isGenerating: boolean;
-  /** The generated blueprint content as a markdown string */
   readonly blueprint: string;
-  /** Whether the blueprint has been copied to clipboard */
   readonly copied: boolean;
-  /** Whether to show the success celebration animation */
   readonly showCelebration: boolean;
-  /** Handler to download the blueprint as a markdown file */
   readonly handleDownload: () => void;
-  /** Handler to copy the blueprint to clipboard */
   readonly handleCopy: () => Promise<void>;
-  /** Callback to dismiss the celebration animation */
   readonly dismissCelebration: () => void;
+  readonly handleCancel: () => void;
 }
 
 /**
@@ -87,6 +81,8 @@ export function useBlueprintGeneration(
   const [showCelebration, setShowCelebration] = useState(false);
   const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const downloadCleanupRef = useRef<NodeJS.Timeout | null>(null);
+  const isCancelledRef = useRef(false);
+  const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
 
   // Cleanup timeouts on unmount
   useEffect(() => {
@@ -106,15 +102,12 @@ export function useBlueprintGeneration(
 
   // Generate blueprint with delay
   useEffect(() => {
-    let isCancelled = false;
-    let timeoutId: NodeJS.Timeout | null = null;
-    // Ensure loading state is shown when inputs change
+    isCancelledRef.current = false;
     setIsGenerating(true);
 
     const generateBlueprint = () => {
-      timeoutId = setTimeout(() => {
-        // Prevent state updates if component unmounted during generation
-        if (isCancelled) return;
+      timeoutIdRef.current = setTimeout(() => {
+        if (isCancelledRef.current) return;
 
         const generatedBlueprint = generateBlueprintTemplate(idea, answers);
 
@@ -127,9 +120,10 @@ export function useBlueprintGeneration(
     generateBlueprint();
 
     return () => {
-      isCancelled = true;
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+      isCancelledRef.current = true;
+      if (timeoutIdRef.current) {
+        clearTimeout(timeoutIdRef.current);
+        timeoutIdRef.current = null;
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -192,6 +186,20 @@ export function useBlueprintGeneration(
     setShowCelebration(false);
   }, []);
 
+  const handleCancel = useCallback(() => {
+    isCancelledRef.current = true;
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+      timeoutIdRef.current = null;
+    }
+    setIsGenerating(false);
+    showToast({
+      type: 'info',
+      message: 'Blueprint generation cancelled',
+      duration: UI_CONFIG.TOAST_DURATION,
+    });
+  }, [showToast]);
+
   // PERFORMANCE: Memoize return object to ensure referential stability
   return useMemo(
     () => ({
@@ -202,6 +210,7 @@ export function useBlueprintGeneration(
       handleDownload,
       handleCopy,
       dismissCelebration,
+      handleCancel,
     }),
     [
       isGenerating,
@@ -211,6 +220,7 @@ export function useBlueprintGeneration(
       handleDownload,
       handleCopy,
       dismissCelebration,
+      handleCancel,
     ]
   );
 }
