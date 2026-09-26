@@ -179,6 +179,37 @@ describe('Alert Component', () => {
       const hintText = screen.getByText('dismiss');
       expect(hintText).toBeInTheDocument();
     });
+
+    it('should have active scale class on close button for micro-UX feedback', async () => {
+      await act(async () => {
+        render(
+          <Alert type="error" onClose={jest.fn()}>
+            Error message
+          </Alert>
+        );
+      });
+
+      const closeButton = screen.getByLabelText('Dismiss alert');
+      expect(closeButton.className).toContain('active:scale-95');
+    });
+
+    it('should show snooze hint label from component-labels when autoDismiss is active and alert is focused', async () => {
+      await act(async () => {
+        render(
+          <Alert type="info" onClose={jest.fn()} autoDismiss>
+            Info message
+          </Alert>
+        );
+      });
+
+      const alert = screen.getByRole('alert');
+      await act(async () => {
+        fireEvent.focus(alert);
+      });
+
+      expect(screen.getByText('snooze')).toBeInTheDocument();
+      expect(screen.getByText('dismiss')).toBeInTheDocument();
+    });
   });
 
   describe('Visual States', () => {
