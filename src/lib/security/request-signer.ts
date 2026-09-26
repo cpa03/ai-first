@@ -242,9 +242,14 @@ export function parseSignatureHeader(
       if (!value) continue;
 
       switch (key.trim()) {
-        case 't':
-          timestamp = parseInt(value, 10);
+        case 't': {
+          const trimmedVal = value.trim();
+          if (!/^\d+$/.test(trimmedVal)) {
+            return null;
+          }
+          timestamp = parseInt(trimmedVal, 10);
           break;
+        }
         case 'nonce':
           nonce = value;
           break;
@@ -254,7 +259,12 @@ export function parseSignatureHeader(
       }
     }
 
-    if (timestamp === undefined || signature === undefined) {
+    if (
+      timestamp === undefined ||
+      signature === undefined ||
+      Number.isNaN(timestamp) ||
+      !Number.isFinite(timestamp)
+    ) {
       return null;
     }
 
@@ -480,8 +490,16 @@ export function verifySignedUrl(url: string): VerificationResult & {
       };
     }
 
-    const timestamp = parseInt(timestampStr, 10);
-    if (isNaN(timestamp)) {
+    const trimmedTs = timestampStr.trim();
+    if (!/^\d+$/.test(trimmedTs)) {
+      return {
+        valid: false,
+        error: API_ERROR_MESSAGES.REQUEST_SIGNER.INVALID_TIMESTAMP_FORMAT,
+      };
+    }
+
+    const timestamp = parseInt(trimmedTs, 10);
+    if (Number.isNaN(timestamp) || !Number.isFinite(timestamp)) {
       return {
         valid: false,
         error: API_ERROR_MESSAGES.REQUEST_SIGNER.INVALID_TIMESTAMP_FORMAT,

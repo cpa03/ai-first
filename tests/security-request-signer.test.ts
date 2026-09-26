@@ -202,6 +202,16 @@ describe('Request Signer', () => {
       const result = parseSignatureHeader(header);
       expect(result).toBeNull();
     });
+
+    it('should return null for malformed or non-digit timestamp', () => {
+      expect(parseSignatureHeader('t=1234abc,sig=def456')).toBeNull();
+      expect(parseSignatureHeader('t=123.45,sig=def456')).toBeNull();
+      expect(parseSignatureHeader('t=NaN,sig=def456')).toBeNull();
+      expect(parseSignatureHeader('t=Infinity,sig=def456')).toBeNull();
+      expect(
+        parseSignatureHeader('t=1234567890\r\nHeader: inject,sig=def456')
+      ).toBeNull();
+    });
   });
 
   describe('createSignatureHeader', () => {
@@ -260,6 +270,18 @@ describe('Request Signer', () => {
     it('should reject URL without signature params', () => {
       const result = verifySignedUrl(baseUrl);
       expect(result.valid).toBe(false);
+    });
+
+    it('should reject URL with malformed timestamp format', () => {
+      const url1 = `${baseUrl}?_ts=12345abc&_sig=test`;
+      const result1 = verifySignedUrl(url1);
+      expect(result1.valid).toBe(false);
+      expect(result1.error).toBe('Invalid timestamp format');
+
+      const url2 = `${baseUrl}?_ts=123.45&_sig=test`;
+      const result2 = verifySignedUrl(url2);
+      expect(result2.valid).toBe(false);
+      expect(result2.error).toBe('Invalid timestamp format');
     });
   });
 
