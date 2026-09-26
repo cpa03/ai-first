@@ -165,10 +165,14 @@ class ExternalRateLimitTracker {
     let resetTime: number;
     if (resetStr) {
       const resetValue = parseInt(resetStr, 10);
-      resetTime =
-        resetValue < TIMESTAMP_CONFIG.UNIX_2020
-          ? Date.now() + resetValue * TIME_UNITS.SECOND
-          : resetValue * TIME_UNITS.SECOND;
+      if (isNaN(resetValue)) {
+        resetTime = Date.now() + TIME_UNITS.HOUR;
+      } else {
+        resetTime =
+          resetValue < TIMESTAMP_CONFIG.UNIX_2020
+            ? Date.now() + resetValue * TIME_UNITS.SECOND
+            : resetValue * TIME_UNITS.SECOND;
+      }
     } else {
       resetTime = Date.now() + TIME_UNITS.HOUR;
     }
