@@ -22,6 +22,8 @@ import {
   ENABLE_FEEDBACK,
   SPIN,
   ICON_SIZES,
+  TRANSITION_CLASSES,
+  UI_CONFIG,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { PLATFORM } from '@/lib/dom-utils';
@@ -91,6 +93,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
     const [justEnabled, setJustEnabled] = useState(false);
     const [isMac, setIsMac] = useState(false);
     const [shouldShowSpinner, setShouldShowSpinner] = useState(showDelay === 0);
+    const [isHoveredOrFocused, setIsHoveredOrFocused] = useState(false);
     const timeoutRefs = useRef<ReturnType<typeof setTimeout>[]>([]);
     const wasDisabledRef = useRef(disabled || loading);
     const prefersReducedMotion = usePrefersReducedMotion();
@@ -213,6 +216,11 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
         ? BUTTON_STYLES.STATES.disabled
         : BUTTON_STYLES.STATES.enabled;
 
+    const displayShortcut = shortcut?.map((key) => {
+      if (key === '⌘') return isMac ? '⌘' : 'Ctrl';
+      return key;
+    });
+
     const buttonElement = (
       <button
         ref={ref}
@@ -221,6 +229,10 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
           : { disabled: disabled || loading })}
         onClick={createRipple}
         onKeyDown={handleKeyDown}
+        onMouseEnter={() => setIsHoveredOrFocused(true)}
+        onMouseLeave={() => setIsHoveredOrFocused(false)}
+        onFocus={() => setIsHoveredOrFocused(true)}
+        onBlur={() => setIsHoveredOrFocused(false)}
         className={`
           ${BUTTON_STYLES.VARIANTS[variant]}
           ${BUTTON_STYLES.SIZES[size]}
@@ -258,6 +270,28 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
           </svg>
         )}
         {loading && shouldShowSpinner && loadingText ? loadingText : children}
+        {displayShortcut &&
+          displayShortcut.length > 0 &&
+          !disabled &&
+          !loading && (
+            <span
+              className={`hidden sm:inline-flex items-center gap-1 transition-opacity ${TRANSITION_CLASSES.DEFAULT} ${
+                isHoveredOrFocused && !prefersReducedMotion
+                  ? 'opacity-60'
+                  : 'opacity-0'
+              }`}
+              aria-hidden="true"
+            >
+              {displayShortcut.map((key, i) => (
+                <kbd
+                  key={i}
+                  className={`px-1 py-0.5 ${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}`}
+                >
+                  {key}
+                </kbd>
+              ))}
+            </span>
+          )}
         {ripples.map((ripple) => (
           <span
             key={ripple.id}
@@ -273,11 +307,6 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
         ))}
       </button>
     );
-
-    const displayShortcut = shortcut?.map((key) => {
-      if (key === '⌘') return isMac ? '⌘' : 'Ctrl';
-      return key;
-    });
 
     if (disabled && disabledTooltip) {
       return (

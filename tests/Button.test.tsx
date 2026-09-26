@@ -18,8 +18,8 @@ describe('Button', () => {
       });
 
       // In test environment (Linux), ⌘ is converted to Ctrl
-      expect(screen.getByText('Ctrl')).toBeInTheDocument();
-      expect(screen.getByText('S')).toBeInTheDocument();
+      expect(screen.getAllByText('Ctrl').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('S').length).toBeGreaterThanOrEqual(1);
     });
 
     it('does not show tooltip when shortcut prop is not provided', async () => {
@@ -82,8 +82,8 @@ describe('Button', () => {
         expect(screen.getByRole('tooltip')).toBeInTheDocument();
       });
 
-      expect(screen.getByText('Ctrl')).toBeInTheDocument();
-      expect(screen.getByText('S')).toBeInTheDocument();
+      expect(screen.getAllByText('Ctrl').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('S').length).toBeGreaterThanOrEqual(1);
     });
 
     it('does not render separator border-l when content is empty and only shortcut is provided', async () => {
@@ -97,8 +97,10 @@ describe('Button', () => {
         expect(screen.getByRole('tooltip')).toBeInTheDocument();
       });
 
-      const ctrlElement = screen.getByText('Ctrl');
-      const container = ctrlElement.parentElement;
+      const tooltip = screen.getByRole('tooltip');
+      const ctrlElement = tooltip.querySelector('kbd');
+      expect(ctrlElement).not.toBeNull();
+      const container = ctrlElement!.parentElement;
       expect(container).not.toHaveClass('border-l');
     });
 
