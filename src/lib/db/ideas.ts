@@ -32,10 +32,25 @@ export class IdeaService {
 
   /**
    * Create a new idea
+   *
+   * Application-layer NOT NULL guard: the `ideas.user_id`, `title`, and
+   * `raw_text` columns are nullable at the DB level (see supabase/schema.sql)
+   * with enforcement left to RLS. Validate here so orphan rows fail fast with
+   * a clear message instead of leaking through as silent NULLs.
    */
   async createIdea(idea: Omit<Idea, 'id' | 'created_at'>): Promise<Idea> {
     const client = this.clientProvider.getClient();
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
+
+    if (!idea.user_id || typeof idea.user_id !== 'string' || !idea.user_id.trim()) {
+      throw new Error('createIdea: user_id is required (must be a non-empty string)');
+    }
+    if (!idea.title || !idea.title.trim()) {
+      throw new Error('createIdea: title is required (must be a non-empty string)');
+    }
+    if (!idea.raw_text || !idea.raw_text.trim()) {
+      throw new Error('createIdea: raw_text is required (must be a non-empty string)');
+    }
 
     const { data, error } = await client
       .from(DB_TABLES.IDEAS)
@@ -353,7 +368,7 @@ export class IdeaService {
         const deliverableIds = deliverables.map((d) => d.id);
         const { count: taskCount, error: taskError } = await client
           .from(DB_TABLES.TASKS)
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact', head: true })
           .in('deliverable_id', deliverableIds)
           .is('deleted_at', null);
 

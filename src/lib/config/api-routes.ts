@@ -29,7 +29,7 @@
  * ```
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * API Routes
@@ -109,6 +109,22 @@ export const API_ROUTES = {
   ADMIN_RATE_LIMIT: EnvLoader.string(
     'API_ROUTE_ADMIN_RATE_LIMIT',
     '/api/admin/rate-limit'
+  ),
+  ADMIN_USERS: EnvLoader.string(
+    'API_ROUTE_ADMIN_USERS',
+    '/api/admin/users'
+  ),
+  ADMIN_USERS_ACTION: EnvLoader.string(
+    'API_ROUTE_ADMIN_USERS_ACTION',
+    '/api/admin/users/action'
+  ),
+  ADMIN_AUDIT_LOGS: EnvLoader.string(
+    'API_ROUTE_ADMIN_AUDIT_LOGS',
+    '/api/admin/audit-logs'
+  ),
+  ADMIN_SYSTEM_HEALTH: EnvLoader.string(
+    'API_ROUTE_ADMIN_SYSTEM_HEALTH',
+    '/api/admin/system-health'
   ),
 
   /** Export endpoints */

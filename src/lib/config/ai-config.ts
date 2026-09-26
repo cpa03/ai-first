@@ -1,4 +1,4 @@
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 import { RATE_LIMIT_STORE_CONFIG } from './rate-limit-values';
 
 /**

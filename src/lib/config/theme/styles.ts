@@ -65,9 +65,9 @@ export const BUTTON_STYLES = {
     danger: 'focus-visible:ring-red-500',
   } as const,
   SIZES: {
-    sm: `px-3 py-1.5 text-sm min-h-[${EnvLoader.number('UI_BUTTON_SM_HEIGHT', 36, 28, 48)}px]`,
-    md: `px-4 py-2 text-base min-h-[${EnvLoader.number('UI_BUTTON_MD_HEIGHT', 44, 36, 56)}px]`,
-    lg: `px-6 py-3 text-lg min-h-[${EnvLoader.number('UI_BUTTON_LG_HEIGHT', 48, 40, 64)}px]`,
+    sm: `px-3 py-1.5 text-sm min-h-[${EnvLoader.number('UI_BUTTON_SM_HEIGHT', 44, 44, 48)}px]`,
+    md: `px-4 py-2 text-base min-h-[${EnvLoader.number('UI_BUTTON_MD_HEIGHT', 44, 44, 56)}px]`,
+    lg: `px-6 py-3 text-lg min-h-[${EnvLoader.number('UI_BUTTON_LG_HEIGHT', 48, 44, 64)}px]`,
   } as const,
   STATES: {
     disabled:

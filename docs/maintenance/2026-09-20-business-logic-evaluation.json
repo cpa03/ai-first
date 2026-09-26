@@ -1,0 +1,20 @@
+{
+  "agen_penilai": "Business Logic & Edge-Case Agent",
+  "indikator": "Logika Bisnis & Penanganan Edge Cases",
+  "skor_saat_ini": 78,
+  "status": "BUTUH_PERBAIKAN",
+  "temuan_kunci": [
+    "validateRequestSize returns valid=true for NaN/negative/malformed content-length at src/lib/validators/schema-validator.ts:178 - comment says 'actual body size must be enforced downstream' but no downstream enforcement visible",
+    "sanitizeObject doesn't handle Map, Set, Date, RegExp, Error, ArrayBuffer, TypedArrays, WeakMap, WeakSet at src/lib/validators/input-sanitizer.ts:208-274 - returned as-is potentially leaking sensitive data in logs",
+    "sanitizeXSS filterAttributes regex doesn't handle unquoted attributes with spaces, missing closing quotes, or boolean attributes at src/lib/validators/xss-sanitizer.ts:147-172",
+    "detectPII sequential redaction can fail on overlapping patterns (e.g., email inside URL with credentials) at src/lib/validators/pii-detector.ts:52-59",
+    "getClientIdentifier throws Error when RATE_LIMIT_REJECT_UNTRUSTED=true and no trusted headers at src/lib/rate-limit.ts:401-406 - could cause unhandled promise rejection if not caught",
+    "breakdown/route.ts userResponses sanitization converts non-strings with String(value) producing '[object Object]'/'null' at src/app/api/breakdown/route.ts:57-65",
+    "clarify/answer/route.ts answer validation missing minLength check at src/app/api/clarify/answer/route.ts:36-55 (idea validation has both min/max)",
+    "InputWithValidation charCount uses .length (UTF-16 code units) not grapheme clusters at src/components/InputWithValidation.tsx:180 - mismatches server validation for emoji/multibyte",
+    "withHalfOpenLock lock cleanup race: halfOpenLocks.get(this.name) === currentLock can fail if another request replaced lock at src/lib/resilience/circuit-breaker.ts:90",
+    "api-handler uses TimeoutManager.withTimeout (setTimeout-based) not edge-compatible withTimeoutAndSignal at src/lib/api-handler/wrapper.ts:248 and src/lib/resilience/timeout-manager.ts:17-59",
+    "validateModelTemperature/validateModelMaxTokens accept explicit null/undefined in JSON as valid (default fallback) at src/lib/validators/ai-validator.ts:93-95,145-147 - edge case for optional config",
+    "sanitizeHtml cache keyed only by trimmed input - stale results if future config options added at src/lib/validators/input-sanitizer.ts:35,99-118,165-172"
+  ],
+  "rekomendasi_tindakan": "1) Add downstream body size enforcement in api-handler wrapper after validateRequestSize. 2) Extend sanitizeObject to handle Map/Set/Date/RegExp/Error/ArrayBuffer/TypedArray/WeakMap/WeakSet like pii-redaction.ts does. 3) Fix filterAttributes regex to handle unquoted/malformed/boolean attributes. 4) Make detectPII redaction atomic (collect all matches first, then replace). 5) Change getClientIdentifier to return fallback identifier instead of throwing, or ensure all callers catch. 6) Add minLength validation to clarify answer endpoint. 7) Use Intl.Segmenter for grapheme cluster counting in InputWithValidation. 8) Fix withHalfOpenLock cleanup to use a separate lock reference. 9) Switch api-handler to withTimeoutAndSignal for edge compatibility. 10) Document or restrict null/undefined in AI model config. 11) Include config hash in sanitizeHtml cache key."

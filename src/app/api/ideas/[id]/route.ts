@@ -4,11 +4,14 @@ import {
   standardSuccessResponse,
 } from '@/lib/api-handler';
 import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
+import { createLogger } from '@/lib/logger';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { validateIdeaId, sanitizeHtml } from '@/lib/validation';
 import { dbService, Idea } from '@/lib/db';
-import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
+import { requireAuth, verifyResourceOwnership, optionalAuth, isGuestRequest } from '@/lib/auth';
 import { IDEA_CONFIG, IDEA_STATUS_CONFIG, STATUS_CODES } from '@/lib/config';
+
+const logger = createLogger('IdeaByIdAPI');
 
 // Type guard for valid idea status values
 function isValidStatus(status: string): status is Idea['status'] {
@@ -27,6 +30,31 @@ async function handleGet(context: ApiContext) {
   const idValidation = validateIdeaId(ideaId || '');
   if (!idValidation.valid) {
     throw new ValidationError(idValidation.errors);
+  }
+
+  // Check if this is a guest request
+  const guestMode = isGuestRequest(request);
+
+  if (guestMode) {
+    // For guest mode, allow access to any idea by ID (for preview)
+    // In production, you might want to add additional validation
+    const idea = await dbService.getIdea(ideaId!);
+
+    if (!idea) {
+      throw new AppError(
+        API_ERROR_MESSAGES.NOT_FOUND.IDEA,
+        ErrorCode.NOT_FOUND,
+        STATUS_CODES.NOT_FOUND
+      );
+    }
+
+    // Return idea without ownership verification for guest preview
+    return standardSuccessResponse(
+      { ...idea, isGuestPreview: true },
+      context.requestId,
+      STATUS_CODES.OK,
+      context.rateLimit
+    );
   }
 
   // Authenticate user
@@ -65,12 +93,31 @@ async function handlePut(context: ApiContext) {
     throw new ValidationError(idValidation.errors);
   }
 
+  // Check if this is a guest request - guests cannot update ideas
+  const guestMode = isGuestRequest(request);
+  if (guestMode) {
+    throw new AppError(
+      'Guest users cannot update ideas. Please sign in to save changes.',
+      ErrorCode.AUTHORIZATION_ERROR,
+      STATUS_CODES.FORBIDDEN
+    );
+  }
+
   // Authenticate user
   const user = await requireAuth(request);
   let body: Record<string, unknown>;
   try {
     body = await request.json();
-  } catch {
+  } catch (parseError) {
+    logger.warnWithContext(
+      'Failed to parse JSON body for idea update',
+      {
+        requestId: context.requestId,
+        component: 'IdeaByIdAPI',
+        action: 'handlePut.parseBody',
+      },
+      parseError
+    );
     throw new ValidationError([
       {
         field: 'body',
@@ -145,6 +192,16 @@ async function handleDelete(context: ApiContext) {
   const idValidation = validateIdeaId(ideaId || '');
   if (!idValidation.valid) {
     throw new ValidationError(idValidation.errors);
+  }
+
+  // Check if this is a guest request - guests cannot delete ideas
+  const guestMode = isGuestRequest(request);
+  if (guestMode) {
+    throw new AppError(
+      'Guest users cannot delete ideas. Please sign in to manage your ideas.',
+      ErrorCode.AUTHORIZATION_ERROR,
+      STATUS_CODES.FORBIDDEN
+    );
   }
 
   // Authenticate user

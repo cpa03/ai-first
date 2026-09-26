@@ -4,7 +4,7 @@
  * These values are used in className strings and need to be configurable
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Dashboard-specific Tailwind arbitrary values

@@ -4,6 +4,9 @@ import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import Button from '@/components/Button';
+import InputWithValidation from '@/components/InputWithValidation';
+import Alert from '@/components/Alert';
 import { supabaseClient } from '@/lib/db';
 import { useCapsLock } from '@/hooks/useCapsLock';
 import {
@@ -52,15 +55,11 @@ import { useScrollToError } from '@/hooks/useScrollToError';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 
-// Dynamic imports for code splitting - reduce initial bundle size
-// SSR enabled to prevent CLS (Cumulative Layout Shift) - components render on server
-const Button = dynamic(() => import('@/components/Button'));
-const InputWithValidation = dynamic(
-  () => import('@/components/InputWithValidation')
-);
-const Alert = dynamic(() => import('@/components/Alert'));
-const CapsLockWarning = dynamic(() =>
-  import('@/components/CapsLockWarning').then((mod) => mod.CapsLockWarning)
+// CapsLockWarning is a below-fold enhancement: keep lazy-loaded (client-only,
+// no SSR) so it does not add to the critical login-form bundle.
+const CapsLockWarning = dynamic(
+  () => import('@/components/CapsLockWarning').then((mod) => mod.CapsLockWarning),
+  { ssr: false }
 );
 
 export default function LoginPage() {

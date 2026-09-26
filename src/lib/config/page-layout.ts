@@ -4,7 +4,7 @@
  * Eliminates arbitrary Tailwind values like min-h-[calc(100vh-4rem)]
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Page Layout Dimensions

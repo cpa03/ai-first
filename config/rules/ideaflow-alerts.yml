@@ -1,0 +1,279 @@
+# =============================================================================
+# Prometheus Alert Rules for IdeaFlow
+# =============================================================================
+# These rules define alerts for application health, performance, and infrastructure
+# =============================================================================
+
+groups:
+  # ---------------------------------------------------------------------------
+  # Application Health Alerts
+  # ---------------------------------------------------------------------------
+  - name: ideaflow-application-health
+    interval: 30s
+    rules:
+      # High error rate
+      - alert: IdeaFlowHighErrorRate
+        expr: |
+          sum(rate(http_request_errors_total[5m])) by (service)
+          /
+          sum(rate(http_requests_total[5m])) by (service)
+          > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          team: backend
+        annotations:
+          summary: "High error rate on {{ $labels.service }}"
+          description: "Error rate is above 5% for {{ $labels.service }} (current: {{ $value | humanizePercentage }})"
+          runbook_url: "https://github.com/cpa03/ai-first/blob/main/docs/troubleshooting.md#high-error-rate"
+
+      # High latency (p95 > 3s)
+      - alert: IdeaFlowHighLatency
+        expr: |
+          histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, route, service))
+          > 3
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "High latency on {{ $labels.route }}"
+          description: "p95 latency is above 3s for {{ $labels.route }} on {{ $labels.service }} (current: {{ $value }}s)"
+          runbook_url: "https://github.com/cpa03/ai-first/blob/main/docs/troubleshooting.md#high-latency"
+
+      # Circuit breaker open
+      - alert: IdeaFlowCircuitBreakerOpen
+        expr: circuit_breaker_state == 2
+        for: 1m
+        labels:
+          severity: critical
+          team: backend
+        annotations:
+          summary: "Circuit breaker open for {{ $labels.name }}"
+          description: "Circuit breaker for {{ $labels.name }} has been open for more than 1 minute"
+          runbook_url: "https://github.com/cpa03/ai-first/blob/main/docs/troubleshooting.md#circuit-breaker-open"
+
+      # Circuit breaker half-open (recovering)
+      - alert: IdeaFlowCircuitBreakerHalfOpen
+        expr: circuit_breaker_state == 1
+        for: 5m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "Circuit breaker half-open for {{ $labels.name }}"
+          description: "Circuit breaker for {{ $labels.name }} is half-open (recovering)"
+
+  # ---------------------------------------------------------------------------
+  # Resource Alerts
+  # ---------------------------------------------------------------------------
+  - name: ideaflow-resource-alerts
+    interval: 60s
+    rules:
+      # High memory usage
+      - alert: IdeaFlowHighMemoryUsage
+        expr: |
+          (process_resident_memory_bytes / 1024 / 1024) > 512
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "RSS memory is above 512MB (current: {{ $value }}MB)"
+
+      # Critical memory usage
+      - alert: IdeaFlowCriticalMemoryUsage
+        expr: |
+          (process_resident_memory_bytes / 1024 / 1024) > 1024
+        for: 2m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Critical memory usage on {{ $labels.instance }}"
+          description: "RSS memory is above 1GB (current: {{ $value }}MB) - possible memory leak"
+
+      # High CPU usage
+      - alert: IdeaFlowHighCPUUsage
+        expr: |
+          rate(process_cpu_seconds_total[5m]) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% (current: {{ $value | humanizePercentage }})"
+
+      # Event loop lag (Node.js specific)
+      - alert: IdeaFlowEventLoopLag
+        expr: nodejs_eventloop_lag_seconds > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "Event loop lag detected on {{ $labels.instance }}"
+          description: "Node.js event loop lag is above 100ms (current: {{ $value }}s)"
+
+  # ---------------------------------------------------------------------------
+  # Database Alerts
+  # ---------------------------------------------------------------------------
+  - name: ideaflow-database-alerts
+    interval: 60s
+    rules:
+      # High database connection usage
+      - alert: IdeaFlowHighDBConnections
+        expr: |
+          supabase_database_connections_active / supabase_database_connections_max > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: database
+        annotations:
+          summary: "High database connection usage"
+          description: "Active connections are above 80% of max (current: {{ $value | humanizePercentage }})"
+
+      # Critical database connection usage
+      - alert: IdeaFlowCriticalDBConnections
+        expr: |
+          supabase_database_connections_active / supabase_database_connections_max > 0.95
+        for: 2m
+        labels:
+          severity: critical
+          team: database
+        annotations:
+          summary: "Critical database connection usage"
+          description: "Active connections are above 95% of max (current: {{ $value | humanizePercentage }}) - connection pool exhaustion imminent"
+
+      # Slow database queries
+      - alert: IdeaFlowSlowDBQueries
+        expr: |
+          histogram_quantile(0.95, sum(rate(supabase_query_duration_seconds_bucket[5m])) by (le)) > 1
+        for: 5m
+        labels:
+          severity: warning
+          team: database
+        annotations:
+          summary: "Slow database queries detected"
+          description: "p95 query duration is above 1s (current: {{ $value }}s)"
+
+  # ---------------------------------------------------------------------------
+  # AI Cost Alerts
+  # ---------------------------------------------------------------------------
+  - name: ideaflow-ai-cost-alerts
+    interval: 300s
+    rules:
+      # Daily cost approaching limit
+      - alert: IdeaFlowAICostApproachingLimit
+        expr: |
+          ai_daily_cost_usd / 10.0 > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          team: ai
+        annotations:
+          summary: "AI daily cost approaching limit"
+          description: "Daily AI cost is at {{ $value | humanizePercentage }} of limit (${{ $value }} / $10.00)"
+
+      # Daily cost exceeded
+      - alert: IdeaFlowAICostExceeded
+        expr: |
+          ai_daily_cost_usd > 10.0
+        for: 1m
+        labels:
+          severity: critical
+          team: ai
+        annotations:
+          summary: "AI daily cost limit exceeded"
+          description: "Daily AI cost has exceeded $10.00 limit (current: ${{ $value }}) - AI features may be degraded"
+          runbook_url: "https://github.com/cpa03/ai-first/blob/main/docs/troubleshooting.md#ai-cost-limit-exceeded"
+
+  # ---------------------------------------------------------------------------
+  # Rate Limiting Alerts
+  # ---------------------------------------------------------------------------
+  - name: ideaflow-rate-limiting
+    interval: 60s
+    rules:
+      # High rate limiter hits
+      - alert: IdeaFlowHighRateLimitHits
+        expr: |
+          sum(rate(rate_limiter_hits_total[5m])) by (route) > 10
+        for: 2m
+        labels:
+          severity: warning
+          team: backend
+        annotations:
+          summary: "High rate limiter hits on {{ $labels.route }}"
+          description: "Rate limiter is being hit frequently on {{ $labels.route }} ({{ $value }} hits/sec)"
+
+  # ---------------------------------------------------------------------------
+  # Infrastructure Alerts
+  # ---------------------------------------------------------------------------
+  - name: ideaflow-infrastructure
+    interval: 60s
+    rules:
+      # Instance down
+      - alert: IdeaFlowInstanceDown
+        expr: up{job="ideaflow-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "IdeaFlow instance down"
+          description: "{{ $labels.instance }} has been down for more than 1 minute"
+          runbook_url: "https://github.com/cpa03/ai-first/blob/main/docs/troubleshooting.md#instance-down"
+
+      # SSL certificate expiring
+      - alert: IdeaFlowSSLCertExpiring
+        expr: ssl_certificate_expiry_days < 30
+        for: 1h
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "SSL certificate expiring soon"
+          description: "SSL certificate for {{ $labels.domain }} expires in {{ $value }} days"
+
+      # Disk space low
+      - alert: IdeaFlowDiskSpaceLow
+        expr: |
+          (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) < 0.1
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Disk space is below 10% ({{ $value | humanizePercentage }} remaining)"
+
+  # ---------------------------------------------------------------------------
+  # Deployment Alerts
+  # ---------------------------------------------------------------------------
+  - name: ideaflow-deployment
+    interval: 60s
+    rules:
+      # Deployment failed
+      - alert: IdeaFlowDeploymentFailed
+        expr: deployment_status{status="failed"} == 1
+        for: 0m
+        labels:
+          severity: critical
+          team: devops
+        annotations:
+          summary: "Deployment failed"
+          description: "Deployment of {{ $labels.version }} to {{ $labels.environment }} failed"
+          runbook_url: "https://github.com/cpa03/ai-first/blob/main/docs/troubleshooting.md#deployment-failed"
+
+      # Deployment rollback
+      - alert: IdeaFlowDeploymentRollback
+        expr: deployment_status{status="rolled_back"} == 1
+        for: 0m
+        labels:
+          severity: warning
+          team: devops
+        annotations:
+          summary: "Deployment rolled back"
+          description: "Deployment to {{ $labels.environment }} was rolled back to {{ $labels.previous_version }}"

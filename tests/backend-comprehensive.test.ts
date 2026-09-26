@@ -22,7 +22,7 @@ jest.mock('openai', () => {
   return jest.fn();
 });
 
-import { AIService, aiService } from '@/lib/ai';
+import { AIService, aiService, defaultProviderRegistry } from '@/lib/ai';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import { ExportService } from '@/lib/export-connectors';
@@ -70,6 +70,9 @@ describe('Backend Service Tests', () => {
     mockOpenAIConstructor.mockImplementation(
       () => mockOpenAI as unknown as OpenAI
     );
+
+    // Reset provider registry to pick up mocked OpenAI constructor
+    defaultProviderRegistry.reset();
 
     // Reset DatabaseService singleton to ensure it picks up mocked clients
     DatabaseService.resetInstance();

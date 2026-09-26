@@ -1,4 +1,4 @@
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * UI Dimensions Configuration
@@ -61,9 +61,9 @@ export const CONTAINER_WIDTHS = {
 export const MIN_SIZES = {
   /**
    * Toast action button minimum size (for touch targets)
-   * Env: UI_TOAST_BUTTON_MIN_SIZE (default: 32)
+   * Env: UI_TOAST_BUTTON_MIN_SIZE (default: 44)
    */
-  TOAST_BUTTON: EnvLoader.number('UI_TOAST_BUTTON_MIN_SIZE', 32, 24, 48),
+  TOAST_BUTTON: EnvLoader.number('UI_TOAST_BUTTON_MIN_SIZE', 44, 44, 48),
 
   /**
    * Keyboard shortcut badge minimum width

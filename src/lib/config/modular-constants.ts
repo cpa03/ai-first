@@ -29,7 +29,7 @@
  * 4. Update this header with the new config group
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Hash and Numeric Constants

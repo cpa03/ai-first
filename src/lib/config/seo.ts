@@ -5,7 +5,7 @@
  */
 
 import { APP_CONFIG } from './app';
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const SEO_CONFIG = {
   METADATA: {
@@ -130,6 +130,70 @@ export const SEO_CONFIG = {
   SCHEMA_ORG: {
     CONTEXT: 'https://schema.org',
     IN_STOCK: 'https://schema.org/InStock',
+    ARTICLE: 'https://schema.org/Article',
+    BREADCRUMB_LIST: 'https://schema.org/BreadcrumbList',
+    LIST_ITEM: 'https://schema.org/ListItem',
+    WEB_APPLICATION: 'https://schema.org/WebApplication',
+  } as const,
+
+  /**
+   * Structured Data Templates
+   * Reusable templates for JSON-LD structured data
+   */
+  STRUCTURED_DATA: {
+    /**
+     * Article schema for results page - represents the generated blueprint/project plan
+     */
+    ARTICLE: (params: {
+      headline: string;
+      description: string;
+      url: string;
+      datePublished: string;
+      dateModified: string;
+      authorName: string;
+      publisherName: string;
+      publisherLogo: string;
+      imageUrl: string;
+    }) => ({
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: params.headline,
+      description: params.description,
+      url: params.url,
+      datePublished: params.datePublished,
+      dateModified: params.dateModified,
+      author: {
+        '@type': 'Person',
+        name: params.authorName,
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: params.publisherName,
+        logo: {
+          '@type': 'ImageObject',
+          url: params.publisherLogo,
+        },
+      },
+      image: params.imageUrl,
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': params.url,
+      },
+    }),
+
+    /**
+     * BreadcrumbList schema for clarify page - shows navigation hierarchy
+     */
+    BREADCRUMB_LIST: (items: Array<{ name: string; url: string; position: number }>) => ({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: items.map((item) => ({
+        '@type': 'ListItem',
+        position: item.position,
+        name: item.name,
+        item: item.url,
+      })),
+    }),
   } as const,
 } as const;
 

@@ -4,7 +4,7 @@
  * Supports environment variable overrides via EnvLoader
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 import { generateId } from '@/lib/security/crypto';
 
 export const TIMELINE_CONFIG = {

@@ -125,10 +125,13 @@ async function handleCSPReport(context: ApiContext): Promise<Response> {
  * Preserves 204 response behavior for browser CSP reporting compatibility.
  * SECURITY: skipCSRF is set to true because CSP reports are sent out-of-band by the browser
  * and do not have side effects on user sessions, so CSRF verification is not required.
+ * SECURITY: skipSuspiciousPatterns is set to true because CSP reports legitimately contain
+ * URLs (document-uri, blocked-uri) that would trigger false positive SSRF detection.
  */
 export const POST = withApiHandler(handleCSPReport, {
   rateLimit: 'lenient',
   skipCSRF: true,
+  skipSuspiciousPatterns: true,
 });
 
 /**

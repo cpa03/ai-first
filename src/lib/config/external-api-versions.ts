@@ -15,7 +15,7 @@
  * @module lib/config/external-api-versions
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const EXTERNAL_API_VERSIONS = {
   /**

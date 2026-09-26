@@ -275,6 +275,13 @@ function shouldTrackEvent(event: AnalyticsEventType): boolean {
 }
 
 function flushEvents(): void {
+  // Always clear + null the scheduled timer first so a flush triggered
+  // with an empty queue (or via reset) cannot leave a stale handle behind.
+  if (flushTimeout) {
+    clearTimeout(flushTimeout);
+    flushTimeout = null;
+  }
+
   if (eventQueue.length === 0) return;
 
   const eventsToSend = [...eventQueue];
@@ -296,11 +303,6 @@ function flushEvents(): void {
     ANALYTICS_CONFIG.DEBUG
   ) {
     logger.debug('[Analytics] Events:', JSON.stringify(eventsToSend, null, 2));
-  }
-
-  if (flushTimeout) {
-    clearTimeout(flushTimeout);
-    flushTimeout = null;
   }
 }
 
@@ -346,16 +348,24 @@ function sendEventsToPostHogServer(events: AnalyticsEventProperties[]): void {
     distinct_id: event.session_id || event.user_id || 'anonymous',
   }));
 
-  // Send to PostHog batch endpoint
+  // Send to PostHog batch endpoint with an abortable fetch so
+  // fire-and-forget requests cannot hang indefinitely.
+  const controller = new AbortController();
+  const abortTimer = setTimeout(() => controller.abort(), 5000);
   fetch(`${host}/capture/`, {
     method: HTTP_METHODS.POST,
     headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
     body: JSON.stringify(posthogEvents),
-  }).catch((error) => {
-    if (ANALYTICS_CONFIG.DEBUG) {
-      logger.error('Failed to send events to PostHog:', error);
-    }
-  });
+    signal: controller.signal,
+  })
+    .catch((error) => {
+      if (ANALYTICS_CONFIG.DEBUG) {
+        logger.error('Failed to send events to PostHog:', error);
+      }
+    })
+    .finally(() => {
+      clearTimeout(abortTimer);
+    });
 }
 
 /**
@@ -385,17 +395,25 @@ function sendEventsToPostHogClient(events: AnalyticsEventProperties[]): void {
     distinct_id: event.session_id || event.user_id || 'anonymous',
   }));
 
-  // Send to PostHog using fetch
+  // Send to PostHog using abortable fetch so pending requests
+  // can be cancelled instead of leaking on navigation/unmount.
+  const controller = new AbortController();
+  const abortTimer = setTimeout(() => controller.abort(), 5000);
   fetch(`${host}/capture/`, {
     method: HTTP_METHODS.POST,
     headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
     body: JSON.stringify(posthogEvents),
     credentials: 'omit' as RequestCredentials,
-  }).catch((error) => {
-    if (ANALYTICS_CONFIG.DEBUG) {
-      logger.error('Failed to send events to PostHog:', error);
-    }
-  });
+    signal: controller.signal,
+  })
+    .catch((error) => {
+      if (ANALYTICS_CONFIG.DEBUG) {
+        logger.error('Failed to send events to PostHog:', error);
+      }
+    })
+    .finally(() => {
+      clearTimeout(abortTimer);
+    });
 }
 
 /**
@@ -640,6 +658,54 @@ export function trackFunnelDropoff(
  */
 export function flush(): void {
   flushEvents();
+}
+
+/**
+ * Flush pending events via `navigator.sendBeacon` when available so
+ * events are not lost on page unload. Falls back to a regular flush.
+ */
+export function flushWithBeacon(): void {
+  if (eventQueue.length === 0) return;
+  if (
+    typeof window === 'undefined' ||
+    typeof navigator === 'undefined' ||
+    typeof navigator.sendBeacon !== 'function' ||
+    !(isPostHogConfigured() || ANALYTICS_CONFIG.POSTHOG_ENABLED)
+  ) {
+    flushEvents();
+    return;
+  }
+  try {
+    const eventsToSend = [...eventQueue];
+    const host = ANALYTICS_CONFIG.POSTHOG_HOST;
+    const blob = new Blob([JSON.stringify(eventsToSend)], {
+      type: 'application/json',
+    });
+    const sent = navigator.sendBeacon(`${host}/capture/`, blob);
+    if (sent) {
+      eventQueue = [];
+      if (flushTimeout) {
+        clearTimeout(flushTimeout);
+        flushTimeout = null;
+      }
+      return;
+    }
+  } catch {
+    // Fall through to regular flush below
+  }
+  flushEvents();
+}
+
+/**
+ * Register a `beforeunload` listener that beacon-flushes analytics.
+ * Returns a cleanup function that removes the listener.
+ */
+export function setupAnalyticsUnloadFlush(): () => void {
+  if (typeof window === 'undefined') return () => undefined;
+  window.addEventListener('beforeunload', flushWithBeacon);
+  return () => {
+    window.removeEventListener('beforeunload', flushWithBeacon);
+  };
 }
 
 /**

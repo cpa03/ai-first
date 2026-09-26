@@ -11,10 +11,27 @@
 
 import 'openai/shims/node';
 
-import { AIService, AIModelConfig } from '@/lib/ai';
+import {
+  AIService,
+  AIModelConfig,
+  defaultProviderRegistry,
+  AIRateLimiter,
+} from '@/lib/ai';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import { MOCK_SECRETS } from './utils/test-secrets';
+import type { ResilienceManagerType } from '@/lib/ai/rate-limiter';
+
+// Mock resilience manager for testing
+const mockResilienceManager = {
+  execute: jest.fn(async <T,>(operation: () => Promise<T>): Promise<T> => operation()),
+  getCircuitBreakerStates: jest.fn(() => ({})),
+  getAllCircuitBreakerStatuses: jest.fn(() => ({})),
+  getCircuitBreaker: jest.fn(() => undefined),
+  resetCircuitBreaker: jest.fn(),
+  resetAllCircuitBreakers: jest.fn(),
+  getCircuitBreakerNames: jest.fn(() => []),
+};
 
 jest.mock('openai', () => {
   return jest.fn();
@@ -22,38 +39,6 @@ jest.mock('openai', () => {
 
 jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn(),
-}));
-
-jest.mock('@/lib/resilience', () => ({
-  resilienceManager: {
-    execute: jest.fn((operation) => operation()),
-  },
-  defaultResilienceConfigs: {
-    openai: {
-      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 10000 },
-      timeout: { timeoutMs: 60000 },
-      circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 60000 },
-    },
-    default: {
-      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 10000 },
-      timeout: { timeoutMs: 30000 },
-      circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 60000 },
-    },
-  },
-  DEFAULT_TIMEOUTS: {
-    openai: 60000,
-    notion: 30000,
-    trello: 30000,
-    github: 30000,
-    database: 10000,
-  },
-  circuitBreakerManager: {
-    getAllStatuses: jest.fn(() => ({})),
-  },
-  TimeoutManager: {
-    withTimeout: jest.fn((operation, options) => operation()),
-  },
-  withTimeout: jest.fn((operation, options) => operation()),
 }));
 
 // Mock window to be undefined (server-side) - required for AIService security checks
@@ -99,6 +84,13 @@ describe('AIService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockResilienceManager.execute.mockImplementation(async (op) => op());
+    mockResilienceManager.getCircuitBreakerStates.mockReturnValue({});
+    mockResilienceManager.getAllCircuitBreakerStatuses.mockReturnValue({});
+    mockResilienceManager.getCircuitBreaker.mockReturnValue(undefined);
+    mockResilienceManager.resetCircuitBreaker.mockReset();
+    mockResilienceManager.resetAllCircuitBreakers.mockReset();
+    mockResilienceManager.getCircuitBreakerNames.mockReturnValue([]);
 
     process.env.OPENAI_API_KEY = MOCK_SECRETS.OPENAI_API_KEY;
     process.env.NEXT_PUBLIC_SUPABASE_URL = MOCK_SECRETS.SUPABASE_URL;
@@ -106,10 +98,17 @@ describe('AIService', () => {
       MOCK_SECRETS.SUPABASE_SERVICE_ROLE_KEY;
     process.env.COST_LIMIT_DAILY = '10.0';
 
+    // Reset the provider registry to pick up the new environment variables
+    defaultProviderRegistry.reset();
+
     mockCreateClient.mockReturnValue(mockSupabaseClient);
     mockOpenAIConstructor.mockImplementation(() => mockOpenAIClient);
 
-    aiService = new AIService();
+    // Create AIService with mock resilience manager
+    const rateLimiter = new AIRateLimiter(
+      mockResilienceManager as unknown as ResilienceManagerType
+    );
+    aiService = new AIService(undefined, undefined, rateLimiter);
   });
 
   afterEach(() => {
@@ -124,7 +123,7 @@ describe('AIService', () => {
     it('should initialize OpenAI client when API key is provided', () => {
       expect(OpenAI).toHaveBeenCalledWith({
         apiKey: MOCK_SECRETS.OPENAI_API_KEY,
-        timeout: 60000,
+        timeout: 30000,
       });
     });
 
@@ -156,7 +155,12 @@ describe('AIService', () => {
 
     it('should throw error when OpenAI provider not initialized', async () => {
       process.env.OPENAI_API_KEY = '';
-      const service = new AIService();
+      // Reset provider registry to pick up the removed API key
+      defaultProviderRegistry.reset();
+      const rateLimiter = new AIRateLimiter(
+        mockResilienceManager as unknown as ResilienceManagerType
+      );
+      const service = new AIService(undefined, undefined, rateLimiter);
       const config: AIModelConfig = {
         provider: 'openai',
         model: 'gpt-4',
@@ -168,6 +172,7 @@ describe('AIService', () => {
         'OpenAI API key not configured'
       );
       process.env.OPENAI_API_KEY = MOCK_SECRETS.OPENAI_API_KEY;
+      defaultProviderRegistry.reset();
     });
   });
 
@@ -515,7 +520,12 @@ describe('AIService', () => {
 
     it('should return unhealthy when no providers available', async () => {
       delete process.env.OPENAI_API_KEY;
-      const service = new AIService();
+      // Reset provider registry to pick up the removed API key
+      defaultProviderRegistry.reset();
+      const rateLimiter = new AIRateLimiter(
+        mockResilienceManager as unknown as ResilienceManagerType
+      );
+      const service = new AIService(undefined, undefined, rateLimiter);
 
       const health = await service.healthCheck();
 

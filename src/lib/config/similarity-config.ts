@@ -4,7 +4,7 @@
  * Eliminates hardcoded values from similarity-service.ts and API routes
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Similarity search configuration

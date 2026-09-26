@@ -69,6 +69,10 @@ jest.mock('@/lib/auth', () => ({
     .fn()
     .mockResolvedValue({ id: 'test-user-id', email: 'test@example.com' }),
   verifyResourceOwnership: jest.fn(),
+  isGuestRequest: jest.fn().mockReturnValue(false),
+  getUserIdOrGuest: jest
+    .fn()
+    .mockResolvedValue({ userId: 'test-user-id', isGuest: false }),
 }));
 
 import { GET, PUT, DELETE } from '@/app/api/ideas/[id]/route';

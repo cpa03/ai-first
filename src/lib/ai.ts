@@ -34,6 +34,14 @@ import { AI_TOKEN_ESTIMATION } from './config/time';
 import { resourceCleanupManager } from './resource-cleanup';
 import { validateAIModelConfig } from './validation';
 
+// Import new modular components
+import { AIProviderRegistry, defaultProviderRegistry } from './ai/provider-registry';
+import { AICostTracker } from './ai/cost-tracker';
+import { AIRateLimiter } from './ai/rate-limiter';
+
+// Import types from dedicated types file
+import type { AIModelConfig, CostTracker, ContextWindow } from './ai/types';
+
 function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
   return {
     timeoutMs: config.timeout.timeoutMs,
@@ -47,101 +55,46 @@ function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
 
 const logger = createLogger('AIService');
 
-// Model configuration
-export interface AIModelConfig {
-  provider: 'openai' | 'anthropic';
-  model: string;
-  maxTokens: number;
-  temperature: number;
-}
-
-// Cost tracking
-export interface CostTracker {
-  tokensUsed: number;
-  cost: number;
-  model: string;
-  timestamp: Date;
-}
-
-// Memory leak prevention: Maximum number of cost trackers to prevent unbounded growth
-const MAX_COST_TRACKERS = AI_SERVICE_LIMITS.MAX_COST_TRACKERS;
-
-// Memory leak prevention: Maximum age of cost tracker entries (24 hours)
-const MAX_COST_TRACKER_AGE_MS = AI_SERVICE_LIMITS.MAX_COST_TRACKER_AGE_MS;
-
-// Context windowing strategy
-export interface ContextWindow {
-  shortTerm: Array<{ role: string; content: string }>;
-  longTermSummary?: string;
-  maxTokens: number;
-}
+// Re-export types for backward compatibility
+export type { AIModelConfig, CostTracker, ContextWindow };
 
 class AIService {
+  // Use new modular components
+  private providerRegistry: AIProviderRegistry;
+  private costTracker: AICostTracker;
+  private rateLimiter: AIRateLimiter;
+
+  // Legacy properties for backward compatibility
   private openai: OpenAI | null = null;
   private anthropic: Anthropic | null = null;
   // SECURITY: Lazy-loaded Supabase client to prevent service role key exposure in client bundle
   // The client is only initialized when explicitly needed in server-side contexts
   private _supabase: SupabaseClient | null = null;
-  private costTrackers: CostTracker[] = [];
-  private todayCostCache: Cache<number>;
   private responseCache: Cache<string>;
-  private cleanupIntervalId: ReturnType<typeof setInterval> | null = null;
   private encoder = new TextEncoder();
 
-  constructor() {
-    this.todayCostCache = new Cache<number>({
-      ttl: AI_CONFIG.COST_CACHE_TTL_MS,
-      maxSize: AI_CONFIG.COST_CACHE_MAX_SIZE,
-    });
+  // Allow dependency injection for testing
+  constructor(
+    providerRegistry?: AIProviderRegistry,
+    costTracker?: AICostTracker,
+    rateLimiter?: AIRateLimiter
+  ) {
+    // Initialize modular components
+    this.providerRegistry = providerRegistry || defaultProviderRegistry;
+    this.costTracker = costTracker || new AICostTracker();
+    this.rateLimiter = rateLimiter || new AIRateLimiter();
+
+    // Initialize legacy properties from provider registry for backward compatibility
+    this.openai = this.providerRegistry.getOpenAIClient();
+    this.anthropic = this.providerRegistry.getAnthropicClient();
 
     this.responseCache = new Cache<string>({
       ttl: AI_CONFIG.RESPONSE_CACHE_TTL_MS,
       maxSize: AI_CONFIG.RESPONSE_CACHE_MAX_SIZE,
     });
 
-    // SECURITY: Removed direct Supabase client initialization from constructor
-    // to prevent SUPABASE_SERVICE_ROLE_KEY from being accessed at module load time
-    // Use getSupabase() method instead for lazy initialization
-
-    if (process.env[AI_ENV_KEYS.OPENAI_API_KEY]) {
-      this.openai = new OpenAI({
-        apiKey: process.env[AI_ENV_KEYS.OPENAI_API_KEY],
-        timeout: DEFAULT_TIMEOUTS.openai,
-      });
-    }
-
-    if (process.env[AI_ENV_KEYS.ANTHROPIC_API_KEY]) {
-      this.anthropic = new Anthropic({
-        apiKey: process.env[AI_ENV_KEYS.ANTHROPIC_API_KEY],
-        timeout: DEFAULT_TIMEOUTS.openai,
-      });
-    }
-
-    // Periodic cleanup of cost trackers to prevent memory leaks
-    // Only start in production to avoid open handles in tests
-    // RELIABILITY: Conditional interval start prevents Jest force exit warnings
-    if (
-      typeof process !== 'undefined' &&
-      process.env[PLATFORM_ENV_KEYS.NODE_ENV] === 'production' &&
-      !process.env[PLATFORM_ENV_KEYS.JEST_WORKER_ID] &&
-      !process.env[PLATFORM_ENV_KEYS.VITEST_WORKER_ID]
-    ) {
-      this.cleanupIntervalId = setInterval(() => {
-        this.cleanupOldCostTrackers();
-      }, AI_CONFIG.COST_TRACKER_CLEANUP_INTERVAL_MS);
-
-      // Prevent interval from keeping process alive
-      if (
-        this.cleanupIntervalId &&
-        typeof (this.cleanupIntervalId as NodeJS.Timeout).unref === 'function'
-      ) {
-        (this.cleanupIntervalId as NodeJS.Timeout).unref();
-      }
-
-      resourceCleanupManager.register('ai-service-interval', () =>
-        this.cleanup()
-      );
-    }
+    // Register cleanup with resource manager
+    resourceCleanupManager.register('ai-service', () => this.cleanup());
   }
 
   /**
@@ -198,14 +151,8 @@ class AIService {
       );
     }
 
-    // Validate API keys and configuration
-    if (config.provider === 'openai' && !this.openai) {
-      throw new Error(API_ERROR_MESSAGES.AI.OPENAI_API_KEY_NOT_CONFIGURED);
-    }
-
-    if (config.provider === 'anthropic' && !this.anthropic) {
-      throw new Error(API_ERROR_MESSAGES.AI.ANTHROPIC_API_KEY_NOT_CONFIGURED);
-    }
+    // Validate API keys and configuration via provider registry
+    this.providerRegistry.validateProviderConfig(config);
 
     // Log initialization for audit
     await this.logAgentAction('ai-service', 'initialize', {
@@ -245,7 +192,8 @@ class AIService {
     }
 
     try {
-      const response = await this.executeWithResilience(async () => {
+      // Use rate limiter for resilience
+      const response = await this.rateLimiter.executeWithResilience(async () => {
         if (config.provider === 'openai') {
           if (!this.openai) {
             const { AppError, ErrorCode } = await import('./errors');
@@ -299,7 +247,7 @@ class AIService {
 
           const usage = completion.usage;
           if (usage) {
-            await this.trackCost(usage.total_tokens, config.model);
+            await this.costTracker.trackCost(usage.total_tokens, config.model);
           }
 
           return response;
@@ -368,7 +316,7 @@ class AIService {
             const totalTokens =
               (response.usage.input_tokens || 0) +
               (response.usage.output_tokens || 0);
-            await this.trackCost(totalTokens, config.model);
+            await this.costTracker.trackCost(totalTokens, config.model);
           }
 
           return anthropicResponse;
@@ -442,47 +390,6 @@ class AIService {
       .join('');
 
     return hashHex.substring(0, AI_SERVICE_LIMITS.CACHE_KEY_HASH_LENGTH);
-  }
-
-  private async executeWithResilience<T>(
-    operation: () => Promise<T>,
-    config: AIModelConfig
-  ): Promise<T> {
-    const { resilienceManager, defaultResilienceConfigs } =
-      await import('@/lib/resilience');
-
-    // Use 'anthropic' key if provider is anthropic, otherwise use provider name or fall back to default
-    const serviceKey =
-      config.provider === 'openai'
-        ? 'openai'
-        : config.provider === 'anthropic'
-          ? 'anthropic'
-          : 'default';
-
-    try {
-      return await resilienceManager.execute(
-        operation,
-        toResilienceConfig(
-          defaultResilienceConfigs[
-            serviceKey as keyof typeof defaultResilienceConfigs
-          ] || defaultResilienceConfigs.openai
-        ),
-        `ai-${config.provider}-${config.model}`
-      );
-    } catch (error) {
-      // Wrap non-AppError errors for consistency
-      if (!(error instanceof Error)) {
-        const { AppError, ErrorCode } = await import('./errors');
-        throw new AppError(
-          String(error),
-          ErrorCode.EXTERNAL_SERVICE_ERROR,
-          STATUS_CODES.BAD_GATEWAY,
-          undefined,
-          true
-        );
-      }
-      throw error;
-    }
   }
 
   // Context windowing strategy
@@ -614,152 +521,65 @@ class AIService {
     return context;
   }
 
-  // Cost tracking and guardrails
-  private async trackCost(tokens: number, model: string): Promise<void> {
-    // Memory leak prevention: Clean up old cost trackers before adding new ones
-    this.cleanupOldCostTrackers();
+  // Get cost tracking data (delegates to costTracker)
+  getCostTracking(): CostTracker[] {
+    return this.costTracker.getCostTracking();
+  }
 
-    // Simple cost calculation (can be enhanced with actual pricing)
-    const costPerToken = this.getCostPerToken(model);
-    const cost = tokens * costPerToken;
-
-    // PERFORMANCE: Get current today's cost. This is O(1) if cached, O(n) if not.
-    // We call it before pushing the new tracker to ensure it only includes previous costs.
-    const previousTodayCost = this.getTodayCost();
-    const totalTodayCost = previousTodayCost + cost;
-
-    const tracker: CostTracker = {
-      tokensUsed: tokens,
-      cost,
-      model,
-      timestamp: new Date(),
+  getCacheStats(): {
+    costCache: ReturnType<Cache<number>['getStats']>;
+    responseCache: ReturnType<Cache<string>['getStats']>;
+    costCacheSize: number;
+    responseCacheSize: number;
+  } {
+    return {
+      costCache: this.costTracker.getCacheStats(),
+      responseCache: this.responseCache.getStats(),
+      costCacheSize: this.costTracker.getCacheStats().size,
+      responseCacheSize: this.responseCache.size,
     };
-
-    this.costTrackers.push(tracker);
-
-    // Memory leak prevention: If array exceeds max size, remove oldest 20% of entries
-    if (this.costTrackers.length > MAX_COST_TRACKERS) {
-      const entriesToRemove = Math.floor(
-        MAX_COST_TRACKERS * AI_SERVICE_LIMITS.CLEANUP_PERCENTAGE
-      );
-      this.costTrackers.splice(0, entriesToRemove);
-    }
-
-    // PERFORMANCE: Update cache with the new total instead of clearing it.
-    // This keeps subsequent calls to getTodayCost() as O(1).
-    // We use the day-start numeric timestamp as the key to match getTodayCost.
-    const todayDate = new Date();
-    todayDate.setHours(0, 0, 0, 0);
-    const dayStart = todayDate.getTime();
-    const cacheKey = `today:${dayStart}`;
-    this.todayCostCache.set(cacheKey, totalTodayCost);
-
-    const dailyLimit = parseFloat(
-      process.env[AI_ENV_KEYS.COST_LIMIT_DAILY] ||
-        String(AI_CONFIG.DEFAULT_DAILY_COST_LIMIT)
-    );
-
-    if (totalTodayCost > dailyLimit) {
-      throw new Error(
-        `${API_ERROR_MESSAGES.AI.COST_LIMIT_EXCEEDED}. Today's cost: $${totalTodayCost}, Limit: $${dailyLimit}`
-      );
-    }
-
-    // Store cost tracking
-    const supabase = this.getSupabase();
-    if (supabase) {
-      await supabase.from(DB_TABLES.AGENT_LOGS).insert({
-        agent: 'ai-service',
-        action: 'cost-tracking',
-        payload: tracker,
-      });
-    }
   }
 
-  private getCostPerToken(model: string): number {
-    return (
-      AI_CONFIG.PRICING[model as keyof typeof AI_CONFIG.PRICING] ??
-      AI_CONFIG.DEFAULT_PRICING_PER_TOKEN
-    );
+  clearCostCache(): void {
+    this.costTracker.clearCostCache();
   }
 
-  /**
-   * Binary search to find the first index where costTracker.timestamp >= cutoffTime
-   * PERFORMANCE: O(log N) complexity compared to O(N) linear scan.
-   */
-  private findFirstValidIndex(cutoffTime: number): number {
-    let low = 0;
-    let high = this.costTrackers.length - 1;
-    let result = -1;
+  clearResponseCache(): void {
+    this.responseCache.clear();
+  }
 
-    while (low <= high) {
-      const mid = (low + high) >>> 1;
-      if (this.costTrackers[mid].timestamp.getTime() >= cutoffTime) {
-        result = mid;
-        high = mid - 1;
-      } else {
-        low = mid + 1;
+  invalidateIdeaCache(ideaId: string): void {
+    const contextCacheKey = `context:${ideaId}`;
+    const ideaUpdateCacheKey = `idea:${ideaId}:updated`;
+
+    this.responseCache.delete(contextCacheKey);
+    this.responseCache.delete(ideaUpdateCacheKey);
+  }
+
+  // Health check (delegates to rateLimiter)
+  async healthCheck(): Promise<{
+    status: string;
+    providers: string[];
+    circuitBreakers: Record<
+      string,
+      {
+        state: 'closed' | 'open' | 'half-open';
+        failures: number;
+        nextAttemptTime?: string;
       }
-    }
-
-    return result;
-  }
-
-  /**
-   * Memory leak prevention: Clean up old cost tracker entries
-   * Removes entries older than MAX_COST_TRACKER_AGE_MS (24 hours)
-   */
-  private cleanupOldCostTrackers(): void {
-    const cutoffTime = Date.now() - MAX_COST_TRACKER_AGE_MS;
-
-    // PERFORMANCE: Use O(log N) binary search instead of O(N) linear scan.
-    const firstValidIndex = this.findFirstValidIndex(cutoffTime);
-
-    if (firstValidIndex === -1) {
-      // All entries are expired
-      this.costTrackers = [];
-    } else if (firstValidIndex > 0) {
-      // Some entries are expired, remove them
-      this.costTrackers = this.costTrackers.slice(firstValidIndex);
-    }
-    // If firstValidIndex is 0, all entries are still valid; no action needed.
-  }
-
-  /**
-   * Cleanup method to stop the interval and prevent memory leaks
-   * Should be called on service shutdown
-   */
-  cleanup(): void {
-    if (this.cleanupIntervalId) {
-      clearInterval(this.cleanupIntervalId);
-      this.cleanupIntervalId = null;
-    }
-  }
-
-  private getTodayCost(): number {
-    const todayDate = new Date();
-    todayDate.setHours(0, 0, 0, 0);
-    const dayStart = todayDate.getTime();
-    const cacheKey = `today:${dayStart}`;
-
-    const cachedCost = this.todayCostCache.get(cacheKey);
-    if (cachedCost !== null) {
-      return cachedCost;
-    }
-
-    // PERFORMANCE: Use O(log N) binary search to find the start of today's entries.
-    // This avoids O(N) traversal and expensive toDateString() formatting in a loop.
-    const firstTodayIndex = this.findFirstValidIndex(dayStart);
-
-    let cost = 0;
-    if (firstTodayIndex !== -1) {
-      for (let i = firstTodayIndex; i < this.costTrackers.length; i++) {
-        cost += this.costTrackers[i].cost;
-      }
-    }
-
-    this.todayCostCache.set(cacheKey, cost);
-    return cost;
+    >;
+  }> {
+    // Cast Anthropic client to match expected health check interface
+    const anthropicForHealthCheck = this.anthropic
+      ? {
+          messages: {
+            create: async (params: unknown) => {
+              return this.anthropic!.messages.create(params as never);
+            },
+          },
+        }
+      : null;
+    return this.rateLimiter.healthCheck(this.openai, anthropicForHealthCheck);
   }
 
   // Agent action logging
@@ -784,103 +604,37 @@ class AIService {
     }
   }
 
-  // Get cost tracking data
-  getCostTracking(): CostTracker[] {
-    return [...this.costTrackers];
+  /**
+   * Cleanup method to stop intervals and prevent memory leaks
+   * Should be called on service shutdown
+   */
+  cleanup(): void {
+    this.costTracker.cleanup();
+    // Note: rateLimiter doesn't have cleanup needed as it uses the shared resilienceManager
   }
 
-  getCacheStats(): {
-    costCache: ReturnType<Cache<number>['getStats']>;
-    responseCache: ReturnType<Cache<string>['getStats']>;
-    costCacheSize: number;
-    responseCacheSize: number;
-  } {
-    return {
-      costCache: this.todayCostCache.getStats(),
-      responseCache: this.responseCache.getStats(),
-      costCacheSize: this.todayCostCache.size,
-      responseCacheSize: this.responseCache.size,
-    };
+  // Backward compatibility getters
+  getProviderRegistry(): AIProviderRegistry {
+    return this.providerRegistry;
   }
 
-  clearCostCache(): void {
-    this.todayCostCache.clear();
+  getCostTracker(): AICostTracker {
+    return this.costTracker;
   }
 
-  clearResponseCache(): void {
-    this.responseCache.clear();
-  }
-
-  invalidateIdeaCache(ideaId: string): void {
-    const contextCacheKey = `context:${ideaId}`;
-    const ideaUpdateCacheKey = `idea:${ideaId}:updated`;
-
-    this.responseCache.delete(contextCacheKey);
-    this.responseCache.delete(ideaUpdateCacheKey);
-  }
-
-  // Health check
-  async healthCheck(): Promise<{
-    status: string;
-    providers: string[];
-    circuitBreakers: Record<
-      string,
-      {
-        state: 'closed' | 'open' | 'half-open';
-        failures: number;
-        nextAttemptTime?: string;
-      }
-    >;
-  }> {
-    const providers: string[] = [];
-
-    if (this.openai?.models) {
-      try {
-        await withTimeout(() => this.openai!.models.list(), {
-          timeoutMs:
-            DEFAULT_TIMEOUTS.openai / AI_HEALTH_CHECK_CONFIG.TIMEOUT_DIVISOR,
-        });
-        providers.push('openai');
-      } catch (error) {
-        logger.error('OpenAI health check failed:', error);
-      }
-    }
-
-    if (this.anthropic) {
-      try {
-        await withTimeout(
-          async () => {
-            await this.anthropic!.messages.create({
-              model: AI_MODEL_CONFIG.HEALTH_CHECK_MODEL,
-              max_tokens: 1,
-              messages: [{ role: 'user', content: 'ping' }],
-            });
-          },
-          {
-            timeoutMs:
-              (DEFAULT_TIMEOUTS.openai ?? RESILIENCE_CONFIG.TIMEOUTS.OPENAI) /
-              AI_HEALTH_CHECK_CONFIG.TIMEOUT_DIVISOR,
-          }
-        );
-        providers.push('anthropic');
-      } catch (error) {
-        logger.error('Anthropic health check failed:', error);
-      }
-    }
-
-    const circuitBreakers = circuitBreakerManager.getAllStatuses();
-
-    return {
-      status: providers.length > 0 ? 'healthy' : 'unhealthy',
-      providers,
-      circuitBreakers,
-    };
+  getRateLimiter(): AIRateLimiter {
+    return this.rateLimiter;
   }
 }
 
-// Singleton instance
+// Singleton instance (backward compatible)
 export const aiService = new AIService();
 
 // Export the class and utilities
 export { AIService };
 export { createClient };
+
+// Export new modular components for direct use
+export { AIProviderRegistry, createAIProviderRegistry, defaultProviderRegistry } from './ai/provider-registry';
+export { AICostTracker } from './ai/cost-tracker';
+export { AIRateLimiter } from './ai/rate-limiter';

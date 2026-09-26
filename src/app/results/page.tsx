@@ -10,6 +10,9 @@ import {
 } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import Button from '@/components/Button';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import Alert from '@/components/Alert';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
@@ -23,7 +26,6 @@ import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 import {
   SPINNER_PATTERNS,
   CARD_PATTERNS,
-  LOADING_PATTERNS,
   EXPORT_LABELS,
   API_ERROR_MESSAGES,
   ROUTES,
@@ -51,6 +53,7 @@ import {
   PY_CLASSES,
   SPACE_Y_PATTERNS,
   RESPONSIVE_SPACING,
+  APP_CONFIG,
 } from '@/lib/config';
 import {
   RESULTS_SUCCESS_CONTAINER,
@@ -58,6 +61,7 @@ import {
   FLEX_CENTER,
   MARGIN_BOTTOM_4,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { safeJsonLd } from '@/lib/security/json-ld';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
   ssr: false,
@@ -71,35 +75,11 @@ const SectionIndicator = dynamic(
   }
 );
 
-// Lazy load Button and LoadingSpinner for code splitting
-const Button = dynamic(() => import('@/components/Button'), {
-  ssr: false,
-  loading: () => (
-    <button className={SPINNER_PATTERNS.placeholder.container} disabled>
-      {RESULTS_PAGE_CONTENT.LOADING_SHORT}
-    </button>
-  ),
-});
-
-const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
-  ssr: false,
-  loading: () => (
-    <div className={FLEX_CENTER}>
-      <div
-        className={`animate-spin rounded-full ${SPINNER_PATTERNS.default.size.md} ${SPINNER_PATTERNS.default.border} ${SPINNER_PATTERNS.default.borderColor}`}
-      ></div>
-    </div>
-  ),
-});
-
-const Alert = dynamic(() => import('@/components/Alert'), {
-  ssr: false,
-  loading: () => (
-    <div className={LOADING_PATTERNS.ROUNDED}>
-      {RESULTS_PAGE_CONTENT.LOADING_SHORT}
-    </div>
-  ),
-});
+// NOTE: Button, Alert, and LoadingSpinner are above-the-fold atomic components.
+// They use static imports (top of file) so they render on the server without an
+// extra client-side chunk waterfall, improving INP/LCP. Only heavy below-fold
+// components (BlueprintDisplay, TaskManagement, ShareButton, EmailButton) stay
+// dynamic with ssr:false below.
 
 const Tooltip = dynamic(() => import('@/components/Tooltip'), {
   ssr: false,
@@ -598,8 +578,42 @@ function ResultsContent() {
     { id: 'exports-section', label: 'Exports', shortcut: 'e' },
   ];
 
+  // Generate Article structured data for SEO
+  const articleJsonLd = idea ? {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: idea.title || 'Project Blueprint',
+    description: idea.raw_text.substring(0, 160),
+    url: `${APP_CONFIG.URLS.BASE}/results?ideaId=${idea.id}`,
+    datePublished: idea.created_at,
+    dateModified: idea.created_at,
+    author: {
+      '@type': 'Person',
+      name: 'IdeaFlow AI',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'IdeaFlow',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${APP_CONFIG.URLS.BASE}/icon-512.png`,
+      },
+    },
+    image: `${APP_CONFIG.URLS.BASE}/og-image.png`,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${APP_CONFIG.URLS.BASE}/results?ideaId=${idea.id}`,
+    },
+  } : null;
+
   return (
     <>
+      {articleJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(articleJsonLd) }}
+        />
+      )}
       <ScrollProgress />
       <SectionIndicator sections={sections} />
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>

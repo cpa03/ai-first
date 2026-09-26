@@ -234,7 +234,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                       {MESSAGES.ERROR_BOUNDARY.RETRY_BUTTON}
                     </Button>
                     <span
-                      className={`hidden sm:flex items-center gap-1 text-xs ${TEXT_COLORS.MUTED}`}
+                      className={`flex items-center gap-1 text-xs ${TEXT_COLORS.MUTED} sm:justify-center`}
                       aria-hidden="true"
                     >
                       <kbd
@@ -255,7 +255,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                       </Button>
                     </Link>
                     <span
-                      className={`hidden sm:flex items-center gap-1 text-xs ${TEXT_COLORS.MUTED}`}
+                      className={`flex items-center gap-1 text-xs ${TEXT_COLORS.MUTED} sm:justify-center`}
                       aria-hidden="true"
                     >
                       <kbd

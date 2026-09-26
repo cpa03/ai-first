@@ -1,4 +1,4 @@
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const TIME_UNITS = {
   MILLISECOND: 1,
