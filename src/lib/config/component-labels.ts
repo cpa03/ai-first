@@ -293,7 +293,7 @@ export const REFERRAL_LINK_LABELS = {
   /** Copy button success label */
   COPY_SUCCESS_LABEL: 'Copied!',
   /** Copy button aria-label */
-  COPY_ARIA_LABEL: 'Copy referral link',
+  COPY_ARIA_LABEL: 'Copy',
   /** Copy button toast message */
   COPY_TOAST_MESSAGE: 'Referral link copied!',
   /** Code element title attribute */
