@@ -155,6 +155,12 @@ The application demonstrates a **strong security posture** with comprehensive se
 - Lenient: 60 requests/minute (default)
 - Tiered: 30-300 requests/minute (based on user role)
 
+**Bypass hardening (#680)**:
+
+- Client identification prefers trusted headers (`CF-Connecting-IP`, `x-vercel-forwarded-for`, `x-forwarded-for`, `x-real-ip`) before falling back to the client-controlled request fingerprint.
+- `RATE_LIMIT_REJECT_UNTRUSTED=true` removes the fingerprint fallback entirely and rejects requests that carry no trusted header.
+- **Recommendation**: keep the default `false` (fail-open) so bare/self-hosted deployments and local development keep working, but set `RATE_LIMIT_REJECT_UNTRUSTED=true` in every production deployment that terminates requests at Cloudflare, Vercel, or any reverse proxy. Flipping the default itself is not recommended — it cannot distinguish "spoofed" from "no proxy" and would fail closed for proxied-less installs. Behaviour is pinned by `tests/security/rate-limit-reject-untrusted-680.test.ts`.
+
 ### ✅ Security Headers
 
 **Location**: `next.config.js`
