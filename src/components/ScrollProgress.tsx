@@ -18,6 +18,7 @@ import {
   SCROLL_STEP_CONFIG,
   PROGRESS_PERCENTAGE,
   TEXT_FORMAT_PATTERNS,
+  COMPONENT_CONFIG,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
@@ -41,14 +42,43 @@ function ScrollProgressComponent() {
   const [scrollPercent, setScrollPercent] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  // Micro-UX: Brief tooltip on keyboard focus to discover scroll navigation shortcuts
+  // Auto-hides after a short delay so it doesn't obstruct the page
+  const [showFocusHint, setShowFocusHint] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
   const rafRef = useRef<number | null>(null);
   const barRef = useRef<HTMLDivElement>(null);
   const prevPercentRef = useRef<number>(0);
+  const focusHintTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const showPercentage =
     scrollPercent >= UI_CONFIG.SCROLL_PROGRESS_SHOW_THRESHOLD;
   const displayPercentage = Math.round(scrollPercent);
+
+  const handleFocusHint = useCallback(() => {
+    setShowFocusHint(true);
+    if (focusHintTimeoutRef.current) {
+      clearTimeout(focusHintTimeoutRef.current);
+    }
+    focusHintTimeoutRef.current = setTimeout(() => {
+      setShowFocusHint(false);
+    }, COMPONENT_CONFIG.SCROLL_TO_TOP.CELEBRATION_DURATION_MS);
+  }, []);
+
+  const handleBlurHint = useCallback(() => {
+    setShowFocusHint(false);
+    if (focusHintTimeoutRef.current) {
+      clearTimeout(focusHintTimeoutRef.current);
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (focusHintTimeoutRef.current) {
+        clearTimeout(focusHintTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleScroll = useCallback(() => {
     if (rafRef.current !== null) return;
@@ -210,6 +240,8 @@ function ScrollProgressComponent() {
         setIsHovered(false);
         setIsDragging(false);
       }}
+      onFocus={handleFocusHint}
+      onBlur={handleBlurHint}
       onKeyDown={(e) => {
         const docHeight =
           document.documentElement.scrollHeight - window.innerHeight;
@@ -327,6 +359,31 @@ function ScrollProgressComponent() {
             className={`${TEXT_SIZE_CLASSES.XS} font-semibold text-white tabular-nums leading-none ${TEXT_FORMAT_PATTERNS.DROP_SHADOW_SM}`}
           >
             {displayPercentage}%
+          </span>
+        </div>
+      )}
+      {showFocusHint && (
+        <div
+          className={`absolute left-1/2 -translate-x-1/2 top-full mt-2 px-3 py-1.5 rounded-lg bg-gray-900 text-white text-xs whitespace-nowrap shadow-lg ${prefersReducedMotion ? '' : `animate-in fade-in slide-in-from-top-1 ${DURATION_TAILWIND[200]}`}`}
+          role="tooltip"
+          aria-hidden="true"
+        >
+          <span className="flex items-center gap-2">
+            <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[10px] font-mono">
+              ←
+            </kbd>
+            <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[10px] font-mono">
+              →
+            </kbd>
+            <span className="opacity-70">navigate</span>
+            <span className="opacity-30">|</span>
+            <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[10px] font-mono">
+              Home
+            </kbd>
+            <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[10px] font-mono">
+              End
+            </kbd>
+            <span className="opacity-70">jump</span>
           </span>
         </div>
       )}
