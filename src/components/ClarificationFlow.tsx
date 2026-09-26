@@ -109,6 +109,7 @@ function ClarificationFlow({
     currentQuestion,
     progress,
     steps,
+    answers,
     currentAnswer,
     showCelebration,
     isSubmitting,
@@ -1095,6 +1096,82 @@ function ClarificationFlow({
               </div>
             )}
           </div>
+
+          {/* Micro-UX: Review answers summary on the final step */}
+          {/* Allows users to verify all their previous answers before submitting, */}
+          {/* reducing anxiety and preventing mistakes. Uses a collapsible <details> */}
+          {/* element to keep the interface clean while making review accessible. */}
+          {currentStep === questions.length - 1 &&
+            Object.keys(answers).length > 0 && (
+              <details
+                className={`mt-4 group ${BG_COLOR_CLASSES.PAGE} rounded-lg border ${BORDER_COLOR_CLASSES.LIGHT} overflow-hidden ${TRANSITION_CLASSES.DEFAULT}`}
+              >
+                <summary
+                  className={`px-4 py-3 ${TYPOGRAPHY_CLASSES.SM_MEDIUM} ${TEXT_COLOR_CLASSES.BODY} cursor-pointer ${BG_COLOR_CLASSES.HOVER_SUBTLE} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg flex justify-between items-center list-none select-none`}
+                >
+                  <div className={FLEX_PATTERNS.GAP_MD}>
+                    <svg
+                      className={`${ICON_SIZES.MD} ${TEXT_COLOR_CLASSES.MUTED}`}
+                      fill="none"
+                      viewBox={SVG_VIEWBOX.STANDARD}
+                      stroke="currentColor"
+                      strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      />
+                    </svg>
+                    <span>Review your previous answers</span>
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 ${TYPOGRAPHY_CLASSES.XS_SEMIBOLD} rounded-full ${BG_COLORS.BRAND_100} ${TEXT_COLORS.BRAND}`}
+                    >
+                      {Object.keys(answers).length}
+                    </span>
+                  </div>
+                  <svg
+                    className={`${ICON_SIZES.MD} ${TEXT_COLOR_CLASSES.PLACEHOLDER} ${TRANSITION_CLASSES.TRANSFORM} transform group-open:rotate-180`}
+                    fill="none"
+                    viewBox={SVG_VIEWBOX.STANDARD}
+                    stroke="currentColor"
+                    strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </summary>
+                <div
+                  className={`px-4 pb-4 pt-2 border-t ${BORDER_COLOR_CLASSES.EXTRA_LIGHT}`}
+                >
+                  <dl className="space-y-3">
+                    {questions.slice(0, currentStep).map((question, index) => {
+                      const answer = answers[question.id];
+                      if (!answer) return null;
+                      return (
+                        <div key={question.id}>
+                          <dt
+                            className={`text-xs ${TEXT_COLOR_CLASSES.MUTED} font-medium`}
+                          >
+                            {index + 1}. {question.question}
+                          </dt>
+                          <dd
+                            className={`mt-1 text-sm ${TEXT_COLOR_CLASSES.HEADING} pl-4 border-l-2 ${BORDER_COLOR_CLASSES.LIGHT}`}
+                          >
+                            {answer}
+                          </dd>
+                        </div>
+                      );
+                    })}
+                  </dl>
+                </div>
+              </details>
+            )}
 
           <div
             className={`${FLEX_PATTERNS.BETWEEN_CENTER} ${SPACING_PATTERNS.MT8}`}
