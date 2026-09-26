@@ -59,6 +59,12 @@ $$;
 --    the SECURITY DEFINER helpers to avoid RLS self-recursion).
 --    DROP IF EXISTS first so re-apply is safe.
 -- ============================================================================
+DROP POLICY IF EXISTS "Admins can view admin_roles" ON admin_roles;
+CREATE POLICY "Admins can view admin_roles" ON admin_roles
+    FOR SELECT USING (
+        auth.role() = 'service_role' OR is_admin(auth.uid())
+    );
+
 DROP POLICY IF EXISTS "Super admins can manage admin_roles" ON admin_roles;
 CREATE POLICY "Super admins can manage admin_roles" ON admin_roles
     FOR INSERT WITH CHECK (
@@ -81,6 +87,12 @@ DROP POLICY IF EXISTS "Users can view own admin_roles" ON admin_roles;
 CREATE POLICY "Users can view own admin_roles" ON admin_roles
     FOR SELECT USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Admins can view admin_audit_logs" ON admin_audit_logs;
+CREATE POLICY "Admins can view admin_audit_logs" ON admin_audit_logs
+    FOR SELECT USING (
+        auth.role() = 'service_role' OR is_moderator_or_admin(auth.uid())
+    );
+
 DROP POLICY IF EXISTS "Admins can insert admin_audit_logs" ON admin_audit_logs;
 CREATE POLICY "Admins can insert admin_audit_logs" ON admin_audit_logs
     FOR INSERT WITH CHECK (
@@ -100,4 +112,11 @@ END
 $$;
 
 -- RLS on the view must be enforced as the querying role (mirrors 20260919).
-ALTER VIEW admin_user_view SET (security_invoker = on);
+-- Guarded so the migration no-ops when the view is absent.
+DO $$
+BEGIN
+    IF to_regclass('public.admin_user_view') IS NOT NULL THEN
+        ALTER VIEW admin_user_view SET (security_invoker = on);
+    END IF;
+END
+$$;
