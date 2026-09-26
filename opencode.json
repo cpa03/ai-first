@@ -1,13 +1,19 @@
 {
   "$schema": "https://opencode.ai/config.json",
-"model": "opencode/mimo-v2.5-free",
-  "plugin": ["oh-my-opencode@latest", "opencode-supermemory@latest"],
+  "model": "sabila/cmz",
+  "plugin": [
+    "oh-my-opencode@latest",
+    "opencode-supermemory@latest"
+  ],
   "default_agent": "CMZ",
   "agent": {
     "CMZ": {
       "mode": "primary",
       "description": "Primary orchestrating agent",
-      "orchestration": true
+      "orchestration": true,
+      "options": {
+        "orchestration": true
+      }
     }
   },
   "permission": {
@@ -18,12 +24,51 @@
     "glob": "allow"
   },
   "skills": {
-    "paths": [".opencode/skills"]
+    "paths": [
+      ".opencode/skills"
+    ]
+  },
+  "snapshot": false,
+  "indexing": {
+    "enabled": true,
+    "provider": "openai-compatible",
+    "openai-compatible": {
+      "baseUrl": "https://sabila01-router.hf.space/v1",
+      "apiKey": "${OPENCODE_API_KEY}"
+    }
   },
   "mcp": {
-    "playwright": { "enabled": true },
-    "websearch": { "enabled": true },
-    "context7": { "enabled": true },
-    "github": { "enabled": true }
+    "playwright": {
+      "enabled": true
+    },
+    "websearch": {
+      "enabled": true
+    },
+    "context7": {
+      "enabled": true
+    },
+    "github": {
+      "enabled": true
+    }
+  },
+  "providers": {
+    "sabila": {
+      "name": "Sabila Router",
+      "package": "@opencode/ai/providers/openai-compatible",
+      "settings": {
+        "baseURL": "https://sabila01-router.hf.space/v1",
+        "apiKey": "${OPENCODE_API_KEY}"
+      },
+      "models": {
+        "cmz": {
+          "name": "CMZ",
+          "modelID": "cmz",
+          "limit": {
+            "context": 200000,
+            "output": 32000
+          }
+        }
+      }
+    }
   }
 }

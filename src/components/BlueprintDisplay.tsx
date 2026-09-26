@@ -368,9 +368,9 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             </div>
             {/* Micro-UX: Persistent keyboard shortcut hints for discoverability */}
             {/* Follows the pattern from TaskManagementHeader and FooterNav */}
-            {/* Only visible on desktop (sm+) to avoid cluttering mobile header */}
+            {/* Stacked on mobile, inline on desktop */}
             <div
-              className={`hidden sm:flex items-center gap-3 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
+              className={`flex flex-col sm:flex-row items-center justify-center gap-3 text-xs ${TEXT_COLOR_CLASSES.MUTED} sm:gap-4`}
               aria-hidden="true"
             >
               <span className={KEYBOARD_HINT_INLINE}>

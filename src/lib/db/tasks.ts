@@ -12,10 +12,20 @@ export class TaskService {
 
   /**
    * Create a single task
+   *
+   * Application-layer NOT NULL guard: `tasks.deliverable_id` is nullable at
+   * the DB level, so reject orphan rows here with a clear message.
    */
   async createTask(task: Omit<Task, 'id' | 'created_at'>): Promise<Task> {
     const client = this.clientProvider.getClient();
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
+
+    if (!task.deliverable_id || !String(task.deliverable_id).trim()) {
+      throw new Error('createTask: deliverable_id is required (must be non-empty)');
+    }
+    if (!task.title || !task.title.trim()) {
+      throw new Error('createTask: title is required (must be non-empty)');
+    }
 
     const { data, error } = await client
       .from(DB_TABLES.TASKS)

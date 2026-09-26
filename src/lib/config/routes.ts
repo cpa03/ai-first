@@ -29,7 +29,7 @@
  * ```
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Page Routes

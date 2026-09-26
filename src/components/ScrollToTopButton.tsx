@@ -1,8 +1,8 @@
 'use client';
 
 import { memo, useCallback, useEffect, useState, useRef } from 'react';
-import { triggerHapticFeedback } from '@/lib/utils';
-import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { PLATFORM } from '@/lib/dom-utils';
 import {
   TRANSITION_CLASSES,
   GRAY_CLASSES,
@@ -14,8 +14,6 @@ import {
   UI_CONFIG,
   SCROLL_TO_TOP_APPEAR,
 } from '@/lib/config';
-import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
-import { PLATFORM } from '@/lib/dom-utils';
 import { SCROLL_TO_TOP_BUTTON_LABELS } from '@/lib/config/component-labels';
 import Tooltip from './Tooltip';
 import { COMPONENT_PRIMARY_PATTERNS } from '@/lib/config/primary-colors';
@@ -40,7 +38,7 @@ function ScrollToTopButtonComponent() {
   const [isHoveredOrFocused, setIsHoveredOrFocused] = useState(false);
   const [isMac, setIsMac] = useState(false);
   const [hasAppeared, setHasAppeared] = useState(false);
-  const prefersReducedMotion = usePrefersReducedMotion();
+  const { scrollToTop, prefersReducedMotion } = useScrollToTop();
   const pulseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Micro-UX: Detect platform for keyboard shortcut display
@@ -65,25 +63,6 @@ function ScrollToTopButtonComponent() {
     };
   }, [prefersReducedMotion]);
 
-  const handleScrollToTop = useCallback(() => {
-    triggerHapticFeedback();
-
-    if (prefersReducedMotion) {
-      window.scrollTo(0, 0);
-    } else {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
-    }
-
-    // Focus main content for screen readers
-    const mainContent = document.getElementById(PAGE_ELEMENT_IDS.MAIN_CONTENT);
-    if (mainContent) {
-      mainContent.focus({ preventScroll: true });
-    }
-  }, [prefersReducedMotion]);
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -101,29 +80,29 @@ function ScrollToTopButtonComponent() {
       if (isModifierPressed && (isHomeKey || isUpArrow)) {
         if ((isMac && isUpArrow) || (!isMac && isHomeKey)) {
           e.preventDefault();
-          handleScrollToTop();
+          scrollToTop();
         }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [handleScrollToTop, isMac]);
+  }, [scrollToTop, isMac]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        handleScrollToTop();
+        scrollToTop();
       }
     },
-    [handleScrollToTop]
+    [scrollToTop]
   );
 
   const buttonElement = (
     <button
       type="button"
-      onClick={handleScrollToTop}
+      onClick={scrollToTop}
       onKeyDown={handleKeyDown}
       onMouseEnter={() => setIsHoveredOrFocused(true)}
       onMouseLeave={() => setIsHoveredOrFocused(false)}
@@ -184,7 +163,11 @@ function ScrollToTopButtonComponent() {
   const shortcut = isMac ? ['⌘', '↑'] : ['Ctrl', 'Home'];
 
   return (
-    <Tooltip content={SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT} shortcut={shortcut} position="top">
+    <Tooltip
+      content={SCROLL_TO_TOP_BUTTON_LABELS.BUTTON_TEXT}
+      shortcut={shortcut}
+      position="top"
+    >
       {buttonElement}
     </Tooltip>
   );

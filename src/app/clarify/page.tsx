@@ -7,6 +7,7 @@ import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
+import { useGuestMode } from '@/hooks/useGuestMode';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
@@ -28,12 +29,22 @@ import {
   BREATHE,
   REMAINING_PATTERNS,
   ANIMATION_CLASSES,
+  SPACE_Y_PATTERNS,
+  FLEX_PATTERNS,
+  TEXT_COLOR_CLASSES,
+  BG_COLOR_CLASSES,
+  TYPOGRAPHY_CLASSES,
+  ICON_SIZES,
+  SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import {
   CLARIFY_PARAGRAPH_MARGIN,
   CLARIFY_EMPTY_STATE,
 } from '@/lib/config/remaining-hardcoded-patterns';
+import { ProgressStepper } from '@/components/ProgressStepper';
+import { safeJsonLd } from '@/lib/security/json-ld';
 
 const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
@@ -169,6 +180,13 @@ function ClarifySuccessState({
   );
 }
 
+// Progress indicator steps for Idea Input -> Clarify transition
+const CLARIFY_PROGRESS_STEPS = [
+  { id: 'input', label: 'Enter Idea', description: 'Describe your idea' },
+  { id: 'clarify', label: 'Clarify', description: 'Answer questions' },
+  { id: 'results', label: 'Blueprint', description: 'View plan' },
+];
+
 // Inner component that uses URL search params
 function ClarifyPageContent() {
   const router = useRouter();
@@ -176,6 +194,7 @@ function ClarifyPageContent() {
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { isAuthenticated, isLoading: authLoading } = useAuthCheck();
+  const { isGuest, ideaId: guestIdeaId, setGuestIdea, setGuestAnswers, refreshGuestState } = useGuestMode();
 
   // Read URL params safely - useSearchParams returns null on initial server render
   // We use a ref to track if we've hydrated to avoid hydration mismatches
@@ -212,14 +231,30 @@ function ClarifyPageContent() {
 
   const { idea, ideaId, hasLoaded } = params;
 
+  // Initialize guest session with URL params if available
+  useEffect(() => {
+    if (hasLoaded && idea && ideaId && !isGuest) {
+      setGuestIdea(idea, ideaId);
+    }
+  }, [hasLoaded, idea, ideaId, isGuest, setGuestIdea]);
+
+  // Determine effective ideaId (guest or authenticated)
+  const effectiveIdeaId = isAuthenticated ? ideaId : guestIdeaId;
+  const isGuestMode = !isAuthenticated && isGuest;
+
   // PERFORMANCE: Memoize handler to prevent unnecessary re-renders of ClarificationFlow
   // which receives this function as a prop
   const handleClarificationComplete = useCallback(
     async (completedAnswers: Record<string, string>) => {
       try {
-        if (ideaId) {
+        if (isGuestMode) {
+          // Guest mode: save answers locally
+          setGuestAnswers(completedAnswers);
+          setAnswers(completedAnswers);
+        } else if (effectiveIdeaId) {
+          // Authenticated mode: save to server
           const response = await fetchWithTimeout(
-            `${API_ROUTES.IDEAS}/${ideaId}`,
+            `${API_ROUTES.IDEAS}/${effectiveIdeaId}`,
             {
               method: 'PUT',
               headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
@@ -235,18 +270,16 @@ function ClarifyPageContent() {
               errorData.error || `Failed to update idea: ${response.status}`
             );
           }
+
+          setAnswers(completedAnswers);
         }
-
-        setAnswers(completedAnswers);
-
-        // In a real app, this would navigate to results page
-        // For now, we'll just show the completion message
       } catch (err) {
         logger.errorWithContext('Failed to save clarification answers', {
           component: 'ClarifyPage',
           action: 'handleClarificationComplete',
           metadata: {
-            ideaId,
+            ideaId: effectiveIdeaId,
+            isGuestMode,
             error:
               err instanceof Error
                 ? err.message
@@ -256,8 +289,17 @@ function ClarifyPageContent() {
         setError(CLARIFY_PAGE_CONTENT.FAILED_SAVE_ANSWERS);
       }
     },
-    [ideaId, logger]
+    [effectiveIdeaId, isGuestMode, setGuestAnswers, logger]
   );
+
+  // Handle back to edit - for guest mode, just go home
+  const handleBackToEdit = useCallback(() => {
+    if (isGuestMode) {
+      router.push(ROUTES.HOME);
+    } else {
+      router.push('/');
+    }
+  }, [isGuestMode, router]);
 
   if (authLoading || !hasLoaded) {
     return (
@@ -274,33 +316,8 @@ function ClarifyPageContent() {
     );
   }
 
-  if (!isAuthenticated) {
-    return (
-      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
-        <Alert type="warning" title={CLARIFY_PAGE_CONTENT.AUTH_REQUIRED_TITLE}>
-          <p>{CLARIFY_PAGE_CONTENT.AUTH_REQUIRED_MESSAGE}</p>
-          <div className={REMAINING_PATTERNS.CLARIFY_LAYOUT.RESPONSIVE_FLEX}>
-            <Button onClick={() => router.push(ROUTES.HOME)} variant="primary">
-              {CLARIFY_PAGE_CONTENT.BUTTONS.GO_HOME}
-            </Button>
-            {/* Micro-UX: Keyboard shortcut hint for auth-required state */}
-            {/* Matches the keyboard hint patterns in not-found and dashboard pages */}
-            <span
-              className={`hidden sm:inline-flex items-center gap-1.5 text-xs ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
-              aria-hidden="true"
-            >
-              <kbd
-                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
-              >
-                {isMac ? '↵' : 'Enter'}
-              </kbd>
-              <span>to go home</span>
-            </span>
-          </div>
-        </Alert>
-      </div>
-    );
-  }
+  // Show progress indicator at top for visual orientation
+  const showProgress = hasLoaded && idea;
 
   if (error) {
     return (
@@ -384,9 +401,35 @@ function ClarifyPageContent() {
 
 // Main page component wrapped in Suspense
 export default function ClarifyPage() {
+  // Generate BreadcrumbList structured data for SEO
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://ideaflow.ai/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Clarify Idea',
+        item: 'https://ideaflow.ai/clarify',
+      },
+    ],
+  };
+
   return (
-    <Suspense fallback={<ClarifyPageLoading />}>
-      <ClarifyPageContent />
-    </Suspense>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbJsonLd) }}
+      />
+      <Suspense fallback={<ClarifyPageLoading />}>
+        <ClarifyPageContent />
+      </Suspense>
+    </>
   );
 }

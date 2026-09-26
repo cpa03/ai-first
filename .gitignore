@@ -86,6 +86,7 @@ pids
 *.pid
 *.seed
 *.pid.lock
+build.log
 
 # ============================================================
 # Package Manager
@@ -105,12 +106,14 @@ pnpm-lock.yaml
 .jules/
 .omo/
 .sisyphus/
+.kilo/
 
 # ============================================================
 # OpenCode CLI
 # ============================================================
 .opencode/node_modules/
 .opencode/package-lock.json
+opencode.json
 
 # ============================================================
 # Codegraph
@@ -125,6 +128,7 @@ docs/archive/*.gz
 docs/archive/*.zip
 docs/archive/*.tar
 docs/archive/*.tar.gz
+docs/maintenance/*.json
 
 # ============================================================
 # Temporary Agent Reports (auto-generated, should not be committed)
@@ -156,3 +160,6 @@ docs/reports/
 docs/stale-branches-report.md
 reports/
 .worktrees
+
+# Agent Memory (orchestrator state, jangan commit)
+.agent_memory/

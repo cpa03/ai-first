@@ -8,7 +8,7 @@
  * to avoid conflicts with third-party libraries.
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Application storage key prefix

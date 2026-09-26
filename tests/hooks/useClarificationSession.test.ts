@@ -64,8 +64,11 @@ describe('useClarificationSession', () => {
     });
   });
 
-  afterEach(() => {
-    act(() => {
+  afterEach(async () => {
+    // Flush pending timers AND pending promise continuations (e.g. the
+    // fire-and-forget handleNext() triggered by handleKeyDown) inside act()
+    // so state updates settle before the next test. Prevents act() warnings.
+    await act(async () => {
       jest.runOnlyPendingTimers();
     });
     jest.useRealTimers();
@@ -324,7 +327,10 @@ describe('useClarificationSession', () => {
       preventDefault: jest.fn(),
     } as unknown as React.KeyboardEvent;
 
-    act(() => {
+    // Await act() so the fire-and-forget async handleNext() triggered by
+    // handleKeyDown (await onComplete -> setIsSubmitting(false) in finally)
+    // settles inside act() instead of leaking into the next test.
+    await act(async () => {
       result.current.handleKeyDown(mockEvent);
     });
 

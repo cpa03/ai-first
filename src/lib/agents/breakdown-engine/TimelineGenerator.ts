@@ -24,9 +24,12 @@ export class TimelineGenerator {
     }
   ): Timeline {
     const startDate = new Date();
-    const totalWeeks = Math.ceil(
+    const rawWeeks = Math.ceil(
       tasks.totalEstimatedHours / (HOURS_PER_WEEK * (options.teamSize || 1))
     );
+    const totalWeeks = Number.isFinite(rawWeeks)
+      ? Math.max(1, rawWeeks)
+      : 1;
     const endDate = new Date(
       startDate.getTime() + totalWeeks * MILLISECONDS_PER_WEEK
     );
@@ -55,6 +58,7 @@ export class TimelineGenerator {
     date: Date;
     dependencies: string[];
   }> {
+    if (analysis.deliverables.length === 0) return [];
     return analysis.deliverables.map((deliverable, index) => ({
       id: `m_${index + TIMELINE_CONFIG.MILESTONES.SPACING_MULTIPLIER}`,
       title: deliverable.title,

@@ -1,5 +1,5 @@
 import { RATE_LIMIT_CONFIG } from './rate-limit-config';
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Rate limit cleanup configuration

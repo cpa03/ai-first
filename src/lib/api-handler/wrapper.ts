@@ -183,34 +183,37 @@ export function withApiHandler(
 
       // 4. Suspicious Pattern Detection (Regex-based, most expensive)
       // Only runs if the request hasn't been blocked by rate limiting or size validation.
-      const suspiciousResult = detectSuspiciousPatterns(request, {
-        scanBody: false,
-        minSeverity: 2,
-        logDetected: true,
-        requestId,
-      });
-
-      if (suspiciousResult.detected && suspiciousResult.maxSeverity >= 2) {
-        logger.warnWithContext('Blocking suspicious request', logContext, {
-          maxSeverity: suspiciousResult.maxSeverity,
-          patterns: suspiciousResult.patterns.map((p) => p.category),
+      // Skip if skipSuspiciousPatterns option is set (e.g., for CSP report endpoints)
+      if (!options.skipSuspiciousPatterns) {
+        const suspiciousResult = await detectSuspiciousPatterns(request, {
+          scanBody: true,
+          minSeverity: 2,
+          logDetected: true,
+          requestId,
         });
 
-        return toErrorResponse(
-          new AppError(
-            API_ERROR_MESSAGES.CSRF.SECURITY_VIOLATION,
-            ErrorCode.AUTHORIZATION_ERROR,
-            STATUS_CODES.FORBIDDEN,
-            [
-              {
-                message: `Suspicious patterns detected: ${suspiciousResult.patterns.map((p) => p.category).join(', ')}`,
-              },
-            ],
-            false
-          ),
-          requestId,
-          Date.now() - requestStartTime
-        );
+        if (suspiciousResult.detected && suspiciousResult.maxSeverity >= 2) {
+          logger.warnWithContext('Blocking suspicious request', logContext, {
+            maxSeverity: suspiciousResult.maxSeverity,
+            patterns: suspiciousResult.patterns.map((p) => p.category),
+          });
+
+          return toErrorResponse(
+            new AppError(
+              API_ERROR_MESSAGES.CSRF.SECURITY_VIOLATION,
+              ErrorCode.AUTHORIZATION_ERROR,
+              STATUS_CODES.FORBIDDEN,
+              [
+                {
+                  message: `Suspicious patterns detected: ${suspiciousResult.patterns.map((p) => p.category).join(', ')}`,
+                },
+              ],
+              false
+            ),
+            requestId,
+            Date.now() - requestStartTime
+          );
+        }
       }
 
       // PERFORMANCE: Extract route parameters efficiently.

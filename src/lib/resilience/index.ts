@@ -9,6 +9,12 @@ export {
 } from './circuit-breaker-manager';
 export { createResilientWrapper } from './resilient-wrapper';
 export { resilienceManager } from './manager';
+export {
+  defaultShouldRetry,
+  createErrorCodeRetryPredicate,
+  createNeverRetryPredicate,
+  createAlwaysRetryPredicate,
+} from './retry-predicates';
 
 export {
   DEFAULT_RETRIES,
@@ -23,3 +29,4 @@ import { TimeoutManager as TM } from './timeout-manager';
 
 export const withRetry = RM.withRetry;
 export const withTimeout = TM.withTimeout;
+export const withTimeoutLegacy = TM.withTimeoutLegacy;

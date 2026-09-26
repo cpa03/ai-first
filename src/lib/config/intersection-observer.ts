@@ -1,4 +1,4 @@
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const INTERSECTION_OBSERVER_CONFIG = {
   SECTION_INDICATOR: {

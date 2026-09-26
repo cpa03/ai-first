@@ -83,14 +83,29 @@ export class CircuitBreakerManager {
     this.circuitBreakers.delete(name);
   }
 
+  /**
+   * Returns all circuit breaker names.
+   *
+   * @returns Array of circuit breaker names
+   */
   getNames(): string[] {
     return Array.from(this.circuitBreakers.keys());
   }
 
+  /**
+   * Returns the number of managed circuit breakers.
+   *
+   * @returns Current size of the circuit breaker cache
+   */
   getSize(): number {
     return this.circuitBreakers.size;
   }
 
+  /**
+   * Returns status of all circuit breakers.
+   *
+   * @returns Record mapping circuit breaker names to their status objects
+   */
   getAllStatuses(): Record<
     string,
     {
@@ -113,6 +128,11 @@ export class CircuitBreakerManager {
     return statuses;
   }
 
+  /**
+   * Resets a specific circuit breaker to closed state.
+   *
+   * @param name - Name of the circuit breaker to reset
+   */
   reset(name: string): void {
     const cb = this.circuitBreakers.get(name);
     if (cb) {
@@ -120,6 +140,10 @@ export class CircuitBreakerManager {
     }
   }
 
+  /**
+   * Resets all circuit breakers to closed state.
+   * Useful for admin operations and testing.
+   */
   resetAll(): void {
     this.circuitBreakers.forEach((cb) => cb.reset());
   }

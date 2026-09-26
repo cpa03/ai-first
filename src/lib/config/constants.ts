@@ -34,6 +34,8 @@ export {
   RETRY_VALUES,
 } from './retry-config';
 
+export { DEFAULT_TIMEOUTS } from './resilience-config';
+
 export {
   RATE_LIMIT_CLEANUP_CONFIG,
   RATE_LIMIT_STORE_CONFIG,

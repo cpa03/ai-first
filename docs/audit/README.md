@@ -6,8 +6,7 @@ This directory contains security audits, code quality reports, and compliance in
 
 | Report                                                                   | Date       | Description                               |
 | ------------------------------------------------------------------------ | ---------- | ----------------------------------------- |
-| [BROCULA-AUDIT-20260817.md](./BROCULA-AUDIT-20260817.md)                 | 2026-08-17 | BroCula browser audit (latest)            |
-| [BROCULA-AUDIT-20260816.md](./BROCULA-AUDIT-20260816.md)                 | 2026-08-16 | BroCula browser audit                     |
+| [2026-08-18-brocula-browser-console-lighthouse.md](./2026-08-18-brocula-browser-console-lighthouse.md) | 2026-08-18 | BroCula browser audit (latest)            |
 | [SECURITY-AUDIT-1739.md](./SECURITY-AUDIT-1739.md)                       | 2026-08    | Security audit for issue #1739            |
 | [ISSUE-01-large-files.md](./ISSUE-01-large-files.md)                     | 2026-07    | Large file detection and refactoring plan |
 | [ISSUE-02-api-test-coverage.md](./ISSUE-02-api-test-coverage.md)         | 2026-07    | API route test coverage gaps              |
@@ -20,6 +19,8 @@ This directory contains security audits, code quality reports, and compliance in
 See [archive/](./archive/) for historical audit reports from earlier maintenance cycles. Archived reports include:
 
 - [2026-08-08-brocula-browser-console-lighthouse.md](./archive/2026-08-08-brocula-browser-console-lighthouse.md) - Browser console & Lighthouse audit
+- [BROCULA-AUDIT-20260817.md](./archive/BROCULA-AUDIT-20260817.md) - BroCula browser audit (archived 2026-09-25)
+- [BROCULA-AUDIT-20260816.md](./archive/BROCULA-AUDIT-20260816.md) - BroCula browser audit (archived 2026-09-25)
 - [BROCULA-AUDIT-20260811.md](./archive/BROCULA-AUDIT-20260811.md) - BroCula browser audit
 - [BROCULA-AUDIT-20260810.md](./archive/BROCULA-AUDIT-20260810.md) - BroCula browser audit
 - [BROCULA-AUDIT-SUMMARY-20260809.md](./archive/BROCULA-AUDIT-SUMMARY-20260809.md) - BroCula audit summary

@@ -7,11 +7,13 @@
 const { chromium } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
-const { CONSOLE_SCANNER_CONFIG, LIGHTHOUSE_CONFIG } = require('./config');
+const { CONSOLE_SCANNER_CONFIG, LIGHTHOUSE_CONFIG, BROWSER_SCANNER_CONFIG } = require('./config');
 
 const { BASE_URL, PAGES, NAVIGATION_TIMEOUT, ASYNC_WAIT_MS } =
   CONSOLE_SCANNER_CONFIG;
 const { CHROME_PATH } = LIGHTHOUSE_CONFIG;
+const { SCREEN_EMULATION } = LIGHTHOUSE_CONFIG;
+const { MOBILE_EMULATION = false, MOBILE_VIEWPORT = { width: 375, height: 667, deviceScaleFactor: 2, isMobile: true, hasTouch: true } } = BROWSER_SCANNER_CONFIG;
 
 const consoleLogs = [];
 const errors = [];
@@ -20,6 +22,18 @@ const warnings = [];
 async function scanPage(page, url) {
   const pageErrors = [];
   const pageWarnings = [];
+
+  // Apply mobile emulation if configured
+  if (MOBILE_EMULATION) {
+    await page.setViewportSize({
+      width: MOBILE_VIEWPORT.width,
+      height: MOBILE_VIEWPORT.height,
+    });
+    // Set user agent to mobile
+    await page.setExtraHTTPHeaders({
+      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+    });
+  }
 
   // Listen to console messages
   page.on('console', (msg) => {

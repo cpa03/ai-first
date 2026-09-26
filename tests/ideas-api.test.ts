@@ -11,6 +11,10 @@ jest.mock('@/lib/auth', () => ({
   verifyAuth: jest
     .fn()
     .mockResolvedValue({ id: 'test-user-id', email: 'test@example.com' }),
+  isGuestRequest: jest.fn().mockReturnValue(false),
+  getUserIdOrGuest: jest
+    .fn()
+    .mockResolvedValue({ userId: 'test-user-id', isGuest: false }),
 }));
 
 import { POST } from '@/app/api/ideas/route';
@@ -58,6 +62,7 @@ describe('/api/ideas POST', () => {
         title: 'Build a task management app',
         status: 'draft',
         createdAt: '2024-01-15T10:00:00.000Z',
+        isGuest: false,
       });
       expect(data.requestId).toMatch(
         /^req_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/

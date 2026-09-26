@@ -151,6 +151,7 @@ describe('api-client utilities', () => {
         global.fetch = jest.fn().mockResolvedValue({
           ok: true,
           json: () => Promise.resolve(mockResponse),
+          text: () => Promise.resolve(JSON.stringify(mockResponse)),
           headers: new Headers({ 'X-Request-ID': 'req_123' }),
         });
 
@@ -170,6 +171,7 @@ describe('api-client utilities', () => {
         global.fetch = jest.fn().mockResolvedValue({
           ok: true,
           json: () => Promise.resolve(mockResponse),
+          text: () => Promise.resolve(JSON.stringify(mockResponse)),
           headers: new Headers(),
         });
 
@@ -187,6 +189,7 @@ describe('api-client utilities', () => {
         global.fetch = jest.fn().mockResolvedValue({
           ok: true,
           json: () => Promise.resolve(mockResponse),
+          text: () => Promise.resolve(JSON.stringify(mockResponse)),
           headers: new Headers(),
         });
 
@@ -201,6 +204,8 @@ describe('api-client utilities', () => {
         global.fetch = jest.fn().mockResolvedValue({
           ok: true,
           json: () => Promise.resolve({ success: true, data: {} }),
+          text: () =>
+            Promise.resolve(JSON.stringify({ success: true, data: {} })),
           headers: new Headers(),
         });
 
@@ -225,6 +230,8 @@ describe('api-client utilities', () => {
         global.fetch = jest.fn().mockResolvedValue({
           ok: true,
           json: () => Promise.resolve({ success: true, data: {} }),
+          text: () =>
+            Promise.resolve(JSON.stringify({ success: true, data: {} })),
           headers: new Headers(),
         });
 
@@ -242,6 +249,8 @@ describe('api-client utilities', () => {
         global.fetch = jest.fn().mockResolvedValue({
           ok: true,
           json: () => Promise.resolve({ success: true, data: {} }),
+          text: () =>
+            Promise.resolve(JSON.stringify({ success: true, data: {} })),
           headers: new Headers(),
         });
 
@@ -257,17 +266,18 @@ describe('api-client utilities', () => {
 
     describe('error handling', () => {
       it('should throw ApiRequestError on non-OK response', async () => {
+        const errorResponse = {
+          error: 'Resource not found',
+          code: 'NOT_FOUND',
+          requestId: 'req_404',
+          retryable: false,
+        };
         global.fetch = jest.fn().mockResolvedValue({
           ok: false,
           status: 404,
           statusText: 'Not Found',
-          json: () =>
-            Promise.resolve({
-              error: 'Resource not found',
-              code: 'NOT_FOUND',
-              requestId: 'req_404',
-              retryable: false,
-            }),
+          json: () => Promise.resolve(errorResponse),
+          text: () => Promise.resolve(JSON.stringify(errorResponse)),
           headers: new Headers({ 'X-Request-ID': 'req_404' }),
         });
 
@@ -284,11 +294,13 @@ describe('api-client utilities', () => {
       });
 
       it('should handle non-JSON error response', async () => {
+        const errorResponse = { message: 'Internal Server Error' };
         global.fetch = jest.fn().mockResolvedValue({
           ok: false,
           status: 500,
           statusText: 'Internal Server Error',
           json: () => Promise.reject(new Error('Invalid JSON')),
+          text: () => Promise.resolve(JSON.stringify(errorResponse)),
           headers: new Headers(),
         });
 
@@ -304,11 +316,13 @@ describe('api-client utilities', () => {
       });
 
       it('should use "Request failed" when no error message', async () => {
+        const errorResponse = {};
         global.fetch = jest.fn().mockResolvedValue({
           ok: false,
           status: 500,
           statusText: '',
-          json: () => Promise.resolve({}),
+          json: () => Promise.resolve(errorResponse),
+          text: () => Promise.resolve(JSON.stringify(errorResponse)),
           headers: new Headers(),
         });
 
@@ -321,6 +335,8 @@ describe('api-client utilities', () => {
         const mockFetch = jest.fn().mockResolvedValue({
           ok: true,
           json: () => Promise.resolve({ success: true, data: {} }),
+          text: () =>
+            Promise.resolve(JSON.stringify({ success: true, data: {} })),
           headers: new Headers(),
         });
         global.fetch = mockFetch;

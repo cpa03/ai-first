@@ -8,7 +8,8 @@
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta}
  */
 
-import { isDevelopment, EnvLoader } from './environment';
+import { isDevelopment } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Content Security Policy configuration

@@ -226,9 +226,7 @@ export class TrelloExporter extends ExportConnector {
       'create-board'
     );
 
-    if (!response.ok) {
-      throw new Error(`Failed to create Trello board: ${response.statusText}`);
-    }
+    this.throwIfNotOk(response, 'create-board');
 
     return response.json();
   }
@@ -250,9 +248,7 @@ export class TrelloExporter extends ExportConnector {
       'create-list'
     );
 
-    if (!response.ok) {
-      throw new Error(`Failed to create Trello list: ${response.statusText}`);
-    }
+    this.throwIfNotOk(response, 'create-list');
 
     return response.json();
   }
@@ -283,9 +279,7 @@ export class TrelloExporter extends ExportConnector {
       'create-card'
     );
 
-    if (!response.ok) {
-      throw new Error(`Failed to create Trello card: ${response.statusText}`);
-    }
+    this.throwIfNotOk(response, 'create-card');
 
     const card = await response.json();
 

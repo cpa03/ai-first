@@ -44,6 +44,7 @@ import {
 } from '@/lib/config/element-ids';
 import { TYPOGRAPHY_UTILITY_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { createLogger } from '@/lib/logger';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useFocusManagement } from '@/hooks/useAnnouncement';
@@ -275,6 +276,8 @@ const defaultPreferences: ShortcutsPreferences = {
   shortcutsEnabled: true,
 };
 
+const shortcutsLogger = createLogger('KeyboardShortcutsHelp');
+
 export function useShortcutsPreferences() {
   const [preferences, setPreferences] =
     useState<ShortcutsPreferences>(defaultPreferences);
@@ -285,8 +288,15 @@ export function useShortcutsPreferences() {
       if (stored) {
         setPreferences({ ...defaultPreferences, ...JSON.parse(stored) });
       }
-    } catch {
-      // Ignore localStorage errors
+    } catch (readError) {
+      shortcutsLogger.warnWithContext(
+        'Failed to read keyboard shortcut preferences from localStorage',
+        {
+          component: 'KeyboardShortcutsHelp',
+          action: 'useShortcutsPreferences.load',
+        },
+        readError
+      );
     }
   }, []);
 
@@ -296,8 +306,15 @@ export function useShortcutsPreferences() {
         const newPrefs = { ...prev, ...updates };
         try {
           localStorage.setItem(SHORTCUTS_STORAGE_KEY, JSON.stringify(newPrefs));
-        } catch {
-          // Ignore localStorage errors
+        } catch (writeError) {
+          shortcutsLogger.warnWithContext(
+            'Failed to persist keyboard shortcut preferences to localStorage',
+            {
+              component: 'KeyboardShortcutsHelp',
+              action: 'useShortcutsPreferences.persist',
+            },
+            writeError
+          );
         }
         return newPrefs;
       });
@@ -357,18 +374,20 @@ const HighlightedText = memo(function HighlightedText({
   text: string;
   query: string;
 }) {
-  if (!query.trim()) {
+  const trimmedQuery = query.trim();
+  if (!trimmedQuery) {
     return <>{text}</>;
   }
 
-  const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const regex = new RegExp(`(${escapedQuery})`, 'gi');
-  const parts = text.split(regex);
+  const lowerQuery = trimmedQuery.toLowerCase();
+  const escapedQuery = trimmedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const splitRegex = new RegExp(`(${escapedQuery})`, 'gi');
+  const parts = text.split(splitRegex);
 
   return (
     <>
       {parts.map((part, index) =>
-        regex.test(part) ? (
+        part.toLowerCase() === lowerQuery ? (
           <span
             key={index}
             className={`${BG_COLORS.WARNING} ${TEXT_COLORS.WARNING} px-0.5 rounded-sm font-medium`}
@@ -406,11 +425,15 @@ const ShortcutRow = memo(function ShortcutRow({
     };
   }, []);
 
-  const displayKeys = shortcut.keys.map((key) => {
-    if (key === '⌘') return isMac ? '⌘' : 'Ctrl';
-    if (key === '⌥') return isMac ? '⌥' : 'Alt';
-    return key;
-  });
+  const displayKeys = useMemo(
+    () =>
+      shortcut.keys.map((key) => {
+        if (key === '⌘') return isMac ? '⌘' : 'Ctrl';
+        if (key === '⌥') return isMac ? '⌥' : 'Alt';
+        return key;
+      }),
+    [shortcut.keys, isMac]
+  );
 
   // Micro-UX: Copy shortcut to clipboard with visual feedback
   // Allows users to quickly copy keyboard shortcuts for reference or sharing
@@ -423,8 +446,16 @@ const ShortcutRow = memo(function ShortcutRow({
       timeoutRef.current = setTimeout(() => {
         setCopied(false);
       }, UI_CONFIG.FEEDBACK.COPY_FEEDBACK_DURATION_MS);
-    } catch {
-      // Clipboard API not available or denied - fail silently
+    } catch (clipboardError) {
+      // Clipboard API not available or denied - log once, keep UI silent
+      shortcutsLogger.warnWithContext(
+        'Clipboard write failed for keyboard shortcut',
+        {
+          component: 'KeyboardShortcutsHelp',
+          action: 'ShortcutRow.copy',
+        },
+        clipboardError
+      );
     }
   }, [displayKeys]);
 
@@ -569,6 +600,31 @@ function KeyboardShortcutsHelpComponent({
     };
   }, [isOpen, handleClose, searchQuery]);
 
+  // Hoisted + memoized normalized query: computed once per search change,
+  // shared by keyboard-nav handlers and grouping (single-pass filter).
+  const normalizedQuery = useMemo(
+    () => searchQuery.trim().toLowerCase(),
+    [searchQuery]
+  );
+
+  const queryFilteredShortcuts = useMemo(() => {
+    if (!normalizedQuery) return keyboardShortcuts;
+    return keyboardShortcuts.filter(
+      (s) =>
+        s.description.toLowerCase().includes(normalizedQuery) ||
+        s.keys.some((k) => k.toLowerCase().includes(normalizedQuery))
+    );
+  }, [normalizedQuery]);
+
+  // Per-category counts computed once (module-level list is static).
+  const contextCounts = useMemo(() => {
+    const counts = {} as Record<KeyboardShortcut['context'], number>;
+    for (const s of keyboardShortcuts) {
+      counts[s.context] = (counts[s.context] ?? 0) + 1;
+    }
+    return counts;
+  }, []);
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -584,15 +640,7 @@ function KeyboardShortcutsHelpComponent({
       const isVimKey = e.key === 'j' || e.key === 'k';
       if (isVimKey && !preferences.vimMode) return;
 
-      const filtered = searchQuery
-        ? keyboardShortcuts.filter(
-            (s) =>
-              s.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              s.keys.some((k) =>
-                k.toLowerCase().includes(searchQuery.toLowerCase())
-              )
-          )
-        : keyboardShortcuts;
+      const filtered = queryFilteredShortcuts;
 
       if (filtered.length === 0) return;
 
@@ -609,17 +657,7 @@ function KeyboardShortcutsHelpComponent({
 
     const handleEnterKey = (e: KeyboardEvent) => {
       if (e.key === 'Enter' && (preferences.vimMode || selectedIndex >= 0)) {
-        const filtered = searchQuery
-          ? keyboardShortcuts.filter(
-              (s) =>
-                s.description
-                  .toLowerCase()
-                  .includes(searchQuery.toLowerCase()) ||
-                s.keys.some((k) =>
-                  k.toLowerCase().includes(searchQuery.toLowerCase())
-                )
-            )
-          : keyboardShortcuts;
+        const filtered = queryFilteredShortcuts;
 
         if (filtered[selectedIndex]) {
           e.preventDefault();
@@ -634,7 +672,7 @@ function KeyboardShortcutsHelpComponent({
       document.removeEventListener('keydown', handleKeyboardNav);
       document.removeEventListener('keydown', handleEnterKey);
     };
-  }, [isOpen, preferences.vimMode, searchQuery, selectedIndex, handleClose]);
+  }, [isOpen, preferences.vimMode, queryFilteredShortcuts, selectedIndex, handleClose]);
 
   useEffect(() => {
     if (selectedItemRef.current && shortcutsContainerRef.current) {
@@ -681,42 +719,42 @@ function KeyboardShortcutsHelpComponent({
     return () => document.removeEventListener('keydown', handleTabTrap);
   }, [isOpen]);
 
-  // Filter and group shortcuts
+  // Filter and group shortcuts (single-pass grouping, preserves contextOrder)
   const groupedShortcuts = useMemo(() => {
-    let filtered = searchQuery
-      ? keyboardShortcuts.filter(
-          (s) =>
-            s.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            s.keys.some((k) =>
-              k.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-        )
-      : keyboardShortcuts;
+    const base =
+      selectedContext !== 'all'
+        ? queryFilteredShortcuts.filter((s) => s.context === selectedContext)
+        : queryFilteredShortcuts;
 
-    // Micro-UX: Filter by context category when a filter chip is selected
-    // Provides quick visual filtering without requiring text search
-    if (selectedContext !== 'all') {
-      filtered = filtered.filter((s) => s.context === selectedContext);
+    const grouped = {} as Record<KeyboardShortcut['context'], KeyboardShortcut[]>;
+    for (const s of base) {
+      const list = grouped[s.context];
+      if (list) list.push(s);
+      else grouped[s.context] = [s];
     }
 
-    return contextOrder.reduce(
-      (acc, context) => {
-        const shortcuts = filtered.filter((s) => s.context === context);
-        if (shortcuts.length > 0) acc[context] = shortcuts;
-        return acc;
-      },
-      {} as Record<KeyboardShortcut['context'], KeyboardShortcut[]>
-    );
-  }, [searchQuery, selectedContext]);
+    const ordered = {} as Record<KeyboardShortcut['context'], KeyboardShortcut[]>;
+    for (const context of contextOrder) {
+      if (grouped[context]?.length) ordered[context] = grouped[context];
+    }
+    return ordered;
+  }, [queryFilteredShortcuts, selectedContext]);
 
-  // Flatten for selection tracking
+  // Flatten for selection tracking (no per-item spread: preserves referential
+  // stability so memoized rows don't re-render on every keystroke)
   const flatShortcuts = useMemo(
-    () =>
-      Object.entries(groupedShortcuts).flatMap(([, shortcuts]) =>
-        shortcuts.map((s) => ({ ...s }))
-      ),
+    () => Object.values(groupedShortcuts).flat(),
     [groupedShortcuts]
   );
+
+  // O(1) lookup of a shortcut's flat index (replaces per-row findIndex O(N^2))
+  const flatIndexByDescription = useMemo(() => {
+    const map = new Map<string, number>();
+    flatShortcuts.forEach((s, i) => {
+      if (!map.has(s.description)) map.set(s.description, i);
+    });
+    return map;
+  }, [flatShortcuts]);
 
   if (!isOpen) return null;
 
@@ -850,9 +888,7 @@ function KeyboardShortcutsHelpComponent({
             All
           </button>
           {contextOrder.map((context) => {
-            const count = keyboardShortcuts.filter(
-              (s) => s.context === context
-            ).length;
+            const count = contextCounts[context] ?? 0;
             return (
               <button
                 key={context}
@@ -1003,9 +1039,8 @@ function KeyboardShortcutsHelpComponent({
                 </h3>
                 <div className={SPACE_Y_PATTERNS.XS}>
                   {shortcuts.map((shortcut, index) => {
-                    const globalIndex = flatShortcuts.findIndex(
-                      (s) => s.description === shortcut.description
-                    );
+                    const globalIndex =
+                      flatIndexByDescription.get(shortcut.description) ?? -1;
                     return (
                       <div
                         key={`${context}-${index}`}

@@ -6,7 +6,7 @@
  * Supports environment variable overrides via EnvLoader.
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Request ID generation configuration

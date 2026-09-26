@@ -1,0 +1,18 @@
+{
+  "agen_penilai": "QA & Test Coverage Agent",
+  "indikator": "Kuantitas & Kualitas Pengujian",
+  "skor_saat_ini": 38,
+  "status": "BUTUH_PERBAIKAN",
+  "temuan_kunci": [
+    "Global coverage only 35.44% statements (target 85%) - jest.config.js:27-34 thresholds commented out",
+    "Critical modules at 0% coverage: src/lib/db/repository.ts:19-86, src/lib/db/server.ts:31-46, src/lib/db/vectors.ts:22-58, src/lib/errors/context.ts:88-298, src/lib/validators/pii-detector.ts:44-144, src/lib/validators/xss-sanitizer.ts:74-274",
+    "OpenAI mock fundamentally broken - jest.setup.js:8-24 mocks 'default' as function but code uses 'import OpenAI from openai' (class) - causes 4 API suites to fail with '_openai.default is not a constructor'",
+    "PROGRESS_PERCENTAGE.MAX undefined in tests/api/health-detailed.test.ts - missing mock for @/lib/config/modular-constants",
+    "Performance test flaky: tests/dom-utils-perf.test.ts:120 fails in CI (327ms > 250ms threshold) - timing-sensitive benchmark",
+    "8 of 20 API test suites fail pre-existing (500 errors) due to missing auth.isGuestRequest mock and OpenAI mock issues",
+    "Coverage thresholds intentionally disabled - no gate preventing regression",
+    "No Playwright/Cypress E2E integration visible despite e2e test files existing",
+    "Stryker mutation testing configured (package.json:33-34) but not run in CI",
+    "Test infrastructure solid: jest.setup.js comprehensive mocks for Next.js, DOM, crypto, timers; separate jest.config.api.js for API tests"
+  ],
+  "rekomendasi_tindakan": "1. Fix OpenAI mock in jest.setup.js:8-24 to export a class constructor matching OpenAI SDK. 2. Add PROGRESS_PERCENTAGE mock to tests/api/health-detailed.test.ts or jest.setup.js. 3. Mock auth.isGuestRequest in API test setup. 4. Remove flaky performance benchmark or increase threshold significantly. 5. Enable coverage thresholds incrementally (start 20% → 50% → 85%). 6. Add missing unit tests for 0% coverage modules (repository, vectors, pii-detector, xss-sanitizer). 7. Integrate Playwright for true E2E testing. 8. Run Stryker mutation testing in CI pipeline."

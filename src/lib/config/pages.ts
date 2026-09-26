@@ -527,6 +527,12 @@ export const DASHBOARD_PAGE_CONTENT = {
     IDEAS_LIST: 'List of your ideas',
     SITE_FOOTER: 'Site footer',
   },
+  // Guest mode banner
+  GUEST_BANNER_TITLE: 'Guest Mode Active',
+  GUEST_BANNER_MESSAGE:
+    'Your progress is saved locally in this browser. Create an account to save your ideas permanently and access them from any device.',
+  GUEST_BANNER_CTA: 'Create Account',
+  GUEST_BANNER_DISMISS: 'Dismiss',
 } as const;
 
 /**

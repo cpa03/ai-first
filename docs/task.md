@@ -13,66 +13,77 @@ This file contains only **active tasks** that are currently in progress or pendi
 ## StorX Feature Analysis & Integration Tasks
 
 ### [STRENGTHEN] Strengthen LoadingSpinner Accessibility and Non-Redundant Screen Reader Announcements
+
 - **Priority**: MEDIUM
 - **Status**: COMPLETE
 - **Date**: 2026-08-17
 - **Details**: Strengthened `LoadingSpinner` accessibility by setting `aria-hidden="true"` on visible labels when `ariaLabel` matches `label`, preventing duplicate screen reader announcements while maintaining polite status updates. Verified in `tests/LoadingSpinner.test.tsx`.
 
 ### [CONNECT] Connect LoadingSpinner Label Handling to Central Component Configurations
+
 - **Priority**: LOW
 - **Status**: COMPLETE
 - **Date**: 2026-08-17
 - **Details**: Verified that `LoadingSpinner` styling, timers, and accessibility labels are connected directly to central configurations in `src/lib/config/`, maintaining zero hardcoded values and consistent system architecture.
 
 ### [STRENGTHEN] Standardize EmailButton Hover and Active States
+
 - **Priority**: MEDIUM
 - **Status**: COMPLETE
 - **Date**: 2026-08-02
 - **Details**: Strengthened the `EmailButton` element by incorporating interactive translations and physical scale transformations on hover and active click states. This aligns the visual interaction with the standardized `ShareButton` component while remaining compatible with `prefers-reduced-motion` settings.
 
 ### [CONNECT] Connect EmailButton Interaction Patterns to Central Configs
+
 - **Priority**: LOW
 - **Status**: COMPLETE
 - **Date**: 2026-08-02
 - **Details**: Verified that keyboard shortcut and styling details in `EmailButton` are connected directly to centralized modular configurations in `src/lib/config/`, maintaining zero hardcoded values and consistent architectural layers.
 
 ### [STRENGTHEN] Strengthen SectionIndicator Keyboard Accessibility and Reduced Motion Compatibility
+
 - **Priority**: MEDIUM
 - **Status**: COMPLETE
 - **Date**: 2026-08-14
 - **Details**: Strengthened `SectionIndicator` keyboard focus visibility with `focus-visible:scale-125` for tactile parity with mouse hover, integrated `usePrefersReducedMotion` smooth scroll toggling, and added unit tests in `tests/SectionIndicator.test.tsx`.
 
 ### [STRENGTHEN] Strengthen CapsLockWarning Re-toggle State Persistence
+
 - **Priority**: MEDIUM
 - **Status**: COMPLETE
 - **Date**: 2026-08-15
 - **Details**: Unified `isOn` state tracking in `CapsLockWarning.tsx` to ensure `prevIsOnRef.current` is updated on every transition, fixing a bug where subsequent Caps Lock toggling failed to trigger the warning indicator. Verified in `tests/CapsLockWarning.test.tsx`.
 
 ### [CONNECT] Connect CapsLockWarning Labels to Central Component Configs
+
 - **Priority**: LOW
 - **Status**: COMPLETE
 - **Date**: 2026-08-15
 - **Details**: Connected `CapsLockWarning` UI strings directly to `CAPS_LOCK_WARNING_LABELS` in `src/lib/config/component-labels.ts`, eliminating inline hardcoded text.
 
 ### [STRENGTHEN] Strengthen CopyButton Keyboard Shortcut Handling and Tooltip Discovery
+
 - **Priority**: MEDIUM
 - **Status**: COMPLETE
 - **Date**: 2026-08-16
 - **Details**: Enhanced `CopyButton` keyboard interactions to handle case-insensitive key detection (`e.key.toLowerCase() === 'c'`) when `Ctrl` or `Cmd` is pressed, and added platform-aware keyboard shortcut hints (`⌘+C` vs `Ctrl+C` using `PLATFORM.isMac()`) to the component's tooltip.
 
 ### [CONNECT] Connect CopyButton Keyboard Shortcut Labels to Central Configs
+
 - **Priority**: LOW
 - **Status**: COMPLETE
 - **Date**: 2026-08-16
 - **Details**: Connected platform-aware keyboard shortcut representations for `CopyButton` directly to `COPY_BUTTON_LABELS.KEYBOARD_SHORTCUT` in `src/lib/config/component-labels.ts`.
 
 ### [STRENGTHEN] Strengthen ScrollToTopButton Micro-UX and Touch Responsiveness
+
 - **Priority**: MEDIUM
 - **Status**: COMPLETE
 - **Date**: 2026-09-10
 - **Details**: Strengthened `ScrollToTopButton` interactive state feedback with active tactile scaling (`active:scale-95 motion-reduce:active:scale-100`) to provide instant physical feedback during touch and click interactions while respecting reduced motion settings.
 
 ### [CONNECT] Connect ScrollToTopButton Tooltip Labels to Central Component Configs
+
 - **Priority**: LOW
 - **Status**: COMPLETE
 - **Date**: 2026-09-10

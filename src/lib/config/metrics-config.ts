@@ -7,7 +7,7 @@
  * @module lib/config/metrics-config
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Metric Names

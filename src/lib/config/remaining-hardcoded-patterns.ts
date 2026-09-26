@@ -318,7 +318,7 @@ export const PROGRESS_BAR_COLORS = {
  * Loading spinner elapsed time text style
  * Used in: LoadingSpinner.tsx elapsed time display
  */
-export const LOADING_SPINNER_ELAPSED_TEXT = 'text-xs text-gray-400 font-mono';
+export const LOADING_SPINNER_ELAPSED_TEXT = 'text-xs text-gray-600 font-mono';
 
 /**
  * Password visible state background tint
