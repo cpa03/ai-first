@@ -686,6 +686,11 @@ export const PASSWORD_REQUIREMENTS_LABELS = {
   /** Screen reader announcement when requirement count changes */
   PROGRESS_ANNOUNCEMENT: (metCount: number, total: number) =>
     `${metCount} of ${total} requirements met`,
+  /** Micro-UX: Hint showing example special characters when requirement is not met */
+  SPECIAL_CHAR_HINT: 'Try: !@#$%^&*()',
+  /** ARIA label for the special character hint */
+  SPECIAL_CHAR_HINT_ARIA:
+    'Example special characters: exclamation at, at sign, hash, dollar, percent, caret, ampersand, asterisk, open parenthesis, close parenthesis',
 } as const;
 
 /**
