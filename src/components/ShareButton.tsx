@@ -19,7 +19,7 @@ import {
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { triggerHapticFeedback } from '@/lib/utils';
-import { isFocusedOnInput } from '@/lib/dom-utils';
+import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
 import { useConfetti } from '@/hooks/useConfetti';
@@ -67,9 +67,15 @@ const ShareButtonComponent = function ShareButton({
   onShare,
 }: ShareButtonProps) {
   const [shared, setShared] = useState(false);
+  const [isMac, setIsMac] = useState(false);
   const { particles, fire } = useConfetti();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { showToast: showToastFn } = useToast();
+
+  // Micro-UX: Detect platform for keyboard shortcut display
+  useEffect(() => {
+    setIsMac(PLATFORM.isMac());
+  }, []);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -230,7 +236,7 @@ const ShareButtonComponent = function ShareButton({
       <StatusAnnouncer message={toastMessage} triggered={shared} />
       <Tooltip
         content={shared ? successLabel : ariaLabel}
-        shortcut={shared ? undefined : ['⌘', '⇧', 'S']}
+        shortcut={shared ? undefined : [isMac ? '⌘' : 'Ctrl', '⇧', 'S']}
         disabled={false}
         position="top"
       >
@@ -292,6 +298,28 @@ const ShareButtonComponent = function ShareButton({
             `}
               >
                 {shared ? successLabel : label}
+                {!shared && (
+                  <span
+                    className={`hidden sm:inline-flex items-center gap-1 ml-1.5 transition-opacity ${TRANSITION_CLASSES.DEFAULT} opacity-60`}
+                    aria-hidden="true"
+                  >
+                    <kbd
+                      className={`px-1 py-0.5 rounded text-[10px] font-mono bg-white/20`}
+                    >
+                      {isMac ? '⌘' : 'Ctrl'}
+                    </kbd>
+                    <kbd
+                      className={`px-1 py-0.5 rounded text-[10px] font-mono bg-white/20`}
+                    >
+                      ⇧
+                    </kbd>
+                    <kbd
+                      className={`px-1 py-0.5 rounded text-[10px] font-mono bg-white/20`}
+                    >
+                      S
+                    </kbd>
+                  </span>
+                )}
               </span>
             )}
           </button>
