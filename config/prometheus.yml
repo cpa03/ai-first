@@ -21,6 +21,14 @@
 #                                metric and set the variable.
 #   PROMETHEUS_REMOTE_WRITE_PASSWORD - password for remote_write (commented section below).
 #
+# OPTIONAL ENV VARS (only needed when enabling the commented auth/remote_write blocks):
+#   WORKERS_EXPORTER_USER / WORKERS_EXPORTER_PASSWORD     - basic_auth for the
+#                                workers exporter (commented block below).
+#   SUPABASE_EXPORTER_USER / SUPABASE_EXPORTER_PASSWORD   - basic_auth for the
+#                                supabase exporter (commented block below).
+#   PROM_REMOTE_WRITE_URL  - remote_write endpoint URL (commented block below;
+#                                edit the url or set this var before enabling).
+#
 # VALIDATE AFTER EDITING:
 #   python3 -c "import yaml; yaml.safe_load(open('config/prometheus.yml'))"
 #   promtool check config config/prometheus.yml
@@ -39,13 +47,14 @@ scrape_configs:
   # ---------------------------------------------------------------------------
   # NOTE: /api/metrics requires `Authorization: Bearer <ADMIN_API_KEY>`.
   # Set METRICS_BEARER_TOKEN to the same value as the app's ADMIN_API_KEY.
-  # Scheme defaults to https for public targets; when scraping the in-cluster
-  # Docker DNS default (ideaflow-app:3000, plain HTTP behind a TLS-terminating
-  # proxy) set IDEAFLOW_SCRAPE_SCHEME=http.
+  # Scheme defaults to http, matching the in-cluster Docker DNS default
+  # (ideaflow-app:3000, plain HTTP behind a TLS-terminating proxy).
+  # For a public https target, override scheme to https AND set
+  # IDEAFLOW_APP_TARGET to the public host:port (e.g. my-app.example.com:443).
   # ---------------------------------------------------------------------------
   - job_name: 'ideaflow-app'
     metrics_path: '/api/metrics'
-    scheme: 'https'
+    scheme: 'http'
     authorization:
       type: 'Bearer'
       credentials: '${METRICS_BEARER_TOKEN}'
@@ -78,6 +87,8 @@ scrape_configs:
   # set WORKERS_EXPORTER_TARGET to the exporter host:port and, if the exporter
   # requires auth, uncomment basic_auth/authorization below and provide the
   # credentials via env vars (e.g. WORKERS_EXPORTER_USER / WORKERS_EXPORTER_PASSWORD).
+  # Scheme stays https by default; flip to http if the exporter serves plain
+  # HTTP internally.
   # ---------------------------------------------------------------------------
   - job_name: 'cloudflare-workers'
     metrics_path: '/metrics'
@@ -101,7 +112,9 @@ scrape_configs:
   # TODO: configure the exporter endpoint and credentials for your deployment:
   # set SUPABASE_EXPORTER_TARGET to the exporter host:port and, if the exporter
   # requires auth, uncomment basic_auth/authorization below and provide the
-  # credentials via env vars.
+  # credentials via env vars (SUPABASE_EXPORTER_USER / SUPABASE_EXPORTER_PASSWORD).
+  # Scheme stays https by default; flip to http if the exporter serves plain
+  # HTTP internally.
   # ---------------------------------------------------------------------------
   - job_name: 'supabase'
     metrics_path: '/metrics'
