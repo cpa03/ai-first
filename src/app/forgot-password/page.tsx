@@ -6,7 +6,7 @@ import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
-import { ROUTES } from '@/lib/config';
+import { ROUTES, API_ERROR_MESSAGES } from '@/lib/config';
 import {
   PAGE_LAYOUT_CLASSES,
   CONTAINER_WIDTHS,
@@ -132,7 +132,7 @@ export default function ForgotPasswordPage() {
 
       try {
         if (!supabaseClient) {
-          throw new Error('Authentication service is unavailable');
+          throw new Error(API_ERROR_MESSAGES.PAGE.AUTH_SERVICE_UNAVAILABLE);
         }
 
         const { error: resetError } =
@@ -172,7 +172,7 @@ export default function ForgotPasswordPage() {
 
     try {
       if (!supabaseClient) {
-        throw new Error('Authentication service is unavailable');
+        throw new Error(API_ERROR_MESSAGES.PAGE.AUTH_SERVICE_UNAVAILABLE);
       }
 
       const trimmedEmail = email.trim();

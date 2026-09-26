@@ -371,8 +371,8 @@ export default function NotFound() {
                 {[
                   {
                     href: ROUTES.HOME,
-                    label: 'Home',
-                    description: 'Start a new idea',
+                    label: NOT_FOUND_LABELS.NAVIGATION.HOME.LABEL,
+                    description: NOT_FOUND_LABELS.NAVIGATION.HOME.DESCRIPTION,
                     icon: (
                       <path
                         strokeLinecap="round"
@@ -383,8 +383,9 @@ export default function NotFound() {
                   },
                   {
                     href: ROUTES.DASHBOARD,
-                    label: 'Dashboard',
-                    description: 'View your ideas',
+                    label: NOT_FOUND_LABELS.NAVIGATION.DASHBOARD.LABEL,
+                    description:
+                      NOT_FOUND_LABELS.NAVIGATION.DASHBOARD.DESCRIPTION,
                     icon: (
                       <path
                         strokeLinecap="round"
@@ -395,8 +396,8 @@ export default function NotFound() {
                   },
                   {
                     href: ROUTES.SIGNUP,
-                    label: 'Sign up',
-                    description: 'Create an account',
+                    label: NOT_FOUND_LABELS.NAVIGATION.SIGNUP.LABEL,
+                    description: NOT_FOUND_LABELS.NAVIGATION.SIGNUP.DESCRIPTION,
                     icon: (
                       <path
                         strokeLinecap="round"

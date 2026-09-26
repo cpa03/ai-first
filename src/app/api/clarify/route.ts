@@ -8,7 +8,7 @@ import {
 } from '@/lib/api-handler';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { dbService } from '@/lib/db';
-import { IDEA_CONFIG, STATUS_CODES } from '@/lib/config';
+import { IDEA_CONFIG, STATUS_CODES, API_ERROR_MESSAGES } from '@/lib/config';
 
 async function handlePost(context: ApiContext) {
   const { request } = context;
@@ -37,7 +37,7 @@ async function handlePost(context: ApiContext) {
     const ideaRecord = await dbService.getIdea(finalIdeaId);
     if (!ideaRecord) {
       throw new AppError(
-        'Idea not found',
+        API_ERROR_MESSAGES.NOT_FOUND.IDEA,
         ErrorCode.NOT_FOUND,
         STATUS_CODES.NOT_FOUND
       );
