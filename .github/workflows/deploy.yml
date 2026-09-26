@@ -86,7 +86,7 @@ jobs:
             const botComment = comments.find(c => c.user.type === 'Bot' && c.body.includes('Vercel Preview'));
             const previewUrl = '${{ steps.vercel.outputs.preview-url }}';
             const body = `🚀 **Vercel Preview Deployment**\n\nPreview URL: ${previewUrl}\n\n---\n*Deployed from commit ${{ github.sha }}*`;
-            
+
             if (botComment) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
@@ -163,7 +163,7 @@ jobs:
             const botComment = comments.find(c => c.user.type === 'Bot' && c.body.includes('Cloudflare Preview'));
             const previewUrl = `https://${{ github.head_ref || github.ref_name }}.ai-first.pages.dev`;
             const body = `☁️ **Cloudflare Preview Deployment**\n\nPreview URL: ${previewUrl}\n\n---\n*Deployed from commit ${{ github.sha }}*`;
-            
+
             if (botComment) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
@@ -384,12 +384,12 @@ jobs:
           else
             TARGET_URL="${{ secrets.NEXT_PUBLIC_APP_URL }}"
           fi
-          
+
           echo "Verifying: $TARGET_URL"
-          
+
           # Basic health
           curl -f "$TARGET_URL/api/health" | jq '.status'
-          
+
           # Detailed health (requires admin auth, skip if not configured)
           curl -f "$TARGET_URL/api/health/detailed" -H "Authorization: Bearer ${{ secrets.ADMIN_API_KEY }}" | jq '.reliabilityScore' || echo "Detailed health check skipped (no admin key)"
 
@@ -402,7 +402,7 @@ jobs:
           else
             TARGET_URL="${{ secrets.NEXT_PUBLIC_APP_URL }}"
           fi
-          
+
           echo "Scanning: $TARGET_URL"
           npx playwright install --with-deps chromium
           node scripts/scan-console.js --url "$TARGET_URL"
@@ -416,6 +416,6 @@ jobs:
           else
             TARGET_URL="${{ secrets.NEXT_PUBLIC_APP_URL }}"
           fi
-          
+
           echo "Auditing: $TARGET_URL"
           node scripts/lighthouse-audit.js --url "$TARGET_URL"

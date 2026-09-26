@@ -34,7 +34,7 @@ async function handleGet(context: ApiContext) {
 
   // Check if this is a guest request
   const guestMode = isGuestRequest(request);
-  
+
   if (guestMode) {
     // For guest mode, allow access to any idea by ID (for preview)
     // In production, you might want to add additional validation

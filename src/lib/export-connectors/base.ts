@@ -187,7 +187,7 @@ export abstract class ExportConnector {
   /**
    * Check HTTP response and throw AppError with proper retryable classification
    * if the response indicates an error.
-   * 
+   *
    * Retryable status codes: 429, 500, 502, 503, 504
    * Non-retryable: 400, 401, 403, 404, etc.
    */
@@ -197,7 +197,7 @@ export abstract class ExportConnector {
       // Retryable: 429 (rate limit), 500, 502, 503, 504 (server errors)
       const retryableStatuses = [429, 500, 502, 503, 504];
       const isRetryable = retryableStatuses.includes(status);
-      
+
       let errorCode: ErrorCode;
       if (isRetryable) {
         errorCode = ErrorCode.EXTERNAL_SERVICE_ERROR;

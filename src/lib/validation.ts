@@ -1,9 +1,9 @@
 /**
  * Validation Module - Backward Compatible Wrapper
- * 
+ *
  * This file maintains backward compatibility by re-exporting all validation
  * utilities from the new modular validators/ folder.
- * 
+ *
  * New code should import directly from '@/lib/validators' or specific modules:
  * - '@/lib/validators/input-sanitizer'
  * - '@/lib/validators/schema-validator'

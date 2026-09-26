@@ -84,7 +84,7 @@ async function handleGet(context: ApiContext) {
 
   // Check if this is a guest request
   const guestMode = isGuestRequest(request);
-  
+
   if (guestMode) {
     // For guest mode, return empty list (guests don't have persistent ideas list)
     // They access individual ideas via /api/ideas/[id]

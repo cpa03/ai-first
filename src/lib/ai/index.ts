@@ -1,6 +1,6 @@
 /**
  * AI Module - Modular AI Service Components
- * 
+ *
  * This module provides separated concerns for the AI Service:
  * - AIProviderRegistry: Provider client initialization and management
  * - AICostTracker: Cost tracking, limits, and memory leak prevention

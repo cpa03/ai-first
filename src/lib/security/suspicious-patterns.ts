@@ -368,7 +368,7 @@ export async function detectSuspiciousPatterns(
       const clonedRequest = request.clone();
       const contentType = clonedRequest.headers.get('content-type') || '';
       let body = '';
-      
+
       // Parse body based on content type
       if (contentType.includes('application/json')) {
         body = await clonedRequest.text();

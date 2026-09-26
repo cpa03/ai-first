@@ -398,25 +398,25 @@ import HomePageClient from '@/app/HomePageClient';
 describe('Complete User Flow E2E', () => {
   it('should allow anonymous user to complete full flow: Home → Idea Input → Clarify → Results', async () => {
     render(<HomePageClient />);
-    
+
     // Step 1: Enter idea
     const textarea = screen.getByRole('textbox');
     fireEvent.change(textarea, { target: { value: 'Build a todo app' } });
     fireEvent.submit(screen.getByRole('form'));
-    
+
     // Step 2: Should redirect to clarify with progress
     await waitFor(() => {
       expect(screen.getByText('Processing your idea...')).toBeInTheDocument();
     });
-    
+
     // Step 3: Should show clarify flow without auth
     await waitFor(() => {
       expect(screen.getByText('Clarify Your Idea')).toBeInTheDocument();
     });
-    
+
     // Step 4: Complete clarification
     // ... complete all steps
-    
+
     // Step 5: Should show results (preview for anonymous)
     await waitFor(() => {
       expect(screen.getByText('Preview')).toBeInTheDocument();

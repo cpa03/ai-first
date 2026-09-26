@@ -381,7 +381,7 @@ jobs:
           echo "Pallet: ${{ needs.pallet.result }}"
           echo "Flexy: ${{ needs.flexy.result }}"
           echo "Broc: ${{ needs.broc.result }}"
-          
+
           # Fail if any required job failed
           if [[ "${{ needs.quality.result }}" != "success" ]] || \
              [[ "${{ needs.security.result }}" != "success" ]] || \
@@ -390,5 +390,5 @@ jobs:
             echo "❌ Required checks failed"
             exit 1
           fi
-          
+
           echo "✅ All required checks passed"

@@ -30,21 +30,21 @@ jobs:
           # Get base and head commits
           BASE_SHA="${{ github.event.pull_request.base.sha }}"
           HEAD_SHA="${{ github.event.pull_request.head.sha }}"
-          
+
           # Count changes
           CHANGES=$(git diff --shortstat $BASE_SHA..$HEAD_SHA)
           echo "changes=$CHANGES" >> $GITHUB_OUTPUT
-          
+
           # Get file count
           FILE_COUNT=$(git diff --name-only $BASE_SHA..$HEAD_SHA | wc -l)
           echo "file_count=$FILE_COUNT" >> $GITHUB_OUTPUT
-          
+
           # Get lines added/removed
           LINES_ADDED=$(git diff --numstat $BASE_SHA..$HEAD_SHA | awk '{sum+=$1} END {print sum}')
           LINES_REMOVED=$(git diff --numstat $BASE_SHA..$HEAD_SHA | awk '{sum+=$2} END {print sum}')
           echo "lines_added=${LINES_ADDED:-0}" >> $GITHUB_OUTPUT
           echo "lines_removed=${LINES_REMOVED:-0}" >> $GITHUB_OUTPUT
-          
+
           # Calculate total lines changed
           TOTAL_LINES=$(( ${LINES_ADDED:-0} + ${LINES_REMOVED:-0} ))
           echo "total_lines=$TOTAL_LINES" >> $GITHUB_OUTPUT
@@ -60,7 +60,7 @@ jobs:
             });
             const botComment = comments.find(c => c.user.type === 'Bot' && c.body.includes('PR Size'));
             const body = `📊 **PR Size Analysis**\n\n\`\`\`\n${{ steps.pr-size.outputs.changes }}\n\`\`\`\n\n- **Files changed**: ${{ steps.pr-size.outputs.file_count }}\n- **Lines added**: ${{ steps.pr-size.outputs.lines_added }}\n- **Lines removed**: ${{ steps.pr-size.outputs.lines_removed }}\n- **Total lines**: ${{ steps.pr-size.outputs.total_lines }}\n\n---\n*Size categories: XS (<10 lines), S (10-50), M (50-200), L (200-500), XL (>500)*`;
-            
+
             if (botComment) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
@@ -97,14 +97,14 @@ jobs:
             const requiredLabels = ['type:', 'size:'];
             const optionalLabels = ['priority:', 'area:', 'status:'];
             const prLabels = context.payload.pull_request.labels.map(l => l.name);
-            
+
             const hasType = prLabels.some(l => l.startsWith('type:'));
             const hasSize = prLabels.some(l => l.startsWith('size:'));
-            
+
             const missing = [];
             if (!hasType) missing.push('type:* (e.g., type:feature, type:bugfix, type:refactor)');
             if (!hasSize) missing.push('size:* (e.g., size:xs, size:s, size:m, size:l, size:xl)');
-            
+
             if (missing.length > 0) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -134,7 +134,7 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-            
+
             // Define reviewer mapping based on file paths
             const reviewerMap = {
               'src/app/': ['frontend-team'],
@@ -147,10 +147,10 @@ jobs:
               'tests/': ['qa-team'],
               'public/': ['frontend-team'],
             };
-            
+
             const reviewers = new Set();
             const teams = new Set();
-            
+
             for (const file of files) {
               for (const [path, teamReviewers] of Object.entries(reviewerMap)) {
                 if (file.filename.startsWith(path)) {
@@ -158,11 +158,11 @@ jobs:
                 }
               }
             }
-            
+
             // Get team members (in real scenario, fetch from GitHub API)
             // For now, just request review from teams
             const teamList = Array.from(teams);
-            
+
             if (teamList.length > 0) {
               await github.rest.pulls.requestReviewers({
                 owner: context.repo.owner,
@@ -347,7 +347,7 @@ jobs:
           script: |
             const requiredChecks = ['pr-size', 'label-check', 'quick-checks', 'dependency-check', 'docs-links'];
             const isMain = context.payload.pull_request.base.ref === 'main';
-            
+
             // Check if all required checks passed
             let allPassed = true;
             for (const check of requiredChecks) {
@@ -359,7 +359,7 @@ jobs:
                 console.log(`✅ ${check}: passed`);
               }
             }
-            
+
             // Check for full checks if targeting main
             if (isMain) {
               const fullResult = needs['full-checks']?.result;
@@ -368,11 +368,11 @@ jobs:
                 console.log(`❌ full-checks: ${fullResult} (required for main)`);
               }
             }
-            
+
             // Check for auto-merge label
             const prLabels = context.payload.pull_request.labels.map(l => l.name);
             const hasAutoMerge = prLabels.includes('auto-merge');
-            
+
             if (allPassed && hasAutoMerge) {
               console.log('🎉 PR is eligible for auto-merge!');
               // Enable auto-merge
@@ -421,11 +421,11 @@ jobs:
           echo "Dependency Check: ${{ needs.dependency-check.result }}"
           echo "Docs Links: ${{ needs.docs-links.result }}"
           echo "Auto-Merge: ${{ needs.auto-merge.result }}"
-          
+
           # Determine overall status
           REQUIRED_JOBS=("pr-size" "label-check" "quick-checks" "dependency-check" "docs-links")
           FAILED=0
-          
+
           for job in "${REQUIRED_JOBS[@]}"; do
             RESULT="${{ needs.$job.result }}"
             if [[ "$RESULT" != "success" ]]; then
@@ -433,7 +433,7 @@ jobs:
               FAILED=1
             fi
           done
-          
+
           # Full checks required for main branch
           if [[ "${{ github.event.pull_request.base.ref }}" == "main" ]]; then
             FULL_RESULT="${{ needs.full-checks.result }}"
@@ -442,7 +442,7 @@ jobs:
               FAILED=1
             fi
           fi
-          
+
           if [[ $FAILED -eq 1 ]]; then
             echo "❌ Some required checks failed"
             exit 1

@@ -6,7 +6,7 @@ const logger = createLogger('GuestMode');
 
 /**
  * Guest Mode Utilities
- * 
+ *
  * Handles anonymous user session management using localStorage.
  * Allows users to try the clarify flow without authentication.
  */
@@ -116,15 +116,15 @@ export function getGuestIdeaData(): { idea: string; ideaId: string; createdAt: s
  */
 export function saveGuestIdeaData(idea: string, ideaId: string): void {
   if (typeof window === 'undefined') return;
-  
+
   const sessionId = generateGuestSessionId();
   const createdAt = new Date().toISOString();
-  
+
   localStorage.setItem(GUEST_STORAGE_KEYS.SESSION_ID, sessionId);
   localStorage.setItem(GUEST_STORAGE_KEYS.IDEA_ID, ideaId);
   localStorage.setItem(GUEST_STORAGE_KEYS.IDEA_DATA, JSON.stringify({ idea, ideaId, createdAt }));
   localStorage.setItem(GUEST_STORAGE_KEYS.CREATED_AT, createdAt);
-  
+
   logger.info('Guest idea saved', { ideaId, sessionId });
 }
 
@@ -169,11 +169,11 @@ export function isGuestSessionExpired(): boolean {
   if (typeof window === 'undefined') return true;
   const createdAt = localStorage.getItem(GUEST_STORAGE_KEYS.CREATED_AT);
   if (!createdAt) return true;
-  
+
   const created = new Date(createdAt).getTime();
   const now = Date.now();
   const sevenDays = 7 * 24 * 60 * 60 * 1000;
-  
+
   return (now - created) > sevenDays;
 }
 
@@ -182,7 +182,7 @@ export function isGuestSessionExpired(): boolean {
  */
 export function initializeGuestSession(): void {
   if (typeof window === 'undefined') return;
-  
+
   if (isGuestSessionExpired()) {
     clearGuestSession();
   }

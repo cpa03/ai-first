@@ -26,13 +26,13 @@ it('should detect suspicious patterns in request body when scanBody=true', async
     body: JSON.stringify({ query: "SELECT * FROM users" }),
     headers: { 'content-type': 'application/json' }
   });
-  
+
   const result = detectSuspiciousPatterns(request, {
     scanBody: true,
     minSeverity: 2,
     logDetected: false
   });
-  
+
   expect(result.detected).toBe(true);
   expect(result.patterns.some(p => p.category === 'sql_injection')).toBe(true);
 });

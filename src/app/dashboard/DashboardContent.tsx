@@ -20,7 +20,7 @@ export default async function DashboardContent({
   page = 1,
 }: DashboardContentProps) {
   const cookieStore = await cookies();
-  
+
   // Create Supabase server client for auth
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

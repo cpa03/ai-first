@@ -935,7 +935,7 @@ export {
   FLEX_GROW_PATTERNS,
 } from './spacing';
 
-export { 
+export {
   PX_CLASSES,
   SPACE_X_CLASSES,
   SPACE_Y_CLASSES,

@@ -4,7 +4,7 @@ import { generateApiCacheControl, generateStaticAssetCacheControl } from '@/lib/
 
 /**
  * Middleware for edge caching, redirects, and performance optimization
- * 
+ *
  * This middleware runs at the edge and provides:
  * - Cache-Control headers for static assets and API routes
  * - Security headers
@@ -77,25 +77,25 @@ export function middleware(request: NextRequest) {
 function addSecurityHeaders(response: NextResponse) {
   // Prevent clickjacking
   response.headers.set('X-Frame-Options', 'DENY');
-  
+
   // Prevent MIME type sniffing
   response.headers.set('X-Content-Type-Options', 'nosniff');
-  
+
   // Control referrer information
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
+
   // XSS Protection
   response.headers.set('X-XSS-Protection', '0');
-  
+
   // Restrict browser features
   response.headers.set(
     'Permissions-Policy',
     'camera=(), microphone=(), geolocation=(), browsing-topics=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()'
   );
-  
+
   // Cross-Origin-Resource-Policy
   response.headers.set('Cross-Origin-Resource-Policy', 'same-origin');
-  
+
   // Cross-Origin-Opener-Policy
   response.headers.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
 }

@@ -334,7 +334,7 @@ export class Cache<T = unknown> {
 /**
  * Factory function for creating Cache instances.
  * Enables dependency injection for testing and avoids singleton pattern.
- * 
+ *
  * @param options - Cache configuration options
  * @returns A new Cache instance
  */
