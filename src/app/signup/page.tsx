@@ -671,7 +671,7 @@ export default function SignupPage() {
             <div className={FORM_OVERLAY_STYLES.SPINNER_CONTAINER}>
               <div className={FORM_OVERLAY_STYLES.SPINNER} />
               <span className={FORM_OVERLAY_STYLES.LOADING_TEXT}>
-                Creating account...
+                {SIGNUP_PAGE_CONTENT.FORM.SUBMIT_LOADING}
               </span>
             </div>
           </div>

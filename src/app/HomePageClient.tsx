@@ -29,6 +29,7 @@ import {
   REMAINING_PATTERNS,
   HOMEPAGE_HERO_SECTION,
   HOMEPAGE_HERO_ACTIONS,
+  SR_ONLY,
 } from '@/lib/config/remaining-hardcoded-patterns';
 
 const ShareButton = dynamic(() => import('@/components/ShareButton'), {
@@ -252,7 +253,7 @@ export default function HomePageClient() {
         className={CARD_PATTERNS.BASE}
         style={CSS_CONTAINMENT.LAYOUT}
       >
-        <h2 id={HOME_PAGE_ELEMENT_IDS.IDEA_INPUT_HEADING} className="sr-only">
+        <h2 id={HOME_PAGE_ELEMENT_IDS.IDEA_INPUT_HEADING} className={SR_ONLY}>
           Enter Your Idea
         </h2>
         <IdeaInput onSubmit={handleIdeaSubmit} />
