@@ -163,3 +163,4 @@ reports/
 
 # Agent Memory (orchestrator state, jangan commit)
 .agent_memory/
+.agent_memory/**
