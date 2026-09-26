@@ -329,6 +329,73 @@ Risk analysis for ideas.
 - `idx_risk_assessments_idea_risk_score` - Idea+score composite (partial)
 - `idx_risk_assessments_status_risk_score` - Status+score composite
 
+### Admin RBAC Tables
+
+#### `admin_roles`
+
+RBAC role grants for admin access (`admin`, `moderator`, `super_admin`).
+
+| Column     | Type      | Description                          |
+| ---------- | --------- | ------------------------------------ |
+| id         | UUID      | Primary key                          |
+| user_id    | UUID      | Foreign key to auth.users            |
+| role       | TEXT      | Role (admin, moderator, super_admin) |
+| granted_by | UUID      | Granting user (nullable)             |
+| granted_at | TIMESTAMP | Grant timestamp                      |
+| expires_at | TIMESTAMP | Expiry timestamp (nullable)          |
+| is_active  | BOOLEAN   | Active flag                          |
+| metadata   | JSONB     | Extensible metadata                  |
+
+**Constraints:**
+
+- UNIQUE(user_id, role)
+
+**Indexes:**
+
+- `idx_admin_roles_user_id` - User lookup
+- `idx_admin_roles_role` - Role filtering
+- `idx_admin_roles_active` - Active roles (partial)
+- `idx_admin_roles_expires_at` - Expiry filtering (partial)
+
+**RLS:** Enabled. Service role full access; admins can view all roles; super admins manage roles; users view own roles. Helpers: `is_admin`, `is_super_admin`, `is_moderator_or_admin`. View: `admin_user_view`.
+
+#### `admin_audit_logs`
+
+Immutable audit trail of admin actions.
+
+| Column         | Type      | Description                                  |
+| -------------- | --------- | -------------------------------------------- |
+| id             | UUID      | Primary key                                  |
+| admin_user_id  | UUID      | Acting admin (FK auth.users)                 |
+| action         | TEXT      | Action performed                             |
+| resource_type  | TEXT      | Resource type                                |
+| resource_id    | UUID      | Resource ID (nullable)                       |
+| target_user_id | UUID      | Target user (nullable)                       |
+| details        | JSONB     | Action details                               |
+| ip_address     | INET      | Client IP                                    |
+| user_agent     | TEXT      | Client user agent                            |
+| request_id     | TEXT      | Request correlation ID                       |
+| correlation_id | TEXT      | Cross-request correlation ID                 |
+| severity       | TEXT      | Severity (debug/info/warning/error/critical) |
+| created_at     | TIMESTAMP | Creation timestamp                           |
+
+**Indexes:**
+
+- `idx_admin_audit_logs_admin_user_id` - Admin lookup
+- `idx_admin_audit_logs_action` - Action filtering
+- `idx_admin_audit_logs_resource_type` - Resource type filtering
+- `idx_admin_audit_logs_resource_id` - Resource lookup
+- `idx_admin_audit_logs_target_user_id` - Target user lookup
+- `idx_admin_audit_logs_created_at` - Chronological ordering
+- `idx_admin_audit_logs_severity` - Severity filtering
+- `idx_admin_audit_logs_request_id` - Request drill-down lookup
+- `idx_admin_audit_logs_correlation_id` - Correlation drill-down lookup
+- `idx_admin_audit_logs_admin_created` - Admin+time composite
+- `idx_admin_audit_logs_resource_created` - Resource+time composite
+- `idx_admin_audit_logs_target_created` - Target+time composite
+
+**RLS:** Enabled. Service role full access; admins/moderators/super_admins can view and insert. No `updated_at` by design (immutable).
+
 ## Migration History
 
 ### Consolidated Migrations
@@ -342,6 +409,9 @@ Risk analysis for ideas.
 7. **20260222_consolidate_performance_indexes.sql** - Performance indexes
 8. **20260223_consolidate_migrations.sql** - Additional indexes
 9. **20260226_consolidate_risk_assessments_migrations.sql** - Risk assessments
+10. **20260817_final_schema_consolidation.sql** - Final schema consolidation (single source of truth)
+11. **20260818_fix_schema_integrity.sql** - Schema integrity fixes (RLS DELETE policies, updated_at triggers)
+12. **20260919_add_admin_tables.sql** - Admin RBAC + audit tables (`admin_roles`, `admin_audit_logs`), RLS, `is_admin` helpers, `admin_user_view`
 
 ## Best Practices
 
