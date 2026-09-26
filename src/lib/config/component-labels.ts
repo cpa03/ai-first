@@ -203,6 +203,8 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
     `Copy shortcut: ${keys.join(' plus ')}`,
   /** Separator between keyboard shortcut key combinations */
   SEPARATOR: '·',
+  /** Filter category aria-label */
+  FILTER_CATEGORY_ARIA_LABEL: 'Filter shortcuts by category',
   /** Keyboard shortcut context labels */
   CONTEXT_LABELS: {
     global: 'Global',
@@ -319,6 +321,13 @@ export const ALERT_LABELS = {
   SNOOZE_SHORTCUT_HINT: 'Press s to snooze',
   /** Keyboard shortcut hint for dismiss */
   DISMISS_SHORTCUT_HINT: 'Press d to dismiss',
+  /** Alert type titles */
+  TITLES: {
+    ERROR: 'Error',
+    WARNING: 'Warning',
+    INFO: 'Info',
+    SUCCESS: 'Success',
+  } as const,
 } as const;
 
 /**
