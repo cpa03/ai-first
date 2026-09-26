@@ -561,6 +561,7 @@ export const COMPONENT_CONFIG = {
       1000,
       30000
     ),
+    SHORTCUT_HINT_DISCOVERY_DURATION_MS: 2500,
   },
 
   DASHBOARD: {
