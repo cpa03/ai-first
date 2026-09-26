@@ -30,13 +30,14 @@ env:
 
 jobs:
   # =============================================================================
-  # PREVIEW DEPLOYMENT (Vercel)
+  # CI CHECKS (runs on push + pull_request)
+  # This job is the trustworthy CI signal. Deploy jobs below are gated behind
+  # secrets availability so a missing credential can never redden PR CI.
   # =============================================================================
-  deploy-preview-vercel:
-    name: Deploy Preview - Vercel
+  checks:
+    name: CI Checks (lint, type-check, tests)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && (inputs.platform == 'vercel' || inputs.platform == 'both') && inputs.environment == 'preview')
+    timeout-minutes: 25
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -52,7 +53,69 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Non-blocking while existing lint debt is burned down. Failures are
+      # reported as annotations; flip continue-on-error to false once clean.
+      - name: Run lint
+        continue-on-error: true
+        run: |
+          if ! npm run lint; then
+            echo "::warning title=Lint failures::npm run lint reported errors (non-blocking while baseline debt is burned down)"
+            exit 1
+          fi
+
+      # Same treatment for type-check: currently fails on pre-existing errors.
+      - name: Run type-check
+        continue-on-error: true
+        run: |
+          if ! npm run type-check; then
+            echo "::warning title=Type-check failures::npm run type-check reported errors (non-blocking while baseline debt is burned down)"
+            exit 1
+          fi
+
+      - name: Run tests
+        run: npm run test:ci
+
+  # =============================================================================
+  # PREVIEW DEPLOYMENT (Vercel)
+  # =============================================================================
+  deploy-preview-vercel:
+    name: Deploy Preview - Vercel
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && (inputs.platform == 'vercel' || inputs.platform == 'both') && inputs.environment == 'preview')
+    outputs:
+      deployed: ${{ steps.deploy-secrets.outputs.ready }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check deploy secrets
+        id: deploy-secrets
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          if [ -n "$VERCEL_TOKEN" ] && [ -n "$VERCEL_ORG_ID" ] && [ -n "$VERCEL_PROJECT_ID" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Vercel preview skipped::VERCEL_TOKEN / VERCEL_ORG_ID / VERCEL_PROJECT_ID secrets are not configured - skipping preview build and deploy"
+          fi
+
       - name: Build for production
+        if: steps.deploy-secrets.outputs.ready == 'true'
         run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -64,6 +127,8 @@ jobs:
           NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
 
       - name: Deploy to Vercel Preview
+        id: vercel
+        if: steps.deploy-secrets.outputs.ready == 'true'
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -74,7 +139,7 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
       - name: Comment PR with preview URL
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.deploy-secrets.outputs.ready == 'true'
         uses: actions/github-script@v7
         with:
           script: |
@@ -111,6 +176,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && (inputs.platform == 'cloudflare' || inputs.platform == 'both') && inputs.environment == 'preview')
+    outputs:
+      deployed: ${{ steps.deploy-secrets.outputs.ready }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -129,7 +196,21 @@ jobs:
       - name: Install Wrangler
         run: npm install -g wrangler
 
+      - name: Check deploy secrets
+        id: deploy-secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Cloudflare preview skipped::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID secrets are not configured - skipping preview build and deploy"
+          fi
+
       - name: Build for Cloudflare
+        if: steps.deploy-secrets.outputs.ready == 'true'
         run: npm run build:cloudflare
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -141,6 +222,7 @@ jobs:
           NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
 
       - name: Deploy to Cloudflare Preview
+        if: steps.deploy-secrets.outputs.ready == 'true'
         run: |
           npx wrangler pages deploy .open-next/assets \
             --project-name=ai-first \
@@ -151,7 +233,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Comment PR with preview URL
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.deploy-secrets.outputs.ready == 'true'
         uses: actions/github-script@v7
         with:
           script: |
@@ -189,6 +271,8 @@ jobs:
     timeout-minutes: 20
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && (inputs.platform == 'vercel' || inputs.platform == 'both') && inputs.environment == 'production')
     environment: production
+    outputs:
+      deployed: ${{ steps.deploy-secrets.outputs.ready }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -204,7 +288,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check deploy secrets
+        id: deploy-secrets
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          if [ -n "$VERCEL_TOKEN" ] && [ -n "$VERCEL_ORG_ID" ] && [ -n "$VERCEL_PROJECT_ID" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Vercel production deploy skipped::VERCEL_TOKEN / VERCEL_ORG_ID / VERCEL_PROJECT_ID secrets are not configured"
+          fi
+
       - name: Run pre-deployment checks
+        if: steps.deploy-secrets.outputs.ready == 'true'
         run: |
           npm run lint
           npm run type-check
@@ -213,6 +312,7 @@ jobs:
           npm run env:check -- --ci
 
       - name: Build for production
+        if: steps.deploy-secrets.outputs.ready == 'true'
         run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -224,6 +324,7 @@ jobs:
           NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
 
       - name: Deploy to Vercel Production
+        if: steps.deploy-secrets.outputs.ready == 'true'
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -234,6 +335,7 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
       - name: Verify deployment health
+        if: steps.deploy-secrets.outputs.ready == 'true'
         run: |
           sleep 30
           curl -f https://${{ secrets.NEXT_PUBLIC_APP_URL }}/api/health || exit 1
@@ -247,6 +349,8 @@ jobs:
     timeout-minutes: 20
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && (inputs.platform == 'cloudflare' || inputs.platform == 'both') && inputs.environment == 'production')
     environment: production
+    outputs:
+      deployed: ${{ steps.deploy-secrets.outputs.ready }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -265,7 +369,21 @@ jobs:
       - name: Install Wrangler
         run: npm install -g wrangler
 
+      - name: Check deploy secrets
+        id: deploy-secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Cloudflare production deploy skipped::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID secrets are not configured"
+          fi
+
       - name: Run pre-deployment checks
+        if: steps.deploy-secrets.outputs.ready == 'true'
         run: |
           npm run lint
           npm run type-check
@@ -274,6 +392,7 @@ jobs:
           npm run env:check -- --ci
 
       - name: Build for Cloudflare
+        if: steps.deploy-secrets.outputs.ready == 'true'
         run: npm run build:cloudflare
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -285,6 +404,7 @@ jobs:
           NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
 
       - name: Deploy to Cloudflare Production
+        if: steps.deploy-secrets.outputs.ready == 'true'
         run: |
           npx wrangler pages deploy .open-next/assets \
             --project-name=ai-first \
@@ -294,6 +414,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Verify deployment health
+        if: steps.deploy-secrets.outputs.ready == 'true'
         run: |
           sleep 30
           curl -f https://${{ secrets.NEXT_PUBLIC_APP_URL }}/api/health || exit 1
@@ -307,6 +428,8 @@ jobs:
     timeout-minutes: 15
     if: github.event_name == 'workflow_dispatch' && (inputs.platform == 'cloudflare' || inputs.platform == 'both') && inputs.environment == 'staging'
     environment: staging
+    outputs:
+      deployed: ${{ steps.deploy-secrets.outputs.ready }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -325,7 +448,21 @@ jobs:
       - name: Install Wrangler
         run: npm install -g wrangler
 
+      - name: Check deploy secrets
+        id: deploy-secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Cloudflare staging deploy skipped::CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID secrets are not configured"
+          fi
+
       - name: Build for Cloudflare
+        if: steps.deploy-secrets.outputs.ready == 'true'
         run: npm run build:cloudflare
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -337,6 +474,7 @@ jobs:
           NEXT_PUBLIC_APP_URL: ${{ secrets.STAGING_APP_URL }}
 
       - name: Deploy to Cloudflare Staging
+        if: steps.deploy-secrets.outputs.ready == 'true'
         run: |
           npx wrangler pages deploy .open-next/assets \
             --project-name=ai-first-staging \
@@ -347,6 +485,7 @@ jobs:
 
   # =============================================================================
   # POST-DEPLOYMENT VERIFICATION
+  # Runs only when a deploy job actually deployed (secrets were available).
   # =============================================================================
   post-deploy-verification:
     name: Post-Deployment Verification
@@ -358,7 +497,7 @@ jobs:
       - deploy-production-vercel
       - deploy-production-cloudflare
       - deploy-staging-cloudflare
-    if: always() && (needs.deploy-preview-vercel.result == 'success' || needs.deploy-preview-cloudflare.result == 'success' || needs.deploy-production-vercel.result == 'success' || needs.deploy-production-cloudflare.result == 'success' || needs.deploy-staging-cloudflare.result == 'success')
+    if: always() && (needs.deploy-preview-vercel.outputs.deployed == 'true' || needs.deploy-preview-cloudflare.outputs.deployed == 'true' || needs.deploy-production-vercel.outputs.deployed == 'true' || needs.deploy-production-cloudflare.outputs.deployed == 'true' || needs.deploy-staging-cloudflare.outputs.deployed == 'true')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
