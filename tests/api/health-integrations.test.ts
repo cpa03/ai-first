@@ -15,7 +15,7 @@ jest.mock('@/lib/export-connectors', () => ({
 
 jest.mock('@/lib/config', () => ({
   APP_CONFIG: { VERSION: '0.1.1' },
-  EXTERNAL_RATE_LIMIT_CONFIG: { THROTTLE_THRESHOLD: 0.2 },
+  RATE_LIMIT_CONFIG: { EXTERNAL: { THROTTLE_THRESHOLD: 0.2 } },
 }));
 
 jest.mock('@/lib/config/constants', () => ({
