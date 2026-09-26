@@ -509,6 +509,51 @@ export const UI_STRINGS = {
     CONFIRM_GIVE_FEEDBACK: 'Are you sure you want to give feedback?',
   },
 
+  // Page-specific strings
+  PAGES: {
+    FORGOT_PASSWORD: {
+      TITLE: 'Forgot your password?',
+      DESCRIPTION:
+        "Enter your email address and we'll send you a link to reset your password.",
+      EMAIL_LABEL: 'Email address',
+      SUBMIT_BUTTON: 'Send reset link',
+      SENDING_BUTTON: 'Sending...',
+      RESEND_BUTTON: 'Resend email',
+      RESEND_COOLDOWN: 'Resend in {seconds}s',
+      SUCCESS_TITLE: 'Check your email',
+      SUCCESS_DESCRIPTION: "We've sent a password reset link to",
+      SUCCESS_SPAM_HINT:
+        "Didn't receive the email? Check your spam folder or resend below.",
+      RESEND_SUCCESS: 'Reset email resent successfully!',
+      LOADING_TEXT: 'Sending reset link...',
+      SKIP_LINK: 'Skip to forgot password form',
+      BACK_TO_SIGN_IN: 'Back to sign in',
+      REMEMBER_PASSWORD: 'Remember your password?',
+      SIGN_IN_LINK: 'Sign in',
+      KEYBOARD_HINT: 'Press {key} + Enter to submit',
+      SHORTCUTS: 'Shortcuts',
+      VIEW_ALL: 'View all',
+    },
+    LOGIN: {
+      TITLE: 'Sign in to your account',
+      EMAIL_LABEL: 'Email address',
+      PASSWORD_LABEL: 'Password',
+      SUBMIT_BUTTON: 'Sign in',
+      FORGOT_PASSWORD_LINK: 'Forgot your password?',
+      NO_ACCOUNT: "Don't have an account?",
+      SIGN_UP_LINK: 'Sign up',
+    },
+    SIGNUP: {
+      TITLE: 'Create your account',
+      EMAIL_LABEL: 'Email address',
+      PASSWORD_LABEL: 'Password',
+      CONFIRM_PASSWORD_LABEL: 'Confirm password',
+      SUBMIT_BUTTON: 'Create account',
+      HAS_ACCOUNT: 'Already have an account?',
+      SIGN_IN_LINK: 'Sign in',
+    },
+  },
+
   // Info messages
   INFO: {
     LOADING: 'Loading...',
