@@ -144,7 +144,6 @@ Complete index of all IdeaFlow documentation.
 - [Cloudflare Deployment](./cloudflare-deploy.md) - Cloudflare-specific deployment
 - [Disaster Recovery](./disaster-recovery.md) - Disaster recovery procedures and backup strategies
 - [Backup Procedures](./backup-procedures.md) - Automated backup and recovery procedures
-- [Browser Console Audit](./browser-console-audit.md) - Browser console optimization guide
 - [Modularity Audit - 2026-08-14](./audit/archive/modularity-audit-20260814.md) - Modularity audit report (Flexy, archived)
 - [Modular Architecture Review](./audit/archive/flexy-modularization-audit-20260724.md) - Modular architecture analysis and recommendations
 
@@ -258,7 +257,10 @@ Complete index of all IdeaFlow documentation.
 
 ### Archived Reports
 
-Older audit reports (2026-07-08 through 2026-08-17, incl. BROCULA-AUDIT-20260816, BROCULA-AUDIT-20260817, modularity-audit-20260814) are archived in [audit/archive/](./audit/archive/).
+Older audit reports (2026-07-08 through 2026-08-17, incl. BROCULA-AUDIT-20260816, BROCULA-AUDIT-20260817, modularity-audit-20260814) are archived in [audit/archive/](./audit/archive/), including two reports relocated from the docs root:
+
+- [BroCula Browser Audit - 2026-08-14](./audit/archive/2026-08-14-brocula-browser-console-audit.md) - Browser console audit report (archived from `docs/browser-console-audit.md`)
+- [Skipped Tests Investigation - 2026-08-18](./audit/archive/skipped-tests-investigation-2026-08-18.md) - Issue #1903 investigation (archived from `docs/skipped-tests-investigation.md`)
 
 ## Database Reports
 
@@ -273,21 +275,24 @@ Older audit reports (2026-07-08 through 2026-08-17, incl. BROCULA-AUDIT-20260816
 
 ### Active Reports
 
-- [Repository Maintenance Report - 2026-08-19](./maintenance/2026-08-19-repository-maintenance-report.md) - Repository maintenance report (latest)
+- [Repository Maintenance Report - 2026-08-23](./maintenance/2026-08-23-repository-maintenance-report.md) - Repository maintenance report (latest)
 - [RepoKeeper Maintenance Summary - 2026-08-23](./maintenance/2026-08-23-repokeeper-summary.md) - RepoKeeper maintenance summary
-- [Repository Maintenance Report - 2026-08-23](./maintenance/2026-08-23-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-18 (Loop)](./maintenance/2026-08-18-repository-maintenance-report-loop.md) - Repository maintenance loop report
-- [Repository Maintenance Report - 2026-08-18](./maintenance/2026-08-18-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-17](./maintenance/2026-08-17-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-17 (Loop)](./maintenance/2026-08-17-repository-maintenance-report-loop.md) - Repository maintenance loop report
-- [Repository Maintenance Report - 2026-08-16 (2100)](./maintenance/2026-08-16-repository-maintenance-report-2100.md) - Repository maintenance report
-- [Repository Maintenance Report - 2026-08-16](./maintenance/2026-08-16-repository-maintenance-report.md) - Repository maintenance report
-- [Repository Health Check - 2026-08-15](./maintenance/2026-08-15-repository-health-check.md) - Repository health check report
-- [Repository Maintenance Report - 2026-08-15](./maintenance/2026-08-15-repository-maintenance.md) - Repository maintenance report
+- [Repository Maintenance Report - 2026-08-19](./maintenance/2026-08-19-repository-maintenance-report.md) - Repository maintenance report
 
 ### Archived Reports
 
-Older maintenance reports (2026-07-07 through 2026-08-14) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/).
+Older maintenance reports (2026-07-07 through 2026-08-18) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/), including:
+
+- [Repository Maintenance Report - 2026-08-18 (Loop)](./maintenance/archive/2026-08-18-repository-maintenance-report-loop.md) - Repository maintenance loop report
+- [Repository Maintenance Report - 2026-08-18](./maintenance/archive/2026-08-18-repository-maintenance-report.md) - Repository maintenance report
+- [Repository Maintenance Report - 2026-08-17](./maintenance/archive/2026-08-17-repository-maintenance-report.md) - Repository maintenance report
+- [Repository Maintenance Report - 2026-08-17 (Loop)](./maintenance/archive/2026-08-17-repository-maintenance-report-loop.md) - Repository maintenance loop report
+- [Repository Maintenance Report - 2026-08-16 (2100)](./maintenance/archive/2026-08-16-repository-maintenance-report-2100.md) - Repository maintenance report
+- [Repository Maintenance Report - 2026-08-16](./maintenance/archive/2026-08-16-repository-maintenance-report.md) - Repository maintenance report
+- [Repository Health Check - 2026-08-15](./maintenance/archive/2026-08-15-repository-health-check.md) - Repository health check report
+- [Repository Maintenance Report - 2026-08-15](./maintenance/archive/2026-08-15-repository-maintenance.md) - Repository maintenance report
+- [PR Triage Report - 2026-09-25](./maintenance/archive/PR_TRIAGE_REPORT_2026-09-25.md) - Repository-wide PR triage (relocated from repository root)
+- [Wave 2C Efficiency Report - 2026-09-25](./maintenance/archive/2026-09-25-WAVE2C-REPORT.md) - Wave 2C efficiency work report (moved from repository root)
 
 ---
 

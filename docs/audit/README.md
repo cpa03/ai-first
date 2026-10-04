@@ -18,6 +18,8 @@ This directory contains security audits, code quality reports, and compliance in
 
 See [archive/](./archive/) for historical audit reports from earlier maintenance cycles. Archived reports include:
 
+- [2026-08-14-brocula-browser-console-audit.md](./archive/2026-08-14-brocula-browser-console-audit.md) - BroCula browser console audit (moved from `docs/browser-console-audit.md`)
+- [skipped-tests-investigation-2026-08-18.md](./archive/skipped-tests-investigation-2026-08-18.md) - Issue #1903 skipped tests investigation (moved from `docs/skipped-tests-investigation.md`)
 - [2026-08-08-brocula-browser-console-lighthouse.md](./archive/2026-08-08-brocula-browser-console-lighthouse.md) - Browser console & Lighthouse audit
 - [BROCULA-AUDIT-20260817.md](./archive/BROCULA-AUDIT-20260817.md) - BroCula browser audit (archived 2026-09-25)
 - [BROCULA-AUDIT-20260816.md](./archive/BROCULA-AUDIT-20260816.md) - BroCula browser audit (archived 2026-09-25)
