@@ -157,7 +157,7 @@ function WhyChooseSectionComponent() {
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             End
           </kbd>
-          <span>jump to first/last</span>
+          <span>{WHY_CHOOSE_SECTION_LABELS.KEYBOARD_JUMP_HINT}</span>
         </span>
       </div>
     </section>

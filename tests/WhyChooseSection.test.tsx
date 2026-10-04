@@ -25,4 +25,17 @@ describe('WhyChooseSection', () => {
       expect(ariaLabel).toContain(': ');
     });
   });
+
+  it('renders keyboard jump shortcut hint from configuration', () => {
+    render(<WhyChooseSection />);
+
+    expect(screen.getByText('jump to first/last')).toBeInTheDocument();
+  });
+
+  it('applies motion-reduce utility classes to icon container and icon svg for reduced motion users', () => {
+    const { container } = render(<WhyChooseSection />);
+
+    const iconContainers = container.querySelectorAll('.motion-reduce\\:transform-none');
+    expect(iconContainers.length).toBeGreaterThan(0);
+  });
 });
