@@ -1,0 +1,13 @@
+diff --git a/node_modules/@opennextjs/cloudflare/dist/cli/commands/populate-cache.js b/node_modules/@opennextjs/cloudflare/dist/cli/commands/populate-cache.js
+index acd872c..bd9e43a 100644
+--- a/node_modules/@opennextjs/cloudflare/dist/cli/commands/populate-cache.js
++++ b/node_modules/@opennextjs/cloudflare/dist/cli/commands/populate-cache.js
+@@ -531,7 +531,7 @@ function populateD1TagCache(buildOpts, config, populateCacheOptions) {
+ }
+ function populateStaticAssetsIncrementalCache(options) {
+     logger.info("\nPopulating Workers static assets...");
+-    fs.cpSync(path.join(options.outputDir, "cache"), path.join(options.outputDir, "assets", STATIC_ASSETS_CACHE_DIR), { recursive: true });
++    if (fs.existsSync(path.join(options.outputDir, "cache"))) { fs.cpSync(path.join(options.outputDir, "cache"), path.join(options.outputDir, "assets", STATIC_ASSETS_CACHE_DIR), { recursive: true }); }
+     logger.info(`Successfully populated static assets cache`);
+ }
+ /**
