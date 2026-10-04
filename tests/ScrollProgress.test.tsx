@@ -141,4 +141,57 @@ describe('ScrollProgress Component', () => {
       behavior: 'smooth',
     });
   });
+
+  it('handles touch drag events correctly', () => {
+    window.scrollY = 200; // 20%
+    render(<ScrollProgress />);
+
+    act(() => {
+      fireEvent.scroll(window);
+    });
+
+    const slider = screen.getByRole('slider');
+
+    // Mock getBoundingClientRect for width calculation (e.g., bar width = 500px)
+    jest.spyOn(slider, 'getBoundingClientRect').mockReturnValue({
+      left: 0,
+      top: 0,
+      width: 500,
+      height: 10,
+      right: 500,
+      bottom: 10,
+      x: 0,
+      y: 0,
+      toJSON: () => {},
+    });
+
+    // Touch start at 250px (50% of width)
+    act(() => {
+      fireEvent.touchStart(slider, {
+        touches: [{ clientX: 250 }],
+      });
+    });
+
+    expect(window.scrollTo).toHaveBeenCalledWith({
+      top: 500, // 50% of 1000px scrollable height
+      behavior: 'smooth',
+    });
+
+    // Touch move to 375px (75% of width)
+    act(() => {
+      fireEvent.touchMove(slider, {
+        touches: [{ clientX: 375 }],
+      });
+    });
+
+    expect(window.scrollTo).toHaveBeenCalledWith({
+      top: 750, // 75% of 1000px
+      behavior: 'smooth',
+    });
+
+    // Touch end
+    act(() => {
+      fireEvent.touchEnd(slider);
+    });
+  });
 });
