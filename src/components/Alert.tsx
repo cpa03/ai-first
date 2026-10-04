@@ -368,7 +368,7 @@ const AlertComponent = function Alert({
             )}
             <button
               onClick={handleSnooze}
-              className={`${TYPOGRAPHY_CLASSES.XS_MEDIUM} opacity-50 hover:opacity-100 transition-opacity p-0.5 rounded ${FOCUS_RING_OFFSET_PATTERNS.SUBTLE}`}
+              className={`${TYPOGRAPHY_CLASSES.XS_MEDIUM} opacity-50 hover:opacity-100 active:scale-95 motion-reduce:active:scale-100 transition-all p-0.5 rounded ${FOCUS_RING_OFFSET_PATTERNS.SUBTLE}`}
               aria-label={ALERT_LABELS.SNOOZE_ARIA_LABEL}
               type="button"
             >
@@ -392,7 +392,7 @@ const AlertComponent = function Alert({
               >
                 s
               </kbd>
-              <span>snooze</span>
+              <span>{ALERT_LABELS.SNOOZE_HINT_LABEL}</span>
             </span>
           )}
           <span className={COMMON_SPACING_PATTERNS.FLEX_CENTER_XS}>
@@ -401,7 +401,7 @@ const AlertComponent = function Alert({
             >
               d
             </kbd>
-            <span>dismiss</span>
+            <span>{ALERT_LABELS.DISMISS_HINT_LABEL}</span>
           </span>
         </div>
       )}
