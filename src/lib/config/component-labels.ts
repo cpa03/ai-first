@@ -272,6 +272,9 @@ export const PROGRESS_STEPPER_LABELS = {
   /** Step counter label */
   STEP_COUNTER: (current: number, total: number) =>
     `Step ${current} of ${total}`,
+  /** Live screen reader announcement on step change */
+  STEP_ANNOUNCEMENT: (current: number, total: number, label: string) =>
+    `Step ${current} of ${total}: ${label}`,
   KEYBOARD_NAV_HINT: 'navigate steps',
   KEYBOARD_NAV_ARIA_LABEL:
     'Keyboard shortcuts: Left and Right arrow keys to navigate between steps',
