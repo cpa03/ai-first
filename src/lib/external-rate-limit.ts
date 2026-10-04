@@ -12,13 +12,10 @@ import { createLogger } from './logger';
 import { resourceCleanupManager } from './resource-cleanup';
 import {
   TIME_UNITS,
-  RATE_LIMIT_CONFIG_WITH_EXTERNAL as RATE_LIMIT_CONFIG,
+  RATE_LIMIT_CONFIG,
   EXTERNAL_RATE_LIMIT_TIMING,
 } from './config';
-import {
-  TIMESTAMP_CONFIG,
-  EXTERNAL_RATE_LIMIT_CONFIG,
-} from './config/modular-constants';
+import { TIMESTAMP_CONFIG } from './config/modular-constants';
 import { PLATFORM_ENV_KEYS } from './config/env-keys';
 
 const logger = createLogger('ExternalRateLimit');
@@ -202,7 +199,7 @@ class ExternalRateLimitTracker {
         1,
         Math.floor(
           this.config.maxServices *
-            EXTERNAL_RATE_LIMIT_CONFIG.CLEANUP_PERCENTAGE
+            RATE_LIMIT_CONFIG.EXTERNAL.CLEANUP_PERCENTAGE
         )
       );
       this.cleanupOldestEntries(toRemove);
