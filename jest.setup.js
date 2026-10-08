@@ -81,6 +81,31 @@ process.env.TEST_SUPABASE_ANON_KEY =
 process.env.TEST_SUPABASE_SERVICE_KEY =
   process.env.TEST_SUPABASE_SERVICE_KEY || 'test-DUMMY-SERVICE-KEY';
 
+// Mock PROGRESS_PERCENTAGE constant for tests
+jest.mock('@/lib/config/modular-constants', () => ({
+  ...jest.requireActual('@/lib/config/modular-constants'),
+  PROGRESS_PERCENTAGE: {
+    MAX: 100,
+    MIN: 0,
+    COMPLETE: 100,
+    ZERO: 0,
+  },
+}));
+
+// Also mock the main config index which re-exports PROGRESS_PERCENTAGE
+jest.mock('@/lib/config', () => {
+  const actual = jest.requireActual('@/lib/config');
+  return {
+    ...actual,
+    PROGRESS_PERCENTAGE: {
+      MAX: 100,
+      MIN: 0,
+      COMPLETE: 100,
+      ZERO: 0,
+    },
+  };
+});
+
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
   useRouter() {

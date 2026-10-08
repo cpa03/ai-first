@@ -18,20 +18,16 @@ const customJestConfig = {
     '!src/app/sitemap.ts',
     '!src/middleware.ts',
   ],
-  // Coverage gate roadmap (target: 85% global). NOT enforced yet on purpose:
-  // current global coverage is ~1% and the default suite is red (24 failed
-  // suites pre-existing, incl. timing-sensitive perf tests), so any numeric
-  // gate would break `test:ci` today. Graduation plan: once the suite is
-  // green, uncomment the block below in stages (e.g. 20% -> 50% -> 85%)
-  // ratcheting upward as coverage improves.
-  // coverageThreshold: {
-  //   global: {
-  //     statements: 85,
-  //     branches: 85,
-  //     functions: 85,
-  //     lines: 85,
-  //   },
-  // },
+  // Coverage gate roadmap (target: 85% global).
+  // Starting with 20% thresholds to prevent regression while improving coverage.
+  coverageThreshold: {
+    global: {
+      statements: 20,
+      branches: 20,
+      functions: 20,
+      lines: 20,
+    },
+  },
   testMatch: [
     '<rootDir>/tests/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',

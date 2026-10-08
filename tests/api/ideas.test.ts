@@ -27,6 +27,7 @@ jest.mock('@/lib/auth', () => ({
   requireAuth: jest
     .fn()
     .mockResolvedValue({ id: 'user-123', email: 'test@example.com' }),
+  isGuestRequest: jest.fn((request) => request?.headers?.get('x-guest-mode') === 'true'),
 }));
 
 jest.mock('@/lib/embedding-service', () => ({

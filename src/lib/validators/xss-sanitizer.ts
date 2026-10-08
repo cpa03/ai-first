@@ -8,33 +8,33 @@ import { ValidationError, ValidationResult } from './input-sanitizer';
 // Extended XSS patterns to detect
 const XSS_PATTERNS = {
   // Script tags
-  SCRIPT_TAG: /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+  SCRIPT_TAG: /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/i,
   // Event handlers
-  EVENT_HANDLERS: /\son\w+\s*=\s*["'][^"']*["']/gi,
+  EVENT_HANDLERS: /\son\w+\s*=\s*["'][^"']*["']/i,
   // JavaScript protocol
-  JAVASCRIPT_PROTOCOL: /javascript\s*:/gi,
+  JAVASCRIPT_PROTOCOL: /javascript\s*:/i,
   // Data URI with HTML
-  DATA_URI_HTML: /data\s*:\s*text\/html/gi,
+  DATA_URI_HTML: /data\s*:\s*text\/html/i,
   // VBScript protocol
-  VBSCRIPT_PROTOCOL: /vbscript\s*:/gi,
+  VBSCRIPT_PROTOCOL: /vbscript\s*:/i,
   // Expression (IE)
-  EXPRESSION: /expression\s*\(/gi,
+  EXPRESSION: /expression\s*\(/i,
   // Style with behavior
-  STYLE_BEHAVIOR: /behavior\s*:\s*url/gi,
+  STYLE_BEHAVIOR: /behavior\s*:\s*url/i,
   // Import in style
-  STYLE_IMPORT: /@import/gi,
+  STYLE_IMPORT: /@import/i,
   // Meta refresh
-  META_REFRESH: /<meta[^>]*http-equiv\s*=\s*["']refresh["'][^>]*>/gi,
+  META_REFRESH: /<meta[^>]*http-equiv\s*=\s*["']refresh["'][^>]*>/i,
   // Iframe
-  IFRAME: /<iframe\b[^>]*>/gi,
+  IFRAME: /<iframe\b[^>]*>/i,
   // Object/embed
-  OBJECT_EMBED: /<(?:object|embed)\b[^>]*>/gi,
+  OBJECT_EMBED: /<(?:object|embed)\b[^>]*>/i,
   // Form action hijacking
-  FORM_ACTION: /<form[^>]*action\s*=/gi,
+  FORM_ACTION: /<form[^>]*action\s*=/i,
   // Input with formaction
-  INPUT_FORMACTION: /<input[^>]*formaction\s*=/gi,
+  INPUT_FORMACTION: /<input[^>]*formaction\s*=/i,
   // Base tag
-  BASE_TAG: /<base[^>]*href\s*=/gi,
+  BASE_TAG: /<base[^>]*href\s*=/i,
 };
 
 /**
@@ -101,6 +101,10 @@ export function sanitizeXSS(
   );
 
   // Third pass: Handle allowed tags and attributes
+  // Use placeholders to protect allowed tags from entity escaping
+  const placeholders: string[] = [];
+  let placeholderIndex = 0;
+
   if (allowBasicFormatting || allowLinks || allowImages || allowedTags.length > 0) {
     const allAllowedTags = [
       ...(allowBasicFormatting ? DEFAULT_ALLOWED_TAGS : []),
@@ -114,18 +118,23 @@ export function sanitizeXSS(
       ...allowedAttributes,
     ];
 
-    // Remove disallowed tags but keep their content
+    // Replace allowed tags with placeholders
     const tagRegex = /<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/gi;
     sanitized = sanitized.replace(tagRegex, (match, tagName) => {
       const isClosing = match.startsWith('</');
       const lowerTag = tagName.toLowerCase();
 
       if (allAllowedTags.includes(lowerTag)) {
-        // For allowed tags, filter attributes
+        // For allowed tags, filter attributes and store as placeholder
         if (!isClosing) {
-          return filterAttributes(match, allAllowedAttributes);
+          const filtered = filterAttributes(match, allAllowedAttributes);
+          const placeholder = `__XSS_PLACEHOLDER_${placeholderIndex++}__`;
+          placeholders.push(filtered);
+          return placeholder;
         }
-        return match;
+        const placeholder = `__XSS_PLACEHOLDER_${placeholderIndex++}__`;
+        placeholders.push(match);
+        return placeholder;
       }
       // Disallowed tag: remove entirely (but keep content for non-void tags)
       return '';
@@ -135,8 +144,13 @@ export function sanitizeXSS(
     sanitized = sanitized.replace(/<[^>]*>/g, '');
   }
 
-  // Final pass: Escape remaining HTML entities
+  // Fourth pass: Escape HTML entities (now safe to do since allowed tags are placeholders)
   sanitized = escapeHtmlEntities(sanitized);
+
+  // Fifth pass: Restore placeholders
+  placeholders.forEach((placeholder, index) => {
+    sanitized = sanitized.replace(`__XSS_PLACEHOLDER_${index}__`, placeholder);
+  });
 
   return sanitized;
 }

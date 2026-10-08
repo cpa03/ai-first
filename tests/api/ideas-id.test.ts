@@ -27,6 +27,7 @@ jest.mock('@/lib/auth', () => ({
     .fn()
     .mockResolvedValue({ id: 'user-123', email: 'test@example.com' }),
   verifyResourceOwnership: jest.fn(),
+  isGuestRequest: jest.fn((request) => request?.headers?.get('x-guest-mode') === 'true'),
 }));
 
 // Import the route AFTER mocking
