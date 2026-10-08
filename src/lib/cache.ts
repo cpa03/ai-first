@@ -1,6 +1,7 @@
 export interface CacheEntry<T> {
   value: T;
   timestamp: number;
+  createdAt: number;
   hits: number;
 }
 
@@ -20,6 +21,7 @@ export class Cache<T = unknown> {
   private onEvict?: (key: string, entry: CacheEntry<unknown>) => void;
   private misses: number;
   private totalHits: number;
+  private lastEvictionTime: number;
 
   constructor(options: CacheOptions = {}) {
     this.cache = new Map();
@@ -29,13 +31,30 @@ export class Cache<T = unknown> {
     this.onEvict = options.onEvict;
     this.misses = 0;
     this.totalHits = 0;
+    this.lastEvictionTime = 0;
   }
 
   set(key: string, value: T): void {
-    // PERFORMANCE: Optimized O(K) early-stop cleanup on every set operation.
-    // Since we use sliding expiration (updating timestamp on get/set), the Map
-    // remains sorted by expiration time, allowing O(K) instead of O(N) scans.
-    this.evictExpiredEntries();
+    // PERFORMANCE: Throttle expired-entry eviction to avoid O(K) scan on every
+    // set during bulk loads (was O(N*K) for N inserts). Eviction now runs at
+    // most once per CACHE_CONFIG.CLEANUP.INTERVAL_MS, falling back to a
+    // size-based check when the cache approaches capacity.
+    const now = Date.now();
+    const shouldEvictByTime =
+      !this.lastEvictionTime ||
+      (this.ttl && now - this.lastEvictionTime > CACHE_CONFIG.CLEANUP.INTERVAL_MS);
+
+    if (shouldEvictByTime) {
+      this.evictExpiredEntries();
+      this.lastEvictionTime = now;
+    } else if (
+      this.maxSize &&
+      this.ttl &&
+      this.cache.size >= this.maxSize * 0.9
+    ) {
+      this.evictExpiredEntries();
+      this.lastEvictionTime = now;
+    }
 
     const existingEntry = this.cache.get(key);
 
@@ -47,6 +66,7 @@ export class Cache<T = unknown> {
     const entry: CacheEntry<T> = {
       value,
       timestamp: Date.now(),
+      createdAt: existingEntry?.createdAt ?? Date.now(),
       hits: 0,
     };
 
@@ -70,7 +90,7 @@ export class Cache<T = unknown> {
 
     const now = Date.now();
 
-    if (this.ttl && now - entry.timestamp > this.ttl) {
+    if (this.ttl && now - entry.createdAt > this.ttl) {
       this.totalHits -= entry.hits;
       this.cache.delete(key);
       this.misses++;
@@ -116,7 +136,7 @@ export class Cache<T = unknown> {
 
     const now = Date.now();
 
-    if (this.ttl && now - entry.timestamp > this.ttl) {
+    if (this.ttl && now - entry.createdAt > this.ttl) {
       this.totalHits -= entry.hits;
       this.cache.delete(key);
       this.misses++;
@@ -165,6 +185,7 @@ export class Cache<T = unknown> {
     this.cache.clear();
     this.misses = 0;
     this.totalHits = 0;
+    this.lastEvictionTime = 0;
   }
 
   resetStats(): void {
@@ -192,7 +213,7 @@ export class Cache<T = unknown> {
       if (done) break;
 
       const [key, entry] = value;
-      if (now - entry.timestamp > this.ttl) {
+      if (now - entry.createdAt > this.ttl) {
         if (this.onEvict) {
           this.onEvict(key, entry);
         }
@@ -271,7 +292,7 @@ export class Cache<T = unknown> {
     let oldestEntryAge: number | null = null;
     const firstValue = this.cache.values().next();
     if (!firstValue.done) {
-      oldestEntryAge = Date.now() - firstValue.value.timestamp;
+      oldestEntryAge = Date.now() - firstValue.value.createdAt;
     }
 
     // Determine health status based on utilization and hit rate
