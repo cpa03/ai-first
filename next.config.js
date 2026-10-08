@@ -187,6 +187,15 @@ const nextConfig = {
     // Aligns with browserslist: last 2 versions of Chrome, Firefox, Safari, Edge
     styledComponents: false,
   },
+
+  webpack: (config) => {
+    config.performance = {
+      maxAssetSize: 244000,
+      maxEntrypointSize: 244000,
+      hints: 'warning',
+    };
+    return config;
+  },
 };
 
 module.exports = withBundleAnalyzer(nextConfig);
