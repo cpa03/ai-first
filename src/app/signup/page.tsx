@@ -835,6 +835,7 @@ export default function SignupPage() {
             disabled={oauthLoading !== null}
             loading={oauthLoading === 'google'}
             loadingText={SIGNUP_PAGE_CONTENT.OAUTH.GOOGLE_LOADING}
+            enableTransition
             className={JUSTIFY_CENTER}
           >
             {oauthLoading !== 'google' && (
@@ -870,6 +871,7 @@ export default function SignupPage() {
             disabled={oauthLoading !== null}
             loading={oauthLoading === 'github'}
             loadingText={SIGNUP_PAGE_CONTENT.OAUTH.GITHUB_LOADING}
+            enableTransition
             className={JUSTIFY_CENTER}
           >
             {oauthLoading !== 'github' && (
