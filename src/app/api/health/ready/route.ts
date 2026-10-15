@@ -10,6 +10,7 @@ import { STATUS_CODES } from '@/lib/config/http';
 import { API_CACHE_CONFIG } from '@/lib/config/constants';
 import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { HEALTH_STATUS, HEALTH_SERVICES } from '@/lib/config/health-status';
 
 const logger = createLogger('readiness');
 
@@ -19,7 +20,7 @@ async function handleGet(context: ApiContext) {
   const checks: Record<
     string,
     {
-      status: 'ready' | 'not_ready';
+      status: (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS];
       responseTime?: number;
       error?: string;
       details?: unknown;
@@ -31,8 +32,8 @@ async function handleGet(context: ApiContext) {
   try {
     const connectionHealth = await dbService.checkConnection();
     const dbHealthy = connectionHealth.client && connectionHealth.admin;
-    checks.database = {
-      status: dbHealthy ? 'ready' : 'not_ready',
+    checks[HEALTH_SERVICES.DATABASE] = {
+      status: dbHealthy ? HEALTH_STATUS.READY : HEALTH_STATUS.NOT_READY,
       responseTime: Date.now() - dbStartTime,
       details: connectionHealth,
     };
@@ -41,8 +42,8 @@ async function handleGet(context: ApiContext) {
     }
   } catch (error) {
     allReady = false;
-    checks.database = {
-      status: 'not_ready',
+    checks[HEALTH_SERVICES.DATABASE] = {
+      status: HEALTH_STATUS.NOT_READY,
       responseTime: Date.now() - dbStartTime,
       error:
         error instanceof Error
@@ -58,9 +59,9 @@ async function handleGet(context: ApiContext) {
   }
 
   const response = {
-    status: allReady ? 'ready' : 'not_ready',
+    status: allReady ? HEALTH_STATUS.READY : HEALTH_STATUS.NOT_READY,
     timestamp: new Date().toISOString(),
-    service: 'readiness',
+    service: HEALTH_SERVICES.READINESS,
     environment: ENV_ACCESSORS.PLATFORM.NODE_ENV() || 'development',
     checks,
   };
@@ -75,7 +76,7 @@ async function handleGet(context: ApiContext) {
   }
 
   const notReadyChecks = Object.entries(checks)
-    .filter(([, check]) => check.status === 'not_ready')
+    .filter(([, check]) => check.status === HEALTH_STATUS.NOT_READY)
     .map(([name, check]) => ({
       field: name,
       message: check.error || `Service ${name} is not ready`,

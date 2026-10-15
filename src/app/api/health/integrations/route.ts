@@ -8,17 +8,22 @@ import { exportManager } from '@/lib/export-connectors';
 import { APP_CONFIG, EXTERNAL_RATE_LIMIT_CONFIG } from '@/lib/config';
 import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config/constants';
 import { getExternalRateLimitTracker } from '@/lib/external-rate-limit';
+import {
+  HEALTH_STATUS,
+  CIRCUIT_BREAKER_STATES,
+  CIRCUIT_BREAKER_HEALTH_MAP,
+} from '@/lib/config/health-status';
 
 interface IntegrationStatus {
   service: string;
-  status: 'healthy' | 'degraded' | 'unhealthy' | 'unknown';
-  state?: 'closed' | 'open' | 'half-open';
+  status: (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS];
+  state?: (typeof CIRCUIT_BREAKER_STATES)[keyof typeof CIRCUIT_BREAKER_STATES];
   configured: boolean;
   lastChecked: string;
 }
 
 interface IntegrationsHealthResponse {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS];
   timestamp: string;
   version: string;
   integrations: IntegrationStatus[];
@@ -41,21 +46,19 @@ interface IntegrationsHealthResponse {
 }
 
 function mapCircuitBreakerStateToHealth(
-  state: 'closed' | 'open' | 'half-open'
-): 'healthy' | 'degraded' | 'unhealthy' {
-  if (state === 'closed') return 'healthy';
-  if (state === 'half-open') return 'degraded';
-  return 'unhealthy';
+  state: (typeof CIRCUIT_BREAKER_STATES)[keyof typeof CIRCUIT_BREAKER_STATES]
+): (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS] {
+  return CIRCUIT_BREAKER_HEALTH_MAP[state] || HEALTH_STATUS.UNHEALTHY;
 }
 
 function determineOverallStatus(summary: {
   unhealthy: number;
   degraded: number;
   total: number;
-}): 'healthy' | 'degraded' | 'unhealthy' {
-  if (summary.unhealthy > 0) return 'unhealthy';
-  if (summary.degraded > 0) return 'degraded';
-  return 'healthy';
+}): (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS] {
+  if (summary.unhealthy > 0) return HEALTH_STATUS.UNHEALTHY;
+  if (summary.degraded > 0) return HEALTH_STATUS.DEGRADED;
+  return HEALTH_STATUS.HEALTHY;
 }
 
 async function handleGet(context: ApiContext): Promise<Response> {
@@ -84,10 +87,10 @@ async function handleGet(context: ApiContext): Promise<Response> {
     integrations.push({
       service: name,
       status: info.error
-        ? 'unhealthy'
+        ? HEALTH_STATUS.UNHEALTHY
         : info.configured
-          ? 'healthy'
-          : 'unknown',
+          ? HEALTH_STATUS.HEALTHY
+          : HEALTH_STATUS.UNKNOWN,
       configured: info.configured,
       lastChecked: info.lastChecked,
     });
@@ -95,10 +98,14 @@ async function handleGet(context: ApiContext): Promise<Response> {
 
   const summary = {
     total: integrations.length,
-    healthy: integrations.filter((i) => i.status === 'healthy').length,
-    degraded: integrations.filter((i) => i.status === 'degraded').length,
-    unhealthy: integrations.filter((i) => i.status === 'unhealthy').length,
-    unknown: integrations.filter((i) => i.status === 'unknown').length,
+    healthy: integrations.filter((i) => i.status === HEALTH_STATUS.HEALTHY)
+      .length,
+    degraded: integrations.filter((i) => i.status === HEALTH_STATUS.DEGRADED)
+      .length,
+    unhealthy: integrations.filter((i) => i.status === HEALTH_STATUS.UNHEALTHY)
+      .length,
+    unknown: integrations.filter((i) => i.status === HEALTH_STATUS.UNKNOWN)
+      .length,
   };
 
   const overallStatus = determineOverallStatus(summary);
@@ -125,7 +132,7 @@ async function handleGet(context: ApiContext): Promise<Response> {
   };
 
   const statusCode =
-    overallStatus === 'unhealthy'
+    overallStatus === HEALTH_STATUS.UNHEALTHY
       ? STATUS_CODES.SERVICE_UNAVAILABLE
       : STATUS_CODES.OK;
 

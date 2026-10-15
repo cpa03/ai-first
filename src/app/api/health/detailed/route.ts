@@ -19,10 +19,16 @@ import {
 import { APP_CONFIG, PROGRESS_PERCENTAGE } from '@/lib/config';
 import { getExternalRateLimitTracker } from '@/lib/external-rate-limit';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import {
+  HEALTH_STATUS,
+  HEALTH_SEVERITY,
+  CIRCUIT_BREAKER_STATES,
+  HEALTH_SERVICES,
+} from '@/lib/config/health-status';
 
 interface HealthCheckResult {
   service: string;
-  status: string;
+  status: (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS];
   latency?: number;
   lastChecked: string;
   error?: string;
@@ -46,7 +52,7 @@ interface MemoryMetrics {
 }
 
 interface MemoryHealthResult {
-  status: 'healthy' | 'warning' | 'critical';
+  status: (typeof HEALTH_SEVERITY)[keyof typeof HEALTH_SEVERITY];
   metrics: MemoryMetrics;
   warnings: string[];
 }
@@ -66,12 +72,12 @@ interface ExternalRateLimitStats {
     remaining: number;
     limit: number;
     percentRemaining: number;
-    status: 'healthy' | 'warning' | 'critical';
+    status: (typeof HEALTH_SEVERITY)[keyof typeof HEALTH_SEVERITY];
   }>;
 }
 
 interface HealthResponse {
-  status: string;
+  status: (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS];
   timestamp: string;
   version: string;
   uptime: number;
@@ -92,7 +98,7 @@ interface HealthResponse {
   connectors: Record<string, ConnectorHealthInfo>;
   circuitBreakers: Array<{
     service: string;
-    state: string;
+    state: (typeof CIRCUIT_BREAKER_STATES)[keyof typeof CIRCUIT_BREAKER_STATES];
     failures: number;
     nextAttemptTime?: string;
   }>;
@@ -114,45 +120,46 @@ function getMemoryHealth(): MemoryHealthResult {
     arrayBuffers: Math.round(memUsage.arrayBuffers / MEMORY_UNITS.BYTES_PER_MB),
   };
 
-  let status: 'healthy' | 'warning' | 'critical' = 'healthy';
+  let status: (typeof HEALTH_SEVERITY)[keyof typeof HEALTH_SEVERITY] =
+    HEALTH_SEVERITY.HEALTHY;
 
   if (metrics.heapUsedPercent >= MEMORY_CONFIG.HEAP_CRITICAL_THRESHOLD) {
-    status = 'critical';
+    status = HEALTH_SEVERITY.CRITICAL;
     warnings.push(
       `Heap usage at ${metrics.heapUsedPercent}% (critical: ${MEMORY_CONFIG.HEAP_CRITICAL_THRESHOLD}%)`
     );
   } else if (metrics.heapUsedPercent >= MEMORY_CONFIG.HEAP_WARNING_THRESHOLD) {
-    status = 'warning';
+    status = HEALTH_SEVERITY.WARNING;
     warnings.push(
       `Heap usage at ${metrics.heapUsedPercent}% (warning: ${MEMORY_CONFIG.HEAP_WARNING_THRESHOLD}%)`
     );
   }
 
   if (metrics.rss >= MEMORY_CONFIG.RSS_CRITICAL_MB) {
-    status = 'critical';
+    status = HEALTH_SEVERITY.CRITICAL;
     warnings.push(
       `RSS at ${metrics.rss}MB (critical: ${MEMORY_CONFIG.RSS_CRITICAL_MB}MB)`
     );
   } else if (
     metrics.rss >= MEMORY_CONFIG.RSS_WARNING_MB &&
-    status !== 'critical'
+    status !== HEALTH_SEVERITY.CRITICAL
   ) {
-    status = 'warning';
+    status = HEALTH_SEVERITY.WARNING;
     warnings.push(
       `RSS at ${metrics.rss}MB (warning: ${MEMORY_CONFIG.RSS_WARNING_MB}MB)`
     );
   }
 
   if (metrics.external >= MEMORY_CONFIG.EXTERNAL_CRITICAL_MB) {
-    status = 'critical';
+    status = HEALTH_SEVERITY.CRITICAL;
     warnings.push(
       `External memory at ${metrics.external}MB (critical: ${MEMORY_CONFIG.EXTERNAL_CRITICAL_MB}MB)`
     );
   } else if (
     metrics.external >= MEMORY_CONFIG.EXTERNAL_WARNING_MB &&
-    status !== 'critical'
+    status !== HEALTH_SEVERITY.CRITICAL
   ) {
-    status = 'warning';
+    status = HEALTH_SEVERITY.WARNING;
     warnings.push(
       `External memory at ${metrics.external}MB (warning: ${MEMORY_CONFIG.EXTERNAL_WARNING_MB}MB)`
     );
@@ -174,13 +181,14 @@ function getExternalRateLimitStats(): ExternalRateLimitStats {
       s.limit > 0
         ? Math.round((s.remaining / s.limit) * PROGRESS_PERCENTAGE.MAX)
         : 0;
-    let status: 'healthy' | 'warning' | 'critical' = 'healthy';
+    let status: (typeof HEALTH_SEVERITY)[keyof typeof HEALTH_SEVERITY] =
+      HEALTH_SEVERITY.HEALTHY;
     if (percentRemaining <= HEALTH_CONFIG.RATE_LIMIT_THRESHOLDS.CRITICAL) {
-      status = 'critical';
+      status = HEALTH_SEVERITY.CRITICAL;
     } else if (
       percentRemaining <= HEALTH_CONFIG.RATE_LIMIT_THRESHOLDS.WARNING
     ) {
-      status = 'warning';
+      status = HEALTH_SEVERITY.WARNING;
     }
 
     return {
@@ -210,18 +218,18 @@ async function handleGet(context: ApiContext) {
     exports: HealthCheckResult;
   } = {
     database: {
-      service: 'database',
-      status: 'unknown',
+      service: HEALTH_SERVICES.DATABASE,
+      status: HEALTH_STATUS.UNKNOWN,
       lastChecked: new Date().toISOString(),
     },
     ai: {
-      service: 'ai',
-      status: 'unknown',
+      service: HEALTH_SERVICES.AI,
+      status: HEALTH_STATUS.UNKNOWN,
       lastChecked: new Date().toISOString(),
     },
     exports: {
-      service: 'exports',
-      status: 'unknown',
+      service: HEALTH_SERVICES.EXPORTS,
+      status: HEALTH_STATUS.UNKNOWN,
       lastChecked: new Date().toISOString(),
     },
   };
@@ -230,7 +238,7 @@ async function handleGet(context: ApiContext) {
     Object.entries(circuitBreakerStatuses) as [
       string,
       {
-        state: 'closed' | 'open' | 'half-open';
+        state: (typeof CIRCUIT_BREAKER_STATES)[keyof typeof CIRCUIT_BREAKER_STATES];
         failures: number;
         nextAttemptTime?: string;
       },
@@ -250,8 +258,9 @@ async function handleGet(context: ApiContext) {
       const dbStart = Date.now();
       const dbHealth = await dbService.healthCheck();
       return {
-        service: 'database' as const,
-        status: dbHealth.status,
+        service: HEALTH_SERVICES.DATABASE,
+        status:
+          dbHealth.status as (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS],
         latency: Date.now() - dbStart,
         lastChecked: dbHealth.timestamp,
         metrics: dbHealth.metrics,
@@ -261,8 +270,9 @@ async function handleGet(context: ApiContext) {
       const aiStart = Date.now();
       const aiHealth = await aiService.healthCheck();
       return {
-        service: 'ai' as const,
-        status: aiHealth.status,
+        service: HEALTH_SERVICES.AI,
+        status:
+          aiHealth.status as (typeof HEALTH_STATUS)[keyof typeof HEALTH_STATUS],
         latency: Date.now() - aiStart,
         lastChecked: new Date().toISOString(),
       };
@@ -275,13 +285,13 @@ async function handleGet(context: ApiContext) {
       ).length;
       const totalExports = Object.keys(exportStatuses).length;
       return {
-        service: 'exports' as const,
+        service: HEALTH_SERVICES.EXPORTS,
         status:
           healthyExports === totalExports
-            ? 'up'
+            ? HEALTH_STATUS.UP
             : healthyExports > 0
-              ? 'degraded'
-              : 'down',
+              ? HEALTH_STATUS.DEGRADED
+              : HEALTH_STATUS.DOWN,
         latency: Date.now() - exportStart,
         lastChecked: new Date().toISOString(),
         error:
@@ -306,7 +316,7 @@ async function handleGet(context: ApiContext) {
   } else {
     checks.database = {
       ...checks.database,
-      status: 'unhealthy',
+      status: HEALTH_STATUS.UNHEALTHY,
       error: redactPII(
         dbResult.reason instanceof Error
           ? dbResult.reason.message
@@ -325,7 +335,7 @@ async function handleGet(context: ApiContext) {
   } else {
     checks.ai = {
       ...checks.ai,
-      status: 'unhealthy',
+      status: HEALTH_STATUS.UNHEALTHY,
       error: redactPII(
         aiResult.reason instanceof Error
           ? aiResult.reason.message
@@ -344,7 +354,7 @@ async function handleGet(context: ApiContext) {
   } else {
     checks.exports = {
       ...checks.exports,
-      status: 'unhealthy',
+      status: HEALTH_STATUS.UNHEALTHY,
       error: redactPII(
         exportResult.reason instanceof Error
           ? exportResult.reason.message
@@ -354,11 +364,12 @@ async function handleGet(context: ApiContext) {
   }
 
   const overallStatus =
-    checks.database.status === 'healthy' && checks.ai.status === 'healthy'
-      ? checks.exports.status === 'up'
-        ? 'healthy'
-        : 'degraded'
-      : 'unhealthy';
+    checks.database.status === HEALTH_STATUS.HEALTHY &&
+    checks.ai.status === HEALTH_STATUS.HEALTHY
+      ? checks.exports.status === HEALTH_STATUS.UP
+        ? HEALTH_STATUS.HEALTHY
+        : HEALTH_STATUS.DEGRADED
+      : HEALTH_STATUS.UNHEALTHY;
 
   const memoryHealth = getMemoryHealth();
 
@@ -366,33 +377,35 @@ async function handleGet(context: ApiContext) {
 
   const reliabilityFactors = {
     database:
-      checks.database.status === 'healthy'
+      checks.database.status === HEALTH_STATUS.HEALTHY
         ? SCORES.HEALTHY
-        : checks.database.status === 'unhealthy'
+        : checks.database.status === HEALTH_STATUS.UNHEALTHY
           ? SCORES.UNHEALTHY
           : SCORES.DEGRADED,
     ai:
-      checks.ai.status === 'healthy'
+      checks.ai.status === HEALTH_STATUS.HEALTHY
         ? SCORES.HEALTHY
-        : checks.ai.status === 'unhealthy'
+        : checks.ai.status === HEALTH_STATUS.UNHEALTHY
           ? SCORES.UNHEALTHY
           : SCORES.DEGRADED,
     exports:
-      checks.exports.status === 'up'
+      checks.exports.status === HEALTH_STATUS.UP
         ? SCORES.HEALTHY
-        : checks.exports.status === 'degraded'
+        : checks.exports.status === HEALTH_STATUS.DEGRADED
           ? SCORES.DEGRADED
           : SCORES.UNHEALTHY,
     circuitBreakers:
       circuitBreakers.length === 0
         ? SCORES.HEALTHY
-        : (circuitBreakers.filter((cb) => cb.state === 'closed').length /
+        : (circuitBreakers.filter(
+            (cb) => cb.state === CIRCUIT_BREAKER_STATES.CLOSED
+          ).length /
             circuitBreakers.length) *
           SCORES.HEALTHY,
     memory:
-      memoryHealth.status === 'healthy'
+      memoryHealth.status === HEALTH_SEVERITY.HEALTHY
         ? SCORES.HEALTHY
-        : memoryHealth.status === 'critical'
+        : memoryHealth.status === HEALTH_SEVERITY.CRITICAL
           ? SCORES.UNHEALTHY
           : SCORES.DEGRADED,
   };
@@ -420,7 +433,7 @@ async function handleGet(context: ApiContext) {
   };
 
   const statusCode =
-    overallStatus === 'healthy'
+    overallStatus === HEALTH_STATUS.HEALTHY
       ? STATUS_CODES.OK
       : STATUS_CODES.SERVICE_UNAVAILABLE;
 
