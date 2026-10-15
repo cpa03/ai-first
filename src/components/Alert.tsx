@@ -99,6 +99,7 @@ const AlertComponent = function Alert({
   // Micro-UX: Briefly show keyboard shortcut hints when alert appears
   // Helps users discover shortcuts (d=dismiss, s=snooze) without cluttering UI
   const [showShortcutHint, setShowShortcutHint] = useState(false);
+  const [showShortcutHintOnMount, setShowShortcutHintOnMount] = useState(false);
   const shortcutHintTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const styles = ALERT_STYLES[type];
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -134,6 +135,16 @@ const AlertComponent = function Alert({
   useEffect(() => {
     return cleanupTimers;
   }, [cleanupTimers]);
+
+  useEffect(() => {
+    if (shouldAutoDismiss && !prefersReducedMotion) {
+      setShowShortcutHintOnMount(true);
+      const timer = setTimeout(() => {
+        setShowShortcutHintOnMount(false);
+      }, COMPONENT_CONFIG.ALERT.SHORTCUT_HINT_DISCOVERY_DURATION_MS);
+      return () => clearTimeout(timer);
+    }
+  }, [shouldAutoDismiss, prefersReducedMotion]);
 
   useEffect(() => {
     if (!shouldAutoDismiss || isPaused) return;
@@ -382,7 +393,7 @@ const AlertComponent = function Alert({
       )}
       {onClose && (
         <div
-          className={`${COORDINATE_POSITION_PATTERNS.BOTTOM_LEFT_SM} flex items-center gap-2 text-xs ${showShortcutHint ? 'opacity-60' : 'opacity-0'} focus-within:opacity-60 hover:opacity-60 transition-opacity`}
+          className={`${COORDINATE_POSITION_PATTERNS.BOTTOM_LEFT_SM} flex items-center gap-2 text-xs ${showShortcutHint || showShortcutHintOnMount ? 'opacity-60' : 'opacity-0'} focus-within:opacity-60 hover:opacity-60 transition-opacity`}
           aria-hidden="true"
         >
           {shouldAutoDismiss && (
