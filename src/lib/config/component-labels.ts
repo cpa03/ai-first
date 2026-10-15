@@ -375,6 +375,11 @@ export const IDEA_INPUT_LABELS = {
   SUBMIT_TOOLTIP: 'Submit your idea',
   /** Submit button tooltip keyboard shortcut */
   SUBMIT_SHORTCUT: ['⌘', 'Enter'],
+  /** Reading time estimate label - shown when user has typed enough words */
+  READING_TIME_LABEL: (seconds: number) => `~${seconds} sec read`,
+  /** ARIA label for reading time estimate */
+  READING_TIME_ARIA_LABEL: (seconds: number) =>
+    `Estimated reading time: ${seconds} seconds`,
 } as const;
 
 /**
