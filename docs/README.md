@@ -37,6 +37,8 @@ Complete index of all IdeaFlow documentation.
 | `npm run security:check`            | Run security validation script                          |
 | `npm run scan:console`              | Scan console logs with Playwright                       |
 | `npm run audit:lighthouse`          | Run Lighthouse performance audit                        |
+| `npm run audit:browser`             | Run BroCula browser audit                               |
+| `npm run audit:perf`                | Run BroCula performance analysis                        |
 | `npm run build:verify`              | Build + console scan + Lighthouse audit                 |
 | `npm run analyze`                   | Analyze bundle size with webpack                        |
 | `npm run build:cloudflare`          | Build for Cloudflare deployment                         |
