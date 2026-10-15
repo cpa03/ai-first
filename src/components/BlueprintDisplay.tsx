@@ -51,6 +51,9 @@ import {
   COMING_SOON_BADGE,
   ANIMATION_CLASSES,
   COMMON_FLEX_BETWEEN_RESPONSIVE,
+  GAP_CLASSES,
+  PX_CLASSES,
+  PY_CLASSES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -531,7 +534,7 @@ function CopyCodeButton({ text }: { text: string }) {
           onClick={handleCopy}
           className={`
             absolute top-3 right-3 
-            flex items-center gap-1.5 px-2.5 py-1.5 
+            flex items-center ${GAP_CLASSES.MD_SM} ${PX_CLASSES.MD} ${PY_CLASSES.MD_SM}
             text-xs font-medium rounded-md
             ${TRANSITION_CLASSES.DEFAULT_EASE_OUT}
             ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT}

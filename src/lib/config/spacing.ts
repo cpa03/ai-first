@@ -196,6 +196,8 @@ export const PY_CLASSES = {
   XS: 'py-0.5',
   /** py-1 = 4px */
   SM: 'py-1',
+  /** py-1.5 = 6px */
+  MD_SM: 'py-1.5',
   /** py-2 = 8px */
   MD: 'py-2',
   /** py-3 = 12px */

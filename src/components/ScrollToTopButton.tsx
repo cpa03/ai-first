@@ -13,6 +13,7 @@ import {
   COMPONENT_CONFIG,
   UI_CONFIG,
   SCROLL_TO_TOP_APPEAR,
+  GAP_CLASSES,
 } from '@/lib/config';
 import { SCROLL_TO_TOP_BUTTON_LABELS } from '@/lib/config/component-labels';
 import Tooltip from './Tooltip';
@@ -113,7 +114,7 @@ function ScrollToTopButtonComponent() {
         ${TRANSITION_CLASSES.COLOR} ease-out
         ${COMPONENT_PRIMARY_PATTERNS.SCROLL_TO_TOP_HOVER}
         ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} rounded-md
-        inline-flex items-center gap-1.5
+        inline-flex items-center ${GAP_CLASSES.MD_SM}
         group
         ${hasAppeared && !prefersReducedMotion ? SCROLL_TO_TOP_APPEAR : ''}
       `}
