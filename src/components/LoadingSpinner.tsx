@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useMemo, useState, useEffect } from 'react';
+import { memo, useMemo, useState, useEffect, useCallback } from 'react';
 import {
   COMPONENT_CONFIG,
   UI_CONFIG,
@@ -26,6 +26,10 @@ interface LoadingSpinnerProps {
   label?: string;
   showDelay?: number;
   showElapsedTime?: boolean;
+  /** Micro-UX: Show cancel button after delay for long-running operations */
+  onCancel?: () => void;
+  /** Delay in ms before showing cancel button (default: 5000ms) */
+  cancelDelay?: number;
 }
 
 function LoadingSpinnerComponent({
@@ -36,11 +40,15 @@ function LoadingSpinnerComponent({
   label,
   showDelay = 0,
   showElapsedTime = false,
+  onCancel,
+  cancelDelay = 5000,
 }: LoadingSpinnerProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const [hasAppeared, setHasAppeared] = useState(false);
   const [shouldShow, setShouldShow] = useState(showDelay === 0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [showCancelButton, setShowCancelButton] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
 
   // Micro-UX: Track when spinner first becomes visible for entrance animation
   useEffect(() => {
@@ -80,6 +88,15 @@ function LoadingSpinnerComponent({
     return () => clearTimeout(thresholdId);
   }, [showElapsedTime, shouldShow]);
 
+  // Micro-UX: Handle cancel with exit animation for smooth transition
+  const handleCancel = useCallback(() => {
+    if (!onCancel) return;
+    setIsExiting(true);
+    setTimeout(() => {
+      onCancel();
+    }, 150);
+  }, [onCancel]);
+
   // PERFORMANCE: Memoize spinner dimensions to prevent recalculation on every render
   // These values only change when the size prop changes
   const spinnerDimensions = useMemo(() => {
@@ -94,6 +111,34 @@ function LoadingSpinnerComponent({
 
     return { spinnerSize, dimension, pulseRing, pulseRingOffset };
   }, [size]);
+
+  // Micro-UX: Show cancel button after delay for long-running operations
+  // Provides users with an escape hatch if they want to stop waiting
+  useEffect(() => {
+    if (!onCancel || !shouldShow) return;
+
+    const timer = setTimeout(() => {
+      setShowCancelButton(true);
+    }, cancelDelay);
+
+    return () => clearTimeout(timer);
+  }, [onCancel, shouldShow, cancelDelay]);
+
+  // Micro-UX: Keyboard shortcut Escape to cancel loading
+  // Matches the pattern of Alert component for consistency
+  useEffect(() => {
+    if (!onCancel || !showCancelButton) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        handleCancel();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onCancel, showCancelButton, handleCancel]);
 
   const {
     spinnerSize,
@@ -217,6 +262,30 @@ function LoadingSpinnerComponent({
         >
           {COMPONENT_CONFIG.SPINNER.ELAPSED_TIME_LABEL} ({elapsedSeconds}s)
         </span>
+      )}
+      {showCancelButton && onCancel && (
+        <button
+          onClick={handleCancel}
+          className={`ml-2 px-2 py-1 text-xs font-medium rounded-md ${isExiting ? 'opacity-0 scale-95' : 'opacity-100 scale-100'} ${prefersReducedMotion ? '' : 'transition-all duration-150'} bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-1`}
+          aria-label="Cancel loading"
+          type="button"
+        >
+          <svg
+            className="w-3 h-3 inline-block mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+          Cancel
+        </button>
       )}
     </div>
   );
