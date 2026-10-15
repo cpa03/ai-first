@@ -54,6 +54,50 @@ const CopyButton = dynamic(() => import('@/components/CopyButton'), {
   ssr: false,
 });
 
+// Micro-UX: Extract popular pages data as a shared constant for keyboard shortcuts and UI
+// Number keys 1-3 allow users to jump directly to popular pages
+const POPULAR_PAGES = [
+  {
+    href: ROUTES.HOME,
+    label: 'Home',
+    description: 'Start a new idea',
+    shortcutKey: '1',
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+      />
+    ),
+  },
+  {
+    href: ROUTES.DASHBOARD,
+    label: 'Dashboard',
+    description: 'View your ideas',
+    shortcutKey: '2',
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+      />
+    ),
+  },
+  {
+    href: ROUTES.SIGNUP,
+    label: 'Sign up',
+    description: 'Create an account',
+    shortcutKey: '3',
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+      />
+    ),
+  },
+] as const;
+
 // Enhanced 404 page with keyboard shortcuts, focus management, and consistent component usage
 export default function NotFound() {
   const router = useRouter();
@@ -107,6 +151,18 @@ export default function NotFound() {
         e.preventDefault();
         triggerHapticFeedback();
         window.location.href = ROUTES.DASHBOARD;
+      }
+
+      // Micro-UX: Number keys 1-3 navigate to popular pages
+      // Follows the pattern from ClarificationFlow (select options) and MobileNav (menu items)
+      // Provides quick keyboard access to common destinations without requiring mouse/touch
+      if (!e.ctrlKey && !e.metaKey && !e.altKey) {
+        const matchedPage = POPULAR_PAGES.find((p) => p.shortcutKey === e.key);
+        if (matchedPage) {
+          e.preventDefault();
+          triggerHapticFeedback();
+          window.location.href = matchedPage.href;
+        }
       }
 
       // Micro-UX: Ctrl/Cmd+C copies page URL for easy sharing of broken links
@@ -322,9 +378,15 @@ export default function NotFound() {
               <kbd
                 className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
               >
-                d
+                1
               </kbd>
-              <span>dashboard</span>
+              <span>–</span>
+              <kbd
+                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+              >
+                3
+              </kbd>
+              <span>popular pages</span>
             </span>
             <span className={KEYBOARD_HINT_INLINE}>
               {hasCopied ? (
@@ -357,6 +419,7 @@ export default function NotFound() {
 
           {/* Micro-UX: Popular pages suggestions to help users find what they're looking for */}
           {/* Provides quick access to common destinations, reducing frustration from 404 errors */}
+          {/* Number keys 1-3 allow keyboard-only users to navigate quickly */}
           <div
             className={`${POPULAR_PAGES_SECTION} ${BORDER_COLORS.LIGHT} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_6}`}
           >
@@ -368,44 +431,7 @@ export default function NotFound() {
             </h2>
             <nav aria-labelledby="popular-pages-heading">
               <ul className={POPULAR_PAGES_GRID}>
-                {[
-                  {
-                    href: ROUTES.HOME,
-                    label: 'Home',
-                    description: 'Start a new idea',
-                    icon: (
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                      />
-                    ),
-                  },
-                  {
-                    href: ROUTES.DASHBOARD,
-                    label: 'Dashboard',
-                    description: 'View your ideas',
-                    icon: (
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                      />
-                    ),
-                  },
-                  {
-                    href: ROUTES.SIGNUP,
-                    label: 'Sign up',
-                    description: 'Create an account',
-                    icon: (
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                      />
-                    ),
-                  },
-                ].map((item) => (
+                {POPULAR_PAGES.map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
@@ -437,6 +463,12 @@ export default function NotFound() {
                           {item.description}
                         </span>
                       </span>
+                      <kbd
+                        className={`ml-auto hidden sm:inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono opacity-0 group-hover:opacity-60 transition-opacity`}
+                        aria-hidden="true"
+                      >
+                        {item.shortcutKey}
+                      </kbd>
                     </Link>
                   </li>
                 ))}
