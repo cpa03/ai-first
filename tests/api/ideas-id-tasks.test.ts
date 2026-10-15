@@ -47,13 +47,11 @@ jest.mock('@/lib/api-handler', () => ({
 
 jest.mock('@/lib/db', () => ({
   dbService: {
-    getIdea: jest
-      .fn()
-      .mockResolvedValue({
-        id: 'idea-123',
-        user_id: 'user-123',
-        title: 'Test Idea',
-      }),
+    getIdea: jest.fn().mockResolvedValue({
+      id: 'idea-123',
+      user_id: 'user-123',
+      title: 'Test Idea',
+    }),
     getIdeaDeliverablesWithTasks: jest.fn().mockResolvedValue([
       {
         id: 'del-1',
@@ -77,6 +75,7 @@ jest.mock('@/lib/auth', () => ({
 jest.mock('@/lib/config', () => ({
   IDEA_STATUS_CONFIG: { TYPES: { COMPLETED: 'completed' } },
   PRECISION_CONFIG: { HOURS_MULTIPLIER: 100 },
+  PROGRESS_PERCENTAGE: { MAX: 100, MIN: 0, COMPLETE: 100, ZERO: 0 },
 }));
 
 jest.mock('@/lib/config/constants', () => ({
