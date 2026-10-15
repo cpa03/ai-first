@@ -258,6 +258,10 @@ export function parseSignatureHeader(
       return null;
     }
 
+    if (Number.isNaN(timestamp) || !Number.isFinite(timestamp)) {
+      return null;
+    }
+
     return {
       signature,
       timestamp,
